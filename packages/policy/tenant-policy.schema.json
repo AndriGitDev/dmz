@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dmz.is/schemas/tenant-policy.v0.json",
+  "title": "dmz tenant policy v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "entities", "uploads"],
+  "properties": {
+    "version": { "const": 0 },
+    "entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kennitala", "name", "iban", "card", "phone", "email", "address", "secret", "tenant_dictionary"],
+      "properties": {
+        "kennitala": { "$ref": "#/$defs/action" },
+        "name": { "$ref": "#/$defs/action" },
+        "iban": { "$ref": "#/$defs/action" },
+        "card": { "$ref": "#/$defs/action" },
+        "phone": { "$ref": "#/$defs/action" },
+        "email": { "$ref": "#/$defs/action" },
+        "address": { "$ref": "#/$defs/action" },
+        "secret": { "$ref": "#/$defs/action" },
+        "tenant_dictionary": { "$ref": "#/$defs/action" }
+      }
+    },
+    "uploads": { "const": "block" },
+    "uncertain": { "enum": ["ask", "block"] }
+  },
+  "$defs": { "action": { "enum": ["swap", "warn", "block"] } }
+}
