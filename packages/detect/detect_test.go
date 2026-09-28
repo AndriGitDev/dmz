@@ -108,6 +108,34 @@ func TestHandAuthoredNameForms(t *testing.T) {
 	}
 }
 
+func TestUnlistedPatronymicRequiresReview(t *testing.T) {
+	for _, name := range []string{"Guðrún Sigurðardóttir", "Elín Björnsdóttir", "Jón Jónssonar"} {
+		matches := Detect("Hitti " + name + ".")
+		if len(matches) != 1 || matches[0].Kind != Name || matches[0].Confidence != Uncertain || matches[0].Reason != "patronymic-shape-without-lexicon" {
+			t.Errorf("%q: %#v", name, matches)
+		}
+	}
+	for _, text := range []string{"Project Johnson", "Stafrænt Ísland", "Guðrún SigurðardóttirX"} {
+		if matches := Detect(text); len(matches) != 0 {
+			t.Errorf("false patronymic match %q: %#v", text, matches)
+		}
+	}
+}
+
+func TestAddressShapeRequiresReview(t *testing.T) {
+	for _, address := range []string{"Prófgata 99, 999 Reykjavík", "Laugavegur 10, 101 Reykjavík"} {
+		matches := Detect(address)
+		if len(matches) != 1 || matches[0].Kind != Address || matches[0].Confidence != Uncertain || address[matches[0].Start:matches[0].End] != address {
+			t.Errorf("%q: %#v", address, matches)
+		}
+	}
+	for _, text := range []string{"Invoice 99, 999 Items", "Prófgata 99 999 Reykjavík", "Prófgata 99, 99 Reykjavík"} {
+		if matches := Detect(text); len(matches) != 0 {
+			t.Errorf("false address match %q: %#v", text, matches)
+		}
+	}
+}
+
 func TestTenantTermsExactAndBounded(t *testing.T) {
 	input := "Verkefni Gervi var rætt, ekki ÓVerkefni Gervi eða verkefni gervi."
 	got := DetectWithTerms(input, []string{"Verkefni Gervi"})

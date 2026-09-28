@@ -36,6 +36,12 @@ assert.equal(blocked.transformed, undefined);
 const jwtBlocked = JSON.parse(globalThis.dmzProcess('eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl'));
 assert.equal(jwtBlocked.allowed, false);
 assert.equal(jwtBlocked.transformed, undefined);
+const nameBlocked = JSON.parse(globalThis.dmzProcess('Guðrún Sigurðardóttir'));
+assert.equal(nameBlocked.allowed, false);
+assert.equal(nameBlocked.findings[0].action, 'review');
+const addressBlocked = JSON.parse(globalThis.dmzProcess('Prófgata 99, 999 Reykjavík'));
+assert.equal(addressBlocked.allowed, false);
+assert.equal(addressBlocked.findings[0].kind, 'address');
 
 assert.equal(JSON.parse(globalThis.dmzSetTenantTerms(JSON.stringify(['Verkefni Gervi']))).ok, true);
 const tenant = JSON.parse(globalThis.dmzProcess('Ræddu Verkefni Gervi.'));

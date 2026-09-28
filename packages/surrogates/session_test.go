@@ -75,6 +75,20 @@ func TestNameCaseForms(t *testing.T) {
 	}
 }
 
+func TestUnknownPatronymicBlocksWithoutOutboundText(t *testing.T) {
+	got := NewSession().Process("Ræddu Guðrún Sigurðardóttir.")
+	if got.Allowed || got.Transformed != "" || len(got.Findings) != 1 || got.Findings[0].Action != "review" {
+		t.Fatalf("unknown patronymic should block for review: %#v", got)
+	}
+}
+
+func TestAddressShapeBlocksWithoutOutboundText(t *testing.T) {
+	got := NewSession().Process("Sendu á Prófgata 99, 999 Reykjavík.")
+	if got.Allowed || got.Transformed != "" || len(got.Findings) != 1 || got.Findings[0].Action != "review" {
+		t.Fatalf("address candidate should block for review: %#v", got)
+	}
+}
+
 func TestSessionNamespacePreventsWrongRestoration(t *testing.T) {
 	s := NewSession()
 	old := s.Process("140182-8858").Transformed

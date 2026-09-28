@@ -2,8 +2,8 @@
   "corpus": "bench/corpus/v0.jsonl",
   "mode": "outbound-exposure",
   "samples": 42,
-  "allowed_prompts": 35,
-  "blocked_prompts": 7,
+  "allowed_prompts": 32,
+  "blocked_prompts": 10,
   "tenant_terms": [
     "Verkefni Gervi"
   ],
@@ -11,8 +11,8 @@
   "per_kind": {
     "address": {
       "masked": 0,
-      "blocked": 0,
-      "exposed": 1
+      "blocked": 1,
+      "exposed": 0
     },
     "card": {
       "masked": 3,
@@ -36,8 +36,8 @@
     },
     "name_demo": {
       "masked": 5,
-      "blocked": 0,
-      "exposed": 2
+      "blocked": 2,
+      "exposed": 0
     },
     "phone": {
       "masked": 2,

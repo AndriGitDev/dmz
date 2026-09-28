@@ -67,6 +67,16 @@ try {
   assert.equal(await page.locator('#masked').inputValue(), '');
   assert.equal(await page.locator('#copy').isDisabled(), true);
 
+  await page.locator('#prompt').fill('Prófgata 99, 999 Reykjavík');
+  await page.locator('#mask').click();
+  assert.equal(await page.locator('#masked').inputValue(), '');
+  assert.equal(await page.locator('#copy').isDisabled(), true);
+
+  await page.locator('#prompt').fill('Guðrún Sigurðardóttir');
+  await page.locator('#mask').click();
+  assert.equal(await page.locator('#masked').inputValue(), '');
+  assert.equal(await page.locator('#copy').isDisabled(), true);
+
   await page.locator('#reset').click();
   assert.equal(await page.locator('#prompt').inputValue(), '');
   await page.locator('#prompt').fill('140182-8868');

@@ -22,6 +22,7 @@ const (
 	Phone            Kind = "phone"
 	Secret           Kind = "secret"
 	Name             Kind = "name_demo"
+	Address          Kind = "address"
 	TenantDictionary Kind = "tenant_dictionary"
 )
 
@@ -43,14 +44,16 @@ type Match struct {
 }
 
 var (
-	kennitalaRE = regexp.MustCompile(`[0-9]{6}-?[0-9]{4}`)
-	emailRE     = regexp.MustCompile(`[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}`)
-	ibanRE      = regexp.MustCompile(`(?i)IS(?:[ -]?[0-9]){24}`)
-	cardRE      = regexp.MustCompile(`[0-9](?:[0-9 \-]{11,25})[0-9]`)
-	phoneRE     = regexp.MustCompile(`(?:\+354[ \-]?)?[0-9]{3}[ \-]?[0-9]{4}`)
-	secretRE    = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
-	jwtRE       = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
-	bearerRE    = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
+	kennitalaRE  = regexp.MustCompile(`[0-9]{6}-?[0-9]{4}`)
+	emailRE      = regexp.MustCompile(`[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}`)
+	ibanRE       = regexp.MustCompile(`(?i)IS(?:[ -]?[0-9]){24}`)
+	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 \-]{11,25})[0-9]`)
+	phoneRE      = regexp.MustCompile(`(?:\+354[ \-]?)?[0-9]{3}[ \-]?[0-9]{4}`)
+	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
+	jwtRE        = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
+	bearerRE     = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
+	patronymicRE = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|bur)`)
+	addressRE    = regexp.MustCompile(`\p{Lu}\p{L}{1,40}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás)[ \t]+[0-9]{1,3}[A-Za-z]?,[ \t]+[0-9]{3}[ \t]+\p{Lu}\p{L}{2,40}`)
 )
 
 // Hand-authored demonstration forms; not a licensed lexicon or a general name detector.
@@ -91,6 +94,7 @@ func DetectWithTerms(input string, terms []string) []Match {
 	add(kennitalaRE, Kennitala, validateKennitala)
 	add(cardRE, Card, validateCard)
 	add(phoneRE, Phone, validatePhone)
+	add(addressRE, Address, func(string) (Confidence, string, bool) { return Uncertain, "street-postcode-shape-no-gazetteer", true })
 	for _, form := range demoNames {
 		for start := 0; start < len(input); {
 			i := strings.Index(input[start:], form)
@@ -104,6 +108,16 @@ func DetectWithTerms(input string, terms []string) []Match {
 			}
 			start = end
 		}
+	}
+	for _, loc := range patronymicRE.FindAllStringIndex(input, -1) {
+		if !bounded(input, loc[0], loc[1]) {
+			continue
+		}
+		candidate := input[loc[0]:loc[1]]
+		if !strings.ContainsAny(candidate, "ÁÐÉÍÓÚÝÞÆÖáðéíóúýþæö") {
+			continue
+		}
+		candidates = append(candidates, Match{loc[0], loc[1], Name, Uncertain, "patronymic-shape-without-lexicon"})
 	}
 	for _, term := range terms {
 		if term == "" {
@@ -130,6 +144,9 @@ func DetectWithTerms(input string, terms []string) []Match {
 		}
 		if a.End != b.End {
 			return a.End > b.End
+		}
+		if a.Confidence != b.Confidence {
+			return a.Confidence == High
 		}
 		return priority(a.Kind) > priority(b.Kind)
 	})
@@ -169,6 +186,8 @@ func priority(k Kind) int {
 	case Card:
 		return 3
 	case Phone:
+		return 2
+	case Address:
 		return 2
 	case TenantDictionary:
 		return 1
