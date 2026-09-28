@@ -14,6 +14,9 @@ jobs:
       - run: go test ./...
       - run: ./scripts/check-lexicon.sh
       - run: python3 -m unittest discover -s bench/datasets -p 'test_*.py'
+      - run: python3 -m pip install -r bench/contextual/requirements.txt
+      - run: python3 -m unittest discover -s bench/contextual -p 'test_*.py'
+      - run: sha256sum --check bench/gates/legal-financial-v1.sha256
       - run: sha256sum --check bench/gates/corpus.sha256
       - run: ./scripts/check-detector-v2.sh
       - run: go run ./bench/scorers -baseline bench/results/v0.json -floor bench/gates/selected-v0-recall.json > /tmp/dmz-benchmark-current.json

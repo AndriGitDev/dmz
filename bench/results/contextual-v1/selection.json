@@ -1,0 +1,16 @@
+{
+  "model_sha256": "df28612d25344f6241302d36e873abfdb758a85c1b73a30635c53a52249bcf21",
+  "feature_version": 1,
+  "threshold": 0.65,
+  "selected_at": "2026-09-28T18:34:07.685233+00:00",
+  "selection": "Highest development recall among the two configurations and fixed threshold grid with precision >=0.955. Selected before final evaluations.",
+  "development": {
+    "tp": 1266,
+    "fp": 53,
+    "fn": 240,
+    "precision": 0.9598180439727066,
+    "recall": 0.8406374501992032,
+    "target_met": false
+  },
+  "target_met": false
+}

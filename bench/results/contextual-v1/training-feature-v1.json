@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "training_sha256": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+  "model_sha256": "df28612d25344f6241302d36e873abfdb758a85c1b73a30635c53a52249bcf21",
+  "training_sentences": 45332,
+  "iterations": 100,
+  "c1": 0.1,
+  "c2": 0.1,
+  "seconds": 153.985,
+  "bytes": 2141268,
+  "features": "word/shape/affixes/patronymic; +/-2 token context; BIO Person",
+  "runtime": "python-crfsuite 0.9.12; experimental offline baseline, not Shield"
+}
