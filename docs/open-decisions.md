@@ -4,7 +4,7 @@ These items are unresolved in the supplied plan or require time-sensitive verifi
 
 | Priority | Decision or evidence | Why it matters |
 | --- | --- | --- |
-| Immediate | RunAtlas legal form, age and ownership | R&D refund and grant eligibility; processor identity |
+| Immediate | Confirm dmz applicant and owner, Atlas Cloud ehf. group classification and formation date | [Public Atlas terms](https://atlascloud.is/is/terms) identify Atlas Cloud ehf. as service operator, but dmz project ownership, financial risk, company age and grant eligibility still need company records |
 | Immediate | Rannís applicant eligibility and eligible R&D costs | [2026 listing](https://island.is/styrkjatorg/styrkur/1-8) confirms the new-project window through 1 Oct 2026, 23:59 Icelandic time; applicant, cost treatment and portal filing remain unresolved. See [readiness note](rannis-2026-readiness.md) |
 | Immediate | Approved-proxy interpretation and complete evidence mapping for current Stafrænt Ísland rules | Rules checked 28 Sep; direct-identifier masking alone does not cover confidential/case material or process evidence |
 | Immediate | Actual count of vendors delivering to Stafrænt Ísland | Weakest 2029 customer assumption; <40 triggers model reset |

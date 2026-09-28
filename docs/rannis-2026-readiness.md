@@ -8,6 +8,8 @@ The [official 2026 grant listing](https://island.is/styrkjatorg/styrkur/1-8) say
 
 The [Rannís 2025 handbook](https://www.rannis.is/media/skattfrdr.-rannsokna-og-throunarv/Handbok_skattfradrattar_RTh_H2025.pdf) describes company ownership and financial risk, specialist capability, cost planning, numeric business outcomes and a business plan as material to an application. It is a prior-year guide. The applicant must use the **autumn 2026 handbook linked from the grant listing** to settle current requirements and eligible cost treatment before filing. The business plan's 35% SME assumption is not a dmz entitlement; company classification and eligible costs have not been established.
 
+The public [RunAtlas/Atlas terms](https://atlascloud.is/is/terms) identify the service operator as **Atlas Cloud ehf.**; the [Icelandic Intellectual Property Office's Atlas trademark record](https://www.hugverk.is/en/leit/trademark/V0141261) names the same company as owner. This supports the service's public legal name and company form, but does **not** establish that Atlas Cloud ehf. owns the dmz R&D project, will bear its financial risk, or has authority and cost records to apply. The company's formation date, group classification and ownership need company records or the applicant's confirmation.
+
 ## Candidate project scope for the application
 
 **Working title:** Icelandic direct-identifier detection and reversible visible masking for AI workflows.
@@ -37,7 +39,7 @@ The first three points contain measurable technical uncertainty. Routine website
 
 | Item | Status in repo |
 | --- | --- |
-| Applicant legal entity, registration and authority to file; whether RunAtlas owns and bears the financial risk of the project | Unresolved in [open decisions](open-decisions.md) |
+| Applicant legal entity, registration and authority to file; whether Atlas Cloud ehf. owns and bears the financial risk of the dmz project | Public operator name/form found; applicant and project ownership still unresolved in [open decisions](open-decisions.md) |
 | Company size and group/ownership classification for the relevant year | Unresolved |
 | Named project lead and documented specialist experience | Unresolved |
 | Dated project start, work packages, milestones and staff time | Draft scope above; costed schedule missing |
