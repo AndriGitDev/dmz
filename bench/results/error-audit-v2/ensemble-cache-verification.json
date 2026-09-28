@@ -1,0 +1,122 @@
+[
+  {
+    "family": "crf",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "crf",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-9",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-9",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-10",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-10",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-11",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-11",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-12",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-12",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-13",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-13",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-14",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-14",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-15",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-15",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-16",
+    "dataset": "dev",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  },
+  {
+    "family": "neural-epoch-16",
+    "dataset": "domain",
+    "thresholds": 9,
+    "standalone_counts_match": true
+  }
+]

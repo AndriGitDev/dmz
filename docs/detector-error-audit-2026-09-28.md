@@ -7,6 +7,9 @@ and financial documents and both exact Person precision and recall >=95.5%.
 This round uses development data only. It does not change Shield, publish a new
 website score, or establish independent final accuracy.
 
+**Final selected development result: MIM 95.92% precision / 95.29% recall;
+synthetic documents 98.51% / 96.25%. The overall dual 95.5% target is not met.**
+
 ## What the baseline misses
 
 At its previously selected threshold 0.65, the baseline CRF has 1,266 TP, 53 FP,
@@ -96,6 +99,89 @@ language model, not an existing NER-finetuned checkpoint. Only a small classifie
 is trained. Pretraining overlap with MIM source text is not ruled out. Model
 weights, original corpus, cached embeddings, and per-example error text stay
 outside Git. The encoder is a research baseline, not an extension asset.
+
+The frozen encoder processed 46,196 training records / 824,869 tokens in about
+29 minutes on this CPU host. Mean-subword vectors are cached as float16, then
+converted to float32 for the two classifier heads. The linear and 128-unit
+nonlinear heads each trained for eight epochs; all 16 checkpoints were evaluated.
+The head's reported evaluation time excludes the expensive encoder pass and must
+not be presented as end-to-end latency.
+
+Across the 21 standalone candidates, the fixed rule selects nonlinear head epoch
+8 at threshold 0.65:
+
+| Development set | TP | FP | FN | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| MIM | 1,366 | 47 | 140 | 96.67% | 90.70% |
+| Synthetic legal/financial | 427 | 19 | 53 | 95.74% | 88.96% |
+
+This improves the balanced result over the CRFs but still misses the dual 95.5%
+target. All checkpoints, including early ones with no predictions at high
+thresholds, remain in the reports. A zero-prediction trial gets zero precision and
+cannot qualify; it is not silently dropped. Existing command-line release-gate
+behavior still rejects a report without predictions.
+
+## Added combination experiment
+
+The two model families recover different names. A follow-up fixes CRF priority
+when spans overlap and adds only non-overlapping neural spans. Its 81 development
+combinations reuse the same nine thresholds for each model. At CRF 0.75 / neural
+0.65, the epoch-8 combination reaches:
+
+| Development set | TP | FP | FN | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| MIM | 1,429 | 65 | 77 | 95.65% | 94.89% |
+| Synthetic legal/financial | 461 | 6 | 19 | 98.72% | 96.04% |
+
+The MIM result is still ten correct names below the recall target. There are 35
+misses with no proposed name, 22 below threshold, 17 boundary errors and 3 correct
+neural predictions displaced by CRF overlap. Changing overlap handling alone
+cannot close this gap. The document set clears both targets as a development
+point estimate only. A longer 16-epoch head run is recorded as another added
+development experiment; no annotations or test sets are changed.
+
+## Final selection and remaining gap
+
+The longer run reproduces the first eight head checkpoints byte-for-byte. Epochs
+9–16 add eight standalone candidates and 648 CRF/head threshold combinations.
+A further fixed equal-probability average of all eight late checkpoints adds 81
+combinations; it does not beat the best single-checkpoint combination. All runs
+and their order are recorded in the protocol. In total, 119 configurations at
+nine thresholds produce **1,071 development trials**, not independent tests.
+This amount of development selection makes fresh evaluation especially important.
+
+The final best standalone head is epoch 16 at 0.70: MIM P95.56/R91.43 and
+synthetic-domain P95.68/R92.29. The best overall composition uses feature-v3 CRF
+at 0.75 and nonlinear head epoch 12 with no extra confidence cutoff (0.0).
+BIO argmax still decides whether each word is a name; a zero cutoff does not turn
+every word into a finding. The same threshold pair is used on both datasets.
+
+| Final selected composition | TP | FP | FN | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| MIM development | 1,435 | 61 | 71 | 95.92% | 95.29% |
+| Synthetic legal/financial development | 462 | 7 | 18 | 98.51% | 96.25% |
+
+Compared with the original CRF on the same MIM development set, missed names fall
+from 240 to 71, while false detections rise from 53 to 61. General precision stays
+above the target but recall needs four more exact names to reach it, without
+losing the precision floor. Do not round 95.29% into a passing result.
+
+The final composition reproduces its complete domain score grid on the original
+text fields, including TP 462 / FP 7 / FN 18 at the selected threshold. Every
+individual prediction cache used for combination was checked against its separate
+standalone evaluator at all nine thresholds. This guards the combination code
+against changing the underlying model's results.
+
+The selected recipe and hashes are frozen in `selected-candidate.json`; this is
+not a release manifest. It still requires the large local Python encoder, and no
+Go/WASM integration, memory budget, browser latency or combined-entity exposure
+claim follows from these results. Shield is unchanged.
+
+Next evidence should come from human review of the synthetic annotations and a
+new document-disjoint evaluation set, including genuine document structures and
+negative examples. Further model work should investigate encoder fine-tuning and
+remaining boundary/context errors. Continued threshold search on these same
+development examples would not provide independent confirmation of quality.
 
 ## Reproduction and gates
 

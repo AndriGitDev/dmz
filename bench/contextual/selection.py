@@ -16,13 +16,16 @@ def select(candidates):
         if identities!=pair:raise ValueError('candidates use different development inputs')
         model=lambda report:report.get('head_sha256',report.get('model_sha256'))
         if not model(general) or model(general)!=model(domain):raise ValueError('mismatched model pair')
-        if set(general['scores'])!=set(domain['scores']):raise ValueError('mismatched threshold grids')
-        current=set(general['scores'])
+        g_scores={float(t):s for t,s in general['scores'].items()}
+        d_scores={float(t):s for t,s in domain['scores'].items()}
+        if len(g_scores)!=len(general['scores']) or len(d_scores)!=len(domain['scores']):raise ValueError('duplicate numeric threshold')
+        if set(g_scores)!=set(d_scores):raise ValueError('mismatched threshold grids')
+        current=set(g_scores)
         if not current or any(not math.isfinite(float(t)) or not 0<=float(t)<=1 for t in current):raise ValueError('invalid threshold grid')
         if grid is None:grid=current
         if current!=grid:raise ValueError('candidates use different threshold grids')
-        for threshold,g in general['scores'].items():
-            d=domain['scores'][threshold];check(g);check(d)
+        for threshold,g in g_scores.items():
+            d=d_scores[threshold];check(g,allow_empty_predictions=True);check(d,allow_empty_predictions=True)
             totals=(g['tp']+g['fn'],d['tp']+d['fn'])
             if gold_counts is None:gold_counts=totals
             if totals!=gold_counts:raise ValueError('inconsistent annotation counts')

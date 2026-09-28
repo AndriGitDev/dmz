@@ -1,0 +1,26 @@
+{
+  "model_sha256": "b51bd7d916209cc84f6de00208dc428034a5833b51b0f26919b010ef012e73f7",
+  "composition": {
+    "method": "mean token probabilities",
+    "epochs": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "head_sha256": [
+      "993261e210a91f83e25a6a24ac18d65ae7b91a397c6a314f18bbc98d084359d4",
+      "755d4c02abe2478542d15313c7600d544edacfb4048a761610f3cfe63d7362e7",
+      "503687d53bcbe58164a955450d871a1a9358ef77e16396cdf905be18f8776c3b",
+      "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+      "8cf2f3ce969a130f41dfff02d87c125f0a9838b290270f7ccff1660be2a2f152",
+      "afada14bbbbaffd988f939d676e3118c7ffbc29d8e3e7b25cbbaf84c6043d411",
+      "9d06862219338a1a2f0b54d1ebb1d257215c5f0b9c1287b5ebb01049cd3f975f",
+      "91343d837ac083815c69d8be58e987a89d5dd811ca7d4201f1cbe502f2d90eda"
+    ]
+  }
+}

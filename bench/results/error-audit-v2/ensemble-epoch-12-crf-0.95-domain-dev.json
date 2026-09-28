@@ -1,0 +1,88 @@
+{
+  "split": "dev",
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "model_sha256": "66a5f55969010429a4918ac6b9d245b56d6b4bfc3eaf5f4f3d9577e4804dcb52",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 444,
+      "fp": 19,
+      "fn": 36,
+      "precision": 0.958963282937365,
+      "recall": 0.925,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 444,
+      "fp": 19,
+      "fn": 36,
+      "precision": 0.958963282937365,
+      "recall": 0.925,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 441,
+      "fp": 18,
+      "fn": 39,
+      "precision": 0.9607843137254902,
+      "recall": 0.91875,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 439,
+      "fp": 18,
+      "fn": 41,
+      "precision": 0.9606126914660832,
+      "recall": 0.9145833333333333,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 438,
+      "fp": 17,
+      "fn": 42,
+      "precision": 0.9626373626373627,
+      "recall": 0.9125,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 436,
+      "fp": 16,
+      "fn": 44,
+      "precision": 0.9646017699115044,
+      "recall": 0.9083333333333333,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 432,
+      "fp": 15,
+      "fn": 48,
+      "precision": 0.9664429530201343,
+      "recall": 0.9,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 428,
+      "fp": 9,
+      "fn": 52,
+      "precision": 0.9794050343249427,
+      "recall": 0.8916666666666667,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 425,
+      "fp": 4,
+      "fn": 55,
+      "precision": 0.9906759906759907,
+      "recall": 0.8854166666666666,
+      "target_met": false
+    }
+  },
+  "composition": {
+    "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+    "neural_sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+    "crf_threshold": 0.95,
+    "overlap_policy": "CRF priority; add only non-overlapping neural spans"
+  },
+  "method": "Exact Person spans; added development ensemble; confidence thresholds are model-specific ranking scores"
+}

@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "training_cache_sha256": "dfc297a8f7da4cf86bceb526468e34e6493f5cb40a9f29138fc1c0e6e4f26b37",
+  "training_input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "pooling": "mean subwords; <=256-subword chunks at word boundaries",
+  "hidden_size": 768,
+  "classifier_hidden": 128,
+  "epochs": 8,
+  "lr": 0.001,
+  "seed": 42,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.040205097018617006,
+      "seconds": 12.5
+    },
+    {
+      "epoch": 2,
+      "loss": 0.009068739829414724,
+      "seconds": 24.5
+    },
+    {
+      "epoch": 3,
+      "loss": 0.007625755044118122,
+      "seconds": 36.7
+    },
+    {
+      "epoch": 4,
+      "loss": 0.006894733113666872,
+      "seconds": 49.3
+    },
+    {
+      "epoch": 5,
+      "loss": 0.006252283943219575,
+      "seconds": 63.1
+    },
+    {
+      "epoch": 6,
+      "loss": 0.005574743187439726,
+      "seconds": 76.8
+    },
+    {
+      "epoch": 7,
+      "loss": 0.005005836419067736,
+      "seconds": 89.8
+    },
+    {
+      "epoch": 8,
+      "loss": 0.004489235533716884,
+      "seconds": 102.9
+    }
+  ],
+  "weights": {
+    "epoch-1.safetensors": "9a278272b5d6a1faaecc0a06706772c4e8a35ee55698d2264ef64f099f4e7d9f",
+    "epoch-2.safetensors": "28abe23662d25fdb13376a9555d82d616ef4e96fc176a063be6306779f806ad4",
+    "epoch-3.safetensors": "d725adc416ae6c0b4e7d00622154e3511574ae2f0d0401d45a8d1cefe06182cd",
+    "epoch-4.safetensors": "12cf5cae53dea39110bcb2b4cb4c30f8e8e0d8657627d40bbef8abbdb0595edc",
+    "epoch-5.safetensors": "129ba1eb32bd83688735f9127099d9b58916d0ee69d1168b617bb970625ec95f",
+    "epoch-6.safetensors": "ae365567040d4076000a2fa9fc462a090f5402e20cca15398799a60997a90eed",
+    "epoch-7.safetensors": "02217a6561db2efe78505ee71f39d3dae60dd86027c445eee3d57866eb97c406",
+    "epoch-8.safetensors": "3396836f92fdc6a691068d1cd398280d8064baa8f90221dd3f39a6cc7f63ed53"
+  },
+  "method": "Frozen pretrained encoder; train BIO Person classifier only; not Shield"
+}

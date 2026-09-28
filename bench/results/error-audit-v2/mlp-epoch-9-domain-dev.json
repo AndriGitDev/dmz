@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "993261e210a91f83e25a6a24ac18d65ae7b91a397c6a314f18bbc98d084359d4",
+  "epoch": 9,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 447,
+      "fp": 22,
+      "fn": 33,
+      "precision": 0.9530916844349681,
+      "recall": 0.93125,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 447,
+      "fp": 22,
+      "fn": 33,
+      "precision": 0.9530916844349681,
+      "recall": 0.93125,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 443,
+      "fp": 19,
+      "fn": 37,
+      "precision": 0.9588744588744589,
+      "recall": 0.9229166666666667,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 442,
+      "fp": 18,
+      "fn": 38,
+      "precision": 0.9608695652173913,
+      "recall": 0.9208333333333333,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 435,
+      "fp": 17,
+      "fn": 45,
+      "precision": 0.9623893805309734,
+      "recall": 0.90625,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 428,
+      "fp": 15,
+      "fn": 52,
+      "precision": 0.9661399548532731,
+      "recall": 0.8916666666666667,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 425,
+      "fp": 13,
+      "fn": 55,
+      "precision": 0.9703196347031964,
+      "recall": 0.8854166666666666,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 406,
+      "fp": 7,
+      "fn": 74,
+      "precision": 0.9830508474576272,
+      "recall": 0.8458333333333333,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 393,
+      "fp": 5,
+      "fn": 87,
+      "precision": 0.9874371859296482,
+      "recall": 0.81875,
+      "target_met": false
+    }
+  },
+  "seconds": 0.143,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

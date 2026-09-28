@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "129ba1eb32bd83688735f9127099d9b58916d0ee69d1168b617bb970625ec95f",
+  "epoch": 5,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 430,
+      "fp": 26,
+      "fn": 50,
+      "precision": 0.9429824561403509,
+      "recall": 0.8958333333333334,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 429,
+      "fp": 26,
+      "fn": 51,
+      "precision": 0.9428571428571428,
+      "recall": 0.89375,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 418,
+      "fp": 21,
+      "fn": 62,
+      "precision": 0.9521640091116174,
+      "recall": 0.8708333333333333,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 416,
+      "fp": 16,
+      "fn": 64,
+      "precision": 0.9629629629629629,
+      "recall": 0.8666666666666667,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 411,
+      "fp": 14,
+      "fn": 69,
+      "precision": 0.9670588235294117,
+      "recall": 0.85625,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 403,
+      "fp": 11,
+      "fn": 77,
+      "precision": 0.9734299516908212,
+      "recall": 0.8395833333333333,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 399,
+      "fp": 9,
+      "fn": 81,
+      "precision": 0.9779411764705882,
+      "recall": 0.83125,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 375,
+      "fp": 2,
+      "fn": 105,
+      "precision": 0.9946949602122016,
+      "recall": 0.78125,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 362,
+      "fp": 1,
+      "fn": 118,
+      "precision": 0.9972451790633609,
+      "recall": 0.7541666666666667,
+      "target_met": false
+    }
+  },
+  "seconds": 0.134,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

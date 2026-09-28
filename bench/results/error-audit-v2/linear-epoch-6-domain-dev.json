@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "980febc700b0928f0460355cc429e0b09320aa541fd5c308052d7bb4e36b078f",
+  "epoch": 6,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 356,
+      "fp": 67,
+      "fn": 124,
+      "precision": 0.8416075650118203,
+      "recall": 0.7416666666666667,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 352,
+      "fp": 66,
+      "fn": 128,
+      "precision": 0.8421052631578947,
+      "recall": 0.7333333333333333,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 346,
+      "fp": 56,
+      "fn": 134,
+      "precision": 0.8606965174129353,
+      "recall": 0.7208333333333333,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 336,
+      "fp": 44,
+      "fn": 144,
+      "precision": 0.8842105263157894,
+      "recall": 0.7,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 335,
+      "fp": 39,
+      "fn": 145,
+      "precision": 0.8957219251336899,
+      "recall": 0.6979166666666666,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 329,
+      "fp": 35,
+      "fn": 151,
+      "precision": 0.9038461538461539,
+      "recall": 0.6854166666666667,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 318,
+      "fp": 25,
+      "fn": 162,
+      "precision": 0.9271137026239067,
+      "recall": 0.6625,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 281,
+      "fp": 11,
+      "fn": 199,
+      "precision": 0.9623287671232876,
+      "recall": 0.5854166666666667,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 196,
+      "fp": 4,
+      "fn": 284,
+      "precision": 0.98,
+      "recall": 0.4083333333333333,
+      "target_met": false
+    }
+  },
+  "seconds": 0.102,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

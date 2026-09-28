@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "afada14bbbbaffd988f939d676e3118c7ffbc29d8e3e7b25cbbaf84c6043d411",
+  "epoch": 14,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 437,
+      "fp": 32,
+      "fn": 43,
+      "precision": 0.9317697228144989,
+      "recall": 0.9104166666666667,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 437,
+      "fp": 31,
+      "fn": 43,
+      "precision": 0.9337606837606838,
+      "recall": 0.9104166666666667,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 431,
+      "fp": 27,
+      "fn": 49,
+      "precision": 0.9410480349344978,
+      "recall": 0.8979166666666667,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 431,
+      "fp": 24,
+      "fn": 49,
+      "precision": 0.9472527472527472,
+      "recall": 0.8979166666666667,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 428,
+      "fp": 22,
+      "fn": 52,
+      "precision": 0.9511111111111111,
+      "recall": 0.8916666666666667,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 427,
+      "fp": 20,
+      "fn": 53,
+      "precision": 0.9552572706935123,
+      "recall": 0.8895833333333333,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 423,
+      "fp": 18,
+      "fn": 57,
+      "precision": 0.9591836734693877,
+      "recall": 0.88125,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 404,
+      "fp": 14,
+      "fn": 76,
+      "precision": 0.9665071770334929,
+      "recall": 0.8416666666666667,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 397,
+      "fp": 12,
+      "fn": 83,
+      "precision": 0.9706601466992665,
+      "recall": 0.8270833333333333,
+      "target_met": false
+    }
+  },
+  "seconds": 0.135,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

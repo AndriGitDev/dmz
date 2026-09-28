@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "28abe23662d25fdb13376a9555d82d616ef4e96fc176a063be6306779f806ad4",
+  "epoch": 2,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 402,
+      "fp": 45,
+      "fn": 78,
+      "precision": 0.8993288590604027,
+      "recall": 0.8375,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 401,
+      "fp": 42,
+      "fn": 79,
+      "precision": 0.9051918735891648,
+      "recall": 0.8354166666666667,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 393,
+      "fp": 26,
+      "fn": 87,
+      "precision": 0.9379474940334129,
+      "recall": 0.81875,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 389,
+      "fp": 17,
+      "fn": 91,
+      "precision": 0.958128078817734,
+      "recall": 0.8104166666666667,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 384,
+      "fp": 11,
+      "fn": 96,
+      "precision": 0.9721518987341772,
+      "recall": 0.8,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 376,
+      "fp": 8,
+      "fn": 104,
+      "precision": 0.9791666666666666,
+      "recall": 0.7833333333333333,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 369,
+      "fp": 6,
+      "fn": 111,
+      "precision": 0.984,
+      "recall": 0.76875,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 349,
+      "fp": 4,
+      "fn": 131,
+      "precision": 0.9886685552407932,
+      "recall": 0.7270833333333333,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 327,
+      "fp": 1,
+      "fn": 153,
+      "precision": 0.9969512195121951,
+      "recall": 0.68125,
+      "target_met": false
+    }
+  },
+  "seconds": 0.142,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

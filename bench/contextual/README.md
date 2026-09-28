@@ -133,8 +133,22 @@ every report. The default encoder threshold grid matches the protocol. Cache and
 head output directories must be new; a cache is complete only when its metadata
 and checksums have been written. Use `--threads` to limit local CPU usage.
 
+`ensemble.py crf-cache` and `neural-cache` write development span/confidence
+caches outside the repository. `evaluate --crf /outside/crf.json --neural
+/outside/neural.json` checks input identity and annotations, then evaluates the
+fixed 9x9 threshold grid. Retained CRF spans take priority on overlap; only
+non-overlapping neural spans are added. Each CRF threshold is a separate
+composition candidate and the score keys are neural thresholds. Confidence scores
+from the two models are not treated as interchangeable probabilities. This is an
+offline combination experiment, with no browser inference implementation.
+`neural-cache --epochs 9 10 11 12 13 14 15 16` uses a fixed equal average of
+checkpoint token probabilities before BIO decoding; its identity binds all eight
+weight hashes. Use `--epoch N` for a single checkpoint.
+
 The [error-audit report](../../docs/detector-error-audit-2026-09-28.md) records
 this round separately from the older reused-test results. Candidate selection is
 reproduced with `python bench/contextual/selection.py
-bench/results/error-audit-v2/crf-candidates.json`. It checks one common threshold
+bench/results/error-audit-v2/combined-candidates.json`. The `all-candidates.json`
+and `crf-candidates.json` manifests retain the standalone and CRF subsets. Selection
+checks one common threshold
 grid and requires the precision floor on both development datasets.

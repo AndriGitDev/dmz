@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "503687d53bcbe58164a955450d871a1a9358ef77e16396cdf905be18f8776c3b",
+  "epoch": 11,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 448,
+      "fp": 21,
+      "fn": 32,
+      "precision": 0.9552238805970149,
+      "recall": 0.9333333333333333,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 447,
+      "fp": 20,
+      "fn": 33,
+      "precision": 0.9571734475374732,
+      "recall": 0.93125,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 443,
+      "fp": 18,
+      "fn": 37,
+      "precision": 0.9609544468546638,
+      "recall": 0.9229166666666667,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 440,
+      "fp": 17,
+      "fn": 40,
+      "precision": 0.962800875273523,
+      "recall": 0.9166666666666666,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 438,
+      "fp": 12,
+      "fn": 42,
+      "precision": 0.9733333333333334,
+      "recall": 0.9125,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 435,
+      "fp": 10,
+      "fn": 45,
+      "precision": 0.9775280898876404,
+      "recall": 0.90625,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 430,
+      "fp": 9,
+      "fn": 50,
+      "precision": 0.979498861047836,
+      "recall": 0.8958333333333334,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 408,
+      "fp": 9,
+      "fn": 72,
+      "precision": 0.9784172661870504,
+      "recall": 0.85,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 395,
+      "fp": 7,
+      "fn": 85,
+      "precision": 0.9825870646766169,
+      "recall": 0.8229166666666666,
+      "target_met": false
+    }
+  },
+  "seconds": 0.146,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

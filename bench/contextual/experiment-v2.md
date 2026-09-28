@@ -72,3 +72,39 @@ explicit single-letter/initial-before-period, length bucket, hyphen/digit flags,
 and uncollapsed case shape in the local context. This comparison was added after
 observing the CRF development audit and must not be described as preselected.
 It still uses the same threshold grid and final selection rule.
+
+## Added development ensemble after the frozen-head comparison
+
+The fixed rule selects MLP epoch 8 at 0.65 among the 21 standalone candidates.
+It gives MIM development P96.67/R90.70 and synthetic-domain P95.74/R88.96.
+Add one combination experiment with that frozen head and the feature-v3 CRF.
+At each of the same nine CRF thresholds, add neural spans passing each of the
+same nine neural thresholds only when they do not overlap a retained CRF span.
+CRF priority is fixed before evaluating combinations; scores from different models
+are not compared as calibrated probabilities. This makes 81 development trials.
+Require the same precision floor on both datasets and maximize the lower recall.
+Record this as post-audit development, not an independent validation or a
+preplanned standalone comparison. No weights or annotations change.
+
+## Added longer nonlinear-head run after ensemble audit
+
+The epoch-8 ensemble reaches MIM P95.65/R94.89 and synthetic-domain P98.72/R96.04
+(CRF 0.75, neural 0.65). Of 77 MIM misses, 35 have no prediction from either
+model, 22 are below threshold, 17 have incorrect boundaries and 3 are blocked by
+CRF overlap priority. Changing overlap handling alone cannot close the gap.
+The nonlinear head's training loss is still declining at epoch 8. Add one run
+with the same seed, architecture, optimizer and data for 16 epochs. Verify the
+first eight checkpoints reproduce the shorter run. Evaluate epochs 9–16
+standalone and combined with the same feature-v3 CRF and fixed 9x9 threshold
+grid. Preserve all results. This adds eight standalone and 648 ensemble trials;
+selection remains development-only, with no independent-final or release claim.
+
+## Added fixed checkpoint average after the longer run
+
+The extended search selects epoch 12, CRF 0.75 / neural 0.0, with MIM
+P95.92/R95.29 and synthetic-domain P98.51/R96.25. Later checkpoints vary rather
+than improving monotonically. Add exactly one fixed probability average of all
+late checkpoints 9–16, with equal weight per checkpoint, before BIO decoding.
+Evaluate this one predictor with the unchanged CRF-priority 9x9 grid. Do not
+choose a favorable subset of checkpoints or add document-specific exceptions.
+This is another development comparison, not independent confirmation.

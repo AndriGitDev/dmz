@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "3a8569e9633446cbf819290564caeca7ae491d370192e3cff5cbde9780505ebd",
+  "epoch": 7,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 362,
+      "fp": 60,
+      "fn": 118,
+      "precision": 0.8578199052132701,
+      "recall": 0.7541666666666667,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 360,
+      "fp": 58,
+      "fn": 120,
+      "precision": 0.861244019138756,
+      "recall": 0.75,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 352,
+      "fp": 46,
+      "fn": 128,
+      "precision": 0.8844221105527639,
+      "recall": 0.7333333333333333,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 345,
+      "fp": 39,
+      "fn": 135,
+      "precision": 0.8984375,
+      "recall": 0.71875,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 340,
+      "fp": 30,
+      "fn": 140,
+      "precision": 0.918918918918919,
+      "recall": 0.7083333333333334,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 336,
+      "fp": 27,
+      "fn": 144,
+      "precision": 0.9256198347107438,
+      "recall": 0.7,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 324,
+      "fp": 23,
+      "fn": 156,
+      "precision": 0.9337175792507204,
+      "recall": 0.675,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 290,
+      "fp": 9,
+      "fn": 190,
+      "precision": 0.9698996655518395,
+      "recall": 0.6041666666666666,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 224,
+      "fp": 3,
+      "fn": 256,
+      "precision": 0.986784140969163,
+      "recall": 0.4666666666666667,
+      "target_met": false
+    }
+  },
+  "seconds": 0.07,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

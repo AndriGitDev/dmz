@@ -29,5 +29,16 @@ class SelectionTests(unittest.TestCase):
         for r in b[1:]:r['scores']['nan']=r['scores'].pop('0.7')
         with self.assertRaises(ValueError):select([b])
 
+    def test_zero_predictions_remain_a_failed_trial(self):
+        a=('a',report('g','a',90,2,10),report('d','a',90,2,10))
+        for r in a[1:]:r['scores']={'0':dict(tp=0,fp=0,fn=100,precision=0,recall=0)}
+        a[2]['scores']['0.0']=a[2]['scores'].pop('0')
+        result=select([a])
+        self.assertIsNone(result['selected'])
+        self.assertEqual(len(result['trials']),1)
+        self.assertFalse(result['trials'][0]['target_met'])
+        a[2]['scores']['0']=a[2]['scores']['0.0']
+        with self.assertRaises(ValueError):select([a])
+
 
 if __name__=='__main__':unittest.main()
