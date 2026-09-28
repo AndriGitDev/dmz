@@ -1,0 +1,29 @@
+{"id":"v1-name-foreign-demo","text":"Fabricated person: Mira Demo.","entities":[{"kind":"name_demo","value":"Mira Demo"}]}
+{"id":"v1-name-ascii-patronymic","text":"Fabricated person: Demo Testson.","entities":[{"kind":"name_demo","value":"Demo Testson"}]}
+{"id":"v1-name-icelandic-patronymic","text":"Tilbúin persóna: Prófrún Gerviburs.","entities":[{"kind":"name_demo","value":"Prófrún Gerviburs"}]}
+{"id":"v1-name-known-case","text":"Til Arnu Jónsdóttur í tilbúnu dæmi.","entities":[{"kind":"name_demo","value":"Arnu Jónsdóttur"}]}
+{"id":"v1-email-unicode-domain","text":"Tilbúið netfang demo@dæmi.invalid.","entities":[{"kind":"email","value":"demo@dæmi.invalid"}]}
+{"id":"v1-email-uppercase-domain","text":"Tilbúið netfang Demo@EXAMPLE.INVALID.","entities":[{"kind":"email","value":"Demo@EXAMPLE.INVALID"}]}
+{"id":"v1-email-combining-mark","text":"Tilbúið netfang pro\u0301f@example.invalid.","entities":[{"kind":"email","value":"pro\u0301f@example.invalid"}]}
+{"id":"v1-phone-dotted","text":"Óúthlutað prófnúmer +354 000.0000.","entities":[{"kind":"phone","value":"+354 000.0000"}]}
+{"id":"v1-phone-parenthesized","text":"Óúthlutað prófnúmer (+354) 000 0000.","entities":[{"kind":"phone","value":"(+354) 000 0000"}]}
+{"id":"v1-phone-country","text":"Óúthlutað prófnúmer +354 000 0000.","entities":[{"kind":"phone","value":"+354 000 0000"}]}
+{"id":"v1-address-apartment","text":"Tilbúið heimilisfang Prófgata 99/2, 999 Reykjavík.","entities":[{"kind":"address","value":"Prófgata 99/2, 999 Reykjavík"}]}
+{"id":"v1-address-new-suffix","text":"Tilbúið heimilisfang Prófslóð 4, 999 Reykjavík.","entities":[{"kind":"address","value":"Prófslóð 4, 999 Reykjavík"}]}
+{"id":"v1-address-lowercase","text":"Tilbúið heimilisfang prófgata 99, 999 Reykjavík.","entities":[{"kind":"address","value":"prófgata 99, 999 Reykjavík"}]}
+{"id":"v1-address-canonical","text":"Tilbúið heimilisfang Prófgata 99, 999 Reykjavík.","entities":[{"kind":"address","value":"Prófgata 99, 999 Reykjavík"}]}
+{"id":"v1-secret-generic","text":"Tilbúinn þjónustulykill svc_demo_000000000000000000000000.","entities":[{"kind":"secret","value":"svc_demo_000000000000000000000000"}]}
+{"id":"v1-secret-other-prefix","text":"Tilbúinn lykill tok_demo_00000000000000000000000000000000.","entities":[{"kind":"secret","value":"tok_demo_00000000000000000000000000000000"}]}
+{"id":"v1-secret-known-prefix","text":"Tilbúinn lykill sk-test_key_000000000000.","entities":[{"kind":"secret","value":"sk-test_key_000000000000"}]}
+{"id":"v1-kennitala-dotted","text":"Tilbúin 1800s kennitala 140182.8858.","entities":[{"kind":"kennitala","value":"140182.8858"}]}
+{"id":"v1-kennitala-spaced","text":"Tilbúin 1800s kennitala 140182 8858.","entities":[{"kind":"kennitala","value":"140182 8858"}]}
+{"id":"v1-kennitala-known","text":"Tilbúin 1800s kennitala 140182-8858.","entities":[{"kind":"kennitala","value":"140182-8858"}]}
+{"id":"v1-card-dotted","text":"Tilbúið prófkort 4111.1111.1111.1111.","entities":[{"kind":"card","value":"4111.1111.1111.1111"}]}
+{"id":"v1-card-known","text":"Tilbúið prófkort 4111 1111 1111 1111.","entities":[{"kind":"card","value":"4111 1111 1111 1111"}]}
+{"id":"v1-dictionary-case-variant","text":"Tilbúið verkefnisheiti verkefni gervi.","entities":[{"kind":"tenant_dictionary","value":"verkefni gervi"}]}
+{"id":"v1-dictionary-exact","text":"Tilbúið verkefnisheiti Verkefni Gervi.","entities":[{"kind":"tenant_dictionary","value":"Verkefni Gervi"}]}
+{"id":"v1-email-invisible","text":"Tilbúið netfang demo@exa\u200bmple.invalid.","entities":[{"kind":"email","value":"demo@exa\u200bmple.invalid"}]}
+{"id":"v1-negative-date","text":"Dagsetning 14.01.1882 er ekki kennitala.","entities":[]}
+{"id":"v1-negative-price","text":"Setningin Prófgata 99, 999 krónur vísar í vöruheiti og verð, ekki heimilisfang.","entities":[]}
+{"id":"v1-negative-ascii-name","text":"Project Gervison er tilbúið vörumerki.","entities":[]}
+{"id":"v1-negative-combining","text":"Go\u0301ður dagur í tilbúnu dæmi.","entities":[]}

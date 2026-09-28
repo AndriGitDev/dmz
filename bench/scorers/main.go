@@ -53,17 +53,25 @@ func main() {
 	path := flag.String("corpus", "bench/corpus/v0.jsonl", "synthetic JSONL corpus")
 	detectorName := flag.String("detector", "dmz", "detector: dmz or regex")
 	baseline := flag.String("baseline", "", "published result to enforce no recall regression")
+	floor := flag.String("floor", "", "JSON map of minimum recall by entity type")
+	maxExposed := flag.Int("max-exposed", -1, "maximum annotated literals allowed in outbound text (exposure mode)")
 	mode := flag.String("mode", "detection", "report mode: detection or exposure")
 	flag.Parse()
 	if *mode == "exposure" {
-		if *baseline != "" {
-			fmt.Fprintln(os.Stderr, "baseline flag is detection-only; compare exposure snapshots with diff")
+		if *baseline != "" || *floor != "" {
+			fmt.Fprintln(os.Stderr, "baseline and floor flags are detection-only")
 			os.Exit(2)
 		}
 		result, err := evaluateExposure(*path)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
+		}
+		if *maxExposed >= 0 {
+			if err := enforceExposureCap(result, *maxExposed); err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
 		}
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "  ")
@@ -75,6 +83,10 @@ func main() {
 	}
 	if *mode != "detection" {
 		fmt.Fprintln(os.Stderr, "unknown mode:", *mode)
+		os.Exit(2)
+	}
+	if *maxExposed >= 0 {
+		fmt.Fprintln(os.Stderr, "max-exposed flag is exposure-only")
 		os.Exit(2)
 	}
 	var finder func(string) []detect.Match
@@ -118,12 +130,53 @@ func main() {
 			}
 		}
 	}
+	if *floor != "" {
+		if err := enforceRecallFloor(result, *floor); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	}
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	if err := enc.Encode(result); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+}
+
+func enforceExposureCap(result exposureReport, maximum int) error {
+	exposed := 0
+	for _, count := range result.PerKind {
+		exposed += count.Exposed
+	}
+	if exposed > maximum {
+		return fmt.Errorf("outbound exposure regression: %d > %d", exposed, maximum)
+	}
+	return nil
+}
+
+func enforceRecallFloor(result report, path string) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	var floors map[string]float64
+	if err := json.Unmarshal(data, &floors); err != nil {
+		return err
+	}
+	if len(floors) == 0 {
+		return fmt.Errorf("empty recall floor")
+	}
+	for kind, minimum := range floors {
+		if minimum < 0 || minimum > 1 {
+			return fmt.Errorf("invalid recall floor for %s: %g", kind, minimum)
+		}
+		current, exists := result.PerKind[kind]
+		if !exists || current.Recall+1e-12 < minimum {
+			return fmt.Errorf("recall floor failed for %s: %.3f < %.3f", kind, current.Recall, minimum)
+		}
+	}
+	return nil
 }
 
 func evaluate(path, detectorName string, finder func(string) []detect.Match) (report, error) {

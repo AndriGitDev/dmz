@@ -15,7 +15,7 @@ The plan targets ISO 27001 certification by end-2028 through an accredited body,
 
 | Date | Deliverable |
 | --- | --- |
-| 1 Oct 2026 | File Rannís R&D refund application for detector/benchmark |
+| 1 Oct 2026, 23:59 Icelandic time | File Rannís R&D project application for detector/benchmark; [official 2026 window verified](https://island.is/styrkjatorg/styrkur/1-8), applicant and cost details still pending |
 | 16 Oct 2026 | Apply for OpenAI/Anthropic ZDR; test Bedrock EU `none` on named models in a real account |
 | 30 Oct 2026 | Confirm BÍN commercial licence and Mannanafnaskrá export/API |
 | 13 Nov 2026 | Synthetic PII benchmark v0 with Presidio, regex and dmz scores |

@@ -49,7 +49,9 @@ The planned policy schema lives in [`packages/policy/default.json`](../packages/
 
 Current implementation includes a device-local, exact, case-sensitive dictionary of up to 32 user-entered terms. It is cleared on reset and does not provide the planned tenant-admin workflow, inflection or per-tenant distribution. Selected API-key, JWT, bearer-token, PEM-header and database-URL patterns block the entire prompt. General high-entropy-token and log-line detection remain unimplemented.
 Four hand-authored full-name forms are masked. Other two-token names with an Icelandic patronymic shape and diacritics are marked uncertain and block the prompt; this heuristic is not a general Icelandic-name recognizer and can block benign text.
-A narrow street-suffix/house-number/postcode/city pattern is also marked uncertain and blocks. It has no licensed street gazetteer, misses other address formats and can block benign text. It must not be marketed as broad address coverage.
+A narrow street-suffix/house-number/postcode pattern, with optional comma or city in selected forms, is marked uncertain and blocks. It has no licensed street gazetteer, misses other address formats and can block benign text. It must not be marketed as broad address coverage. Internationalized email local parts and `00354` phone shapes now block for review; a `ghp_` token shape blocks as a secret. These rules cover selected forms only.
+
+Combining marks, Unicode format characters (including invisible separators), and invalid UTF-8 bytes cause an uncertain review finding and block the whole prompt. This is a conservative prototype guard for obfuscated text, not Unicode normalization or complete evasion protection. Legitimate text using combining marks may also be blocked.
 
 ## Surrogate and vault requirements
 
@@ -89,7 +91,9 @@ Gateway should expose OpenAI- and Anthropic-compatible endpoints for OpenCode, C
 
 Corpus: synthetic Icelandic examples only, including generated 1800s kennitölur (century digit 8). Compare default Presidio, regex-only, and dmz. Publish precision and recall per entity type and per release. A release must not lower recall for any entity type on the benchmark. Gate 2 targets **99% recall for kennitölur** and **95% for names** on the public benchmark; these are targets, not current results.
 
-The initial 42-case corpus was selected around prototype rules and cannot establish field performance. A separate 18-case challenge corpus was written without retuning the detector. It contains eight annotated direct identifiers that remain in allowed outbound text. The current extension is a manual demo and must not be used for sensitive data. Review these misses before any deployment gate.
+The initial 42-case corpus was selected around prototype rules and cannot establish field performance. A separate 18-case challenge corpus was written without retuning the detector; its original run exposed eight annotated direct identifiers in allowed outbound text. Targeted tuning against those cases leaves two exposed literals in the current run. These are same-set regression results, not independent validation. The current extension is a manual demo and must not be used for sensitive data. Review the remaining misses before any deployment gate.
+
+A further 29-case exploratory synthetic probe, written after that tuning and not used to revise the detector, exposes 13 annotated literals in allowed outbound text. It intentionally samples unsupported variants, so its rate is not a field estimate. It also shows a benign price line stopped by the address heuristic. Its corpus and reports are in `bench/`; it is a separate diagnostic snapshot, not an addition to the selected 42-case release baseline.
 
 CI should include detector conformance tests (Go and WASM), benchmark no-regression gate, lint that rejects logging request/response bodies, secret scanning, SBOM per build, and signed reproducible Shield packages. Fetch licensed lexicon data during build only after licence approval; never commit it.
 

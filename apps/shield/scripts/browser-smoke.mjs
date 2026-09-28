@@ -28,7 +28,8 @@ try {
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
   await page.goto(`chrome-extension://${id}/sidepanel.html`);
-  assert.match(await page.locator('.note').textContent(), /18 dæma gervipróf sýnir 8 auðkenni/);
+  assert.match(await page.locator('.note').textContent(), /sömu dæmi enn 2 í gegn/);
+  assert.match(await page.locator('.note').textContent(), /29 dæma könnunarpróf sýnir 13 auðkenni/);
   await page.locator('#mask').waitFor({ state: 'visible' });
   try {
     await page.waitForFunction(() => !document.querySelector('#mask').disabled, null, { timeout: 10000 });
@@ -74,6 +75,11 @@ try {
   assert.equal(await page.locator('#copy').isDisabled(), true);
 
   await page.locator('#prompt').fill('Guðrún Sigurðardóttir');
+  await page.locator('#mask').click();
+  assert.equal(await page.locator('#masked').inputValue(), '');
+  assert.equal(await page.locator('#copy').isDisabled(), true);
+
+  await page.locator('#prompt').fill('demo@exa\u200bmple.invalid');
   await page.locator('#mask').click();
   assert.equal(await page.locator('#masked').inputValue(), '');
   assert.equal(await page.locator('#copy').isDisabled(), true);

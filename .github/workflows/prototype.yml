@@ -12,16 +12,21 @@ jobs:
         with:
           go-version-file: go.mod
       - run: go test ./...
-      - run: go run ./bench/scorers -baseline bench/results/v0.json > /tmp/dmz-benchmark-current.json
+      - run: sha256sum --check bench/gates/corpus.sha256
+      - run: go run ./bench/scorers -baseline bench/results/v0.json -floor bench/gates/selected-v0-recall.json > /tmp/dmz-benchmark-current.json
       - run: diff -u bench/results/v0.json /tmp/dmz-benchmark-current.json
       - run: go run ./bench/scorers -detector regex > /tmp/dmz-regex-current.json
       - run: diff -u bench/results/regex-v0.json /tmp/dmz-regex-current.json
-      - run: go run ./bench/scorers -mode exposure > /tmp/dmz-exposure-current.json
+      - run: go run ./bench/scorers -mode exposure -max-exposed 0 > /tmp/dmz-exposure-current.json
       - run: diff -u bench/results/exposure-v0.json /tmp/dmz-exposure-current.json
-      - run: go run ./bench/scorers -corpus bench/corpus/challenge-v0.jsonl > /tmp/dmz-challenge-current.json
+      - run: go run ./bench/scorers -corpus bench/corpus/challenge-v0.jsonl -floor bench/gates/challenge-v0-recall.json > /tmp/dmz-challenge-current.json
       - run: diff -u bench/results/challenge-v0.json /tmp/dmz-challenge-current.json
-      - run: go run ./bench/scorers -corpus bench/corpus/challenge-v0.jsonl -mode exposure > /tmp/dmz-challenge-exposure-current.json
+      - run: go run ./bench/scorers -corpus bench/corpus/challenge-v0.jsonl -mode exposure -max-exposed 2 > /tmp/dmz-challenge-exposure-current.json
       - run: diff -u bench/results/challenge-exposure-v0.json /tmp/dmz-challenge-exposure-current.json
+      - run: go run ./bench/scorers -corpus bench/corpus/exploratory-v1.jsonl -floor bench/gates/exploratory-v1-recall.json > /tmp/dmz-exploratory-current.json
+      - run: diff -u bench/results/exploratory-v1.json /tmp/dmz-exploratory-current.json
+      - run: go run ./bench/scorers -corpus bench/corpus/exploratory-v1.jsonl -mode exposure -max-exposed 13 > /tmp/dmz-exploratory-exposure-current.json
+      - run: diff -u bench/results/exploratory-exposure-v1.json /tmp/dmz-exploratory-exposure-current.json
   presidio-baseline:
     runs-on: ubuntu-latest
     steps:
