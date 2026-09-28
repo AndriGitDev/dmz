@@ -83,3 +83,13 @@ rules or a local NER baseline before choosing what can fit in Shield's WASM budg
 Build an address lookup interface using HMS forms and fabricated numbered-address
 fixtures, with price/product-name negatives. Packaging and refresh behaviour need
 an explicit implementation; no detection improvement is claimed from preparation.
+
+## Precision-focused second round
+
+The optional `name_parts` field contains training-derived boundary components.
+`--part-minimum` and `--part-purity` control their frequency filters; these parts
+only extend existing name matches. Full-name filtering still uses `--minimum`
+and `--purity`. Sentence-end candidate counts now exclude truncated slices.
+See [precision results and reproduction](../../docs/detector-precision-2026-09-28.md)
+for the selected configuration: 96.22% exact-name precision and 31.39% recall on
+the reused test set. This is not an all-PII or field-performance claim.

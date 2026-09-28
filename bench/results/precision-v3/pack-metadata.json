@@ -1,0 +1,14 @@
+{
+  "training_sha256": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+  "address_forms_sha256": "08c5344e8d8d947496f0f51f011707994276ba49920156569f89b8e92061a9e6",
+  "pack_sha256": "1eefb090e59afb5074dd394c13899425a429baa940f2fffeb43e13f8b18b9686",
+  "part_minimum": 1,
+  "part_purity": 0.5,
+  "name_parts": 4738,
+  "names": 955,
+  "addresses": 23636,
+  "bytes": 422144,
+  "minimum": 2,
+  "purity": 0.95,
+  "training_sentences": 45332
+}

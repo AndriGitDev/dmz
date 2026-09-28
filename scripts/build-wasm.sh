@@ -25,7 +25,7 @@ raw = pathlib.Path(sys.argv[1]).read_bytes()
 pack = json.loads(raw)
 if pack.get('schema') != 1:
     raise ValueError('invalid lexicon schema')
-pathlib.Path(sys.argv[2]).write_text(json.dumps(dict(schema=1, lexicon_sha256=hashlib.sha256(raw).hexdigest(), names=len(pack['names']), addresses=len(pack['addresses'])), indent=2)+'\n')
+pathlib.Path(sys.argv[2]).write_text(json.dumps(dict(schema=1, lexicon_sha256=hashlib.sha256(raw).hexdigest(), name_parts=len(pack.get('name_parts', [])), names=len(pack['names']), addresses=len(pack['addresses'])), indent=2)+'\n')
 PYDATA
 fi
 "$tinygo_bin" build -target wasm -no-debug "${build_tags[@]}" -o "$build_temp/dmz.wasm" "$root_dir/apps/shield/wasm"

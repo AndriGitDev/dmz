@@ -66,3 +66,38 @@ func TestInvalidLexiconFailsWithoutEchoingEntries(t *testing.T) {
 		}
 	}
 }
+
+func TestLearnedNameBoundaries(t *testing.T) {
+	l, err := LoadLexicon([]byte(`{"schema":1,"names":["Mira","Lira Gervi"],"name_parts":["Prófa","Mira","Lira","Gervi","Sýnisson"]}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		input string
+		want  []string
+	}{
+		{"Í prófun: Prófa Mira Gervi.", []string{"Prófa Mira Gervi"}},
+		{"Í prófun: Prófa Lira Sýnisson.", []string{"Prófa Lira Sýnisson"}},
+		{"Prófa\nMira", []string{"Mira"}},
+		{"Prófa, Mira", []string{"Mira"}},
+		{"Prófa. Mira", []string{"Mira"}},
+		{"Prófa óþekkt Mira", []string{"Mira"}},
+		{"Prófa", nil},
+		{"Prófa Lira Sýnisson Mira Gervi", []string{"Prófa Lira Sýnisson", "Mira Gervi"}},
+	} {
+		got := l.Detect(tc.input, nil)
+		if len(got) != len(tc.want) {
+			t.Fatalf("%q: %#v", tc.input, got)
+		}
+		for i, m := range got {
+			if m.Kind != Name || tc.input[m.Start:m.End] != tc.want[i] || m.Confidence != Uncertain {
+				t.Fatalf("%q: %#v", tc.input, got)
+			}
+		}
+	}
+	for _, part := range []string{"lower", "A", ".", "Mira Demo"} {
+		if _, err := LoadLexicon([]byte(`{"schema":1,"name_parts":["` + part + `"]}`)); err == nil {
+			t.Fatal("accepted invalid boundary part")
+		}
+	}
+}

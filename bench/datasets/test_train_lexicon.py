@@ -24,4 +24,23 @@ class LexiconTrainingTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 train(source,addresses,out)
 
+class BoundaryTrainingTests(unittest.TestCase):
+    def test_sentence_end_counts_and_component_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source, addresses, out = root/'train.jsonl', root/'addresses.json', root/'pack.json'
+            addresses.write_text('[]')
+            def row(text, value):
+                start = text.encode().index(value.encode())
+                return dict(split='train', text=text, entities=[dict(kind='Person', start=start, end=start+len(value.encode()))])
+            rows = [row('Mira', 'Mira'), row('Mira', 'Mira'), row('Prófa Gervi', 'Prófa Gervi'), row('Prófa Gervi', 'Prófa Gervi'), dict(split='train', text='Gervi', entities=[])]
+            source.write_text(''.join(json.dumps(r)+'\n' for r in rows))
+            with contextlib.redirect_stdout(io.StringIO()):
+                train(source, addresses, out, minimum=2, part_minimum=2, part_purity=.95)
+            pack = json.loads(out.read_text())
+            # The longer candidate must not multiply the last single token's denominator.
+            self.assertEqual(pack['names'], ['Mira', 'Prófa Gervi'])
+            # Components can be learned inside full names without becoming standalone detections.
+            self.assertEqual(pack['name_parts'], ['Mira', 'Prófa'])
+
 if __name__=='__main__': unittest.main()

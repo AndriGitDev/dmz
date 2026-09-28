@@ -120,3 +120,9 @@ The fictional character and invented address examples are test-only. Expect a re
 new lexicon findings, not an automatically redacted send. Generalisation to unseen
 names, name inflection and contextual ambiguity needs more work; a context-aware
 local model is a later comparison, subject to device size/latency requirements.
+
+## Subsequent precision round
+
+The owner requested a 95% precision target. A stricter pack with learned name
+boundaries now reaches 96.22% exact-name precision on the reused test set, with
+31.39% recall. See [the full trade-off and reproduction](detector-precision-2026-09-28.md).

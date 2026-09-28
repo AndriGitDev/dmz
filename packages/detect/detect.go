@@ -158,6 +158,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 			start = end
 		}
 	}
+	lexicon.extendNames(input, candidates)
 	// Choose longest/highest-confidence span first; then return stable text order.
 	sort.Slice(candidates, func(i, j int) bool {
 		a, b := candidates[i], candidates[j]
