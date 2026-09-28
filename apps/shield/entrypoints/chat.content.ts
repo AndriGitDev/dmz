@@ -205,12 +205,40 @@ export default defineContentScript({
     document.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
+      if (target.closest('input[type="file"],button[aria-label*="attach" i],button[aria-label*="upload" i]')) {
+        cancel(event);
+        inform('Shield styður ekki skrár eða viðhengi. Opnun stöðvuð.');
+        return;
+      }
       const button = target.closest('button');
       if (!button) return;
       const known = sendButtons.some((selector) => button.matches(selector));
       const sendLike = button.matches('[aria-label*="send" i]') || (button.type === 'submit' && !!button.closest('form')?.querySelector('textarea,[contenteditable="true"]'));
       if (!known && !sendLike) return;
       void gate(event, () => button.click());
+    }, true);
+
+    for (const kind of ['input', 'change'] as const) {
+      document.addEventListener(kind, (event) => {
+        if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'file') return;
+        cancel(event);
+        event.target.value = '';
+        inform('Shield styður ekki skrár eða viðhengi. Val hreinsað.');
+      }, true);
+    }
+
+    for (const kind of ['dragenter', 'dragover', 'drop'] as const) {
+      document.addEventListener(kind, (event) => {
+        if (!(event instanceof DragEvent) || !event.dataTransfer?.types.includes('Files')) return;
+        cancel(event);
+        inform('Shield styður ekki skrár eða viðhengi. Slepping stöðvuð.');
+      }, true);
+    }
+
+    document.addEventListener('paste', (event) => {
+      if (!event.clipboardData?.files.length) return;
+      cancel(event);
+      inform('Shield styður ekki límdar skrár eða myndir. Líming stöðvuð.');
     }, true);
 
     const core = globalThis as unknown as Core;
