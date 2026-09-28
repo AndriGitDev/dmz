@@ -58,3 +58,9 @@ jobs:
         working-directory: apps/shield
       - run: npm audit --omit=dev --audit-level=high
         working-directory: apps/shield
+      - uses: actions/upload-artifact@v6
+        with:
+          name: shield-chromium-prototype
+          path: apps/shield/.output/chrome-mv3
+          if-no-files-found: error
+          retention-days: 14

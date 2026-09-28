@@ -41,6 +41,8 @@ npm run build
 
 Load `apps/shield/.output/chrome-mv3` as an unpacked extension in Chromium, then click its toolbar icon to open the side panel. Paste text into field 01, mask it, copy **only** field 02 to an AI tool, then paste the answer into field 03 to restore unchanged markers. The optional local dictionary accepts up to 32 exact, case-sensitive terms; saving it starts a new session. Reset clears both the map and dictionary. `npm run test:browser` tests the built extension in Chromium; install Playwright's Chromium or set `CHROMIUM_EXECUTABLE` to an existing binary. No extension host permissions are requested and no prompt is sent to dmz servers.
 
+The draft PR's `shield-browser` GitHub Actions job uploads the tested `shield-chromium-prototype` build for review. Download and extract it, then use Chromium's **Load unpacked** on the extracted directory. It is an unsigned prototype, not a store release.
+
 The [benchmark readme](bench/README.md), [visible-mask decision](docs/adr/0002-visible-masks.md) and [kennitala update](docs/adr/0003-kennitala-2026.md) explain results and constraints.
 
 The Go core also has a `StreamRestorer` that handles markers split across response chunks. It is exercised by unit tests but is not wired into the side panel or a Gateway yet.
