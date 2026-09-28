@@ -25,7 +25,10 @@ export default defineContentScript({
   main() {
     let ready = false;
     let processing = false;
-    let replaying = false;
+    let replayPermit: {
+      field: HTMLElement; text: string; url: string; target: HTMLElement; type: string;
+      rootSeen: boolean; submitSeen: boolean; cancelled: boolean;
+    } | undefined;
     let message = 'Shield hleður staðbundnum kjarna…';
     let toast: HTMLElement | undefined;
     let composerAvailable: boolean | undefined;
@@ -133,8 +136,25 @@ export default defineContentScript({
       event.stopImmediatePropagation();
     }
 
-    async function gate(event: Event, replay: () => void) {
-      if (replaying) return;
+    async function gate(event: Event, replay: () => void, action: HTMLElement) {
+      if (replayPermit) {
+        const permit = replayPermit;
+        const sameInput = permit.field.isConnected && composer() === permit.field
+          && read(permit.field) === permit.text && location.href === permit.url;
+        const root = !permit.rootSeen && event.type === permit.type && event.target === permit.target;
+        const submit = permit.rootSeen && permit.type !== 'submit' && !permit.submitSeen
+          && event.type === 'submit' && event.target === permit.field.closest('form');
+        if (permit.cancelled || !sameInput || (!root && !submit)) {
+          permit.cancelled = true;
+          cancel(event);
+          inform('Textareitur eða sending breyttist eftir möskun. Sending stöðvuð.');
+        } else if (root) {
+          permit.rootSeen = true;
+        } else {
+          permit.submitSeen = true;
+        }
+        return;
+      }
       if (processing) { cancel(event); return; }
       const field = composer();
       if (!field || !read(field).trim()) {
@@ -149,6 +169,7 @@ export default defineContentScript({
       }
       processing = true;
       try {
+        const url = location.href;
         const input = read(field);
         const core = globalThis as unknown as Core;
         const result = JSON.parse(core.dmzProcess!(input)) as Result;
@@ -161,17 +182,21 @@ export default defineContentScript({
           return;
         }
         await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
-        if (read(field) !== result.transformed) {
+        if (!field.isConnected || !action.isConnected || composer() !== field
+          || location.href !== url || read(field) !== result.transformed) {
           inform('Textareitur breyttist eftir möskun. Sending stöðvuð.');
           return;
         }
-        replaying = true;
+        const permit = { field, text: result.transformed, url, target: action, type: event.type,
+          rootSeen: false, submitSeen: false, cancelled: false };
+        replayPermit = permit;
         replay();
+        if (permit.cancelled) return;
         inform(result.findings.length ? 'Shield maskaði auðkenni áður en sent var.' : 'Shield yfirfór textann áður en sent var.');
       } catch {
         inform('Shield gat ekki yfirfarið textann. Sending stöðvuð.');
       } finally {
-        replaying = false;
+        replayPermit = undefined;
         processing = false;
       }
     }
@@ -186,7 +211,8 @@ export default defineContentScript({
         inform('Óþekktur textareitur á studdri síðu. Sending stöðvuð.');
         return;
       }
-      void gate(event, () => form.requestSubmit());
+      const submitter = event.submitter;
+      void gate(event, () => form.requestSubmit(submitter ?? undefined), form);
     }, true);
 
     document.addEventListener('keydown', (event) => {
@@ -199,7 +225,7 @@ export default defineContentScript({
         inform('Óþekktur textareitur á studdri síðu. Sending stöðvuð.');
         return;
       }
-      void gate(event, () => field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })));
+      void gate(event, () => field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })), field);
     }, true);
 
     document.addEventListener('click', (event) => {
@@ -215,7 +241,7 @@ export default defineContentScript({
       const known = sendButtons.some((selector) => button.matches(selector));
       const sendLike = button.matches('[aria-label*="send" i]') || (button.type === 'submit' && !!button.closest('form')?.querySelector('textarea,[contenteditable="true"]'));
       if (!known && !sendLike) return;
-      void gate(event, () => button.click());
+      void gate(event, () => button.click(), button);
     }, true);
 
     for (const kind of ['input', 'change'] as const) {
