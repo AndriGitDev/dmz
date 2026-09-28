@@ -16,6 +16,8 @@ jobs:
       - run: diff -u bench/results/v0.json /tmp/dmz-benchmark-current.json
       - run: go run ./bench/scorers -detector regex > /tmp/dmz-regex-current.json
       - run: diff -u bench/results/regex-v0.json /tmp/dmz-regex-current.json
+      - run: go run ./bench/scorers -mode exposure > /tmp/dmz-exposure-current.json
+      - run: diff -u bench/results/exposure-v0.json /tmp/dmz-exposure-current.json
   presidio-baseline:
     runs-on: ubuntu-latest
     steps:

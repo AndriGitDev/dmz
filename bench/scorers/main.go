@@ -53,7 +53,30 @@ func main() {
 	path := flag.String("corpus", "bench/corpus/v0.jsonl", "synthetic JSONL corpus")
 	detectorName := flag.String("detector", "dmz", "detector: dmz or regex")
 	baseline := flag.String("baseline", "", "published result to enforce no recall regression")
+	mode := flag.String("mode", "detection", "report mode: detection or exposure")
 	flag.Parse()
+	if *mode == "exposure" {
+		if *baseline != "" {
+			fmt.Fprintln(os.Stderr, "baseline flag is detection-only; compare exposure snapshots with diff")
+			os.Exit(2)
+		}
+		result, err := evaluateExposure(*path)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		if err := enc.Encode(result); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		return
+	}
+	if *mode != "detection" {
+		fmt.Fprintln(os.Stderr, "unknown mode:", *mode)
+		os.Exit(2)
+	}
 	var finder func(string) []detect.Match
 	var tenantTerms []string
 	switch *detectorName {

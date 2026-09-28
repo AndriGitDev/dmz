@@ -8,12 +8,15 @@ Run from the repository root:
 go run ./bench/scorers
 go run ./bench/scorers -baseline bench/results/v0.json
 go run ./bench/scorers -detector regex
+go run ./bench/scorers -mode exposure
 python3 -m venv /tmp/dmz-presidio
 /tmp/dmz-presidio/bin/pip install -r bench/baselines/requirements.txt
 /tmp/dmz-presidio/bin/python bench/baselines/presidio.py
 ```
 
 The baseline option fails if recall falls below the published result for any type. CI also compares generated JSON against the committed result, requiring an intentional results update when code or corpus changes.
+
+`results/exposure-v0.json` answers a different question: with the prototype's fixed mask/block policy and one configured synthetic tenant term, how many annotated direct-identifier literals remain in **allowed outbound text**? Each annotation is counted as masked, blocked with its whole prompt, or exposed. On this corpus, two unsupported full names and one street address remain exposed; seven prompts are blocked. These counts are a useful failure inventory, not a general leak-rate estimate. The simulation calls no model and sends no prompt over the network.
 
 For the public website, run `./scripts/sync-public-benchmark.sh` from the product repository. It copies only this synthetic corpus and aggregate result JSON into the sibling `dmz-web/public/benchmark` directory. Review both copies before publishing.
 
