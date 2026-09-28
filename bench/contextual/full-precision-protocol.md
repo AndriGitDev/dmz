@@ -57,3 +57,22 @@ therefore **two epochs**, capped at 18,000 training seconds. The probe's three-e
 scheduler was only a feasibility measurement. The actual two-epoch run starts from
 the unchanged baseline again and uses a two-epoch scheduler. No development scores
 were examined to make this adjustment.
+
+## Compression recipes reserved until after freeze
+
+Two bounded candidates are prepared, but must not run until the selected FP32
+checkpoint is frozen and exported with its selection hash. Keep the small decision
+head in FP32 in both cases. No calibration set or confidence retuning is used.
+
+- Dynamic unsigned 8-bit constant MatMul and Gather weights. This tests a different
+  arithmetic path from the rejected signed-weight run; it is not presumed to fix
+  the earlier browser recall loss and may remain above the size target.
+- Weight-only symmetric 4-bit MatMul, block size 32, FP32 activations and head,
+  with unsigned 8-bit Gather weights. Browser operator support and quality are
+  measured, not assumed. Failure to load is a recorded failed experiment.
+
+Report graph bytes, tokenizer/CRF bytes, and runtime asset bytes separately so a
+small graph is not confused with a complete extension download. Full development
+Chromium replay is required for FP32 and any compressed candidate being considered
+acceptable. Native parity alone cannot establish browser accuracy. All such scores
+remain reused-development evidence; the independent-review gate is separate.

@@ -102,3 +102,22 @@ To add one missing measurement without repeating the complete matrix, set e.g.
 `DMZ_BENCH_CASES=fp32:3 DMZ_BENCH_SINGLE_ONLY=1`. Use a separate report file.
 The original report has FP32/1 and int8/1/3; `chromium-fp32-threads3.json` records
 the additional FP32/3 run, taken after corpus replay ended to avoid contention.
+
+## Fine-tuned reference comparisons
+
+The new training round is defined in
+[`full-precision-protocol.md`](../contextual/full-precision-protocol.md).
+`export_finetuned.py --base ... --checkpoint ... --selection ... --output ...`
+requires a frozen selection manifest and verifies checkpoint/base hashes. It
+exports FP32 only, without the old cache's float16 pooling round-trip.
+`compress_frozen.py --assets ... --selection ... --recipe int8|int4` separately
+checks the selection and FP32 graph hashes before creating a new candidate.
+Preparing these commands does not mean either compression candidate was accepted.
+
+Native `evaluate.py` accepts `--selection`. Browser `corpus.py` additionally accepts
+`--model fp32|int8|int4` and `--neural-prefix` for the selected reference caches.
+Use the same selection and prediction hashes throughout. Set `DMZ_MODEL_NAME`
+for `corpus.mjs`; it defaults to the historical int8 replay. `fixtures.py --models`
+selects graphs for fabricated runtime measurements, and `DMZ_MULTI_MODEL` selects
+the graph used in the three-tab run. Use new output paths, and perform timing and
+memory measurements after training has stopped.

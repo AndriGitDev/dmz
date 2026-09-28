@@ -8,7 +8,8 @@ from encoder import chunks,digest
 from ner import external
 from transformers import AutoTokenizer
 
-p=argparse.ArgumentParser(__doc__);p.add_argument('--assets',type=Path,required=True);a=p.parse_args()
+p=argparse.ArgumentParser(__doc__);p.add_argument('--assets',type=Path,required=True)
+p.add_argument('--models',nargs='+',choices=['fp32','int8','int4'],default=['fp32','int8']);a=p.parse_args()
 a.assets=external(a.assets)
 if (a.assets/'fixtures.json').exists():raise ValueError('refusing to overwrite fixtures')
 tokenizer=AutoTokenizer.from_pretrained(a.assets/'tokenizer',local_files_only=True,add_prefix_space=True)
@@ -21,7 +22,7 @@ for size in [32,128,512]:
         feed=inputs([part],tokenizer)
         records.append(dict(offset=shift,words=len(part),feeds={k:dict(shape=list(v.shape),data=v.flatten().tolist()) for k,v in feed.items()}))
     cases.append(dict(words=size,chunks=records))
-for model in ['fp32','int8']:
+for model in a.models:
     runtime=session(a.assets/(model+'.onnx'))
     for case in cases:
         for chunk in case['chunks']:
@@ -30,5 +31,5 @@ for model in ['fp32','int8']:
             logits=runtime.run(['logits'],feed)[0]
             chunk.setdefault('expected',{})[model]=dict(labels=logits.argmax(-1).flatten().tolist(),logits=logits.flatten().tolist())
     del runtime
-(a.assets/'fixtures.json').write_text(json.dumps(dict(schema=1,scope='fabricated pretokenized words; excludes browser tokenization, CRF and masking',models={m:digest(a.assets/(m+'.onnx')) for m in ['fp32','int8']},cases=cases)))
+(a.assets/'fixtures.json').write_text(json.dumps(dict(schema=1,scope='fabricated pretokenized words; excludes browser tokenization, CRF and masking',models={m:digest(a.assets/(m+'.onnx')) for m in a.models},cases=cases)))
 print(json.dumps(dict(cases=len(cases),words=[c['words'] for c in cases])))
