@@ -9,7 +9,7 @@
 {"id":"challenge-address-unit","text":"Tilbúið heimilisfang: Prófbraut 7B, 999 Sýnibær.","entities":[{"kind":"address","value":"Prófbraut 7B, 999 Sýnibær"}]}
 {"id":"challenge-secret-known","text":"Tilbúinn lykill sk-test_key_000000000000.","entities":[{"kind":"secret","value":"sk-test_key_000000000000"}]}
 {"id":"challenge-secret-github","text":"Tilbúinn lykill ghp_000000000000000000000000000000000000.","entities":[{"kind":"secret","value":"ghp_000000000000000000000000000000000000"}]}
-{"id":"challenge-secret-slack","text":"Tilbúinn lykill xoxb-000000000000-000000000000-000000000000000000000000.","entities":[{"kind":"secret","value":"xoxb-000000000000-000000000000-000000000000000000000000"}]}
+{"id":"challenge-secret-generic","text":"Tilbúinn þjónustulykill svc-test-token-000000000000000000000000.","entities":[{"kind":"secret","value":"svc-test-token-000000000000000000000000"}]}
 {"id":"challenge-phone-country","text":"Óúthlutað prófnúmer +354 000 0000.","entities":[{"kind":"phone","value":"+354 000 0000"}]}
 {"id":"challenge-phone-idd","text":"Óúthlutað prófnúmer 00354 000 0000.","entities":[{"kind":"phone","value":"00354 000 0000"}]}
 {"id":"challenge-email-ascii","text":"Próffang demo+test@example.invalid.","entities":[{"kind":"email","value":"demo+test@example.invalid"}]}
