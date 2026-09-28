@@ -1,0 +1,59 @@
+# Full-precision training round
+
+Started 28 September 2026, from `c6a8b0d`; PR #10 remains open and unmerged.
+The old selected checkpoint, development reports, and browser exports are retained.
+No Shield behavior changes are part of this experiment.
+
+## Order and selection
+
+1. Measure CPU/memory feasibility with a ten-optimizer-step training-only probe.
+   The probe is not a model candidate and does not inspect development labels.
+2. Fine-tune all IceBERT encoder parameters and the existing epoch-12 BIO head
+   in FP32. Remove the earlier embedding-cache float16 round-trip. Mean-subword
+   pooling and <=256-subword word-boundary chunks remain unchanged.
+3. Initial bounded recipe: seed 42, three epochs, AdamW, encoder LR 1e-5,
+   head LR 1e-4, weight decay .01, 10% linear warmup then linear decay,
+   batch 8 with four-batch gradient accumulation, gradient norm cap 1.
+   Length buckets reduce padding; all training chunks appear once per epoch.
+   Gradients average per-microbatch token losses; they are not a single
+   token-weighted loss across the accumulated batch.
+4. CPU time may limit complete epochs. Record partial epochs explicitly and keep
+   failed experiments. The training command never reads development input.
+5. Evaluate every retained epoch on the two **reused development sets**, separately.
+   Keep CRF 0.75, neural 0.0 and CRF overlap priority fixed. Require both datasets'
+   precision >=95.5%, then maximize the lower recall; retain the old reference if
+   no new candidate improves this rule. No threshold grid search in this round.
+6. Freeze the selected full-precision checkpoint, all component hashes, thresholds,
+   and input identities before compression. Recheck reproducibility of its scores.
+   Only then test compression at unchanged thresholds, including actual Chromium.
+
+Training uses only the existing 46,196-record MIM+synthetic training mixture.
+Training, evaluation, weights, individual predictions and research logs are local
+outside Git. The implementation refuses wrong row splits and verifies checkpoint
+and encoder hashes. Aggregate reports do not imply independently validated quality.
+
+## Independent evidence
+
+The old MIM test split is exposed. The 36 sampled public-document pages remain
+unlabelled and have not been sent through a model. Prepare a blind review package;
+do not infer negatives from null labels or use agent labels as independent gold.
+Whole-document separation, extraction review, leakage review and independent human
+annotation are outstanding. The broader quality goal cannot be declared achieved
+from development scores alone.
+
+## Runtime and stopping
+
+Use the existing local CPU only, no paid services. Reserve time within the owner's
+eight-hour limit for browser evaluation, reports, PR and canonical vault checkpoint.
+Record changes to this recipe after the feasibility probe explicitly. Stop jobs at
+the deadline and report missing measurements rather than presenting estimates as
+observations. No automatic merge, deployment, public research sync, or Shield release.
+
+### Feasibility adjustment before development evaluation
+
+Ten optimizer steps (40 microbatches, 4,869 tokens) took 47.17 seconds after
+preparation, with no nonfinite losses or allocation failure. The selected run is
+therefore **two epochs**, capped at 18,000 training seconds. The probe's three-epoch
+scheduler was only a feasibility measurement. The actual two-epoch run starts from
+the unchanged baseline again and uses a two-epoch scheduler. No development scores
+were examined to make this adjustment.

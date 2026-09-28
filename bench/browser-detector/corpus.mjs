@@ -22,7 +22,9 @@ try { await stat(output); throw new Error('Refusing to overwrite predictions'); 
 catch(error) { if(error.code!=='ENOENT')throw error; }
 async function digest(path) {const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);return hash.digest('hex');}
 const vectors=JSON.parse(await readFile(vectorsPath,'utf8'));
-assert.equal(await digest(join(assets,'int8.onnx')),vectors.model_sha256);
+const model=process.env.DMZ_MODEL_NAME || 'int8';
+assert.ok(['fp32','int8','int4'].includes(model));
+assert.equal(await digest(join(assets,model+'.onnx')),vectors.model_sha256);
 const result={schema:1,model_sha256:vectors.model_sha256,vectors_sha256:await digest(vectorsPath),runtime:'onnxruntime-web 1.23.2',threads:3,batch_size:1,externalRequests:[],sets:[]};
 const runtime=join(root,'node_modules/onnxruntime-web/dist');
 const server=createServer(async(req,res)=>{
@@ -31,7 +33,7 @@ const server=createServer(async(req,res)=>{
   if(path==='/'){res.writeHead(200,{...headers,'Content-Type':'text/html'}).end('<!doctype html><script type="module" src="/client.mjs"></script>');return;}
   let file;
   if(['/worker.mjs','/client.mjs'].includes(path))file=join(root,path.slice(1));
-  else if(path==='/int8.onnx')file=join(assets,'int8.onnx');
+  else if(path==='/'+model+'.onnx')file=join(assets,model+'.onnx');
   else if(/^\/runtime\/[a-z0-9.-]+$/.test(path))file=join(runtime,path.slice(9));
   if(!file){res.writeHead(404,headers).end();return;}
   try{const info=await stat(file);res.writeHead(200,{...headers,'Content-Length':info.size,'Content-Type':extname(file)==='.mjs'?'text/javascript':extname(file)==='.wasm'?'application/wasm':'application/octet-stream'});const stream=createReadStream(file);res.on('close',()=>stream.destroy());stream.pipe(res);}
@@ -46,7 +48,7 @@ try {
   await context.route('**/*',route=>{const url=route.request().url();if(url.startsWith(origin+'/'))return route.continue();result.externalRequests.push(url);return route.abort();});
   const page=await context.newPage();await page.goto(origin);
   await page.waitForFunction(()=>typeof window.makeClient==='function');
-  result.load=await page.evaluate(async()=>{window.makeClient();return window.client.request('load',{url:'/int8.onnx',threads:3},120000);});
+  result.load=await page.evaluate(async model=>{window.makeClient();return window.client.request('load',{url:'/'+model+'.onnx',threads:3},120000);},model);
   assert.equal(result.load.isolated,true);
   for(const dataset of vectors.sets) {
     const run={name:dataset.name,labels:[]};const start=Date.now();

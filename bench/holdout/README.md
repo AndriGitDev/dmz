@@ -79,3 +79,17 @@ Sources: [MIM-GOLD-NER 2.0](https://repository.clarin.is/repository/xmlui/handle
 [Central Bank 2025 report announcement](https://sedlabanki.is/frettir-og-utgefid-efni/grein/arsskyrsla-sedlabanka-islands-2025),
 [Byggðastofnun publications](https://www.byggdastofnun.is/is/utgefid-efni),
 and the direct Alþingi links in the source manifest.
+
+## Blind annotation packet
+
+`review.py prepare --source /outside/collection/review.jsonl ... --output /outside/packet`
+creates numbered UTF-8 text files, an annotation template, checksummed provenance,
+and reviewer instructions. No predictions or automatic labels are included.
+`review.py validate --packet /outside/packet` rejects missing reviews, null labels,
+unresolved overlap, changed source text, invalid UTF-8 offsets, overlapping spans,
+and attempts to promote this pilot to final evaluation. Passing validation checks
+structure only; it cannot establish human annotation correctness or independence.
+
+The current private packet is `/root/.local/share/dmz/datasets/blind-review-v1`:
+36 pages, three documents, all unlabelled. It includes the already collected
+financial and legal-opinion pilot pages; no new download or model inference.

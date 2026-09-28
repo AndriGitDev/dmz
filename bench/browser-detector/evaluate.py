@@ -44,6 +44,7 @@ def main():
     p=argparse.ArgumentParser(__doc__)
     for key in ['model','tokenizer','input','crf','reference','output','predictions']:p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--batch-size',type=int,default=8)
+    p.add_argument('--selection',type=Path,default=Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json')
     a=p.parse_args()
     for key in ['model','tokenizer','input','crf','reference','predictions']:setattr(a,key,external(getattr(a,key)))
     if a.predictions.exists():raise ValueError('refusing to overwrite prediction cache')
@@ -53,7 +54,7 @@ def main():
     sha=digest(a.input)
     for cache in [crf,reference]:
         if cache['input_sha256']!=sha or cache['split']!='dev' or cache['text_mode']!='canonical':raise ValueError('cache identity mismatch')
-    selected=json.loads((Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json').read_text())
+    selected=json.loads(a.selection.read_text())
     assert selected['thresholds']==dict(crf=.75,neural=0)
     assert crf['model_sha256']==selected['composition']['crf_sha256']
     assert reference['model_sha256']==selected['composition']['neural_sha256']
