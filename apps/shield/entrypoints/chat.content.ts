@@ -268,12 +268,16 @@ export default defineContentScript({
     }, true);
 
     const core = globalThis as unknown as Core;
+    function coreFailed() {
+      ready = false;
+      inform('Shield-kjarni bilaður. Sending stöðvuð.');
+    }
     void (async () => {
       const response = await fetch(chrome.runtime.getURL('dmz.wasm'));
       if (!response.ok) throw new Error('WASM unavailable');
       const go = new core.Go();
       const { instance } = await WebAssembly.instantiate(await response.arrayBuffer(), go.importObject);
-      void go.run(instance);
+      void go.run(instance).then(coreFailed, coreFailed);
       for (let i = 0; i < 100 && typeof core.dmzProcess !== 'function'; i++) {
         await new Promise((resolve) => setTimeout(resolve, 10));
       }
@@ -282,6 +286,6 @@ export default defineContentScript({
       message = 'Shield tilbúinn á þessari síðu.';
       new MutationObserver(queueResponseScan).observe(document.documentElement, { childList: true, characterData: true, subtree: true });
       queueResponseScan();
-    })().catch(() => { message = 'Shield-kjarni bilaður. Sending stöðvuð.'; });
+    })().catch(coreFailed);
   },
 });
