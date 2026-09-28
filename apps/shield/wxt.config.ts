@@ -6,11 +6,11 @@ const dirty = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' 
 
 export default defineConfig({
   manifest: {
-    name: 'dmz Shield prototype',
-    description: 'Local masking for supported AI chats and a manual review side panel.',
+    name: 'dmz Shield',
+    description: 'Local masking for supported ChatGPT and Claude chats, with device-local settings.',
     version: '0.1.0',
     version_name: `0.1.0 preview ${sourceCommit}${dirty ? '-dirty' : ''}`,
-    permissions: ['clipboardWrite'],
+    action: { default_title: 'dmz Shield · Stillingar' },
     web_accessible_resources: [{ resources: ['dmz.wasm', 'restored.html'], matches: ['https://chatgpt.com/*', 'https://claude.ai/*'] }],
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",

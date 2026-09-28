@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "collected_at": "2026-09-28T22:15:18.795277+00:00",
+  "state": "unlabelled candidate pilot; not independent evaluation",
+  "mim_hashes": {
+    "train": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+    "dev": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+    "test": "bf39ee91d9ef97c6e11f29d7f375092fb542fdb5b726ed5ee8765aacf7f63bed"
+  },
+  "sampling": "up to 12 pages >=200 characters per document, sorted by SHA256(document ID + zero-based page); chosen before model inference",
+  "overlap": "casefolded punctuation-tokenized exact 12-grams against all prepared MIM splits; does not exclude semantic, short phrase or pretraining overlap",
+  "documents": [
+    {
+      "id": "central-bank-2025",
+      "domain": "financial",
+      "url": "https://sedlabanki.is/library/?itemid=cbed3bdd-7a61-49d3-adf7-2ba9da78c852",
+      "publication_year": 2026,
+      "status": "candidate; human labels and source-use review pending",
+      "resolved_url": "https://sedlabanki.is/library/?itemid=cbed3bdd-7a61-49d3-adf7-2ba9da78c852",
+      "sha256": "b38c475c83175842a339d8bebcf9b8ef343df75c92777d5cb3fcca74fa54800d",
+      "bytes": 6098250,
+      "pages": 98,
+      "review_pages": 12,
+      "overlapping_mim_12grams": 0
+    },
+    {
+      "id": "regional-development-2025",
+      "domain": "financial",
+      "url": "https://www.byggdastofnun.is/static/files/Arsskyrslur/arsskyrsla_byggdast_2026-vef2.pdf",
+      "publication_year": 2026,
+      "status": "candidate; human labels and source-use review pending",
+      "resolved_url": "https://www.byggdastofnun.is/static/files/Arsskyrslur/arsskyrsla_byggdast_2026-vef2.pdf",
+      "sha256": "bd377bf56d69152c189ab1037150f725f3222c9f945b5475a98129ac0e37e51a",
+      "bytes": 11430109,
+      "pages": 132,
+      "review_pages": 12,
+      "overlapping_mim_12grams": 3
+    },
+    {
+      "id": "courts-2022",
+      "domain": "legal-administration",
+      "url": "https://www.domstolar.is/library/Files/Domstolar-arsskyrsla-2022.pdf",
+      "publication_year": 2023,
+      "status": "pilot only; older material; pretraining overlap not excluded; not a fresh legal holdout",
+      "error": "HTTPError"
+    }
+  ],
+  "human_review_complete": false,
+  "model_evaluated": false
+}

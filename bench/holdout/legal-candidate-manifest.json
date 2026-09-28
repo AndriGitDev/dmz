@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "collected_at": "2026-09-28T22:16:00.187142+00:00",
+  "state": "unlabelled candidate pilot; not independent evaluation",
+  "mim_hashes": {
+    "train": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+    "dev": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+    "test": "bf39ee91d9ef97c6e11f29d7f375092fb542fdb5b726ed5ee8765aacf7f63bed"
+  },
+  "sampling": "up to 12 pages >=200 characters per document, sorted by SHA256(document ID + zero-based page); chosen before model inference",
+  "overlap": "casefolded punctuation-tokenized exact 12-grams against all prepared MIM splits; does not exclude semantic, short phrase or pretraining overlap",
+  "documents": [
+    {
+      "id": "parliament-bill-156-85",
+      "domain": "legal-legislation",
+      "url": "https://www.althingi.is/altext/pdf/156/s/0085.pdf",
+      "publication_year": 2025,
+      "status": "candidate; human labels and source-use review pending",
+      "error": "HTTPError",
+      "http_status": 403
+    },
+    {
+      "id": "parliament-submission-157-488",
+      "domain": "legal-submission",
+      "url": "https://www.althingi.is/altext/erindi/157/157-488.pdf",
+      "publication_year": 2025,
+      "status": "candidate; human labels and source-use review pending",
+      "error": "HTTPError",
+      "http_status": 403
+    },
+    {
+      "id": "parliament-submission-157-516",
+      "domain": "financial-submission",
+      "url": "https://www.althingi.is/altext/erindi/157/157-516.pdf",
+      "publication_year": 2025,
+      "status": "candidate; human labels and source-use review pending",
+      "error": "HTTPError",
+      "http_status": 403
+    }
+  ],
+  "human_review_complete": false,
+  "model_evaluated": false
+}

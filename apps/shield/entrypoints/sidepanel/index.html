@@ -3,22 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dmz Shield prototype</title>
-    <script src="/wasm_exec.js"></script>
+    <title>dmz Shield · Stillingar</title>
     <script type="module" src="./main.ts"></script>
   </head>
   <body>
-    <div class="app">
-      <header class="topbar"><div class="brand">d<span>m</span>z<span class="dot">.</span></div><span class="chip">AÐEINS Á TÆKI</span></header>
-      <main>
-        <div class="intro"><p class="eyebrow">SHIELD / PROTOTYPE</p><h1>Sjáðu hvað fer út.</h1><p>Maskaðu texta áður en þú afritar hann í AI-tól. Raungildin eru aðeins í minni þessa hliðarspjalds.</p></div>
-        <section class="panel"><div class="label-row"><label for="prompt">01 / Fyrirspurn</label><span>TILBÚIÐ DÆMI</span></div><textarea id="prompt" spellcheck="false">Geturðu samið svar fyrir Arnu Jónsdóttur, kt. 140182-8858? Senda á demo@example.com.</textarea><button class="primary" id="mask" type="button" disabled>Maska fyrirspurn <span>↗</span></button></section>
-        <details class="dictionary"><summary>Staðbundin orðabók · valfrjálst</summary><label for="tenant-terms">Eitt heiti í hverri línu, mest 32. Nákvæm stafsetning.</label><textarea id="tenant-terms" spellcheck="false" placeholder="Verkefni Gervi"></textarea><button class="secondary" id="save-terms" type="button" disabled>Vista aðeins í minni</button><p>Vistað heiti er maskað sem ⟦TERM-…: XXXXX⟧. Breyting byrjar nýja lotu og eyðir fyrri tengitöflu.</p></details>
-        <section class="panel"><div class="label-row"><label for="masked">02 / Það sem líkanið sér</label><span>MERKI ERU SÝNILEG</span></div><textarea id="masked" readonly placeholder="Maskaði textinn birtist hér."></textarea><div class="row"><button class="secondary" id="copy" type="button" disabled>Afrita maskað</button><span id="finding-count" class="count"></span></div><div id="findings" class="findings" aria-live="polite"></div></section>
-        <section class="panel"><div class="label-row"><label for="answer">03 / Svar frá líkani</label><span>LÍMDU SVAR HÉR</span></div><textarea id="answer" placeholder="Límdu hér svar sem inniheldur óbreytta ⟦…⟧ merkimiða."></textarea><button class="secondary" id="restore" type="button" disabled>Setja raungildi aftur inn</button><label class="output-label" for="restored">Svar á þínu tæki</label><textarea id="restored" readonly placeholder="Endurheimt svar birtist hér."></textarea></section>
-        <div class="controls"><button id="reset" type="button">Hreinsa lotu</button><span id="status" role="status">Hleð WASM-kjarna…</span></div>
-        <div class="note"><b>Tilraunaútgáfa, ekki fyrir viðkvæm gögn.</b> Fyrsta keyrsla á 18 dæma gerviprófi hleypti 8 auðkennum í gegn; eftir lagfæringar hleypa sömu dæmi enn 2 í gegn. Annað 29 dæma könnunarpróf sýnir 13 auðkenni í leyfðum texta. Þessi litlu söfn meta ekki raunverulegt öryggi. Tilraunaaðlögun fyrir ChatGPT og Claude yfirfer studda textareiti; breytingar á vefnum eða aðrar sendingarleiðir geta farið fram hjá henni. Óþekkt nöfn, heimilisföng, skjöl og samhengi geta enn auðkennt fólk. Merkimiðar verða að haldast óbreyttir til að endurheimt virki.</div>
-      </main>
-    </div>
+    <header><a class="brand" href="https://dmz.is" target="_blank" rel="noreferrer" aria-label="dmz vefsíða">dmz<span>.</span></a><span class="label">SHIELD / FORÚTGÁFA</span></header>
+    <main>
+      <p class="eyebrow">Á ÞÍNU TÆKI</p><h1>Stillingar</h1>
+      <p class="intro">Shield yfirfer studdar sendingar beint í ChatGPT og Claude.</p>
+      <section aria-labelledby="tab-heading"><h2 id="tab-heading">Núverandi flipi</h2><p id="tab-status" role="status">Athuga Shield…</p><button id="refresh" type="button">Athuga aftur</button>
+        <p class="hint">Staðan á aðeins við um virka flipann í þessum glugga. Stuðningur getur breyst þegar vefsíðurnar breytast.</p>
+      </section>
+      <section aria-labelledby="appearance-heading"><h2 id="appearance-heading">Útlit</h2><label for="theme">Litahamur stillinga</label><select id="theme"><option value="system">Fylgja tækinu</option><option value="light">Ljóst</option><option value="dark">Dökkt</option></select><p class="hint">Endurheimt svör fylgja áfram útliti samtalsins.</p></section>
+      <section aria-labelledby="session-heading"><h2 id="session-heading">Shield-lota</h2><p>Hreinsun eyðir tengitöflu í virka flipanum. Eldri svör sýna þá maskaðan texta og verða ekki endurheimt.</p><button id="reset" type="button" disabled>Hreinsa lotu í þessum flipa</button>
+        <div id="confirmation" hidden><p>Eyða tengitöflu þessa flipa?</p><div class="actions"><button id="confirm-reset" class="danger" type="button">Já, hreinsa lotu</button><button id="cancel-reset" type="button">Hætta við</button></div></div><p id="action-status" role="status"></p>
+      </section>
+      <section aria-labelledby="protection-heading"><h2 id="protection-heading">Virkni</h2><ul><li>Greind auðkenni eru möskuð fyrir studdar sendingar.</li><li>Leyndarmál og óviss atriði stöðva sendingu til yfirferðar.</li><li>Skjöl, myndir og viðhengi eru stöðvuð á studdum leiðum.</li><li>Raungildi og tengitafla haldast á tækinu.</li></ul><p class="hint">Greining getur misst af upplýsingum. Þetta er forútgáfa til prófunar.</p></section>
+      <footer><span id="version"></span><a href="https://dmz.is" target="_blank" rel="noreferrer">Um dmz ↗</a></footer>
+    </main>
   </body>
 </html>
