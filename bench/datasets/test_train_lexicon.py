@@ -43,4 +43,19 @@ class BoundaryTrainingTests(unittest.TestCase):
             # Components can be learned inside full names without becoming standalone detections.
             self.assertEqual(pack['name_parts'], ['Mira', 'Prófa'])
 
+class SeedTrainingTests(unittest.TestCase):
+    def test_seeds_count_components_and_exclude_ambiguous_words(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source, addresses, out = root/'train.jsonl', root/'addresses.json', root/'pack.json'
+            addresses.write_text('[]')
+            rows = [dict(split='train', text='Mira Gervi', entities=[dict(kind='Person',start=0,end=len('Mira Gervi'.encode()))]) for _ in range(3)]
+            rows.append(dict(split='train', text='Gervi', entities=[]))
+            source.write_text(''.join(json.dumps(r)+'\n' for r in rows))
+            with contextlib.redirect_stdout(io.StringIO()):
+                train(source, addresses, out, seed_minimum=3, seed_purity=.99)
+            pack = json.loads(out.read_text())
+            self.assertNotIn('Mira', pack['names'])
+            self.assertEqual(pack['name_seeds'], ['Mira'])
+
 if __name__=='__main__': unittest.main()

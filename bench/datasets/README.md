@@ -93,3 +93,12 @@ and `--purity`. Sentence-end candidate counts now exclude truncated slices.
 See [precision results and reproduction](../../docs/detector-precision-2026-09-28.md)
 for the selected configuration: 96.22% exact-name precision and 31.39% recall on
 the reused test set. This is not an all-PII or field-performance claim.
+
+## Recall improvement
+
+Opt in to standalone Person-derived tokens with `--seed-minimum 1 --seed-purity .99`.
+The default `--seed-minimum 0` disables this feature, preserving previous pack
+bytes. Tokens can be learned inside full Person spans; runtime boundary checks
+reject likely incomplete seed matches. All new findings remain uncertain.
+See [recall results](../../docs/detector-recall-2026-09-28.md): 65.37% name recall
+at 95.55% precision on the reused test corpus. Source entries remain outside Git.

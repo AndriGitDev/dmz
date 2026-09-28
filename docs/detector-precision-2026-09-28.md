@@ -87,3 +87,9 @@ The regular CI artifact still contains synthetic data only. The owner-local
 Shield preview must be built with this explicit pack and checked through the
 WASM and Chromium smoke suites. The prior enriched pack remains locally available
 for recall comparisons. No source data or trained pack is uploaded to the PR.
+
+## Subsequent recall work
+
+The [recall round](detector-recall-2026-09-28.md) supersedes this pack for the
+owner-local preview: 65.37% recall at 95.55% precision on the same reused test
+set, using Person-derived seed tokens and conservative boundary checks.

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -11,7 +12,7 @@ import (
 
 // Lexicon is immutable after construction and may be shared between sessions.
 // Corpus-derived matches are uncertain: policy must review/block them.
-type Lexicon struct{ names, addresses, nameParts *lexiconNode }
+type Lexicon struct{ names, addresses, nameParts, nameSeeds *lexiconNode }
 type lexiconNode struct {
 	next     map[string]*lexiconNode
 	terminal bool
@@ -28,6 +29,7 @@ func LoadLexicon(data []byte) (*Lexicon, error) {
 		return nil, fmt.Errorf("lexicon exceeds size limit")
 	}
 	var pack struct {
+		NameSeeds []string `json:"name_seeds"`
 		NameParts []string `json:"name_parts"`
 		Schema    int      `json:"schema"`
 		Names     []string `json:"names"`
@@ -36,17 +38,20 @@ func LoadLexicon(data []byte) (*Lexicon, error) {
 	if err := json.Unmarshal(data, &pack); err != nil || pack.Schema != 1 {
 		return nil, fmt.Errorf("invalid lexicon schema")
 	}
-	if len(pack.NameParts) > 50000 || len(pack.Names) > 50000 || len(pack.Addresses) > 50000 {
+	if len(pack.NameSeeds) > 50000 || len(pack.NameParts) > 50000 || len(pack.Names) > 50000 || len(pack.Addresses) > 50000 {
 		return nil, fmt.Errorf("too many lexicon entries")
 	}
-	l := &Lexicon{names: &lexiconNode{}, addresses: &lexiconNode{}, nameParts: &lexiconNode{}}
-	for i, forms := range [][]string{pack.Names, pack.Addresses, pack.NameParts} {
+	l := &Lexicon{names: &lexiconNode{}, addresses: &lexiconNode{}, nameParts: &lexiconNode{}, nameSeeds: &lexiconNode{}}
+	for i, forms := range [][]string{pack.Names, pack.Addresses, pack.NameParts, pack.NameSeeds} {
 		root := l.names
 		if i == 1 {
 			root = l.addresses
 		}
 		if i == 2 {
 			root = l.nameParts
+		}
+		if i == 3 {
+			root = l.nameSeeds
 		}
 		for _, form := range forms {
 			if len(form) == 0 || len(form) > 256 || !utf8.ValidString(form) {
@@ -61,7 +66,7 @@ func LoadLexicon(data []byte) (*Lexicon, error) {
 			if len(tokens) == 0 || len(tokens) > 8 || strings.Join(tokens, " ") != form {
 				return nil, fmt.Errorf("noncanonical lexicon entry")
 			}
-			if i == 2 && (len(tokens) != 1 || !unicode.IsUpper([]rune(form)[0]) || utf8.RuneCountInString(form) < 2) {
+			if i >= 2 && (len(tokens) != 1 || !unicode.IsUpper([]rune(form)[0]) || utf8.RuneCountInString(form) < 2) {
 				return nil, fmt.Errorf("invalid name part")
 			}
 			node := root
@@ -98,7 +103,7 @@ func (l *Lexicon) matches(input string) []Match {
 		if !bounded(input, loc[0], loc[1]) {
 			continue
 		}
-		for mode, root := range []*lexiconNode{l.names, l.addresses} {
+		for mode, root := range []*lexiconNode{l.names, l.addresses, l.nameSeeds} {
 			node := root
 			for j := i; j < len(tokens) && j < i+8; j++ {
 				part := tokens[j]
@@ -116,7 +121,9 @@ func (l *Lexicon) matches(input string) []Match {
 				if !node.terminal || !bounded(input, loc[0], part[1]) {
 					continue
 				}
-				if mode == 0 {
+				if mode == 2 {
+					result = append(result, Match{loc[0], part[1], Name, Uncertain, "corpus-name-seed"})
+				} else if mode == 0 {
 					result = append(result, Match{loc[0], part[1], Name, Uncertain, "corpus-name-lexicon"})
 				} else if tail := addressTailRE.FindStringIndex(input[part[1]:]); tail != nil {
 					end := part[1] + tail[1]
@@ -161,17 +168,9 @@ func (l *Lexicon) extendNames(input string, matches []Match) {
 		if m.Kind != Name {
 			continue
 		}
-		first, last := -1, -1
-		for i, t := range tokens {
-			if t[0] == m.Start {
-				first = i
-			}
-			if t[1] == m.End {
-				last = i
-				break
-			}
-		}
-		if first < 0 || last < 0 {
+		first := sort.Search(len(tokens), func(i int) bool { return tokens[i][0] >= m.Start })
+		last := sort.Search(len(tokens), func(i int) bool { return tokens[i][1] >= m.End })
+		if first == len(tokens) || last == len(tokens) || tokens[first][0] != m.Start || tokens[last][1] != m.End {
 			continue
 		}
 		for first > 0 && last-first < 7 && !patronymicEndRE.MatchString(input[tokens[first-1][0]:tokens[first-1][1]]) && known(first-1) && gap(tokens[first-1][1], tokens[first][0]) {
@@ -184,7 +183,48 @@ func (l *Lexicon) extendNames(input string, matches []Match) {
 			m.Start = tokens[first][0]
 			m.End = tokens[last][1]
 			m.Confidence = Uncertain
-			m.Reason = "corpus-name-boundary"
+			if m.Reason == "corpus-name-seed" {
+				m.Reason = "corpus-name-seed-boundary"
+			} else {
+				m.Reason = "corpus-name-boundary"
+			}
 		}
 	}
+}
+
+// A component with strong training evidence may be a standalone name, but an
+// adjacent unknown capitalized word signals a possibly incomplete name span.
+// Decline only the new seed candidate; baseline and full-name matches survive.
+func (l *Lexicon) filterSeedBoundaries(input string, matches []Match) []Match {
+	if l == nil || len(l.nameSeeds.next) == 0 {
+		return matches
+	}
+	tokens := lexicalTokenRE.FindAllStringIndex(input, -1)
+	gap := func(a, b int) bool { return a < b && strings.Trim(input[a:b], " \t") == "" }
+	upper := func(i int) bool {
+		r, _ := utf8.DecodeRuneInString(input[tokens[i][0]:tokens[i][1]])
+		return unicode.IsUpper(r)
+	}
+	result := matches[:0]
+	for _, m := range matches {
+		open := false
+		if strings.HasPrefix(m.Reason, "corpus-name-seed") {
+			first := sort.Search(len(tokens), func(i int) bool { return tokens[i][0] >= m.Start })
+			last := sort.Search(len(tokens), func(i int) bool { return tokens[i][1] >= m.End })
+			if first > 0 && upper(first-1) && gap(tokens[first-1][1], m.Start) {
+				open = true
+			}
+			if last+1 < len(tokens) && upper(last+1) && gap(m.End, tokens[last+1][0]) && !patronymicEndRE.MatchString(input[m.Start:m.End]) {
+				open = true
+			}
+			// Do not mistake a surname after an initial for a complete name.
+			if first >= 2 && input[tokens[first-1][0]:tokens[first-1][1]] == "." && upper(first-2) && utf8.RuneCountInString(input[tokens[first-2][0]:tokens[first-2][1]]) == 1 && strings.Trim(input[tokens[first-2][1]:tokens[first-1][0]], " \t") == "" && gap(tokens[first-1][1], m.Start) {
+				open = true
+			}
+		}
+		if !open {
+			result = append(result, m)
+		}
+	}
+	return result
 }

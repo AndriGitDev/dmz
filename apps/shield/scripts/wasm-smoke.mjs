@@ -30,6 +30,13 @@ if (process.env.DMZ_LEXICON_FILE) {
   const address = JSON.parse(globalThis.dmzProcess(`${pack.addresses[0]} 99/2, 999`));
   assert.equal(address.allowed, false, 'bundled address lexicon failed');
   assert.ok(address.findings.some(f => f.reason === 'gazetteer-number-postcode'));
+  if (pack.name_seeds?.length) {
+    const seedReviewed = pack.name_seeds.slice(0, 30).some(seed => {
+      const result = JSON.parse(globalThis.dmzProcess(seed));
+      return !result.allowed && result.findings.some(f => f.reason === 'corpus-name-seed');
+    });
+    assert.equal(seedReviewed, true, 'bundled name seeds did not review a known entry');
+  }
   globalThis.dmzReset();
 }
 

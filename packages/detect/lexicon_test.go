@@ -101,3 +101,51 @@ func TestLearnedNameBoundaries(t *testing.T) {
 		}
 	}
 }
+
+func TestNameSeedsRequireClosedBoundaries(t *testing.T) {
+	l, err := LoadLexicon([]byte(`{"schema":1,"names":["Mira Gervi"],"name_seeds":["Mira"],"name_parts":["Mira","Gervi"]}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		input string
+		want  []string
+	}{
+		{"Mira", []string{"Mira"}},
+		{"til Mira.", []string{"Mira"}},
+		{"próf: Mira Gervi.", []string{"Mira Gervi"}},
+		{"Óþekkt Mira", nil},
+		{"Mira Óþekkt", nil},
+		{"X. Mira", nil},
+		{"X . Mira", nil},
+		{"X.\nMira", []string{"Mira"}},
+		{"Óþekkt\nMira", []string{"Mira"}},
+		{"Óþekkt, Mira", []string{"Mira"}},
+		{"XMiraX", nil},
+		// A declined seed must not erase an existing full-name match.
+		{"Óþekkt Mira Gervi", []string{"Mira Gervi"}},
+	} {
+		got := l.Detect(tc.input, nil)
+		if len(got) != len(tc.want) {
+			t.Fatalf("%q: %#v", tc.input, got)
+		}
+		for i, m := range got {
+			if m.Kind != Name || m.Confidence != Uncertain || tc.input[m.Start:m.End] != tc.want[i] {
+				t.Fatalf("%q: %#v", tc.input, got)
+			}
+		}
+	}
+	for _, seed := range []string{"lower", "A", ".", "Mira Demo"} {
+		if _, err := LoadLexicon([]byte(`{"schema":1,"name_seeds":["` + seed + `"]}`)); err == nil {
+			t.Fatal("accepted invalid seed")
+		}
+	}
+	got := l.Detect("Mira\u200b", nil)
+	if len(got) != 1 || got[0].Kind != UnicodeReview {
+		t.Fatal("seed bypassed unicode guard")
+	}
+	got = l.Detect("Mira", []string{"Mira"})
+	if len(got) != 1 || got[0].Kind != TenantDictionary {
+		t.Fatal("seed displaced explicit tenant term")
+	}
+}
