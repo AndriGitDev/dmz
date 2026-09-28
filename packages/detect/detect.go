@@ -15,13 +15,14 @@ import (
 type Kind string
 
 const (
-	Kennitala Kind = "kennitala"
-	Email     Kind = "email"
-	IBAN      Kind = "iban"
-	Card      Kind = "card"
-	Phone     Kind = "phone"
-	Secret    Kind = "secret"
-	Name      Kind = "name_demo"
+	Kennitala        Kind = "kennitala"
+	Email            Kind = "email"
+	IBAN             Kind = "iban"
+	Card             Kind = "card"
+	Phone            Kind = "phone"
+	Secret           Kind = "secret"
+	Name             Kind = "name_demo"
+	TenantDictionary Kind = "tenant_dictionary"
 )
 
 type Confidence string
@@ -54,6 +55,12 @@ var (
 var demoNames = []string{"Arna Jónsdóttir", "Arnu Jónsdóttur", "Bjarni Jónsson", "Bjarna Jónsson"}
 
 func Detect(input string) []Match {
+	return DetectWithTerms(input, nil)
+}
+
+// DetectWithTerms adds exact, case-sensitive tenant terms. Callers must bound
+// and validate the terms before passing them in. No term list is persisted here.
+func DetectWithTerms(input string, terms []string) []Match {
 	var candidates []Match
 	add := func(re *regexp.Regexp, kind Kind, validate func(string) (Confidence, string, bool)) {
 		for _, loc := range re.FindAllStringIndex(input, -1) {
@@ -85,6 +92,23 @@ func Detect(input string) []Match {
 			end := i + len(form)
 			if bounded(input, i, end) {
 				candidates = append(candidates, Match{i, end, Name, High, "hand-authored-demo-form"})
+			}
+			start = end
+		}
+	}
+	for _, term := range terms {
+		if term == "" {
+			continue
+		}
+		for start := 0; start < len(input); {
+			i := strings.Index(input[start:], term)
+			if i < 0 {
+				break
+			}
+			i += start
+			end := i + len(term)
+			if bounded(input, i, end) {
+				candidates = append(candidates, Match{i, end, TenantDictionary, High, "tenant-exact-term"})
 			}
 			start = end
 		}
@@ -137,8 +161,10 @@ func priority(k Kind) int {
 		return 3
 	case Phone:
 		return 2
-	default:
+	case TenantDictionary:
 		return 1
+	default:
+		return 0
 	}
 }
 

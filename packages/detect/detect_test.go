@@ -95,3 +95,11 @@ func TestHandAuthoredNameForms(t *testing.T) {
 		t.Fatalf("unexpected forms: %#v", got)
 	}
 }
+
+func TestTenantTermsExactAndBounded(t *testing.T) {
+	input := "Verkefni Gervi var rætt, ekki ÓVerkefni Gervi eða verkefni gervi."
+	got := DetectWithTerms(input, []string{"Verkefni Gervi"})
+	if len(got) != 1 || got[0].Kind != TenantDictionary || input[got[0].Start:got[0].End] != "Verkefni Gervi" {
+		t.Fatalf("unexpected tenant match: %#v", got)
+	}
+}

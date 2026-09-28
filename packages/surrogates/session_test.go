@@ -90,3 +90,27 @@ func TestSessionNamespacePreventsWrongRestoration(t *testing.T) {
 		t.Fatal("new session marker failed to restore")
 	}
 }
+
+func TestTenantDictionaryStaysLocalAndResetsMapping(t *testing.T) {
+	s := NewSession()
+	old := s.Process("140182-8858").Transformed
+	if err := s.SetTenantTerms([]string{"Verkefni Gervi", "Verkefni Gervi"}); err != nil {
+		t.Fatal(err)
+	}
+	if s.Restore(old) != old {
+		t.Fatal("dictionary update kept old mapping")
+	}
+	result := s.Process("Ræddu Verkefni Gervi, ekki ÓVerkefni Gervi.")
+	if !result.Allowed || !strings.Contains(result.Transformed, "⟦TERM-") || strings.Contains(result.Transformed, "Ræddu Verkefni Gervi,") {
+		t.Fatalf("tenant term not masked: %#v", result)
+	}
+	if s.Restore(result.Transformed) != "Ræddu Verkefni Gervi, ekki ÓVerkefni Gervi." {
+		t.Fatal("term restoration failed")
+	}
+	if err := s.SetTenantTerms([]string{"ab"}); err == nil {
+		t.Fatal("short tenant term accepted")
+	}
+	if s.Restore(result.Transformed) != "Ræddu Verkefni Gervi, ekki ÓVerkefni Gervi." {
+		t.Fatal("invalid update reset mapping")
+	}
+}

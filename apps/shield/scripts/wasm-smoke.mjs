@@ -34,6 +34,13 @@ const blocked = JSON.parse(globalThis.dmzProcess('sk-test_key_000000000000'));
 assert.equal(blocked.allowed, false);
 assert.equal(blocked.transformed, undefined);
 
+assert.equal(JSON.parse(globalThis.dmzSetTenantTerms(JSON.stringify(['Verkefni Gervi']))).ok, true);
+const tenant = JSON.parse(globalThis.dmzProcess('Ræddu Verkefni Gervi.'));
+assert.equal(tenant.allowed, true);
+assert.match(tenant.transformed, /⟦TERM-[A-F0-9]{16}-\d+: XXXXX⟧/);
+assert.equal(globalThis.dmzRestore(tenant.transformed), 'Ræddu Verkefni Gervi.');
+assert.equal(globalThis.dmzRestore(first.transformed), first.transformed, 'term update did not reset map');
+
 globalThis.dmzReset();
 assert.equal(globalThis.dmzRestore(first.transformed), first.transformed);
 process.stdout.write('TinyGo WASM mask/restore smoke test passed\n');

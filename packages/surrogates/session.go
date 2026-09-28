@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/AndriGitDev/dmz/packages/detect"
 )
@@ -26,11 +27,38 @@ type Result struct {
 }
 
 type Session struct {
-	forward    map[string]string
-	reverse    map[string]string
-	serial     int
-	generation uint64
-	namespace  string
+	forward     map[string]string
+	reverse     map[string]string
+	serial      int
+	generation  uint64
+	namespace   string
+	tenantTerms []string
+}
+
+// SetTenantTerms replaces the device-local exact-match dictionary and starts
+// a fresh mapping session. Terms are deliberately bounded for browser use.
+func (s *Session) SetTenantTerms(terms []string) error {
+	if len(terms) > 32 {
+		return fmt.Errorf("at most 32 tenant terms")
+	}
+	clean := make([]string, 0, len(terms))
+	seen := make(map[string]bool)
+	for _, term := range terms {
+		term = strings.TrimSpace(term)
+		if term == "" {
+			continue
+		}
+		if utf8.RuneCountInString(term) < 3 || utf8.RuneCountInString(term) > 80 || strings.ContainsAny(term, "\r\n⟦⟧") {
+			return fmt.Errorf("tenant terms must be 3–80 characters without markers or newlines")
+		}
+		if !seen[term] {
+			clean = append(clean, term)
+			seen[term] = true
+		}
+	}
+	s.Reset()
+	s.tenantTerms = clean
+	return nil
 }
 
 func NewSession() *Session {
@@ -43,6 +71,7 @@ func (s *Session) Reset() {
 	s.serial = 0
 	s.generation++
 	s.namespace = newNamespace()
+	s.tenantTerms = nil
 }
 
 func newNamespace() string {
@@ -58,7 +87,7 @@ func newNamespace() string {
 // Process blocks the entire prompt if any match is uncertain or unsupported.
 // No partially transformed text is returned in that case.
 func (s *Session) Process(input string) Result {
-	matches := detect.Detect(input)
+	matches := detect.DetectWithTerms(input, s.tenantTerms)
 	result := Result{Allowed: true, Findings: make([]Finding, 0, len(matches))}
 	for _, m := range matches {
 		action := "mask"
@@ -135,6 +164,8 @@ func (s *Session) makeSurrogate(kind detect.Kind, raw string) string {
 		return fmt.Sprintf("⟦CARD-%s-%d: XXXX XXXX XXXX XXXX⟧", s.namespace, n)
 	case detect.Name:
 		return fmt.Sprintf("⟦NAME-%s-%d: XXXXX XXXXX⟧", s.namespace, n)
+	case detect.TenantDictionary:
+		return fmt.Sprintf("⟦TERM-%s-%d: XXXXX⟧", s.namespace, n)
 	}
 	return fmt.Sprintf("⟦VALUE-%s-%d: XXXXX⟧", s.namespace, n)
 }

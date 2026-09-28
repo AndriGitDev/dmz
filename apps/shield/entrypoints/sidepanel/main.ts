@@ -10,6 +10,7 @@ declare global {
     dmzProcess: (input: string) => string;
     dmzRestore: (input: string) => string;
     dmzReset: () => boolean;
+    dmzSetTenantTerms: (json: string) => string;
   }
 }
 
@@ -23,6 +24,8 @@ const restoreButton = document.querySelector<HTMLButtonElement>('#restore')!;
 const findings = document.querySelector<HTMLDivElement>('#findings')!;
 const findingCount = document.querySelector<HTMLSpanElement>('#finding-count')!;
 const status = document.querySelector<HTMLSpanElement>('#status')!;
+const tenantTerms = document.querySelector<HTMLTextAreaElement>('#tenant-terms')!;
+const saveTerms = document.querySelector<HTMLButtonElement>('#save-terms')!;
 
 async function loadCore() {
   const response = await fetch(chrome.runtime.getURL('dmz.wasm'));
@@ -35,6 +38,7 @@ async function loadCore() {
   }
   if (typeof window.dmzProcess !== 'function') throw new Error('WASM core did not start');
   maskButton.disabled = false;
+  saveTerms.disabled = false;
   status.textContent = 'Kjarninn keyrir á tækinu þínu';
 }
 
@@ -72,6 +76,23 @@ maskButton.addEventListener('click', () => {
 
 input.addEventListener('input', () => { masked.value = ''; copyButton.disabled = true; });
 
+saveTerms.addEventListener('click', () => {
+  const terms = tenantTerms.value.split(/\r?\n/).map((term) => term.trim()).filter(Boolean);
+  const result = JSON.parse(window.dmzSetTenantTerms(JSON.stringify(terms))) as { ok?: boolean; error?: string };
+  if (!result.ok) {
+    status.textContent = 'Orðabók ógild: 3–80 stafir í heiti, mest 32 heiti.';
+    return;
+  }
+  masked.value = '';
+  answer.value = '';
+  restored.value = '';
+  findings.replaceChildren();
+  findingCount.textContent = '';
+  copyButton.disabled = true;
+  restoreButton.disabled = true;
+  status.textContent = `${terms.length} heiti vistuð í minni. Ný lota hófst.`;
+});
+
 copyButton.addEventListener('click', async () => {
   if (!masked.value) return;
   await navigator.clipboard.writeText(masked.value);
@@ -86,6 +107,7 @@ restoreButton.addEventListener('click', () => {
 document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', () => {
   if (typeof window.dmzReset === 'function') window.dmzReset();
   for (const field of [input, masked, answer, restored]) field.value = '';
+  tenantTerms.value = '';
   findings.replaceChildren();
   findingCount.textContent = '';
   copyButton.disabled = true;

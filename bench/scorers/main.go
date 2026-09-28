@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/AndriGitDev/dmz/packages/detect"
@@ -40,11 +41,12 @@ type score struct {
 }
 
 type report struct {
-	Corpus   string           `json:"corpus"`
-	Detector string           `json:"detector"`
-	Samples  int              `json:"samples"`
-	Scoring  string           `json:"scoring"`
-	PerKind  map[string]score `json:"per_kind"`
+	Corpus      string           `json:"corpus"`
+	Detector    string           `json:"detector"`
+	Samples     int              `json:"samples"`
+	Scoring     string           `json:"scoring"`
+	PerKind     map[string]score `json:"per_kind"`
+	TenantTerms []string         `json:"tenant_terms,omitempty"`
 }
 
 func main() {
@@ -53,9 +55,11 @@ func main() {
 	baseline := flag.String("baseline", "", "published result to enforce no recall regression")
 	flag.Parse()
 	var finder func(string) []detect.Match
+	var tenantTerms []string
 	switch *detectorName {
 	case "dmz":
-		finder = detect.Detect
+		tenantTerms = []string{"Verkefni Gervi"}
+		finder = func(text string) []detect.Match { return detect.DetectWithTerms(text, tenantTerms) }
 	case "regex":
 		finder = regexDetect
 	default:
@@ -63,6 +67,7 @@ func main() {
 		os.Exit(2)
 	}
 	result, err := evaluate(*path, *detectorName, finder)
+	result.TenantTerms = tenantTerms
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -78,8 +83,8 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		if prior.Detector != result.Detector {
-			fmt.Fprintln(os.Stderr, "baseline detector mismatch")
+		if prior.Detector != result.Detector || !slices.Equal(prior.TenantTerms, result.TenantTerms) {
+			fmt.Fprintln(os.Stderr, "baseline detector/configuration mismatch")
 			os.Exit(1)
 		}
 		for kind, previous := range prior.PerKind {

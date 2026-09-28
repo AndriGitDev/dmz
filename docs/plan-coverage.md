@@ -8,7 +8,7 @@ Checked against the user-supplied 27 September 2026 plan. **Captured** means a r
 | Market size and demand signals | [business plan](business-plan.md), [sources](source-register.md) | Captured as hypotheses; current PxWeb count pending |
 | ZDR gap and provider terms | [business plan](business-plan.md), [legal dependencies](legal/dependencies.md) | Captured; provider-specific verification pending |
 | Product surfaces and data flow | [product spec](product-spec.md) | Manual Shield side panel built; Portal and Gateway pending |
-| Detector scope and algorithm | [product spec](product-spec.md), policy schema, [benchmark](../bench/README.md) | Small Go/WASM detector, 42-case corpus and scores built; licensed name, address and tenant detectors pending |
+| Detector scope and algorithm | [product spec](product-spec.md), policy schema, [benchmark](../bench/README.md) | Small Go/WASM detector, device-local exact tenant terms, 42-case corpus and scores built; licensed name and address detectors pending |
 | Architecture, vault, routing and audit | [product spec](product-spec.md), [threat model](threat-model.md) | Captured; implementation and controls pending |
 | Positioning, precise claims and proof | [website brief](website-brief.md) | Bilingual marketing site and preliminary synthetic results page built; market, legal and provider evidence pending |
 | Competitive landscape | [business plan](business-plan.md), [sources](source-register.md) | Captured; current comparisons not verified |

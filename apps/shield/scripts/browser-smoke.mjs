@@ -50,6 +50,18 @@ try {
   await page.locator('#restore').click();
   assert.equal(await page.locator('#restored').inputValue(), original);
 
+  await page.locator('.dictionary summary').click();
+  await page.locator('#tenant-terms').fill('Verkefni Gervi');
+  await page.locator('#save-terms').click();
+  await page.locator('#prompt').fill('Ræddu Verkefni Gervi.');
+  await page.locator('#mask').click();
+  const tenantMasked = await page.locator('#masked').inputValue();
+  assert.match(tenantMasked, /⟦TERM-[A-F0-9]{16}-\d+: XXXXX⟧/);
+  assert.ok(!tenantMasked.includes('Verkefni Gervi'));
+  await page.locator('#answer').fill(tenantMasked);
+  await page.locator('#restore').click();
+  assert.equal(await page.locator('#restored').inputValue(), 'Ræddu Verkefni Gervi.');
+
   await page.locator('#prompt').fill('sk-test_key_000000000000');
   await page.locator('#mask').click();
   assert.equal(await page.locator('#masked').inputValue(), '');
