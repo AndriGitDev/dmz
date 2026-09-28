@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "collected_at": "2026-09-28T22:17:28.154920+00:00",
+  "state": "unlabelled candidate pilot; not independent evaluation",
+  "mim_hashes": {
+    "train": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+    "dev": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+    "test": "bf39ee91d9ef97c6e11f29d7f375092fb542fdb5b726ed5ee8765aacf7f63bed"
+  },
+  "sampling": "up to 12 pages >=200 characters per document, sorted by SHA256(document ID + zero-based page); chosen before model inference",
+  "overlap": "casefolded punctuation-tokenized exact 12-grams against all prepared MIM splits; does not exclude semantic, short phrase or pretraining overlap",
+  "documents": [
+    {
+      "id": "public-legal-opinion-2025",
+      "domain": "legal-opinion",
+      "url": "https://landvernd.is/wp-content/uploads/2025/02/2502025-Logfraedialit-log-um-Hvammsvirkjun.pdf",
+      "publication_year": 2025,
+      "status": "candidate; human labels and source-use review pending",
+      "resolved_url": "https://landvernd.is/wp-content/uploads/2025/02/2502025-Logfraedialit-log-um-Hvammsvirkjun.pdf",
+      "sha256": "e3cc173045187148fcdc3325c3bec017f33dbb33498479e1b78df9fe107734b1",
+      "bytes": 684033,
+      "pages": 17,
+      "review_pages": 12,
+      "overlapping_mim_12grams": 0
+    }
+  ],
+  "human_review_complete": false,
+  "model_evaluated": false
+}

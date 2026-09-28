@@ -28,72 +28,56 @@ try {
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
   await page.goto(`chrome-extension://${id}/sidepanel.html`);
-  assert.match(await page.locator('.note').textContent(), /sömu dæmi enn 2 í gegn/);
-  assert.match(await page.locator('.note').textContent(), /29 dæma könnunarpróf sýnir 13 auðkenni/);
-  await page.locator('#mask').waitFor({ state: 'visible' });
-  try {
-    await page.waitForFunction(() => !document.querySelector('#mask').disabled, null, { timeout: 10000 });
-  } catch (error) {
-    throw new Error(`Core did not start. Status: ${await page.locator('#status').textContent()}; errors: ${errors.join(' | ')}`, { cause: error });
+  assert.equal(await page.locator('h1').textContent(), 'Stillingar');
+  assert.equal(await page.locator('textarea').count(), 0);
+  await page.waitForFunction(() => document.querySelector('#tab-status').textContent.includes('Opnaðu'));
+  assert.equal(await page.locator('#reset').isDisabled(), true);
+  for (const mode of ['light', 'dark']) {
+    await page.locator('#theme').selectOption(mode);
+    await page.reload();
+    assert.equal(await page.locator('#theme').inputValue(), mode);
+    assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme), mode);
+    await page.screenshot({ path: `/tmp/dmz-settings-${mode}.png`, fullPage: true });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   }
-
-  const original = 'Arna Jónsdóttir, 140182-8858, demo@example.com';
-  await page.locator('#prompt').fill(original);
-  await page.locator('#mask').click();
-  const outbound = await page.locator('#masked').inputValue();
-  assert.match(outbound, /⟦KT-[A-F0-9]{16}-\d+: XXXXX-XXXX⟧/);
-  assert.match(outbound, /⟦NAME-[A-F0-9]{16}-\d+: XXXXX XXXXX⟧/);
-  assert.match(outbound, /⟦EMAIL-[A-F0-9]{16}-\d+: XXXXX@XXXXX\.XXX⟧/);
-  assert.ok(!outbound.includes('140182-8858'));
-  assert.ok(!outbound.includes('demo@example.com'));
-  if (process.env.DMZ_SCREENSHOT) await page.screenshot({ path: process.env.DMZ_SCREENSHOT, fullPage: true });
-
-  await page.locator('#answer').fill(outbound);
-  await page.locator('#restore').click();
-  assert.equal(await page.locator('#restored').inputValue(), original);
-
-  await page.locator('.dictionary summary').click();
-  await page.locator('#tenant-terms').fill('Verkefni Gervi');
-  await page.locator('#save-terms').click();
-  await page.locator('#prompt').fill('Ræddu Verkefni Gervi.');
-  await page.locator('#mask').click();
-  const tenantMasked = await page.locator('#masked').inputValue();
-  assert.match(tenantMasked, /⟦TERM-[A-F0-9]{16}-\d+: XXXXX⟧/);
-  assert.ok(!tenantMasked.includes('Verkefni Gervi'));
-  await page.locator('#answer').fill(tenantMasked);
-  await page.locator('#restore').click();
-  assert.equal(await page.locator('#restored').inputValue(), 'Ræddu Verkefni Gervi.');
-
-  await page.locator('#prompt').fill('sk-test_key_000000000000');
-  await page.locator('#mask').click();
-  assert.equal(await page.locator('#masked').inputValue(), '');
-  assert.equal(await page.locator('#copy').isDisabled(), true);
-
-  await page.locator('#prompt').fill('Prófgata 99, 999 Reykjavík');
-  await page.locator('#mask').click();
-  assert.equal(await page.locator('#masked').inputValue(), '');
-  assert.equal(await page.locator('#copy').isDisabled(), true);
-
-  await page.locator('#prompt').fill('Guðrún Sigurðardóttir');
-  await page.locator('#mask').click();
-  assert.equal(await page.locator('#masked').inputValue(), '');
-  assert.equal(await page.locator('#copy').isDisabled(), true);
-
-  await page.locator('#prompt').fill('demo@exa\u200bmple.invalid');
-  await page.locator('#mask').click();
-  assert.equal(await page.locator('#masked').inputValue(), '');
-  assert.equal(await page.locator('#copy').isDisabled(), true);
-
-  await page.locator('#reset').click();
-  assert.equal(await page.locator('#prompt').inputValue(), '');
-  await page.locator('#prompt').fill('140182-8868');
-  await page.locator('#mask').click();
-  assert.notEqual(await page.locator('#masked').inputValue(), outbound);
-  await page.locator('#answer').fill(outbound);
-  await page.locator('#restore').click();
-  assert.equal(await page.locator('#restored').inputValue(), outbound, 'old markers restored in a new session');
+  await page.locator('#theme').selectOption('system');
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme });
+    assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme), colorScheme);
+  }
+  for (const site of ['chatgpt', 'claude']) {
+    const chat = await browser.newPage();
+    const host = site === 'chatgpt' ? 'chatgpt.com' : 'claude.ai';
+    const field = site === 'chatgpt' ? '<textarea id="prompt-textarea"></textarea>' : '<div class="ProseMirror" contenteditable="true"></div>';
+    await chat.route(`https://${host}/**`, route => route.fulfill({ contentType: 'text/html', body: `<!doctype html><html><body>${field}</body></html>` }));
+    await chat.goto(`https://${host}/`);
+    await chat.bringToFront();
+    const click = selector => page.locator(selector).evaluate(element => element.click());
+    for (let attempt = 0; attempt < 100; attempt++) {
+      await click('#refresh');
+      if (!(await page.locator('#reset').isDisabled())) break;
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    assert.match(await page.locator('#tab-status').textContent(), /Shield er tilbúinn/);
+    await click('#reset');
+    assert.equal(await page.locator('#confirmation').isVisible(), true);
+    await click('#cancel-reset');
+    assert.equal(await page.locator('#confirmation').isVisible(), false);
+    await click('#reset');
+    await click('#confirm-reset');
+    await page.waitForFunction(() => document.querySelector('#action-status').textContent.includes('hreinsuð'));
+    await click('#reset');
+    const other = await browser.newPage();
+    await other.goto('about:blank');
+    await other.bringToFront();
+    await page.waitForFunction(() => document.querySelector('#confirmation').hidden && document.querySelector('#reset').disabled);
+    await other.close();
+    await chat.close();
+  }
+  assert.deepEqual(errors, []);
   assert.ok(requests.every((url) => url.startsWith(`chrome-extension://${id}/`)), `Unexpected request: ${requests.join(', ')}`);
-  console.log('Chromium extension mask/block/restore smoke test passed');
+  assert.ok(!requests.some(url => url.endsWith('.wasm')), 'settings must not create a separate detector session');
+  console.log('Chromium settings theme, active-tab status, reset and tab-switch smoke test passed');
 } finally {
   if (browser) await browser.close();
   await rm(profile, { recursive: true, force: true });

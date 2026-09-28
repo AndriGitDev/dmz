@@ -239,6 +239,31 @@ export default defineContentScript({
 
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', queueResponseScan);
 
+    function resetSession(): boolean {
+      if (!ready) return false;
+      sessionEpoch++;
+      if (replayPermit) replayPermit.cancelled = true;
+      for (const entry of restoredMessages.values()) {
+        removeRestored(entry);
+      }
+      restoredMessages.clear();
+      try {
+        if (!(globalThis as unknown as Core).dmzReset?.()) throw new Error('Reset failed');
+        inform('Shield-lota hreinsuð. Eldri merkimiðar verða ekki endurheimtir.');
+        return true;
+      } catch { coreFailed(); return false; }
+    }
+
+    chrome.runtime.onMessage.addListener((request, sender, respond) => {
+      // Only the extension settings page may inspect status or reset this tab.
+      if (sender.id !== chrome.runtime.id || sender.url !== chrome.runtime.getURL('sidepanel.html')) return;
+      if (request?.type === 'dmz:settings-status') {
+        respond({ ready, composer: Boolean(composer()), site });
+      } else if (request?.type === 'dmz:settings-reset') {
+        respond({ ok: resetSession() });
+      }
+    });
+
     function inform(text: string, review = false) {
       message = text;
       if (!document.documentElement) return;
@@ -258,19 +283,7 @@ export default defineContentScript({
         resetButton.title = 'Eyðir tengitöflu og endurheimtum svörum í þessum flipa.';
         resetButton.style.cssText = 'margin-top:8px;padding:6px 10px;background:#27272a;color:#fff;border:1px solid #71717a;border-radius:4px;cursor:pointer';
         resetButton.disabled = !ready;
-        resetButton.addEventListener('click', () => {
-          if (!ready) return;
-          sessionEpoch++;
-          if (replayPermit) replayPermit.cancelled = true;
-          for (const entry of restoredMessages.values()) {
-            removeRestored(entry);
-          }
-          restoredMessages.clear();
-          try {
-            if (!(globalThis as unknown as Core).dmzReset?.()) throw new Error('Reset failed');
-            inform('Shield-lota hreinsuð. Eldri merkimiðar verða ekki endurheimtir.');
-          } catch { coreFailed(); }
-        });
+        resetButton.addEventListener('click', resetSession);
         reviewButton = document.createElement('button');
         reviewButton.type = 'button';
         reviewButton.setAttribute('data-dmz-review', 'true');

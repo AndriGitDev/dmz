@@ -1,0 +1,51 @@
+[
+  {
+    "id": "central-bank-2025",
+    "domain": "financial",
+    "url": "https://sedlabanki.is/library/?itemid=cbed3bdd-7a61-49d3-adf7-2ba9da78c852",
+    "publication_year": 2026,
+    "status": "candidate; human labels and source-use review pending"
+  },
+  {
+    "id": "regional-development-2025",
+    "domain": "financial",
+    "url": "https://www.byggdastofnun.is/static/files/Arsskyrslur/arsskyrsla_byggdast_2026-vef2.pdf",
+    "publication_year": 2026,
+    "status": "candidate; human labels and source-use review pending"
+  },
+  {
+    "id": "courts-2022",
+    "domain": "legal-administration",
+    "url": "https://www.domstolar.is/library/Files/Domstolar-arsskyrsla-2022.pdf",
+    "publication_year": 2023,
+    "status": "pilot only; older material; pretraining overlap not excluded; not a fresh legal holdout"
+  },
+  {
+    "id": "parliament-bill-156-85",
+    "domain": "legal-legislation",
+    "url": "https://www.althingi.is/altext/pdf/156/s/0085.pdf",
+    "publication_year": 2025,
+    "status": "candidate; human labels and source-use review pending"
+  },
+  {
+    "id": "parliament-submission-157-488",
+    "domain": "legal-submission",
+    "url": "https://www.althingi.is/altext/erindi/157/157-488.pdf",
+    "publication_year": 2025,
+    "status": "candidate; human labels and source-use review pending"
+  },
+  {
+    "id": "parliament-submission-157-516",
+    "domain": "financial-submission",
+    "url": "https://www.althingi.is/altext/erindi/157/157-516.pdf",
+    "publication_year": 2025,
+    "status": "candidate; human labels and source-use review pending"
+  },
+  {
+    "id": "public-legal-opinion-2025",
+    "domain": "legal-opinion",
+    "url": "https://landvernd.is/wp-content/uploads/2025/02/2502025-Logfraedialit-log-um-Hvammsvirkjun.pdf",
+    "publication_year": 2025,
+    "status": "candidate; human labels and source-use review pending"
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "scope": "Python CPU encoder + mean pooling + BIO head; excludes CRF, browser runtime and DOM; fabricated repeated text",
+  "platform": "Linux-6.8.0-142-generic-x86_64-with-glibc2.39",
+  "torch": "2.8.0+cpu",
+  "threads": 3,
+  "encoder_bytes": 651803232,
+  "encoder_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+  "encoder_parameters": 123851520,
+  "load_seconds": 8.155438043002505,
+  "peak_process_rss_kib": 676416,
+  "measurements": [
+    {
+      "words": 32,
+      "chunks": 1,
+      "first_seconds": 0.29832123799133115,
+      "warm_median_seconds": 0.1450587360013742,
+      "warm_max_seconds": 0.18800966299022548,
+      "repeats": 5
+    },
+    {
+      "words": 128,
+      "chunks": 1,
+      "first_seconds": 0.26508411098620854,
+      "warm_median_seconds": 0.259672830987256,
+      "warm_max_seconds": 0.3170168549986556,
+      "repeats": 5
+    },
+    {
+      "words": 512,
+      "chunks": 4,
+      "first_seconds": 1.0367068280174863,
+      "warm_median_seconds": 1.0128642959753051,
+      "warm_max_seconds": 1.1502471480052918,
+      "repeats": 5
+    }
+  ],
+  "browser_validated": false
+}
