@@ -65,3 +65,10 @@ is newer but small and authored by the same developer. A 95.5% claim requires a
 larger independently annotated, document-disjoint legal/financial evaluation,
 including negative documents and names absent from training. Report each dataset
 separately; do not pool easy structured identifiers with names to inflate scores.
+
+## Recorded experiment
+
+The [28 September report](../../docs/detector-contextual-2026-09-28.md) records
+both configurations and the development-selected threshold. Final reused MIM
+results are 95.26% precision / 84.70% recall; the synthetic domain probe gives
+96.88% / 83.78%. **Neither meets the dual 95.5% target.**
