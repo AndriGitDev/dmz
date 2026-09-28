@@ -9,6 +9,24 @@ from ner import external,rows,tokens_and_labels,spans
 from ensemble import merge
 
 
+def compression_changes(records, baseline, crf):
+    """Compare the same-runtime frozen reference at the unchanged thresholds."""
+    result=dict(changed_records=0,added_missed_spans=0,recovered_spans=0,
+                added_false_positives=0,removed_false_positives=0)
+    for output,reference,primary in zip(records,baseline,crf,strict=True):
+        if output['gold']!=reference['gold'] or output['gold']!=primary['gold']:
+            raise ValueError('browser reference annotation mismatch')
+        gold={tuple(span) for span in output['gold']}
+        current=merge(primary['predictions'],output['predictions'],.75,0)
+        frozen=merge(primary['predictions'],reference['predictions'],.75,0)
+        result['changed_records']+=current!=frozen
+        result['added_missed_spans']+=len((frozen-current)&gold)
+        result['recovered_spans']+=len((current-frozen)&gold)
+        result['added_false_positives']+=len((current-frozen)-gold)
+        result['removed_false_positives']+=len((frozen-current)-gold)
+    return result
+
+
 def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('mode',choices=['prepare','score'])
@@ -21,8 +39,11 @@ def main():
     p.add_argument('--model',default='int8',choices=['fp32','int8','int4'])
     p.add_argument('--selection',type=Path,default=Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json')
     p.add_argument('--neural-prefix',default='neural-epoch-12-predictions')
+    p.add_argument('--cache-output',type=Path,help='Private decoded browser spans for subsequent same-runtime comparison')
+    p.add_argument('--browser-reference',type=Path,help='Private FP32 browser span cache, not a native substitute')
     a=p.parse_args()
     if a.report and a.report.exists():raise ValueError('refusing to overwrite browser report')
+    if a.cache_output and external(a.cache_output).exists():raise ValueError('refusing to overwrite browser span cache')
     for key in ['assets','reference_dir','general_input','vectors']:
         setattr(a,key,external(getattr(a,key)))
     if a.mode=='prepare':
@@ -48,7 +69,14 @@ def main():
     assert predictions['vectors_sha256']==digest(a.vectors)
     selected=json.loads(a.selection.read_text())
     assert selected['thresholds']==dict(crf=.75,neural=0)
-    reports=[]
+    browser_reference=None
+    if a.browser_reference:
+        browser_reference=json.loads(external(a.browser_reference).read_text())
+        if browser_reference['model_sha256']!=digest(a.assets/'fp32.onnx'):
+            raise ValueError('browser reference is not this FP32 graph')
+        for key in ['runtime','browser','threads','batch_size']:
+            if browser_reference[key]!=predictions[key]:raise ValueError('browser runtime comparison mismatch')
+    reports=[];decoded_sets=[]
     for dataset,predicted in zip(vectors['sets'],predictions['sets'],strict=True):
         name=dataset['name'];assert name==predicted['name']
         tag='dev' if name=='general' else 'domain'
@@ -74,8 +102,22 @@ def main():
             changed_frozen+=merged!=baseline
             changed_native+=merged!=merge(crf['records'][i]['predictions'],native['records'][i]['predictions'],.75,0)
         reports.append(dict(name=name,input_sha256=dataset['input_sha256'],rows=len(records),browser_replay_seconds=predicted['seconds'],neural=score(records),combined=score(records,crf['records']),changed_combined_from_frozen=changed_frozen,changed_combined_from_native_batch1=changed_native,versus_frozen=dict(added_missed_spans=added_misses,recovered_spans=recovered,added_false_positives=added_false_positives,removed_false_positives=removed_false_positives)))
+        decoded_sets.append(dict(name=name,input_sha256=dataset['input_sha256'],records=records))
+        if browser_reference:
+            matching=[s for s in browser_reference['sets'] if s['name']==name]
+            if len(matching)!=1 or matching[0]['input_sha256']!=dataset['input_sha256']:
+                raise ValueError('browser reference input mismatch')
+            reference_records=matching[0]['records']
+            reports[-1]['versus_fp32_browser']=compression_changes(records,reference_records,crf['records'])
+            reports[-1]['fp32_browser_combined']=score(reference_records,crf['records'])
     report={k:v for k,v in predictions.items() if k!='sets'}
     report.update(scope='Full fixed development replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end Shield',independent_validation=False,sets=reports)
+    if a.browser_reference:report['fp32_browser_reference_sha256']=digest(a.browser_reference)
+    if a.cache_output:
+        with external(a.cache_output).open('x') as f:
+            json.dump(dict(model_sha256=predictions['model_sha256'],predictions_sha256=digest(a.predictions),
+                runtime=predictions['runtime'],browser=predictions['browser'],threads=predictions['threads'],
+                batch_size=predictions['batch_size'],sets=decoded_sets),f)
     a.report.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
 
 if __name__=='__main__':main()

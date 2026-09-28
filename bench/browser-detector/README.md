@@ -121,3 +121,10 @@ for `corpus.mjs`; it defaults to the historical int8 replay. `fixtures.py --mode
 selects graphs for fabricated runtime measurements, and `DMZ_MULTI_MODEL` selects
 the graph used in the three-tab run. Use new output paths, and perform timing and
 memory measurements after training has stopped.
+
+Score FP32 Chromium replay with `--cache-output /outside/fp32-browser-spans.json`.
+Pass that file as `--browser-reference` when scoring each compressed Chromium run.
+This reports both native-reference differences and compression changes relative
+to FP32 in the **same browser/runtime/thread/batch configuration**, including added
+misses, recoveries and false-positive changes. A native reference is not a
+substitute for this same-runtime comparison. The decoded span cache is private.
