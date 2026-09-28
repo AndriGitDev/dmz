@@ -1,0 +1,38 @@
+{
+  "corpus": "bench/corpus/challenge-v0.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 18,
+  "allowed_prompts": 13,
+  "blocked_prompts": 5,
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "address": {
+      "masked": 0,
+      "blocked": 2,
+      "exposed": 2
+    },
+    "email": {
+      "masked": 1,
+      "blocked": 0,
+      "exposed": 1
+    },
+    "name_demo": {
+      "masked": 1,
+      "blocked": 2,
+      "exposed": 2
+    },
+    "phone": {
+      "masked": 1,
+      "blocked": 0,
+      "exposed": 1
+    },
+    "secret": {
+      "masked": 0,
+      "blocked": 1,
+      "exposed": 2
+    }
+  }
+}

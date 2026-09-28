@@ -1,28 +1,28 @@
 # Product and architecture specification, working v0.1
 
-Source: 27 September 2026 business plan. Planned behaviour is marked here as requirements, not shipped functionality. The current repository is a scaffold.
+Source: 27 September 2026 business plan, with prototype decisions recorded in ADR 0002 and 0003. Planned behaviour is marked as a requirement; Shield's manual side panel and a small Go/WASM detector are now implemented.
 
 ## Principles
 
 1. A single Go detector core serves server paths and compiles with TinyGo to WASM for Shield. Spike TinyGo in week 1. If infeasible, a TypeScript port must pass the same conformance corpus.
-2. Direct identifiers and the per-session re-identification map remain on the user's device (Shield) or Icelandic RunAtlas infrastructure (Portal/Gateway). Model providers receive stand-ins.
+2. Direct identifiers and the per-session re-identification map remain on the user's device (Shield) or Icelandic RunAtlas infrastructure (Portal/Gateway). Model providers receive visible masks, such as `⟦KT-<session>-1: XXXXX-XXXX⟧`.
 3. Pseudonymisation does not guarantee anonymity; quasi-identifiers and detection misses remain risks.
 4. Prompt and response bodies must never be written to gateway disk, logs, traces or audit records. Metadata-only audit: user, time, detected entity types, route and model.
-5. Tenant policy determines `swap`, `warn` or `block` for each entity type. Uncertain Shield matches ask the user or block per policy. Uploads are blocked in phase 1.
+5. Tenant policy will determine `mask`, `warn` or `block` for each entity type. The current prototype masks date-shaped uncertain kennitölur, blocks other uncertain matches and secrets, and offers no automatic upload interception.
 
 ## Surfaces and data flow
 
 ```mermaid
 flowchart LR
   subgraph Icelandic device
-    B[Browser / Shield] --> D1[WASM detect + swap]
+    B[Browser / Shield] --> D1[WASM detect + mask]
     D1 <--> V1[Device session map]
   end
   D1 --> C[ChatGPT / Claude / Gemini web]
   C --> D1
   P[Portal user] --> G[dmz core on RunAtlas, Iceland]
   A[Agent or app] --> G
-  G --> D2[Detect + swap + route]
+  G --> D2[Detect + mask + route]
   D2 <--> V2[Encrypted tenant/session vault]
   D2 --> M[Local model / Bedrock EU / approved API]
   M --> D2
@@ -35,8 +35,8 @@ Shield never sends real prompt contents or its map to dmz servers. Portal and Ga
 
 | Entity | Initial rule | Acceptance concern |
 | --- | --- | --- |
-| Personal/legal kennitala | `DDMMYY-NNCM`, optional hyphen; weights 3,2,7,6,5,4,3,2 on first eight digits; check digit `11 - sum % 11`, with 11→0 and 10 invalid; legal day +40 | Validate actual date and century digit; synthetic tests use century digit 8 |
-| Icelandic names | Mannanafnaskrá given names plus patronymics ending `-son`, `-dóttir`, `-bur`; BÍN case forms | Same-gender, same-case surrogate; licensed data cannot be committed yet |
+| Personal/legal kennitala | `DDMMYY-NNCM`, optional hyphen; date, century and legacy mod-11 check; legal day +40 | Newer kennitölur may lack a calculated check digit, so plausible shape is uncertain and still masked; synthetic tests use century digit 8 |
+| Icelandic names | Mannanafnaskrá given names plus patronymics ending `-son`, `-dóttir`, `-bur`; BÍN case forms | Visible masks for each detected case form; licensed data cannot be committed yet |
 | IS IBAN | `IS` + two check digits + 22 digits, mod-97 | 26 characters total |
 | Payment card | 13–19 digits, Luhn | Avoid false positives on long IDs |
 | Icelandic phone | optional `+354`, then seven digits | Local number ambiguity |
@@ -45,14 +45,18 @@ Shield never sends real prompt contents or its map to dmz servers. Portal and Ga
 | Secrets | Provider key prefixes, JWT, PEM, connection strings, high-entropy tokens | Gateway also flags log lines |
 | Tenant dictionary | Client names, case numbers, project codenames | Per-tenant isolation and case handling |
 
-Detector policy defaults currently live in [`packages/policy/default.json`](../packages/policy/default.json). They implement the plan's `swap` default, but a pilot may choose `block` for secrets and other high-risk entities.
+The planned policy schema lives in [`packages/policy/default.json`](../packages/policy/default.json); it has not been wired into the Shield prototype yet. The prototype uses the fixed behaviour in ADR 0002 and 0003. A tenant policy UI and enforcement still need to be built before a pilot.
+
+Current implementation includes a device-local, exact, case-sensitive dictionary of up to 32 user-entered terms. It is cleared on reset and does not provide the planned tenant-admin workflow, inflection or per-tenant distribution. Selected API-key, JWT, bearer-token, PEM-header and database-URL patterns block the entire prompt. General high-entropy-token and log-line detection remain unimplemented.
+Four hand-authored full-name forms are masked. Other two-token names with an Icelandic patronymic shape and diacritics are marked uncertain and block the prompt; this heuristic is not a general Icelandic-name recognizer and can block benign text.
+A narrow street-suffix/house-number/postcode/city pattern is also marked uncertain and blocks. It has no licensed street gazetteer, misses other address formats and can block benign text. It must not be marketed as broad address coverage.
 
 ## Surrogate and vault requirements
 
-- A name becomes another name of the same gender in the same grammatical case, consistently within a session. Every mapped case form rehydrates correctly.
-- Each tenant/session map links real value and stand-in. Envelope encryption uses a tenant key via OpenBao Transit. Customer-managed keys are a later option.
+- Every detected value becomes a visible, typed marker, consistently within a session. Name case forms need complete coverage and mapping before launch; the prototype recognizes only four hand-authored full-name forms.
+- Each tenant/session map links real value and visible marker. Envelope encryption uses a tenant key via OpenBao Transit. Customer-managed keys are a later option.
 - Entries expire at session end or within 24 hours; the exact rule must be policy-controlled and documented. No prompt or response body persistence.
-- Streaming rehydration needs a bounded buffer that handles token boundaries, overlapping stand-ins and partial outputs without emitting a wrong real value.
+- A prototype streaming restorer now buffers partial visible markers across arbitrary chunk boundaries in the Go core. It has no Gateway integration yet. The production path still needs bounded-memory review, adversarial output tests and stream cancellation handling.
 - Tests must cover cross-tenant leakage, same-session consistency, Unicode normalization, inflection, broken streams and vault expiry.
 
 ## Routing requirements
@@ -84,6 +88,8 @@ Gateway should expose OpenAI- and Anthropic-compatible endpoints for OpenCode, C
 ## Benchmarks and release gates
 
 Corpus: synthetic Icelandic examples only, including generated 1800s kennitölur (century digit 8). Compare default Presidio, regex-only, and dmz. Publish precision and recall per entity type and per release. A release must not lower recall for any entity type on the benchmark. Gate 2 targets **99% recall for kennitölur** and **95% for names** on the public benchmark; these are targets, not current results.
+
+The initial 42-case corpus was selected around prototype rules and cannot establish field performance. A separate 18-case challenge corpus was written without retuning the detector. It contains eight annotated direct identifiers that remain in allowed outbound text. The current extension is a manual demo and must not be used for sensitive data. Review these misses before any deployment gate.
 
 CI should include detector conformance tests (Go and WASM), benchmark no-regression gate, lint that rejects logging request/response bodies, secret scanning, SBOM per build, and signed reproducible Shield packages. Fetch licensed lexicon data during build only after licence approval; never commit it.
 

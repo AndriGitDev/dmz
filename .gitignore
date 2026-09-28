@@ -6,6 +6,9 @@ dist/
 build/
 coverage/
 *.wasm
+apps/shield/public/wasm_exec.js
 *.pem
 *.key
 *.db
+.wxt/
+.output/

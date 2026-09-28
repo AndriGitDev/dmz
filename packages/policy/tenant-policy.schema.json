@@ -26,5 +26,5 @@
     "uploads": { "const": "block" },
     "uncertain": { "enum": ["ask", "block"] }
   },
-  "$defs": { "action": { "enum": ["swap", "warn", "block"] } }
+  "$defs": { "action": { "enum": ["mask", "warn", "block"] } }
 }
