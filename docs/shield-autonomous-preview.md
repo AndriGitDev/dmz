@@ -17,6 +17,8 @@ To build locally:
 
 Each tab has an in-memory Go/WASM session map. Closing or reloading the tab loses its map; old markers cannot be restored. The manual side panel has a separate map and dictionary. The extension does not send identifiers or maps to dmz servers.
 
+The floating Shield status panel includes **Hreinsa Shield-lotu** (clear Shield session). It clears this tab's mapping and restored copies and cancels a send still waiting for replay. Old markers in the conversation cannot be restored after reset; a new prompt starts a fresh mapping. Restored copies are also removed when their source reply disappears or stops being an assistant reply.
+
 ## Current coverage and limits
 
 - Content scripts run only on `https://chatgpt.com/*` and `https://claude.ai/*`. The preview gates recognized text composers on submit, Enter and recognized send-button clicks. It blocks ordinary file-picker, drag/drop and file-paste events on those pages. A website layout or event-handler change can bypass these hooks. Other send paths, mobile apps, voice and images outside those file events are not protected.

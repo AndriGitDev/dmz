@@ -82,6 +82,8 @@ try {
   const cdp = await browser.newCDPSession(page);
   const tree = await cdp.send('Accessibility.getFullAXTree');
   assert.ok(tree.nodes.some(node => node.name?.value?.includes('140182-8858')), 'restored value absent from local overlay');
+  await page.locator('[data-message-author-role="assistant"]').first().evaluate(element => element.remove());
+  await page.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
 
   await page.locator('#prompt-textarea').fill('sk-test_key_000000000000');
   await page.locator('[data-testid="send-button"]').click();
@@ -129,6 +131,29 @@ try {
   await claude.locator('[data-dmz-restored="true"]').waitFor();
   const claudeTree = await (await browser.newCDPSession(claude)).send('Accessibility.getFullAXTree');
   assert.ok(claudeTree.nodes.some(node => node.name?.value?.includes('demo@example.com')), 'Claude restored value absent from local overlay');
+  const oldMarker = await claude.evaluate(() => window.sent[0]);
+  // DevTools can inspect closed roots for verification; the page itself cannot.
+  const claudeCdp = await browser.newCDPSession(claude);
+  const { root: dom } = await claudeCdp.send('DOM.getDocument', { depth: -1, pierce: true });
+  function findReset(node) {
+    if (node.attributes?.includes('data-dmz-reset')) return node;
+    for (const child of [...(node.children ?? []), ...(node.shadowRoots ?? [])]) {
+      const found = findReset(child);
+      if (found) return found;
+    }
+  }
+  const control = findReset(dom);
+  assert.ok(control, 'tab reset control missing');
+  const { object } = await claudeCdp.send('DOM.resolveNode', { backendNodeId: control.backendNodeId });
+  await claudeCdp.send('Runtime.callFunctionOn', { objectId: object.objectId, functionDeclaration: 'function() { this.click(); }' });
+  await claudeCdp.send('Runtime.releaseObject', { objectId: object.objectId });
+  await claude.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
+  await claude.locator('[contenteditable]').fill('demo@example.com');
+  await claude.locator('button[aria-label="Send message"]').click();
+  await claude.waitForFunction(() => window.sent.length === 2);
+  assert.notEqual(await claude.evaluate(() => window.sent[1]), oldMarker, 'reset reused the old session namespace');
+  await claude.locator('[data-dmz-restored="true"]').waitFor();
+  assert.equal(await claude.locator('[data-dmz-restored="true"]').count(), 1, 'old reply restored after reset');
   assert.deepEqual(errors, []);
   console.log('ChatGPT and Claude synthetic interception, block and restore smoke tests passed');
 } finally {

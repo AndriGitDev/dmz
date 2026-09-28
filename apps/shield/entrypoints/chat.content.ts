@@ -6,6 +6,7 @@ type Core = {
   Go: new () => { importObject: WebAssembly.Imports; run(instance: WebAssembly.Instance): Promise<void> };
   dmzProcess?: (input: string) => string;
   dmzRestore?: (input: string) => string;
+  dmzReset?: () => boolean;
 };
 
 const site = location.hostname === 'chatgpt.com' ? 'chatgpt' : 'claude';
@@ -31,13 +32,22 @@ export default defineContentScript({
     } | undefined;
     let message = 'Shield hleður staðbundnum kjarna…';
     let toast: HTMLElement | undefined;
+    let resetButton: HTMLButtonElement | undefined;
+    let sessionEpoch = 0;
     let composerAvailable: boolean | undefined;
-    const restoredMessages = new WeakMap<Element, { host: HTMLElement; output: HTMLElement; source: string }>();
+    const restoredMessages = new Map<Element, { host: HTMLElement; output: HTMLElement; source: string }>();
     let scanQueued = false;
 
     function scanResponses() {
       scanQueued = false;
       if (!ready) return;
+      for (const [response, entry] of restoredMessages) {
+        if (!response.isConnected || !response.matches(assistantMessages)) {
+          entry.output.textContent = '';
+          entry.host.remove();
+          restoredMessages.delete(response);
+        }
+      }
       const available = composer() !== null;
       if (composerAvailable !== available) {
         composerAvailable = available;
@@ -48,12 +58,16 @@ export default defineContentScript({
         const source = response.textContent ?? '';
         const existing = restoredMessages.get(response);
         if (!source.includes('⟦')) {
+          if (existing) existing.output.textContent = '';
           existing?.host.remove();
+          restoredMessages.delete(response);
           continue;
         }
         const restored = core.dmzRestore?.(source);
         if (!restored || restored === source) {
+          if (existing) existing.output.textContent = '';
           existing?.host.remove();
+          restoredMessages.delete(response);
           continue;
         }
         let entry = existing;
@@ -92,13 +106,37 @@ export default defineContentScript({
         host.id = 'dmz-shield-status';
         host.style.cssText = 'position:fixed;z-index:2147483647;right:16px;bottom:16px';
         const root = host.attachShadow({ mode: 'closed' });
+        const panel = document.createElement('div');
+        panel.style.cssText = 'max-width:360px;padding:12px 16px;border:1px solid #ef4444;border-radius:8px;background:#18181b;color:#fff;font:14px/1.4 system-ui;box-shadow:0 4px 18px #0008';
         toast = document.createElement('div');
         toast.setAttribute('role', 'status');
-        toast.style.cssText = 'max-width:360px;padding:12px 16px;border:1px solid #ef4444;border-radius:8px;background:#18181b;color:#fff;font:14px/1.4 system-ui;box-shadow:0 4px 18px #0008';
-        root.append(toast);
+        resetButton = document.createElement('button');
+        resetButton.type = 'button';
+        resetButton.setAttribute('data-dmz-reset', 'true');
+        resetButton.textContent = 'Hreinsa Shield-lotu';
+        resetButton.title = 'Eyðir tengitöflu og endurheimtum svörum í þessum flipa.';
+        resetButton.style.cssText = 'margin-top:8px;padding:6px 10px;background:#27272a;color:#fff;border:1px solid #71717a;border-radius:4px;cursor:pointer';
+        resetButton.disabled = !ready;
+        resetButton.addEventListener('click', () => {
+          if (!ready) return;
+          sessionEpoch++;
+          if (replayPermit) replayPermit.cancelled = true;
+          for (const entry of restoredMessages.values()) {
+            entry.output.textContent = '';
+            entry.host.remove();
+          }
+          restoredMessages.clear();
+          try {
+            if (!(globalThis as unknown as Core).dmzReset?.()) throw new Error('Reset failed');
+            inform('Shield-lota hreinsuð. Eldri merkimiðar verða ekki endurheimtir.');
+          } catch { coreFailed(); }
+        });
+        panel.append(toast, resetButton);
+        root.append(panel);
         document.documentElement.append(host);
       }
       toast.textContent = text;
+      if (resetButton) resetButton.disabled = !ready;
     }
 
     function composer(): HTMLElement | null {
@@ -170,6 +208,7 @@ export default defineContentScript({
       processing = true;
       try {
         const url = location.href;
+        const epoch = sessionEpoch;
         const input = read(field);
         const core = globalThis as unknown as Core;
         const result = JSON.parse(core.dmzProcess!(input)) as Result;
@@ -182,7 +221,7 @@ export default defineContentScript({
           return;
         }
         await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
-        if (!field.isConnected || !action.isConnected || composer() !== field
+        if (sessionEpoch !== epoch || !field.isConnected || !action.isConnected || composer() !== field
           || location.href !== url || read(field) !== result.transformed) {
           inform('Textareitur breyttist eftir möskun. Sending stöðvuð.');
           return;
@@ -270,6 +309,7 @@ export default defineContentScript({
     const core = globalThis as unknown as Core;
     function coreFailed() {
       ready = false;
+      if (resetButton) resetButton.disabled = true;
       inform('Shield-kjarni bilaður. Sending stöðvuð.');
     }
     void (async () => {
