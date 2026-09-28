@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "training_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "model_sha256": "c5ca4e01136fa9a450eb3ac22f287dcac5993892f2edef2bc4cc2aa59e9219b0",
+  "label_mode": "entities",
+  "feature_version": 1,
+  "training_sentences": 46196,
+  "iterations": 100,
+  "c1": 0.1,
+  "c2": 0.1,
+  "seconds": 339.9,
+  "bytes": 5521552,
+  "features": "word/shape/affixes/patronymic; +/-2 token context; BIO Person; v2 adds neighbor affixes and pairs",
+  "runtime": "python-crfsuite 0.9.12; experimental offline baseline, not Shield"
+}

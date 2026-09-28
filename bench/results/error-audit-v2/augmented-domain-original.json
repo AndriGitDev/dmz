@@ -1,0 +1,19 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "model_sha256": "2cf5fb6562c0c7199686d1fccd471be673bca7dc99533a8d4e66efcfef9bfb43",
+  "split": "dev",
+  "sentences": 256,
+  "text_mode": "original",
+  "seconds": 0.584,
+  "scores": {
+    "0.65": {
+      "tp": 400,
+      "fp": 1,
+      "fn": 80,
+      "precision": 0.9975062344139651,
+      "recall": 0.8333333333333334,
+      "target_met": false
+    }
+  },
+  "method": "exact UTF-8 Person spans; confidence=min BIO token marginal; offline CRF only, not full Shield pipeline"
+}

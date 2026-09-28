@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "purpose": "Unreviewed synthetic training/development supplement, not independent validation",
+  "splits": {
+    "train": {
+      "documents": 864,
+      "person_spans": 1728,
+      "negative_documents": 192,
+      "sha256": "43584090983053621d5bd97c70379c2937ffc3b52d76015e68fa11894b42d53e",
+      "families": [
+        "audit",
+        "board",
+        "claim",
+        "employment",
+        "english_contract",
+        "english_finance",
+        "estate",
+        "invoice",
+        "lease",
+        "loan",
+        "negative_accounting",
+        "negative_legal",
+        "payroll",
+        "power",
+        "settlement",
+        "witness"
+      ]
+    },
+    "dev": {
+      "documents": 256,
+      "person_spans": 480,
+      "negative_documents": 64,
+      "sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+      "families": [
+        "appeal",
+        "beneficiary",
+        "compliance",
+        "english_estate",
+        "insurance",
+        "negative_budget",
+        "negative_policy",
+        "procurement"
+      ]
+    }
+  }
+}

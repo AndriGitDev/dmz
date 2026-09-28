@@ -1,0 +1,7 @@
+{
+  "batch": 16,
+  "tokens": 16,
+  "seconds_per_batch": 0.4594473513328315,
+  "hidden_size": 768,
+  "parameters": 123851520
+}

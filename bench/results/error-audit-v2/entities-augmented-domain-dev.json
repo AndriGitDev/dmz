@@ -1,0 +1,83 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "model_sha256": "c5ca4e01136fa9a450eb3ac22f287dcac5993892f2edef2bc4cc2aa59e9219b0",
+  "split": "dev",
+  "sentences": 256,
+  "text_mode": "canonical",
+  "seconds": 0.624,
+  "scores": {
+    "0.0": {
+      "tp": 422,
+      "fp": 1,
+      "fn": 58,
+      "precision": 0.9976359338061466,
+      "recall": 0.8791666666666667,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 417,
+      "fp": 1,
+      "fn": 63,
+      "precision": 0.9976076555023924,
+      "recall": 0.86875,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 402,
+      "fp": 0,
+      "fn": 78,
+      "precision": 1.0,
+      "recall": 0.8375,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 402,
+      "fp": 0,
+      "fn": 78,
+      "precision": 1.0,
+      "recall": 0.8375,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 395,
+      "fp": 0,
+      "fn": 85,
+      "precision": 1.0,
+      "recall": 0.8229166666666666,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 390,
+      "fp": 0,
+      "fn": 90,
+      "precision": 1.0,
+      "recall": 0.8125,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 385,
+      "fp": 0,
+      "fn": 95,
+      "precision": 1.0,
+      "recall": 0.8020833333333334,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 353,
+      "fp": 0,
+      "fn": 127,
+      "precision": 1.0,
+      "recall": 0.7354166666666667,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 325,
+      "fp": 0,
+      "fn": 155,
+      "precision": 1.0,
+      "recall": 0.6770833333333334,
+      "target_met": false
+    }
+  },
+  "method": "exact UTF-8 Person spans; confidence=min BIO token marginal; offline CRF only, not full Shield pipeline"
+}

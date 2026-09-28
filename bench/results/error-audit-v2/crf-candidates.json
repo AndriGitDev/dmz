@@ -1,0 +1,22 @@
+[
+  {
+    "name": "baseline",
+    "general": "../contextual-v1/dev-feature-v1.json",
+    "domain": "baseline-domain-dev.json"
+  },
+  {
+    "name": "entities",
+    "general": "entities-dev.json",
+    "domain": "entities-domain-dev.json"
+  },
+  {
+    "name": "augmented",
+    "general": "augmented-dev.json",
+    "domain": "augmented-domain-dev.json"
+  },
+  {
+    "name": "entities-augmented",
+    "general": "entities-augmented-dev.json",
+    "domain": "entities-augmented-domain-dev.json"
+  }
+]

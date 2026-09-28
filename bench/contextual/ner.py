@@ -7,8 +7,10 @@ import math
 from pathlib import Path
 import re
 import time
+import sys
 
 REPO = Path(__file__).resolve().parents[2]
+ENTITY_KINDS = {'Person', 'Organization', 'Location', 'Miscellaneous'}
 PATRONYMIC = re.compile(r'(sonar|syni|son|dóttir|dóttur|burs|bur)$')
 
 
@@ -28,30 +30,43 @@ def rows(path, split):
             yield row
 
 
-def tokens_and_labels(row):
-    text = row['text']
-    tokens, offsets = [], []
-    cursor = 0
-    for token in text.split(' '):
-        if not token:
-            raise ValueError('expected canonical token-spaced text')
-        end = cursor + len(token.encode('utf-8'))
-        tokens.append(token)
-        offsets.append((cursor, end))
-        cursor = end + 1
+def tokens_and_labels(row, label_mode="person", text_mode="canonical"):
+    if label_mode not in ("person", "entities"):
+        raise ValueError("unsupported label mode")
+    if text_mode == 'canonical':
+        text, entities = row['text'], row['entities']
+        tokens, offsets = [], []
+        cursor = 0
+        for token in text.split(' '):
+            if not token:
+                raise ValueError('expected canonical token-spaced text')
+            end = cursor + len(token.encode('utf-8'))
+            tokens.append(token); offsets.append((cursor, end)); cursor = end + 1
+    elif text_mode == 'original':
+        text, entities = row['original_text'], row['original_entities']
+        tokens, offsets = [], []
+        byte_positions = [0]
+        for char in text: byte_positions.append(byte_positions[-1] + len(char.encode('utf-8')))
+        for match in re.finditer(r"\w+(?:[-’']\w+)*|[^\w\s]", text):
+            tokens.append(match[0]); offsets.append((byte_positions[match.start()], byte_positions[match.end()]))
+    else:
+        raise ValueError('unsupported text mode')
+    if not tokens:
+        raise ValueError('no tokens')
     labels = ['O'] * len(tokens)
     starts = {a: i for i, (a, _) in enumerate(offsets)}
     ends = {b: i for i, (_, b) in enumerate(offsets)}
-    for entity in row['entities']:
+    for entity in entities:
         a, b = entity['start'], entity['end']
         if a not in starts or b not in ends or a >= b:
             raise ValueError('entity does not align with UTF-8 token boundaries')
-        if entity['kind'] != 'Person':
+        if entity['kind'] not in (ENTITY_KINDS if label_mode == 'entities' else {'Person'}):
             continue
         i, j = starts[a], ends[b]
         if any(label != 'O' for label in labels[i:j+1]):
-            raise ValueError('overlapping Person annotations')
-        labels[i:j+1] = ['B'] + ['I'] * (j-i)
+            raise ValueError('overlapping entity annotations')
+        suffix = '-' + entity['kind'] if label_mode == 'entities' else ''
+        labels[i:j+1] = ['B'+suffix] + ['I'+suffix] * (j-i)
     return tokens, offsets, labels
 
 
@@ -95,6 +110,11 @@ def spans(labels, offsets):
     found = []
     start = None
     for i, label in enumerate(labels):
+        if '-' in label:
+            prefix, kind = label.split('-', 1)
+            if prefix not in ('B','I') or kind not in ENTITY_KINDS:
+                raise ValueError('unknown entity label')
+            label = prefix if kind == 'Person' else 'O'
         if label not in ('B', 'I', 'O'):
             raise ValueError('unknown label')
         if start is not None and label != 'I':
@@ -111,15 +131,22 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def train(source, model, iterations, c1, c2, version=1):
+def train(source, model, iterations, c1, c2, version=1, label_mode="person", progress=False):
     import pycrfsuite
     external(model)
     if model.exists() or model.with_suffix('.metadata.json').exists():
         raise ValueError('refusing to overwrite an existing model')
-    trainer = pycrfsuite.Trainer(verbose=False)
+    class ProgressTrainer(pycrfsuite.Trainer):
+        def message(self, message):
+            event = self.logparser.feed(message)
+            if progress and event == 'iteration':
+                iteration = self.logparser.last_iteration['num']
+                if iteration == 1 or iteration % 10 == 0:
+                    print(json.dumps(dict(event='iteration', iteration=iteration)), file=sys.stderr, flush=True)
+    trainer = ProgressTrainer(verbose=False)
     count = 0
     for row in rows(source, 'train'):
-        tokens, _, labels = tokens_and_labels(row)
+        tokens, _, labels = tokens_and_labels(row, label_mode)
         trainer.append(features(tokens, version), labels)
         count += 1
     if count == 0:
@@ -129,7 +156,7 @@ def train(source, model, iterations, c1, c2, version=1):
     started = time.monotonic()
     trainer.train(str(model))
     metadata = dict(schema=1, training_sha256=sha(source), model_sha256=sha(model),
-                    feature_version=version, training_sentences=count, iterations=iterations, c1=c1, c2=c2,
+                    label_mode=label_mode, feature_version=version, training_sentences=count, iterations=iterations, c1=c1, c2=c2,
                     seconds=round(time.monotonic()-started, 3), bytes=model.stat().st_size,
                     features='word/shape/affixes/patronymic; +/-2 token context; BIO Person; v2 adds neighbor affixes and pairs',
                     runtime='python-crfsuite 0.9.12; experimental offline baseline, not Shield')
@@ -137,7 +164,7 @@ def train(source, model, iterations, c1, c2, version=1):
     return metadata
 
 
-def evaluate(source, model, split, thresholds):
+def evaluate(source, model, split, thresholds, text_mode="canonical"):
     import pycrfsuite
     tagger = pycrfsuite.Tagger()
     tagger.open(str(external(model)))
@@ -149,7 +176,7 @@ def evaluate(source, model, split, thresholds):
     count = 0
     started = time.monotonic()
     for row in rows(source, split):
-        tokens, offsets, gold_labels = tokens_and_labels(row)
+        tokens, offsets, gold_labels = tokens_and_labels(row, text_mode=text_mode)
         gold = {(a,b) for a,b,_,_ in spans(gold_labels, offsets)}
         predicted = tagger.tag(features(tokens, version))
         candidates = [(a,b,min(tagger.marginal(predicted[k],k) for k in range(i,j))) for a,b,i,j in spans(predicted, offsets)]
@@ -165,7 +192,7 @@ def evaluate(source, model, split, thresholds):
         score['precision'] = score['tp'] / max(1,score['tp']+score['fp'])
         score['recall'] = score['tp'] / max(1,score['tp']+score['fn'])
         score['target_met'] = score['precision'] >= .955 and score['recall'] >= .955
-    return dict(input_sha256=sha(source),model_sha256=sha(model),split=split,sentences=count,
+    return dict(input_sha256=sha(source),model_sha256=sha(model),split=split,sentences=count,text_mode=text_mode,
                 seconds=round(time.monotonic()-started,3),scores=scores,
                 method='exact UTF-8 Person spans; confidence=min BIO token marginal; offline CRF only, not full Shield pipeline')
 
@@ -176,6 +203,8 @@ def main():
     t = sub.add_parser('train')
     t.add_argument('--input',type=Path,required=True)
     t.add_argument('--model',type=Path,required=True)
+    t.add_argument('--label-mode',choices=['person','entities'],default='person')
+    t.add_argument('--progress',action='store_true')
     t.add_argument('--feature-version',type=int,choices=[1,2],default=1)
     t.add_argument('--iterations',type=int,default=100)
     t.add_argument('--c1',type=float,default=.1)
@@ -184,14 +213,15 @@ def main():
     e.add_argument('--input',type=Path,required=True)
     e.add_argument('--model',type=Path,required=True)
     e.add_argument('--split',choices=['dev','test'],default='dev')
+    e.add_argument('--text-mode',choices=['canonical','original'],default='canonical')
     e.add_argument('--thresholds',type=float,nargs='+',default=[0,.5,.8,.9,.95])
     args = parser.parse_args()
     if args.command == 'train':
         if args.iterations < 1 or not all(math.isfinite(v) and v >= 0 for v in (args.c1, args.c2)): parser.error('invalid training parameters')
-        result = train(args.input,args.model,args.iterations,args.c1,args.c2,args.feature_version)
+        result = train(args.input,args.model,args.iterations,args.c1,args.c2,args.feature_version,args.label_mode,args.progress)
     else:
         if any(not math.isfinite(t) or t<0 or t>1 for t in args.thresholds): parser.error('invalid threshold')
-        result = evaluate(args.input,args.model,args.split,args.thresholds)
+        result = evaluate(args.input,args.model,args.split,args.thresholds,args.text_mode)
     print(json.dumps(result,indent=2))
 
 

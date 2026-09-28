@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    {
+      "sha256": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+      "rows": 45332
+    },
+    {
+      "sha256": "43584090983053621d5bd97c70379c2937ffc3b52d76015e68fa11894b42d53e",
+      "rows": 864
+    }
+  ],
+  "output_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "method": "Concatenate original train and synthetic train once; no dev/test rows"
+}
