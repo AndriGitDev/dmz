@@ -9,6 +9,8 @@ go run ./bench/scorers
 go run ./bench/scorers -baseline bench/results/v0.json
 go run ./bench/scorers -detector regex
 go run ./bench/scorers -mode exposure
+go run ./bench/scorers -corpus bench/corpus/challenge-v0.jsonl
+go run ./bench/scorers -corpus bench/corpus/challenge-v0.jsonl -mode exposure
 python3 -m venv /tmp/dmz-presidio
 /tmp/dmz-presidio/bin/pip install -r bench/baselines/requirements.txt
 /tmp/dmz-presidio/bin/python bench/baselines/presidio.py
@@ -17,6 +19,8 @@ python3 -m venv /tmp/dmz-presidio
 The baseline option fails if recall falls below the published result for any type. CI also compares generated JSON against the committed result, requiring an intentional results update when code or corpus changes.
 
 `results/exposure-v0.json` answers a different question: with the prototype's fixed mask/block policy and one configured synthetic tenant term, how many annotated direct-identifier literals remain in **allowed outbound text**? Each annotation is counted as masked, blocked with its whole prompt, or exposed. On this selected corpus, no annotated literal remains in allowed text: two unfamiliar patronymic-shaped names and one address shape stop their prompts for review, with ten prompts blocked in total. This is **not a zero-leak finding**: the corpus is small, selected, and omits quasi-identifiers and many direct-identifier forms. The simulation calls no model and sends no prompt over the network.
+
+`corpus/challenge-v0.jsonl` is a separate 18-case synthetic challenge set, deliberately written after the first detector rules and **not used to tune them**. It includes alternate name and address forms, token prefix families, an internationalised email and a phone prefix variant. The exact-span results in `results/challenge-v0.json` show 50% address recall, 50% email recall, 60% name recall, 50% phone recall and 33.3% secret recall on this tiny set. More directly, `results/challenge-exposure-v0.json` records **8 annotated direct identifiers still present in allowed outbound text**. These are known misses. The figures are neither statistically representative nor a safe-use threshold. Do not send sensitive work through this prototype without independent controls.
 
 For the public website, run `./scripts/sync-public-benchmark.sh` from the product repository. It copies only this synthetic corpus and aggregate result JSON into the sibling `dmz-web/public/benchmark` directory. Review both copies before publishing.
 

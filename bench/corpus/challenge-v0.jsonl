@@ -1,0 +1,18 @@
+{"id":"challenge-name-patronymic","text":"Tilbúin persóna: Prófrún Gervidóttir.","entities":[{"kind":"name_demo","value":"Prófrún Gervidóttir"}]}
+{"id":"challenge-name-dative","text":"Sendu svar til Prófrúnar Gervidóttur.","entities":[{"kind":"name_demo","value":"Prófrúnar Gervidóttur"}]}
+{"id":"challenge-name-bur-genitive","text":"Tilbúin persóna: Prófrún Gerviburs.","entities":[{"kind":"name_demo","value":"Prófrún Gerviburs"}]}
+{"id":"challenge-name-ascii","text":"Fabricated name: Demo Testson.","entities":[{"kind":"name_demo","value":"Demo Testson"}]}
+{"id":"challenge-name-known-form","text":"Til Arnu Jónsdóttur.","entities":[{"kind":"name_demo","value":"Arnu Jónsdóttur"}]}
+{"id":"challenge-address-canonical","text":"Tilbúið heimilisfang: Prófgata 99, 999 Reykjavík.","entities":[{"kind":"address","value":"Prófgata 99, 999 Reykjavík"}]}
+{"id":"challenge-address-no-city","text":"Tilbúið heimilisfang: Prófgata 99, 999.","entities":[{"kind":"address","value":"Prófgata 99, 999"}]}
+{"id":"challenge-address-no-comma","text":"Tilbúið heimilisfang: Prófvegur 12 999 Reykjavík.","entities":[{"kind":"address","value":"Prófvegur 12 999 Reykjavík"}]}
+{"id":"challenge-address-unit","text":"Tilbúið heimilisfang: Prófbraut 7B, 999 Sýnibær.","entities":[{"kind":"address","value":"Prófbraut 7B, 999 Sýnibær"}]}
+{"id":"challenge-secret-known","text":"Tilbúinn lykill sk-test_key_000000000000.","entities":[{"kind":"secret","value":"sk-test_key_000000000000"}]}
+{"id":"challenge-secret-github","text":"Tilbúinn lykill ghp_000000000000000000000000000000000000.","entities":[{"kind":"secret","value":"ghp_000000000000000000000000000000000000"}]}
+{"id":"challenge-secret-slack","text":"Tilbúinn lykill xoxb-000000000000-000000000000-000000000000000000000000.","entities":[{"kind":"secret","value":"xoxb-000000000000-000000000000-000000000000000000000000"}]}
+{"id":"challenge-phone-country","text":"Óúthlutað prófnúmer +354 000 0000.","entities":[{"kind":"phone","value":"+354 000 0000"}]}
+{"id":"challenge-phone-idd","text":"Óúthlutað prófnúmer 00354 000 0000.","entities":[{"kind":"phone","value":"00354 000 0000"}]}
+{"id":"challenge-email-ascii","text":"Próffang demo+test@example.invalid.","entities":[{"kind":"email","value":"demo+test@example.invalid"}]}
+{"id":"challenge-email-international","text":"Alþjóðlegt próffang próf@example.invalid.","entities":[{"kind":"email","value":"próf@example.invalid"}]}
+{"id":"challenge-negative-date","text":"Dagsetning 14.01.1882 er ekki kennitala.","entities":[]}
+{"id":"challenge-negative-mask","text":"Sýnilegt mask: XXXXX-XXXX.","entities":[]}

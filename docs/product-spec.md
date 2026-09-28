@@ -89,6 +89,8 @@ Gateway should expose OpenAI- and Anthropic-compatible endpoints for OpenCode, C
 
 Corpus: synthetic Icelandic examples only, including generated 1800s kennitölur (century digit 8). Compare default Presidio, regex-only, and dmz. Publish precision and recall per entity type and per release. A release must not lower recall for any entity type on the benchmark. Gate 2 targets **99% recall for kennitölur** and **95% for names** on the public benchmark; these are targets, not current results.
 
+The initial 42-case corpus was selected around prototype rules and cannot establish field performance. A separate 18-case challenge corpus was written without retuning the detector. It contains eight annotated direct identifiers that remain in allowed outbound text. The current extension is a manual demo and must not be used for sensitive data. Review these misses before any deployment gate.
+
 CI should include detector conformance tests (Go and WASM), benchmark no-regression gate, lint that rejects logging request/response bodies, secret scanning, SBOM per build, and signed reproducible Shield packages. Fetch licensed lexicon data during build only after licence approval; never commit it.
 
 ## Releases

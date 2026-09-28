@@ -28,6 +28,7 @@ try {
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
   await page.goto(`chrome-extension://${id}/sidepanel.html`);
+  assert.match(await page.locator('.note').textContent(), /18 dæma gervipróf sýnir 8 auðkenni/);
   await page.locator('#mask').waitFor({ state: 'visible' });
   try {
     await page.waitForFunction(() => !document.querySelector('#mask').disabled, null, { timeout: 10000 });
