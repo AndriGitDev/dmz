@@ -14,6 +14,8 @@ const html = `<!doctype html><html><body>
   <main id="responses"></main>
   <script>
     window.sent = [];
+    window.frameMessages = [];
+    window.addEventListener('message', event => window.frameMessages.push(event.data));
     window.uploads = 0;
     document.querySelector('#upload').addEventListener('input', () => window.uploads++);
     document.querySelector('#upload').addEventListener('change', () => window.uploads++);
@@ -78,10 +80,18 @@ try {
   assert.match(outbound, /⟦NAME-[A-F0-9]{16}-\d+: XXXXX XXXXX⟧/);
   assert.ok(!outbound.includes('140182-8858'));
   await page.locator('[data-dmz-restored="true"]').waitFor();
-  assert.equal(await page.locator('[data-dmz-restored="true"]').evaluate(element => element.shadowRoot), null);
-  const cdp = await browser.newCDPSession(page);
-  const tree = await cdp.send('Accessibility.getFullAXTree');
-  assert.ok(tree.nodes.some(node => node.name?.value?.includes('140182-8858')), 'restored value absent from local overlay');
+  const restoredFrame = page.frameLocator('[data-dmz-restored="true"]');
+  await restoredFrame.getByText('Arna Jónsdóttir, 140182-8858', { exact: true }).waitFor();
+  assert.equal(await page.locator('[data-dmz-restored="true"]').evaluate(element => element.contentDocument), null, 'page can read restored frame document');
+  const selectedValue = await page.evaluate(() => {
+    window.getSelection()?.removeAllRanges();
+    window.find('140182-8858', false, false, true, false, true, false);
+    const selected = window.getSelection()?.toString() ?? '';
+    window.getSelection()?.removeAllRanges();
+    return selected;
+  });
+  assert.ok(!selectedValue.includes('140182-8858'), 'page selection exposed restored value');
+  assert.ok(!(await page.evaluate(() => JSON.stringify(window.frameMessages))).includes('140182-8858'), 'frame sent restored text back to the host page');
   await page.locator('[data-message-author-role="assistant"]').first().evaluate(element => element.remove());
   await page.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
 
@@ -129,8 +139,7 @@ try {
   await claude.waitForFunction(() => window.sent.length === 1, null, { timeout: 15000 });
   assert.match(await claude.evaluate(() => window.sent[0]), /⟦EMAIL-[A-F0-9]{16}-\d+: XXXXX@XXXXX\.XXX⟧/);
   await claude.locator('[data-dmz-restored="true"]').waitFor();
-  const claudeTree = await (await browser.newCDPSession(claude)).send('Accessibility.getFullAXTree');
-  assert.ok(claudeTree.nodes.some(node => node.name?.value?.includes('demo@example.com')), 'Claude restored value absent from local overlay');
+  await claude.frameLocator('[data-dmz-restored="true"]').getByText('demo@example.com', { exact: true }).waitFor();
   const oldMarker = await claude.evaluate(() => window.sent[0]);
   // DevTools can inspect closed roots for verification; the page itself cannot.
   const claudeCdp = await browser.newCDPSession(claude);

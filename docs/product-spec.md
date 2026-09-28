@@ -29,7 +29,7 @@ flowchart LR
   D2 --> E[Metadata-only audit]
 ```
 
-Shield never sends real prompt contents or its map to dmz servers. Portal and Gateway see real values transiently in the Icelandic core, then route pseudonyms. The current content script keeps the map in an isolated per-tab WASM instance and displays restored replies in a closed local overlay; the site reply stays masked. Its DOM hooks can be bypassed by site changes or unsupported send paths and are not yet a security boundary. Staff retain their own ChatGPT/Claude subscriptions for ordinary work; dmz supplies an additional sensitive-work path. The source plan's Shield slogan “we cannot leak what we never see” is **Shield-only**; it cannot describe Portal or Gateway.
+Shield never sends real prompt contents or its map to dmz servers. Portal and Gateway see real values transiently in the Icelandic core, then route pseudonyms. The current content script keeps the map in an isolated per-tab WASM instance and displays restored replies in an extension-origin frame; the site reply stays masked. Browser tests check that the parent page cannot read the restored frame document or recover restored text through selection. Its submission DOM hooks can still be bypassed by site changes or unsupported send paths and are not yet a complete security boundary. Staff retain their own ChatGPT/Claude subscriptions for ordinary work; dmz supplies an additional sensitive-work path. The source plan's Shield slogan “we cannot leak what we never see” is **Shield-only**; it cannot describe Portal or Gateway.
 
 ## Phase 1 detection inventory
 

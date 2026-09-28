@@ -35,15 +35,34 @@ export default defineContentScript({
     let resetButton: HTMLButtonElement | undefined;
     let sessionEpoch = 0;
     let composerAvailable: boolean | undefined;
-    const restoredMessages = new Map<Element, { host: HTMLElement; output: HTMLElement; source: string }>();
+    const extensionOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
+    type RestoredEntry = { host: HTMLIFrameElement; source: string; restored: string; nonce: string; loaded: boolean };
+    const restoredMessages = new Map<Element, RestoredEntry>();
     let scanQueued = false;
+
+    function displayRestored(entry: RestoredEntry) {
+      if (!entry.loaded || !entry.host.isConnected) return;
+      entry.host.contentWindow?.postMessage({ type: 'dmz:restored', nonce: entry.nonce, text: entry.restored }, extensionOrigin);
+    }
+
+    // Only dimensions cross back into the host page; restored content never does.
+    window.addEventListener('message', (event) => {
+      if (event.origin !== extensionOrigin || event.data?.type !== 'dmz:restored-height') return;
+      for (const entry of restoredMessages.values()) {
+        if (event.source === entry.host.contentWindow && event.data.nonce === entry.nonce
+          && Number.isFinite(event.data.height)) {
+          entry.host.style.height = `${Math.max(80, Math.min(480, event.data.height))}px`;
+          break;
+        }
+      }
+    });
 
     function scanResponses() {
       scanQueued = false;
       if (!ready) return;
       for (const [response, entry] of restoredMessages) {
         if (!response.isConnected || !response.matches(assistantMessages)) {
-          entry.output.textContent = '';
+          entry.restored = '';
           entry.host.remove();
           restoredMessages.delete(response);
         }
@@ -58,36 +77,40 @@ export default defineContentScript({
         const source = response.textContent ?? '';
         const existing = restoredMessages.get(response);
         if (!source.includes('⟦')) {
-          if (existing) existing.output.textContent = '';
+          if (existing) existing.restored = '';
           existing?.host.remove();
           restoredMessages.delete(response);
           continue;
         }
         const restored = core.dmzRestore?.(source);
         if (!restored || restored === source) {
-          if (existing) existing.output.textContent = '';
+          if (existing) existing.restored = '';
           existing?.host.remove();
           restoredMessages.delete(response);
           continue;
         }
         let entry = existing;
         if (!entry) {
-          const host = document.createElement('div');
+          const host = document.createElement('iframe');
           host.setAttribute('data-dmz-restored', 'true');
-          host.style.cssText = 'display:block;margin:12px 0';
-          const root = host.attachShadow({ mode: 'closed' });
-          const output = document.createElement('div');
-          output.setAttribute('role', 'note');
-          output.style.cssText = 'white-space:pre-wrap;padding:12px 16px;border:1px solid #ef4444;border-radius:8px;background:#18181b;color:#fff;font:14px/1.5 system-ui';
-          root.append(output);
-          response.after(host);
-          entry = { host, output, source: '' };
+          host.title = 'Shield · endurheimt aðeins á þessu tæki';
+          host.referrerPolicy = 'no-referrer';
+          host.style.cssText = 'display:block;width:100%;height:100px;margin:12px 0;border:0';
+          entry = { host, source: '', restored: '', nonce: crypto.randomUUID(), loaded: false };
           restoredMessages.set(response, entry);
+          const frameEntry = entry;
+          host.addEventListener('load', () => {
+            frameEntry.loaded = true;
+            if (restoredMessages.get(response) === frameEntry) displayRestored(frameEntry);
+          });
+          host.src = `${chrome.runtime.getURL('restored.html')}#${entry.nonce}`;
+          response.after(host);
         }
         if (!entry.host.isConnected) response.after(entry.host);
         if (entry.source !== source) {
-          entry.output.textContent = `Shield · endurheimt aðeins á þessu tæki\n${restored}`;
+          entry.restored = restored;
           entry.source = source;
+          displayRestored(entry);
         }
       }
     }
@@ -122,7 +145,7 @@ export default defineContentScript({
           sessionEpoch++;
           if (replayPermit) replayPermit.cancelled = true;
           for (const entry of restoredMessages.values()) {
-            entry.output.textContent = '';
+            entry.restored = '';
             entry.host.remove();
           }
           restoredMessages.clear();
