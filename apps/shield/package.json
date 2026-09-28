@@ -8,10 +8,12 @@
     "build": "wxt build -b chrome",
     "check": "wxt prepare && tsc --noEmit",
     "zip": "wxt zip -b chrome",
-    "test:browser": "node scripts/browser-smoke.mjs"
+    "record:build": "node scripts/record-build.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs && node scripts/chat-smoke.mjs && node scripts/chat-races.mjs"
   },
   "devDependencies": {
     "@types/chrome": "^0.1.34",
+    "@types/node": "^22.20.4",
     "playwright": "^1.63.0",
     "typescript": "^5.9.0",
     "wxt": "^0.21.4"

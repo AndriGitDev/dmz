@@ -1,0 +1,187 @@
+import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { chromium } from 'playwright';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const extension = path.join(root, '.output/chrome-mv3');
+const profile = await mkdtemp(path.join(os.tmpdir(), 'dmz-chat-smoke-'));
+const html = `<!doctype html><html><body>
+  <form id="chat"><textarea id="prompt-textarea"></textarea><button data-testid="send-button">Send</button></form>
+  <input id="upload" type="file"><button aria-label="Attach files" id="attach">Attach</button>
+  <main id="responses"></main>
+  <script>
+    window.sent = [];
+    window.frameMessages = [];
+    window.addEventListener('message', event => window.frameMessages.push(event.data));
+    window.uploads = 0;
+    document.querySelector('#upload').addEventListener('input', () => window.uploads++);
+    document.querySelector('#upload').addEventListener('change', () => window.uploads++);
+    document.querySelector('#attach').addEventListener('click', () => window.uploads++);
+    document.addEventListener('drop', () => window.uploads++);
+    document.addEventListener('paste', () => window.uploads++);
+    window.model = '';
+    document.querySelector('#prompt-textarea').addEventListener('input', event => { window.model = event.target.value; });
+    document.querySelector('#prompt-textarea').addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); document.querySelector('#chat').requestSubmit(); }
+    });
+    document.querySelector('#chat').addEventListener('submit', event => {
+      event.preventDefault();
+      window.sent.push(window.model);
+      const reply = document.createElement('article');
+      reply.dataset.messageAuthorRole = 'assistant';
+      reply.textContent = window.sent.at(-1);
+      document.querySelector('#responses').append(reply);
+    });
+  </script>
+</body></html>`;
+const claudeHtml = `<!doctype html><html><body>
+  <div data-testid="chat-input"><div contenteditable="true" data-placeholder="Message"></div></div>
+  <button aria-label="Send message">Send</button>
+  <main id="responses"></main>
+  <script>
+    window.sent = [];
+    document.querySelector('button').addEventListener('click', () => {
+      const text = document.querySelector('[contenteditable]').innerText;
+      window.sent.push(text);
+      const reply = document.createElement('article');
+      reply.dataset.testid = 'assistant-message';
+      reply.textContent = text;
+      document.querySelector('#responses').append(reply);
+    });
+  </script>
+</body></html>`;
+let browser;
+
+// DevTools can operate extension controls in closed roots without adding a
+// production test bridge that the host page could invoke.
+async function clickShieldControl(page, attribute) {
+  const cdp = await browser.newCDPSession(page);
+  try {
+    const { root: dom } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    function find(node) {
+      if (node.attributes?.includes(attribute)) return node;
+      for (const child of [...(node.children ?? []), ...(node.shadowRoots ?? [])]) {
+        const found = find(child);
+        if (found) return found;
+      }
+    }
+    const control = find(dom);
+    assert.ok(control, `Shield control missing: ${attribute}`);
+    const { object } = await cdp.send('DOM.resolveNode', { backendNodeId: control.backendNodeId });
+    await cdp.send('Runtime.callFunctionOn', { objectId: object.objectId, functionDeclaration: 'function() { this.click(); }' });
+    await cdp.send('Runtime.releaseObject', { objectId: object.objectId });
+  } finally { await cdp.detach(); }
+}
+
+try {
+  browser = await chromium.launchPersistentContext(profile, {
+    headless: true,
+    channel: 'chromium',
+    executablePath: process.env.CHROMIUM_EXECUTABLE || undefined,
+    args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`],
+  });
+  const page = await browser.newPage();
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  await page.route('https://chatgpt.com/**', route => route.fulfill({ status: 200, contentType: 'text/html', body: html }));
+  await page.goto('https://chatgpt.com/');
+  await page.locator('#prompt-textarea').fill('Arna Jónsdóttir, 140182-8858');
+  await page.locator('[data-testid="send-button"]').click();
+  try {
+    await page.waitForFunction(() => window.sent.length === 1, null, { timeout: 15000 });
+  } catch (error) {
+    throw new Error(`No replay. field=${await page.locator('#prompt-textarea').inputValue()}; sent=${JSON.stringify(await page.evaluate(() => window.sent))}; status=${await page.locator('#dmz-shield-status').count()}; errors=${errors.join(' | ')}`, { cause: error });
+  }
+  const outbound = await page.evaluate(() => window.sent[0]);
+  assert.match(outbound, /⟦KT-[A-F0-9]{16}-\d+: XXXXX-XXXX⟧/);
+  assert.match(outbound, /⟦NAME-[A-F0-9]{16}-\d+: XXXXX XXXXX⟧/);
+  assert.ok(!outbound.includes('140182-8858'));
+  await page.locator('[data-dmz-restored="true"]').waitFor();
+  const restoredFrame = page.frameLocator('[data-dmz-restored="true"]');
+  await restoredFrame.getByText('Arna Jónsdóttir, 140182-8858', { exact: true }).waitFor();
+  assert.equal(await page.locator('[data-dmz-restored="true"]').evaluate(element => element.contentDocument), null, 'page can read restored frame document');
+  const selectedValue = await page.evaluate(() => {
+    window.getSelection()?.removeAllRanges();
+    window.find('140182-8858', false, false, true, false, true, false);
+    const selected = window.getSelection()?.toString() ?? '';
+    window.getSelection()?.removeAllRanges();
+    return selected;
+  });
+  assert.ok(!selectedValue.includes('140182-8858'), 'page selection exposed restored value');
+  assert.ok(!(await page.evaluate(() => JSON.stringify(window.frameMessages))).includes('140182-8858'), 'frame sent restored text back to the host page');
+  await page.locator('[data-message-author-role="assistant"]').first().evaluate(element => element.remove());
+  await page.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
+
+  await page.locator('#prompt-textarea').fill('sk-test_key_000000000000');
+  await page.locator('[data-testid="send-button"]').click();
+  assert.equal(await page.evaluate(() => window.sent.length), 1, 'blocked secret reached page submit handler');
+  const reviewCdp = await browser.newCDPSession(page);
+  const reviewTree = await reviewCdp.send('Accessibility.getFullAXTree');
+  await reviewCdp.detach();
+  const reviewText = reviewTree.nodes.map(node => node.name?.value ?? '').find(text => text.startsWith('Sending stöðvuð:'));
+  assert.match(reviewText ?? '', /leyndarmál \(1\)/, 'review did not identify the blocking category');
+  assert.ok(!reviewText.includes('sk-test'), 'review status echoed a secret');
+  await clickShieldControl(page, 'data-dmz-review');
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'prompt-textarea', 'review did not return focus to composer');
+  assert.equal(await page.locator('#prompt-textarea').inputValue(), 'sk-test_key_000000000000', 'blocked draft was changed');
+  await page.locator('#prompt-textarea').fill('demo@example.com');
+  await page.locator('#prompt-textarea').press('Enter');
+  await page.waitForFunction(() => window.sent.length === 2, null, { timeout: 10000 });
+  const emailMarker = await page.evaluate(() => window.sent[1]);
+  assert.match(emailMarker, /⟦EMAIL-[A-F0-9]{16}-\d+: XXXXX@XXXXX\.XXX⟧/);
+  await page.locator('#prompt-textarea').fill('demo@example.com');
+  await page.locator('[data-testid="send-button"]').click();
+  await page.waitForFunction(() => window.sent.length === 3, null, { timeout: 10000 });
+  assert.equal(await page.evaluate(() => window.sent[2]), emailMarker, 'same-tab marker changed across turns');
+  await page.locator('#prompt-textarea').evaluate(element => element.removeAttribute('id'));
+  await page.locator('textarea').fill('demo@example.com');
+  await page.locator('[data-testid="send-button"]').click();
+  assert.equal(await page.evaluate(() => window.sent.length), 3, 'unknown composer was submitted');
+  await page.locator('#upload').setInputFiles({ name: 'synthetic.txt', mimeType: 'text/plain', buffer: Buffer.from('fabricated') });
+  assert.equal(await page.evaluate(() => window.uploads), 0, 'file selection reached page handler');
+  assert.equal(await page.locator('#upload').evaluate(element => element.files.length), 0, 'selected file was retained');
+  await page.locator('#attach').click();
+  assert.equal(await page.evaluate(() => window.uploads), 0, 'attach action reached page handler');
+  await page.locator('body').evaluate(element => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['fabricated'], 'synthetic.txt', { type: 'text/plain' }));
+    element.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: transfer }));
+  });
+  assert.equal(await page.evaluate(() => window.uploads), 0, 'file drop reached page handler');
+  await page.locator('textarea').evaluate(element => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['fabricated'], 'synthetic.txt', { type: 'text/plain' }));
+    element.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, cancelable: true, clipboardData: transfer }));
+  });
+  assert.equal(await page.evaluate(() => window.uploads), 0, 'file paste reached page handler');
+  assert.match(await page.locator('#dmz-shield-status').getAttribute('style'), /position:\s*fixed/);
+
+  const claude = await browser.newPage();
+  claude.on('pageerror', error => errors.push(error.message));
+  await claude.route('https://claude.ai/**', route => route.fulfill({ status: 200, contentType: 'text/html', body: claudeHtml }));
+  await claude.goto('https://claude.ai/new');
+  await claude.locator('[contenteditable]').fill('demo@example.com');
+  await claude.locator('button[aria-label="Send message"]').click();
+  await claude.waitForFunction(() => window.sent.length === 1, null, { timeout: 15000 });
+  assert.match(await claude.evaluate(() => window.sent[0]), /⟦EMAIL-[A-F0-9]{16}-\d+: XXXXX@XXXXX\.XXX⟧/);
+  await claude.locator('[data-dmz-restored="true"]').waitFor();
+  await claude.frameLocator('[data-dmz-restored="true"]').getByText('demo@example.com', { exact: true }).waitFor();
+  const oldMarker = await claude.evaluate(() => window.sent[0]);
+  await clickShieldControl(claude, 'data-dmz-reset');
+  await claude.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
+  await claude.locator('[contenteditable]').fill('demo@example.com');
+  await claude.locator('button[aria-label="Send message"]').click();
+  await claude.waitForFunction(() => window.sent.length === 2);
+  assert.notEqual(await claude.evaluate(() => window.sent[1]), oldMarker, 'reset reused the old session namespace');
+  await claude.locator('[data-dmz-restored="true"]').waitFor();
+  assert.equal(await claude.locator('[data-dmz-restored="true"]').count(), 1, 'old reply restored after reset');
+  assert.deepEqual(errors, []);
+  console.log('ChatGPT and Claude synthetic interception, block and restore smoke tests passed');
+} finally {
+  if (browser) await browser.close();
+  await rm(profile, { recursive: true, force: true });
+}

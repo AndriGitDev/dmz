@@ -7,7 +7,7 @@ Checked against the user-supplied 27 September 2026 plan. **Captured** means a r
 | Executive thesis and Gate 1 decision | [business plan](business-plan.md), [validation](validation.md) | Captured; interviews and commitments pending |
 | Market size and demand signals | [business plan](business-plan.md), [sources](source-register.md) | Captured as hypotheses; current PxWeb count pending |
 | ZDR gap and provider terms | [business plan](business-plan.md), [legal dependencies](legal/dependencies.md) | Captured; provider-specific verification pending |
-| Product surfaces and data flow | [product spec](product-spec.md) | Manual Shield side panel built; Portal and Gateway pending |
+| Product surfaces and data flow | [product spec](product-spec.md) | Manual Shield side panel and experimental ChatGPT/Claude content script built; live-site verification and Portal/Gateway pending |
 | Detector scope and algorithm | [product spec](product-spec.md), policy schema, [benchmark](../bench/README.md) | Small Go/WASM detector, device-local exact terms, uncertain name/address blockers; 42-case selected corpus, 18-case challenge (8 original exposures, 2 after tuning), and 29-case exploratory probe (13 exposures); licensed name and address datasets pending |
 | Architecture, vault, routing and audit | [product spec](product-spec.md), [threat model](threat-model.md) | Captured; implementation and controls pending |
 | Positioning, precise claims and proof | [website brief](website-brief.md) | Bilingual marketing site and preliminary synthetic results page built; market, legal and provider evidence pending |
