@@ -1,0 +1,11 @@
+{
+  "address": 1,
+  "card": 1,
+  "email": 1,
+  "iban": 1,
+  "kennitala": 1,
+  "name_demo": 1,
+  "phone": 1,
+  "secret": 1,
+  "tenant_dictionary": 1
+}

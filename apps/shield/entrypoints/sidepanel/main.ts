@@ -80,7 +80,7 @@ saveTerms.addEventListener('click', () => {
   const terms = tenantTerms.value.split(/\r?\n/).map((term) => term.trim()).filter(Boolean);
   const result = JSON.parse(window.dmzSetTenantTerms(JSON.stringify(terms))) as { ok?: boolean; error?: string };
   if (!result.ok) {
-    status.textContent = 'Orðabók ógild: 3–80 stafir í heiti, mest 32 heiti.';
+    status.textContent = 'Orðabók ógild: 3–80 stafir í heiti, mest 32 heiti; engin ósýnileg tákn eða samsetningarmerki.';
     return;
   }
   masked.value = '';

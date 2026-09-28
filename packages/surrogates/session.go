@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/AndriGitDev/dmz/packages/detect"
@@ -48,8 +49,8 @@ func (s *Session) SetTenantTerms(terms []string) error {
 		if term == "" {
 			continue
 		}
-		if utf8.RuneCountInString(term) < 3 || utf8.RuneCountInString(term) > 80 || strings.ContainsAny(term, "\r\n⟦⟧") {
-			return fmt.Errorf("tenant terms must be 3–80 characters without markers or newlines")
+		if utf8.RuneCountInString(term) < 3 || utf8.RuneCountInString(term) > 80 || strings.ContainsAny(term, "\r\n⟦⟧") || !utf8.ValidString(term) || strings.IndexFunc(term, func(r rune) bool { return unicode.IsMark(r) || unicode.Is(unicode.Cf, r) }) >= 0 {
+			return fmt.Errorf("tenant terms must be 3–80 characters without markers, newlines, combining marks or format characters")
 		}
 		if !seen[term] {
 			clean = append(clean, term)

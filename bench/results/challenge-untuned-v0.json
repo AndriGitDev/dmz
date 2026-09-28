@@ -1,0 +1,46 @@
+{
+  "corpus": "bench/corpus/challenge-v0.jsonl",
+  "detector": "dmz",
+  "samples": 18,
+  "scoring": "exact span and entity type",
+  "per_kind": {
+    "address": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1,
+      "recall": 0.5
+    },
+    "email": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.5
+    },
+    "name_demo": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1,
+      "recall": 0.6
+    },
+    "phone": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.5
+    },
+    "secret": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1,
+      "recall": 0.3333333333333333
+    }
+  },
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ]
+}

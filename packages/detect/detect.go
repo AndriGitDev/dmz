@@ -24,6 +24,7 @@ const (
 	Name             Kind = "name_demo"
 	Address          Kind = "address"
 	TenantDictionary Kind = "tenant_dictionary"
+	UnicodeReview    Kind = "unicode_review"
 )
 
 type Confidence string
@@ -45,15 +46,15 @@ type Match struct {
 
 var (
 	kennitalaRE  = regexp.MustCompile(`[0-9]{6}-?[0-9]{4}`)
-	emailRE      = regexp.MustCompile(`[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}`)
+	emailRE      = regexp.MustCompile(`[\p{L}0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}`)
 	ibanRE       = regexp.MustCompile(`(?i)IS(?:[ -]?[0-9]){24}`)
 	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 \-]{11,25})[0-9]`)
-	phoneRE      = regexp.MustCompile(`(?:\+354[ \-]?)?[0-9]{3}[ \-]?[0-9]{4}`)
-	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
+	phoneRE      = regexp.MustCompile(`(?:(?:\+354|00354)[ \-]?)?[0-9]{3}[ \-]?[0-9]{4}`)
+	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
 	jwtRE        = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
 	bearerRE     = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
-	patronymicRE = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|bur)`)
-	addressRE    = regexp.MustCompile(`\p{Lu}\p{L}{1,40}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás)[ \t]+[0-9]{1,3}[A-Za-z]?,[ \t]+[0-9]{3}[ \t]+\p{Lu}\p{L}{2,40}`)
+	patronymicRE = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|burs|bur)`)
+	addressRE    = regexp.MustCompile(`\p{Lu}\p{L}{1,40}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás)[ \t]+[0-9]{1,3}[A-Za-z]?(?:,[ \t]+[0-9]{3}(?:[ \t]+\p{Lu}\p{L}{2,40})?|[ \t]+[0-9]{3}[ \t]+\p{Lu}\p{L}{2,40})`)
 )
 
 // Hand-authored demonstration forms; not a licensed lexicon or a general name detector.
@@ -66,6 +67,19 @@ func Detect(input string) []Match {
 // DetectWithTerms adds exact, case-sensitive tenant terms. Callers must bound
 // and validate the terms before passing them in. No term list is persisted here.
 func DetectWithTerms(input string, terms []string) []Match {
+	var review []Match
+	for start := 0; start < len(input); {
+		r, size := utf8.DecodeRuneInString(input[start:])
+		if unicode.IsMark(r) || unicode.Is(unicode.Cf, r) || (r == utf8.RuneError && size == 1) {
+			review = append(review, Match{start, start + size, UnicodeReview, Uncertain, "unicode-format-or-combining-mark"})
+		}
+		start += size
+	}
+	// Noncanonical or invisible characters require review before applying any
+	// masking rule, even if a configured exact term spans the character.
+	if len(review) > 0 {
+		return review
+	}
 	var candidates []Match
 	add := func(re *regexp.Regexp, kind Kind, validate func(string) (Confidence, string, bool)) {
 		for _, loc := range re.FindAllStringIndex(input, -1) {
@@ -90,7 +104,7 @@ func DetectWithTerms(input string, terms []string) []Match {
 		}
 	}
 	add(ibanRE, IBAN, validateIBAN)
-	add(emailRE, Email, simple("email-shape"))
+	add(emailRE, Email, validateEmail)
 	add(kennitalaRE, Kennitala, validateKennitala)
 	add(cardRE, Card, validateCard)
 	add(phoneRE, Phone, validatePhone)
@@ -213,7 +227,7 @@ func bounded(s string, start, end int) bool {
 }
 
 func identifierRune(r rune) bool {
-	return unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_'
+	return unicode.IsLetter(r) || unicode.IsDigit(r) || unicode.IsMark(r) || r == '_'
 }
 
 func digits(s string) string {
@@ -310,10 +324,22 @@ func validatePhone(raw string) (Confidence, string, bool) {
 	if strings.HasPrefix(raw, "+354") && len(d) == 10 {
 		return High, "country-code-shape", true
 	}
+	if strings.HasPrefix(raw, "00354") && len(d) == 12 {
+		return Uncertain, "international-dialling-shape", true
+	}
 	if len(d) == 7 {
 		return Uncertain, "local-number-shape", true
 	}
 	return "", "", false
+}
+
+func validateEmail(raw string) (Confidence, string, bool) {
+	for _, r := range raw {
+		if r > unicode.MaxASCII {
+			return Uncertain, "internationalized-local-part-shape", true
+		}
+	}
+	return High, "email-shape", true
 }
 
 // Canonical returns the per-session identity key for a match.
@@ -324,7 +350,12 @@ func Canonical(kind Kind, raw string) string {
 	case IBAN:
 		return strings.ToUpper(strings.NewReplacer(" ", "", "-", "").Replace(raw))
 	case Email:
-		return strings.ToLower(raw)
+		at := strings.LastIndexByte(raw, '@')
+		if at < 0 {
+			return raw
+		}
+		// Domain names are case-insensitive; an email local part may not be.
+		return raw[:at+1] + strings.ToLower(raw[at+1:])
 	default:
 		return raw
 	}

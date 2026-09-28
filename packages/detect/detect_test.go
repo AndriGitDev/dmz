@@ -37,10 +37,49 @@ func TestKennitalaInvalidDateAndBoundaries(t *testing.T) {
 }
 
 func TestEmailAndUnicodeByteOffsets(t *testing.T) {
-	input := "Halló demo@example.com"
-	got := Detect(input)
-	if len(got) != 1 || got[0].Kind != Email || input[got[0].Start:got[0].End] != "demo@example.com" {
-		t.Fatalf("unexpected spans: %#v", got)
+	for _, tc := range []struct {
+		input, value string
+		confidence   Confidence
+	}{
+		{"Halló demo@example.com", "demo@example.com", High},
+		{"Alþjóðlegt próffang próf@example.invalid", "próf@example.invalid", Uncertain},
+	} {
+		got := Detect(tc.input)
+		if len(got) != 1 || got[0].Kind != Email || got[0].Confidence != tc.confidence || tc.input[got[0].Start:got[0].End] != tc.value {
+			t.Errorf("unexpected email span for %q: %#v", tc.input, got)
+		}
+	}
+}
+
+func TestEmailCanonicalPreservesLocalPartCase(t *testing.T) {
+	if got := Canonical(Email, "Demo@EXAMPLE.INVALID"); got != "Demo@example.invalid" {
+		t.Fatalf("canonical email: %q", got)
+	}
+	if Canonical(Email, "Demo@example.invalid") == Canonical(Email, "demo@example.invalid") {
+		t.Fatal("distinct email local parts merged")
+	}
+}
+
+func TestUnicodeObfuscationRequiresReview(t *testing.T) {
+	for _, input := range []string{
+		"Pro\u0301fru\u0301n Gervido\u0301ttir",
+		"demo@exa\u200bmple.invalid",
+		"demo@exam\u202eple.invalid",
+		"bad\xffbytes",
+	} {
+		matches := Detect(input)
+		found := false
+		for _, match := range matches {
+			if match.Kind == UnicodeReview && match.Confidence == Uncertain {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("expected Unicode review for %q: %#v", input, matches)
+		}
+	}
+	if matches := Detect("Prófrún Gervidóttir"); len(matches) != 1 || matches[0].Kind != Name {
+		t.Fatalf("precomposed Icelandic name changed: %#v", matches)
 	}
 }
 
@@ -69,7 +108,7 @@ func TestPhoneConfidence(t *testing.T) {
 	for _, tc := range []struct {
 		input string
 		want  Confidence
-	}{{"+354 0000001", High}, {"0000001", Uncertain}} {
+	}{{"+354 0000001", High}, {"00354 000 0001", Uncertain}, {"0000001", Uncertain}} {
 		got := Detect(tc.input)
 		if len(got) != 1 || got[0].Kind != Phone || got[0].Confidence != tc.want {
 			t.Errorf("%q: %#v", tc.input, got)
@@ -100,6 +139,23 @@ func TestJWTAndBearerTokenBlockSpans(t *testing.T) {
 	}
 }
 
+func TestGitHubStyleSecretShape(t *testing.T) {
+	value := "ghp_000000000000000000000000000000000000"
+	input := "Tilbúinn lykill " + value + "."
+	matches := Detect(input)
+	if len(matches) != 1 || matches[0].Kind != Secret || input[matches[0].Start:matches[0].End] != value {
+		t.Fatalf("GitHub-style token: %#v", matches)
+	}
+	for _, value := range []string{
+		"ghp_00000000000000000000000000000000000",
+		"ghp_0000000000000000000000000000000000000",
+	} {
+		if matches := Detect(value); len(matches) != 0 {
+			t.Errorf("invalid token length %q: %#v", value, matches)
+		}
+	}
+}
+
 func TestHandAuthoredNameForms(t *testing.T) {
 	input := "Arna Jónsdóttir hitti Arnu Jónsdóttur."
 	got := Detect(input)
@@ -109,7 +165,7 @@ func TestHandAuthoredNameForms(t *testing.T) {
 }
 
 func TestUnlistedPatronymicRequiresReview(t *testing.T) {
-	for _, name := range []string{"Guðrún Sigurðardóttir", "Elín Björnsdóttir", "Jón Jónssonar"} {
+	for _, name := range []string{"Guðrún Sigurðardóttir", "Elín Björnsdóttir", "Jón Jónssonar", "Prófrún Gerviburs"} {
 		matches := Detect("Hitti " + name + ".")
 		if len(matches) != 1 || matches[0].Kind != Name || matches[0].Confidence != Uncertain || matches[0].Reason != "patronymic-shape-without-lexicon" {
 			t.Errorf("%q: %#v", name, matches)
@@ -123,13 +179,13 @@ func TestUnlistedPatronymicRequiresReview(t *testing.T) {
 }
 
 func TestAddressShapeRequiresReview(t *testing.T) {
-	for _, address := range []string{"Prófgata 99, 999 Reykjavík", "Laugavegur 10, 101 Reykjavík"} {
+	for _, address := range []string{"Prófgata 99, 999 Reykjavík", "Laugavegur 10, 101 Reykjavík", "Prófgata 99, 999", "Prófgata 99 999 Reykjavík"} {
 		matches := Detect(address)
 		if len(matches) != 1 || matches[0].Kind != Address || matches[0].Confidence != Uncertain || address[matches[0].Start:matches[0].End] != address {
 			t.Errorf("%q: %#v", address, matches)
 		}
 	}
-	for _, text := range []string{"Invoice 99, 999 Items", "Prófgata 99 999 Reykjavík", "Prófgata 99, 99 Reykjavík"} {
+	for _, text := range []string{"Invoice 99, 999 Items", "Prófgata 99 999", "Prófgata 99, 99 Reykjavík"} {
 		if matches := Detect(text); len(matches) != 0 {
 			t.Errorf("false address match %q: %#v", text, matches)
 		}

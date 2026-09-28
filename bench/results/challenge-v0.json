@@ -5,39 +5,39 @@
   "scoring": "exact span and entity type",
   "per_kind": {
     "address": {
-      "tp": 2,
+      "tp": 4,
       "fp": 0,
-      "fn": 2,
+      "fn": 0,
       "precision": 1,
-      "recall": 0.5
+      "recall": 1
     },
     "email": {
-      "tp": 1,
+      "tp": 2,
       "fp": 0,
-      "fn": 1,
+      "fn": 0,
       "precision": 1,
-      "recall": 0.5
+      "recall": 1
     },
     "name_demo": {
-      "tp": 3,
-      "fp": 0,
-      "fn": 2,
-      "precision": 1,
-      "recall": 0.6
-    },
-    "phone": {
-      "tp": 1,
+      "tp": 4,
       "fp": 0,
       "fn": 1,
       "precision": 1,
-      "recall": 0.5
+      "recall": 0.8
+    },
+    "phone": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1
     },
     "secret": {
-      "tp": 1,
+      "tp": 2,
       "fp": 0,
-      "fn": 2,
+      "fn": 1,
       "precision": 1,
-      "recall": 0.3333333333333333
+      "recall": 0.6666666666666666
     }
   },
   "tenant_terms": [

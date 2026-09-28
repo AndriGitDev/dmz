@@ -26,14 +26,45 @@ func TestSwapAndRestoreConsistently(t *testing.T) {
 	}
 }
 
+func TestEmailLocalPartCaseRestoresSeparately(t *testing.T) {
+	s := NewSession()
+	input := "Demo@example.invalid og demo@EXAMPLE.INVALID"
+	result := s.Process(input)
+	if !result.Allowed || len(result.Findings) != 2 || result.Transformed == input {
+		t.Fatalf("expected two email masks: %#v", result)
+	}
+	if strings.Count(result.Transformed, "⟦EMAIL-") != 2 || s.Restore(result.Transformed) != input {
+		t.Fatalf("email addresses merged during restoration: %#v", result)
+	}
+}
+
 func TestBlockedCasesNeverReturnOutboundText(t *testing.T) {
 	for _, input := range []string{
 		"0000001", // ambiguous local seven-digit number
 		"sk-test_key_000000000000",
+		"ghp_000000000000000000000000000000000000",
+		"00354 000 0000",
+		"próf@example.invalid",
+		"Prófgata 99, 999",
+		"Prófvegur 12 999 Reykjavík",
+		"Prófrún Gerviburs",
+		"Pro\u0301fru\u0301n Gervido\u0301ttir",
+		"demo@exa\u200bmple.invalid",
+		"demo@exam\u202eple.invalid",
+		"bad\xffbytes",
 	} {
 		got := NewSession().Process(input)
 		if got.Allowed || got.Transformed != "" || len(got.Findings) == 0 {
 			t.Fatalf("should block %q: %#v", input, got)
+		}
+	}
+}
+
+func TestTenantTermRejectsCharactersThatAlwaysRequireReview(t *testing.T) {
+	s := NewSession()
+	for _, term := range []string{"Pro\u0301fverkefni", "Próf\u200bverkefni", "bad\xffbytes"} {
+		if err := s.SetTenantTerms([]string{term}); err == nil {
+			t.Errorf("unusable tenant term accepted: %q", term)
 		}
 	}
 }

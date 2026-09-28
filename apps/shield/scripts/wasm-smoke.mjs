@@ -42,6 +42,21 @@ assert.equal(nameBlocked.findings[0].action, 'review');
 const addressBlocked = JSON.parse(globalThis.dmzProcess('Prófgata 99, 999 Reykjavík'));
 assert.equal(addressBlocked.allowed, false);
 assert.equal(addressBlocked.findings[0].kind, 'address');
+for (const [input, kind] of [
+  ['próf@example.invalid', 'email'],
+  ['00354 000 0000', 'phone'],
+  ['Prófgata 99, 999', 'address'],
+  ['Prófvegur 12 999 Reykjavík', 'address'],
+  ['Prófrún Gerviburs', 'name_demo'],
+  ['ghp_000000000000000000000000000000000000', 'secret'],
+  ['demo@exa\u200bmple.invalid', 'unicode_review'],
+  ['Pro\u0301fru\u0301n Gervido\u0301ttir', 'unicode_review'],
+]) {
+  const result = JSON.parse(globalThis.dmzProcess(input));
+  assert.equal(result.allowed, false, `${kind} should block outbound text`);
+  assert.equal(result.transformed, undefined);
+  assert.equal(result.findings[0].kind, kind);
+}
 
 assert.equal(JSON.parse(globalThis.dmzSetTenantTerms(JSON.stringify(['Verkefni Gervi']))).ok, true);
 const tenant = JSON.parse(globalThis.dmzProcess('Ræddu Verkefni Gervi.'));
