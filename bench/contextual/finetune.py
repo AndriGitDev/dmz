@@ -11,10 +11,10 @@ from encoder import LABELS, DECODE, chunks, classifier, digest
 from ner import external, rows, spans, tokens_and_labels
 
 
-def prepare(source, split, tokenizer):
+def prepare(source, split, tokenizer, text_mode='canonical'):
     records, jobs = [], []
     for row in rows(source, split):
-        words, offsets, labels = tokens_and_labels(row)
+        words, offsets, labels = tokens_and_labels(row, text_mode=text_mode)
         index = len(records)
         records.append(dict(offsets=offsets, labels=labels))
         for start, part in chunks(words, tokenizer):
@@ -147,7 +147,7 @@ def evaluate(a):
         raise ValueError('base mismatch')
     torch.set_num_threads(a.threads)
     tokenizer = AutoTokenizer.from_pretrained(base, local_files_only=True, add_prefix_space=True, trust_remote_code=False)
-    records, jobs = prepare(source, 'dev', tokenizer)
+    records, jobs = prepare(source, 'dev', tokenizer, text_mode=a.text_mode)
     model = detector(base); model.load_state_dict(load_file(str(checkpoint))); model.eval()
     labels = [[None]*len(r['labels']) for r in records]; confidence = [[None]*len(r['labels']) for r in records]
     jobs.sort(key=lambda j: len(j['ids'])); started=time.monotonic()
@@ -164,7 +164,7 @@ def evaluate(a):
         if any(v is None for v in l+c): raise ValueError('incomplete prediction coverage')
         predictions.append(dict(gold=[[s,e] for s,e,_,_ in spans(r['labels'],r['offsets'])],
             predictions=[[s,e,min(c[i:j])] for s,e,i,j in spans(l,r['offsets'])]))
-    result=dict(split='dev', input_sha256=digest(source), model_sha256=digest(checkpoint), text_mode='canonical', records=predictions)
+    result=dict(split='dev', input_sha256=digest(source), model_sha256=digest(checkpoint), text_mode=a.text_mode, records=predictions)
     if a.predictions:
         with external(a.predictions).open('x') as f: json.dump(result,f)
     crf=json.loads(external(a.crf).read_text())
@@ -198,6 +198,7 @@ def main():
     t.add_argument('--accumulation',type=int,default=4);t.add_argument('--max-seconds',type=float,default=18000)
     t.add_argument('--max-steps',type=int,default=0);t.add_argument('--probe',action='store_true')
     e=sub.add_parser('evaluate');e.add_argument('--checkpoint',type=Path,required=True);e.add_argument('--crf',type=Path,required=True)
+    e.add_argument('--text-mode',choices=['canonical','original'],default='canonical')
     e.add_argument('--predictions',type=Path);e.add_argument('--crf-threshold',type=float,default=.75);e.add_argument('--neural-threshold',type=float,default=0.)
     for q in (t,e):
         q.add_argument('--base',type=Path,required=True);q.add_argument('--input',type=Path,required=True);q.add_argument('--output',type=Path,required=True)

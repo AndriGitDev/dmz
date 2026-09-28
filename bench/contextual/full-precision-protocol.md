@@ -76,3 +76,12 @@ small graph is not confused with a complete extension download. Full development
 Chromium replay is required for FP32 and any compressed candidate being considered
 acceptable. Native parity alone cannot establish browser accuracy. All such scores
 remain reused-development evidence; the independent-review gate is separate.
+
+## Original-text check
+
+Before freezing, also evaluate the chosen model on the synthetic domain set's
+`original_text` and `original_entities`, with the existing offset-preserving
+tokenizer and matching cached CRF spans. `finetune.py evaluate --text-mode original`
+keeps those UTF-8 byte offsets rather than scoring canonical spaced text. This is
+a typography/offset regression check on the same generated development examples,
+not independent evidence of production tokenization or document accuracy.

@@ -33,6 +33,11 @@ class FineTuneTests(unittest.TestCase):
             records,jobs=prepare(path,'dev',tokenizer)
             self.assertEqual(records[0]['offsets'],[(0,4),(5,10)])
             self.assertEqual(jobs[0]['labels'],[1,2])
+            row.update(original_text='Ása\n  Jóns',original_entities=[dict(start=0,end=12,kind='Person')])
+            path.write_text(json.dumps(row)+'\n')
+            records,jobs=prepare(path,'dev',tokenizer,text_mode='original')
+            self.assertEqual(records[0]['offsets'],[(0,4),(7,12)])
+            self.assertEqual(jobs[0]['labels'],[1,2])
 
 
 if __name__=='__main__':unittest.main()
