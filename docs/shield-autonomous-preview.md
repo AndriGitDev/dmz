@@ -17,6 +17,8 @@ To build locally:
 
 Each tab has an in-memory Go/WASM session map. Closing or reloading the tab loses its map; old markers cannot be restored. The manual side panel has a separate map and dictionary. The extension does not send identifiers or maps to dmz servers.
 
+Exact markers from the current session can be submitted again without masking their placeholders. Unknown, stale, edited or nested markers block for review; begin a new test with the original fabricated value after a reload or reset. Keep only one Shield copy enabled. Live testing found nested email markers from different sessions and a Claude restored copy containing duplicate text and interface metadata. The updated extraction reads semantic answer blocks, preserving autolink text and excluding hidden elements and message controls. These fixes have synthetic regression coverage; live retesting remains required.
+
 The floating Shield status panel includes **Hreinsa Shield-lotu** (clear Shield session). It clears this tab's mapping and restored copies and cancels a send still waiting for replay. Old markers in the conversation cannot be restored after reset; a new prompt starts a fresh mapping. Restored copies are also removed when their source reply disappears or stops being an assistant reply.
 
 When the detector blocks a message, the status lists only the categories and counts that need review. **Breyta texta** (edit text) returns focus to the unchanged draft. Remove or change those items and send again; Shield scans the new text. This control does not override a block or send anything itself.

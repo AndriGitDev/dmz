@@ -88,7 +88,31 @@ func newNamespace() string {
 // Process blocks the entire prompt if any match is uncertain or unsupported.
 // No partially transformed text is returned in that case.
 func (s *Session) Process(input string) Result {
-	matches := detect.DetectWithTerms(input, s.tenantTerms)
+	// Only exact markers issued by this live session may bypass detection.
+	// Blank their bytes in the scan copy so match offsets still address input.
+	// Unknown, edited and nested markers need review; accepting arbitrary marker
+	// contents would let a caller hide real identifiers inside a fake marker.
+	scan := []byte(input)
+	for offset := 0; offset < len(input); {
+		relative := strings.IndexAny(input[offset:], "⟦⟧")
+		if relative < 0 {
+			break
+		}
+		start := offset + relative
+		end := strings.Index(input[start:], "⟧")
+		if end < 0 || !strings.HasPrefix(input[start:], "⟦") {
+			return markerReview()
+		}
+		end += start + len("⟧")
+		if _, known := s.reverse[input[start:end]]; !known {
+			return markerReview()
+		}
+		for i := start; i < end; i++ {
+			scan[i] = ' '
+		}
+		offset = end
+	}
+	matches := detect.DetectWithTerms(string(scan), s.tenantTerms)
 	result := Result{Allowed: true, Findings: make([]Finding, 0, len(matches))}
 	for _, m := range matches {
 		action := "mask"
@@ -129,6 +153,10 @@ func (s *Session) Process(input string) Result {
 	out.WriteString(input[previous:])
 	result.Transformed = out.String()
 	return result
+}
+
+func markerReview() Result {
+	return Result{Allowed: false, Findings: []Finding{{detect.Kind("marker_review"), detect.Uncertain, "review", "unknown or changed session marker"}}}
 }
 
 // Restore rehydrates a complete response. NewStreamRestorer handles arbitrary

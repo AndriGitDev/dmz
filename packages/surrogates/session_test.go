@@ -159,3 +159,45 @@ func TestTenantDictionaryStaysLocalAndResetsMapping(t *testing.T) {
 		t.Fatal("invalid update reset mapping")
 	}
 }
+
+func TestKnownMarkersCanBeSubmittedAgain(t *testing.T) {
+	s := NewSession()
+	input := "Arna Jónsdóttir, 140182-8858, demo@example.com, 4111 1111 1111 1111"
+	first := s.Process(input)
+	if !first.Allowed {
+		t.Fatalf("first process blocked: %#v", first)
+	}
+	for i := 0; i < 3; i++ {
+		again := s.Process(first.Transformed)
+		if !again.Allowed || again.Transformed != first.Transformed || len(again.Findings) != 0 {
+			t.Fatalf("marker changed on resubmission: %#v", again)
+		}
+	}
+	mixed := s.Process(first.Transformed + " next@example.com")
+	if !mixed.Allowed || strings.Contains(mixed.Transformed, "next@example.com") || s.Restore(mixed.Transformed) != input+" next@example.com" {
+		t.Fatalf("mixed marker and raw text mishandled: %#v", mixed)
+	}
+	if s.Process(first.Transformed + " sk-test_key_000000000000").Allowed {
+		t.Fatal("marker bypassed secret detection")
+	}
+}
+
+func TestUntrustedMarkersRequireReview(t *testing.T) {
+	s := NewSession()
+	known := s.Process("demo@example.com").Transformed
+	cases := []string{
+		strings.Replace(known, "XXXXX@XXXXX.XXX", "other@example.com", 1),
+		strings.Replace(known, "XXXXX@XXXXX.XXX", known, 1),
+		known[:len(known)-len("⟧")],
+		"⟧", "⟦demo@example.com⟧",
+		NewSession().Process("demo@example.com").Transformed,
+	}
+	s.Reset()
+	cases = append(cases, known)
+	for _, input := range cases {
+		got := s.Process(input)
+		if got.Allowed || got.Transformed != "" || len(got.Findings) != 1 || got.Findings[0].Kind != "marker_review" {
+			t.Fatalf("untrusted marker accepted: %#v", got)
+		}
+	}
+}

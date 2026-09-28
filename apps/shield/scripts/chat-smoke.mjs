@@ -137,10 +137,17 @@ try {
   await page.locator('[data-testid="send-button"]').click();
   await page.waitForFunction(() => window.sent.length === 3, null, { timeout: 10000 });
   assert.equal(await page.evaluate(() => window.sent[2]), emailMarker, 'same-tab marker changed across turns');
+  // A retry or pasted current-session marker must not mask its placeholder again.
+  await page.locator('#prompt-textarea').fill(emailMarker);
+  await page.locator('[data-testid="send-button"]').click();
+  await page.waitForFunction(() => window.sent.length === 4);
+  assert.equal(await page.evaluate(() => window.sent[3]), emailMarker, 'resubmission nested the marker');
+  await page.locator('[data-dmz-restored="true"]').last().waitFor();
+  await page.frameLocator('[data-dmz-restored="true"]').last().getByText('demo@example.com', { exact: true }).waitFor();
   await page.locator('#prompt-textarea').evaluate(element => element.removeAttribute('id'));
   await page.locator('textarea').fill('demo@example.com');
   await page.locator('[data-testid="send-button"]').click();
-  assert.equal(await page.evaluate(() => window.sent.length), 3, 'unknown composer was submitted');
+  assert.equal(await page.evaluate(() => window.sent.length), 4, 'unknown composer was submitted');
   await page.locator('#upload').setInputFiles({ name: 'synthetic.txt', mimeType: 'text/plain', buffer: Buffer.from('fabricated') });
   assert.equal(await page.evaluate(() => window.uploads), 0, 'file selection reached page handler');
   assert.equal(await page.locator('#upload').evaluate(element => element.files.length), 0, 'selected file was retained');
@@ -170,6 +177,32 @@ try {
   assert.match(await claude.evaluate(() => window.sent[0]), /⟦EMAIL-[A-F0-9]{16}-\d+: XXXXX@XXXXX\.XXX⟧/);
   await claude.locator('[data-dmz-restored="true"]').waitFor();
   await claude.frameLocator('[data-dmz-restored="true"]').getByText('demo@example.com', { exact: true }).waitFor();
+  // The live reply contains an autolink inside a paragraph. Its wrapper can
+  // also contain a hidden duplicate and action/timestamp text.
+  await claude.locator('[data-testid="assistant-message"]').evaluate(reply => {
+    const marker = reply.textContent;
+    reply.replaceChildren();
+    const announcement = document.createElement('div');
+    announcement.className = 'sr-only';
+    announcement.textContent = 'Claude responded: ' + marker;
+    const paragraph = document.createElement('p');
+    paragraph.dir = 'ltr';
+    const [prefix, suffix] = marker.split('XXXXX@XXXXX.XXX');
+    const link = document.createElement('a');
+    link.href = 'mailto:XXXXX@XXXXX.XXX';
+    link.textContent = 'XXXXX@XXXXX.XXX';
+    paragraph.append(prefix, link, suffix);
+    const actions = document.createElement('div');
+    actions.dataset.cds = 'MessageActions';
+    actions.textContent = '\ue056\ue0e4\ue0fb\ue0f9\ue11d3 minutes ago';
+    reply.append(announcement, paragraph, actions);
+  });
+  await claude.waitForTimeout(150);
+  assert.equal(await claude.frameLocator('[data-dmz-restored="true"]').locator('#restored-text').textContent(), 'demo@example.com', 'reply included wrapper metadata or duplicated its link');
+  // Legitimate repeated paragraphs and streamed updates must survive extraction.
+  await claude.locator('[data-testid="assistant-message"] p').evaluate(p => p.after(p.cloneNode(true)));
+  await claude.waitForTimeout(150);
+  assert.equal(await claude.frameLocator('[data-dmz-restored="true"]').locator('#restored-text').textContent(), 'demo@example.com\n\ndemo@example.com');
   const oldMarker = await claude.evaluate(() => window.sent[0]);
   await clickShieldControl(claude, 'data-dmz-reset');
   await claude.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });

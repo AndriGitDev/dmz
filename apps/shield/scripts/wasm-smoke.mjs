@@ -20,6 +20,14 @@ assert.match(first.transformed, /⟦KT-[A-F0-9]{16}-\d+: XXXXX-XXXX⟧/);
 assert.ok(!first.transformed.includes('140182-8858'));
 assert.equal(globalThis.dmzRestore(first.transformed), 'Arna Jónsdóttir, 140182-8858.');
 
+const email = JSON.parse(globalThis.dmzProcess('demo@example.com'));
+const repeat = JSON.parse(globalThis.dmzProcess(email.transformed));
+assert.equal(repeat.allowed, true);
+assert.equal(repeat.transformed, email.transformed, 'resubmission nested an email marker');
+assert.equal(globalThis.dmzRestore(repeat.transformed), 'demo@example.com');
+const nested = JSON.parse(globalThis.dmzProcess(email.transformed.replace('XXXXX@XXXXX.XXX', email.transformed)));
+assert.equal(nested.allowed, false, 'nested marker accepted');
+
 const iban = JSON.parse(globalThis.dmzProcess('IS46-0000-0000-0000-0000-0000-00'));
 assert.equal(iban.allowed, true);
 assert.match(iban.transformed, /⟦IBAN-[A-F0-9]{16}-\d+:/);
@@ -67,5 +75,6 @@ assert.equal(globalThis.dmzRestore(first.transformed), first.transformed, 'term 
 
 globalThis.dmzReset();
 assert.equal(globalThis.dmzRestore(first.transformed), first.transformed);
+assert.equal(JSON.parse(globalThis.dmzProcess(email.transformed)).allowed, false, 'stale marker accepted after reset');
 process.stdout.write('TinyGo WASM mask/restore smoke test passed\n');
 process.exit(0);

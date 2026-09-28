@@ -46,6 +46,32 @@ export default defineContentScript({
       entry.host.contentWindow?.postMessage({ type: 'dmz:restored', nonce: entry.nonce, text: entry.restored }, extensionOrigin);
     }
 
+    function responseText(response: Element): string {
+      const excluded = 'button,[role="button"],nav,time,svg,script,style,textarea,input,iframe,[hidden],[aria-hidden="true"],.sr-only,[data-cds="MessageActions"]';
+      function visible(element: Element): boolean {
+        for (let current: Element | null = element; current; current = current.parentElement) {
+          if (current.matches(excluded)) return false;
+          const style = getComputedStyle(current);
+          if (style.display === 'none' || style.visibility === 'hidden') return false;
+          if (current === response) break;
+        }
+        return true;
+      }
+      function text(node: Node): string {
+        if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
+        if (!(node instanceof Element) || !visible(node)) return '';
+        if (node.tagName === 'BR') return '\n';
+        const value = [...node.childNodes].map(text).join('');
+        return /^(P|DIV|PRE|LI|TR|BLOCKQUOTE|H[1-6])$/.test(node.tagName) ? `${value}\n` : value;
+      }
+      // Read semantic answer blocks, not the whole message wrapper. Wrappers
+      // may include accessibility duplicates, action glyphs and timestamps.
+      const blocks = [...response.querySelectorAll('p,pre,ul,ol,table,blockquote,h1,h2,h3,h4,h5,h6')]
+        .filter(visible);
+      const roots = blocks.filter(block => !blocks.some(other => other !== block && other.contains(block)));
+      return (roots.length ? roots.map(text).join('\n') : text(response)).trim();
+    }
+
     // Only dimensions cross back into the host page; restored content never does.
     window.addEventListener('message', (event) => {
       if (event.origin !== extensionOrigin || event.data?.type !== 'dmz:restored-height') return;
@@ -75,7 +101,7 @@ export default defineContentScript({
       }
       const core = globalThis as unknown as Core;
       for (const response of document.querySelectorAll(assistantMessages)) {
-        const source = response.textContent ?? '';
+        const source = responseText(response);
         const existing = restoredMessages.get(response);
         if (!source.includes('⟦')) {
           if (existing) existing.restored = '';
@@ -176,6 +202,7 @@ export default defineContentScript({
       const labels: Record<string, string> = {
         secret: 'leyndarmál', name_demo: 'nafn', address: 'heimilisfang',
         phone: 'símanúmer', email: 'netfang', unicode_review: 'Unicode-tákn',
+        marker_review: 'óþekktur eða breyttur Shield-merkimiði; byrjaðu með upprunalegan prófunartexta',
       };
       const counts = new Map<string, number>();
       for (const finding of findings) {
@@ -383,7 +410,7 @@ export default defineContentScript({
       message = 'Shield tilbúinn á þessari síðu.';
       new MutationObserver(queueResponseScan).observe(document.documentElement, {
         childList: true, characterData: true, subtree: true, attributes: true,
-        attributeFilter: ['contenteditable', 'role', 'id', 'class', 'hidden', 'disabled', 'readonly', 'data-composer-markdown', 'data-testid', 'data-placeholder'],
+        attributeFilter: ['contenteditable', 'role', 'id', 'class', 'style', 'hidden', 'aria-hidden', 'disabled', 'readonly', 'data-composer-markdown', 'data-testid', 'data-placeholder', 'data-message-author-role'],
       });
       queueResponseScan();
     })().catch(coreFailed);
