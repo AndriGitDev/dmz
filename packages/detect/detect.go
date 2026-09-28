@@ -45,11 +45,12 @@ type Match struct {
 }
 
 var (
-	kennitalaRE  = regexp.MustCompile(`[0-9]{6}-?[0-9]{4}`)
-	emailRE      = regexp.MustCompile(`[\p{L}0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}`)
+	// Horizontal separators only: never join identifiers across document lines.
+	kennitalaRE  = regexp.MustCompile(`[0-9]{6}[ .\-\x{00A0}\x{202F}]?[0-9]{4}`)
+	emailRE      = regexp.MustCompile(`[\p{L}0-9._%+\-]+@[\p{L}0-9.\-]+\.[\p{L}]{2,}`)
 	ibanRE       = regexp.MustCompile(`(?i)IS(?:[ -]?[0-9]){24}`)
-	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 \-]{11,25})[0-9]`)
-	phoneRE      = regexp.MustCompile(`(?:(?:\+354|00354)[ \-]?)?[0-9]{3}[ \-]?[0-9]{4}`)
+	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 .\-\x{00A0}\x{202F}]{11,25})[0-9]`)
+	phoneRE      = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ .\-\x{00A0}\x{202F}]?)?[0-9]{3}[ .\-\x{00A0}\x{202F}]?[0-9]{4}`)
 	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
 	jwtRE        = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
 	bearerRE     = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
@@ -174,11 +175,18 @@ func DetectWithTerms(input string, terms []string) []Match {
 }
 
 func adjacentDigitAfterSeparator(s string, start, end int) bool {
-	if start >= 2 && (s[start-1] == '-' || s[start-1] == ' ') && s[start-2] >= '0' && s[start-2] <= '9' {
-		return true
+	separator := func(r rune) bool { return r == '-' || r == '.' || r == ' ' || r == '\u00a0' || r == '\u202f' }
+	if start > 0 {
+		r, size := utf8.DecodeLastRuneInString(s[:start])
+		if separator(r) && start > size && s[start-size-1] >= '0' && s[start-size-1] <= '9' {
+			return true
+		}
 	}
-	if end+1 < len(s) && (s[end] == '-' || s[end] == ' ') && s[end+1] >= '0' && s[end+1] <= '9' {
-		return true
+	if end < len(s) {
+		r, size := utf8.DecodeRuneInString(s[end:])
+		if separator(r) && end+size < len(s) && s[end+size] >= '0' && s[end+size] <= '9' {
+			return true
+		}
 	}
 	return false
 }
@@ -321,7 +329,7 @@ func validateCard(raw string) (Confidence, string, bool) {
 
 func validatePhone(raw string) (Confidence, string, bool) {
 	d := digits(raw)
-	if strings.HasPrefix(raw, "+354") && len(d) == 10 {
+	if (strings.HasPrefix(raw, "+354") || strings.HasPrefix(raw, "(+354)")) && len(d) == 10 {
 		return High, "country-code-shape", true
 	}
 	if strings.HasPrefix(raw, "00354") && len(d) == 12 {
@@ -334,9 +342,19 @@ func validatePhone(raw string) (Confidence, string, bool) {
 }
 
 func validateEmail(raw string) (Confidence, string, bool) {
+	at := strings.LastIndexByte(raw, '@')
+	local := raw[:at]
+	if strings.HasPrefix(local, ".") || strings.HasSuffix(local, ".") || strings.Contains(local, "..") {
+		return "", "", false
+	}
+	for _, label := range strings.Split(raw[at+1:], ".") {
+		if label == "" || strings.HasPrefix(label, "-") || strings.HasSuffix(label, "-") {
+			return "", "", false
+		}
+	}
 	for _, r := range raw {
 		if r > unicode.MaxASCII {
-			return Uncertain, "internationalized-local-part-shape", true
+			return Uncertain, "internationalized-email-shape", true
 		}
 	}
 	return High, "email-shape", true

@@ -4,6 +4,22 @@
   "samples": 29,
   "allowed_prompts": 21,
   "blocked_prompts": 8,
+  "benign_prompts": 4,
+  "blocked_benign_ids": [
+    "v1-negative-price",
+    "v1-negative-combining"
+  ],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [
+    "v1-name-foreign-demo",
+    "v1-name-ascii-patronymic",
+    "v1-address-apartment",
+    "v1-address-new-suffix",
+    "v1-address-lowercase",
+    "v1-secret-generic",
+    "v1-secret-other-prefix",
+    "v1-dictionary-case-variant"
+  ],
   "tenant_terms": [
     "Verkefni Gervi"
   ],
@@ -15,19 +31,19 @@
       "exposed": 3
     },
     "card": {
-      "masked": 1,
+      "masked": 2,
       "blocked": 0,
-      "exposed": 1
+      "exposed": 0
     },
     "email": {
       "masked": 1,
-      "blocked": 2,
-      "exposed": 1
+      "blocked": 3,
+      "exposed": 0
     },
     "kennitala": {
-      "masked": 1,
+      "masked": 3,
       "blocked": 0,
-      "exposed": 2
+      "exposed": 0
     },
     "name_demo": {
       "masked": 1,
@@ -35,9 +51,9 @@
       "exposed": 2
     },
     "phone": {
-      "masked": 1,
-      "blocked": 1,
-      "exposed": 1
+      "masked": 3,
+      "blocked": 0,
+      "exposed": 0
     },
     "secret": {
       "masked": 0,

@@ -4,6 +4,10 @@
   "samples": 42,
   "allowed_prompts": 32,
   "blocked_prompts": 10,
+  "benign_prompts": 8,
+  "blocked_benign_ids": [],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [],
   "tenant_terms": [
     "Verkefni Gervi"
   ],

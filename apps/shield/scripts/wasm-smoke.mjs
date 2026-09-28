@@ -38,6 +38,17 @@ assert.equal(unchecked.allowed, true);
 assert.match(unchecked.transformed, /XXXXX-XXXX/);
 assert.equal(unchecked.findings[0].confidence, 'uncertain');
 
+// Reset between variants so restoration verifies the exact original formatting.
+for (const input of ['140182.8858', '140182\u202f8868', '4111.1111.1111.1111',
+  '4111\u00a01111\u00a01111\u00a01111', '(+354) 000 0001', '+354 000.0001']) {
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcess(input));
+  assert.equal(result.allowed, true, input);
+  assert.notEqual(result.transformed, input);
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  assert.equal(JSON.parse(globalThis.dmzProcess(result.transformed)).transformed, result.transformed);
+}
+
 const blocked = JSON.parse(globalThis.dmzProcess('sk-test_key_000000000000'));
 assert.equal(blocked.allowed, false);
 assert.equal(blocked.transformed, undefined);
@@ -52,6 +63,8 @@ assert.equal(addressBlocked.allowed, false);
 assert.equal(addressBlocked.findings[0].kind, 'address');
 for (const [input, kind] of [
   ['próf@example.invalid', 'email'],
+  ['demo@dæmi.invalid', 'email'],
+  ['00354 000.0001', 'phone'],
   ['00354 000 0000', 'phone'],
   ['Prófgata 99, 999', 'address'],
   ['Prófvegur 12 999 Reykjavík', 'address'],

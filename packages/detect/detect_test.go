@@ -199,3 +199,46 @@ func TestTenantTermsExactAndBounded(t *testing.T) {
 		t.Fatalf("unexpected tenant match: %#v", got)
 	}
 }
+
+func TestFormattingKeepsExactUTF8Spans(t *testing.T) {
+	for _, tc := range []struct {
+		value      string
+		kind       Kind
+		confidence Confidence
+	}{
+		{"140182.8858", Kennitala, High},
+		{"140182\u00a08858", Kennitala, High},
+		{"140182\u202f8868", Kennitala, Uncertain},
+		{"4111.1111.1111.1111", Card, High},
+		{"4111  1111  1111  1111", Card, High},
+		{"4111\u202f1111\u202f1111\u202f1111", Card, High},
+		{"(+354) 000 0001", Phone, High},
+		{"+354\u00a0000.0001", Phone, High},
+		{"00354 000.0001", Phone, Uncertain},
+		{"000.0001", Phone, Uncertain},
+		{"demo@dæmi.invalid", Email, Uncertain},
+	} {
+		t.Run(tc.value, func(t *testing.T) {
+			input := "Í prófun: " + tc.value + "."
+			got := Detect(input)
+			if len(got) != 1 || got[0].Kind != tc.kind || got[0].Confidence != tc.confidence || input[got[0].Start:got[0].End] != tc.value {
+				t.Fatalf("unexpected match: %#v", got)
+			}
+		})
+	}
+}
+
+func TestFormattingHardNegatives(t *testing.T) {
+	for _, input := range []string{
+		"14.01.1882", "192.0.2.1", "123.456,78 kr.",
+		"310282.8858", "141382 8858", "X140182.8858Y",
+		"4111.1111.1111.1112", "X4111.1111.1111.1111Y",
+		"12.000.0001.34", "12\u00a0000\u00a00001\u00a034",
+		"demo@example..invalid", "demo@-example.invalid", "demo@example-.invalid",
+		".demo@example.invalid", "demo..test@example.invalid",
+	} {
+		if got := Detect(input); len(got) != 0 {
+			t.Errorf("false detection for %q: %#v", input, got)
+		}
+	}
+}

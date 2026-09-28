@@ -201,3 +201,30 @@ func TestUntrustedMarkersRequireReview(t *testing.T) {
 		}
 	}
 }
+
+func TestFormattingVariantsRoundTripAndResubmit(t *testing.T) {
+	for _, input := range []string{
+		"Tilbúið kt: 140182.8858.",
+		"Tilbúið kt: 140182\u202f8868.",
+		"Prófunarkort: 4111.1111.1111.1111.",
+		"Prófunarkort: 4111\u00a01111\u00a01111\u00a01111.",
+		"Óúthlutað prófnúmer: (+354) 000 0001.",
+		"Óúthlutað prófnúmer: +354 000.0001.",
+	} {
+		s := NewSession()
+		out := s.Process(input)
+		if !out.Allowed || len(out.Findings) != 1 || out.Transformed == input || s.Restore(out.Transformed) != input {
+			t.Fatalf("round trip failed for %q: %#v", input, out)
+		}
+		resubmit := s.Process(out.Transformed)
+		if !resubmit.Allowed || resubmit.Transformed != out.Transformed {
+			t.Fatalf("marker not stable for %q", input)
+		}
+	}
+	for _, input := range []string{"demo@dæmi.invalid", "00354 000.0001", "000.0001"} {
+		out := NewSession().Process(input)
+		if out.Allowed || out.Transformed != "" {
+			t.Fatalf("ambiguous format should block: %#v", out)
+		}
+	}
+}

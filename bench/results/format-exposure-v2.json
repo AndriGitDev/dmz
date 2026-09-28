@@ -1,0 +1,37 @@
+{
+  "corpus": "bench/corpus/format-v2.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 41,
+  "allowed_prompts": 36,
+  "blocked_prompts": 5,
+  "benign_prompts": 18,
+  "blocked_benign_ids": [],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [],
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "card": {
+      "masked": 6,
+      "blocked": 0,
+      "exposed": 0
+    },
+    "email": {
+      "masked": 2,
+      "blocked": 3,
+      "exposed": 0
+    },
+    "kennitala": {
+      "masked": 6,
+      "blocked": 0,
+      "exposed": 0
+    },
+    "phone": {
+      "masked": 4,
+      "blocked": 2,
+      "exposed": 0
+    }
+  }
+}

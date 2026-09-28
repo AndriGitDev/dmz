@@ -22,6 +22,10 @@ type exposureReport struct {
 	Samples        int                      `json:"samples"`
 	AllowedPrompts int                      `json:"allowed_prompts"`
 	BlockedPrompts int                      `json:"blocked_prompts"`
+	BenignPrompts  int                      `json:"benign_prompts"`
+	BlockedBenign  []string                 `json:"blocked_benign_ids"`
+	AlteredBenign  []string                 `json:"altered_benign_ids"`
+	ExposedCases   []string                 `json:"exposed_case_ids"`
 	TenantTerms    []string                 `json:"tenant_terms"`
 	Method         string                   `json:"method"`
 	PerKind        map[string]exposureCount `json:"per_kind"`
@@ -37,7 +41,8 @@ func evaluateExposure(path string) (exposureReport, error) {
 	defer f.Close()
 	terms := []string{"Verkefni Gervi"}
 	r := exposureReport{Corpus: path, Mode: "outbound-exposure", TenantTerms: terms,
-		Method:  "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+		Method:        "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+		BlockedBenign: []string{}, AlteredBenign: []string{}, ExposedCases: []string{},
 		PerKind: map[string]exposureCount{}}
 	seen := map[string]bool{}
 	scanner := bufio.NewScanner(f)
@@ -62,6 +67,17 @@ func evaluateExposure(path string) (exposureReport, error) {
 		} else {
 			r.BlockedPrompts++
 		}
+		// Unannotated rows are explicitly benign examples in these synthetic
+		// corpora. Report review burden separately from identifier exposure.
+		if len(item.Entities) == 0 {
+			r.BenignPrompts++
+			if !out.Allowed {
+				r.BlockedBenign = append(r.BlockedBenign, item.ID)
+			} else if out.Transformed != item.Text {
+				r.AlteredBenign = append(r.AlteredBenign, item.ID)
+			}
+		}
+		exposedCase := false
 		for _, e := range item.Entities {
 			if e.Kind == "" || e.Value == "" || strings.Count(item.Text, e.Value) != 1 {
 				return exposureReport{}, fmt.Errorf("line %d: invalid annotation", r.Samples)
@@ -72,10 +88,14 @@ func evaluateExposure(path string) (exposureReport, error) {
 				count.Blocked++
 			case strings.Contains(out.Transformed, e.Value):
 				count.Exposed++
+				exposedCase = true
 			default:
 				count.Masked++
 			}
 			r.PerKind[string(e.Kind)] = count
+		}
+		if exposedCase {
+			r.ExposedCases = append(r.ExposedCases, item.ID)
 		}
 	}
 	if err := scanner.Err(); err != nil {

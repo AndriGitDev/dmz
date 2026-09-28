@@ -4,6 +4,13 @@
   "samples": 18,
   "allowed_prompts": 7,
   "blocked_prompts": 11,
+  "benign_prompts": 2,
+  "blocked_benign_ids": [],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [
+    "challenge-name-ascii",
+    "challenge-secret-generic"
+  ],
   "tenant_terms": [
     "Verkefni Gervi"
   ],

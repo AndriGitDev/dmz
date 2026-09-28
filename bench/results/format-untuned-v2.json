@@ -1,0 +1,39 @@
+{
+  "corpus": "bench/corpus/format-v2.jsonl",
+  "detector": "dmz",
+  "samples": 41,
+  "scoring": "exact span and entity type",
+  "per_kind": {
+    "card": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1,
+      "recall": 0.5
+    },
+    "email": {
+      "tp": 3,
+      "fp": 2,
+      "fn": 2,
+      "precision": 0.6,
+      "recall": 0.6
+    },
+    "kennitala": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 4,
+      "precision": 1,
+      "recall": 0.3333333333333333
+    },
+    "phone": {
+      "tp": 0,
+      "fp": 1,
+      "fn": 6,
+      "precision": 0,
+      "recall": 0
+    }
+  },
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ]
+}
