@@ -4,7 +4,7 @@
 {"id":"v1-name-known-case","text":"Til Arnu Jónsdóttur í tilbúnu dæmi.","entities":[{"kind":"name_demo","value":"Arnu Jónsdóttur"}]}
 {"id":"v1-email-unicode-domain","text":"Tilbúið netfang demo@dæmi.invalid.","entities":[{"kind":"email","value":"demo@dæmi.invalid"}]}
 {"id":"v1-email-uppercase-domain","text":"Tilbúið netfang Demo@EXAMPLE.INVALID.","entities":[{"kind":"email","value":"Demo@EXAMPLE.INVALID"}]}
-{"id":"v1-email-combining-mark","text":"Tilbúið netfang próf@example.invalid.","entities":[{"kind":"email","value":"próf@example.invalid"}]}
+{"id":"v1-email-combining-mark","text":"Tilbúið netfang pro\u0301f@example.invalid.","entities":[{"kind":"email","value":"pro\u0301f@example.invalid"}]}
 {"id":"v1-phone-dotted","text":"Óúthlutað prófnúmer +354 000.0000.","entities":[{"kind":"phone","value":"+354 000.0000"}]}
 {"id":"v1-phone-parenthesized","text":"Óúthlutað prófnúmer (+354) 000 0000.","entities":[{"kind":"phone","value":"(+354) 000 0000"}]}
 {"id":"v1-phone-country","text":"Óúthlutað prófnúmer +354 000 0000.","entities":[{"kind":"phone","value":"+354 000 0000"}]}
@@ -22,8 +22,8 @@
 {"id":"v1-card-known","text":"Tilbúið prófkort 4111 1111 1111 1111.","entities":[{"kind":"card","value":"4111 1111 1111 1111"}]}
 {"id":"v1-dictionary-case-variant","text":"Tilbúið verkefnisheiti verkefni gervi.","entities":[{"kind":"tenant_dictionary","value":"verkefni gervi"}]}
 {"id":"v1-dictionary-exact","text":"Tilbúið verkefnisheiti Verkefni Gervi.","entities":[{"kind":"tenant_dictionary","value":"Verkefni Gervi"}]}
-{"id":"v1-email-invisible","text":"Tilbúið netfang demo@exa​mple.invalid.","entities":[{"kind":"email","value":"demo@exa​mple.invalid"}]}
+{"id":"v1-email-invisible","text":"Tilbúið netfang demo@exa\u200bmple.invalid.","entities":[{"kind":"email","value":"demo@exa\u200bmple.invalid"}]}
 {"id":"v1-negative-date","text":"Dagsetning 14.01.1882 er ekki kennitala.","entities":[]}
 {"id":"v1-negative-price","text":"Setningin Prófgata 99, 999 krónur vísar í vöruheiti og verð, ekki heimilisfang.","entities":[]}
 {"id":"v1-negative-ascii-name","text":"Project Gervison er tilbúið vörumerki.","entities":[]}
-{"id":"v1-negative-combining","text":"Góður dagur í tilbúnu dæmi.","entities":[]}
+{"id":"v1-negative-combining","text":"Go\u0301ður dagur í tilbúnu dæmi.","entities":[]}
