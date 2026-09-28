@@ -17,7 +17,8 @@ publish the source data. BÍN/Mannanafnaskrá are separate and not covered here.
 Source copies and derived text live under `/root/.local/share/dmz/datasets`, outside
 Git. Only tooling, fabricated tests, hashes and aggregate results are committed.
 No source text is sent to model APIs, CI or the public marketing repository.
-The current Shield package does not yet contain either dataset.
+The standard CI Shield package omits external data. An explicit local build can
+embed the approved lexicon; see [the lexicon tuning report](../../docs/detector-lexicon-2026-09-28.md).
 
 ## Reproduce preparation
 
@@ -55,7 +56,9 @@ over time; do not silently replace a baseline with a newer source release.
 - Text-hash assignment keeps exact duplicate text in one split even when its
   annotations conflict. It is **not document-disjoint** and does not eliminate
   near-duplicates, common entities or topical overlap. Use document/source-aware
-  evaluation before making a generalisation claim. Test split is unscored so far.
+  evaluation before making a generalisation claim. The test split was reserved during lexicon selection, then scored once in the
+  [lexicon pass](../../docs/detector-lexicon-2026-09-28.md). It is now a recorded
+  evaluation set; future tuning requires a fresh independent test set.
 
 ## Untuned development baseline
 

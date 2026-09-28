@@ -45,7 +45,8 @@ snapshots are retained as `exploratory-untuned-*`.
 annotations and 18 benign prompts). Untuned reports preserve 14 exposed literals;
 current reports have zero exposed annotations and zero false detections.
 `holdout-v2.jsonl` is a fresh 30-case post-change probe, not tuned against: eight
-literals remain exposed and two of ten benign prompts are blocked. Both sets are
+literals remain exposed and one of ten benign prompts is blocked after the
+[lexicon pass](../docs/detector-lexicon-2026-09-28.md) removed the price false positive. Both sets are
 synthetic, deliberately selected, and authored by the implementing agent; neither
 estimates field accuracy. Do not pool their results into a headline success rate.
 

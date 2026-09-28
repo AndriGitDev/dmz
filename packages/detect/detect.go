@@ -68,6 +68,10 @@ func Detect(input string) []Match {
 // DetectWithTerms adds exact, case-sensitive tenant terms. Callers must bound
 // and validate the terms before passing them in. No term list is persisted here.
 func DetectWithTerms(input string, terms []string) []Match {
+	return detectWithLexicon(input, terms, bundledLexicon)
+}
+
+func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 	var review []Match
 	for start := 0; start < len(input); {
 		r, size := utf8.DecodeRuneInString(input[start:])
@@ -81,10 +85,13 @@ func DetectWithTerms(input string, terms []string) []Match {
 	if len(review) > 0 {
 		return review
 	}
-	var candidates []Match
+	candidates := lexicon.matches(input)
 	add := func(re *regexp.Regexp, kind Kind, validate func(string) (Confidence, string, bool)) {
 		for _, loc := range re.FindAllStringIndex(input, -1) {
 			if !bounded(input, loc[0], loc[1]) {
+				continue
+			}
+			if kind == Address && currencyAfter(input, loc[1]) {
 				continue
 			}
 			if kind == Phone && adjacentDigitAfterSeparator(input, loc[0], loc[1]) {

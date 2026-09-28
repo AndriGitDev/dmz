@@ -17,3 +17,5 @@ apps/shield/public/wasm_exec.js
 bench/datasets/raw/
 bench/datasets/prepared/
 __pycache__/
+packages/detect/lexicon.generated.json
+apps/shield/public/detector-data.json

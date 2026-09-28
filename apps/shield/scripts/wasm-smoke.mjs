@@ -14,6 +14,26 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
+// Optional local-only integration check: source entries never leave this process
+// or appear in test output. CI can use a fabricated pack through the same path.
+if (process.env.DMZ_LEXICON_FILE) {
+  const pack = JSON.parse(readFileSync(process.env.DMZ_LEXICON_FILE, 'utf8'));
+  let nameReviewed = false;
+  for (const name of pack.names.slice(0, 30)) {
+    const result = JSON.parse(globalThis.dmzProcess(name));
+    if (!result.allowed && result.findings.some(f => f.reason === 'corpus-name-lexicon')) {
+      nameReviewed = true;
+      break;
+    }
+  }
+  assert.equal(nameReviewed, true, 'bundled name lexicon did not review a known entry');
+  const address = JSON.parse(globalThis.dmzProcess(`${pack.addresses[0]} 99/2, 999`));
+  assert.equal(address.allowed, false, 'bundled address lexicon failed');
+  assert.ok(address.findings.some(f => f.reason === 'gazetteer-number-postcode'));
+  globalThis.dmzReset();
+}
+
+
 const first = JSON.parse(globalThis.dmzProcess('Arna Jónsdóttir, 140182-8858.'));
 assert.equal(first.allowed, true);
 assert.match(first.transformed, /⟦KT-[A-F0-9]{16}-\d+: XXXXX-XXXX⟧/);

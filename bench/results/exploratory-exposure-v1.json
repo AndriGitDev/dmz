@@ -2,11 +2,10 @@
   "corpus": "bench/corpus/exploratory-v1.jsonl",
   "mode": "outbound-exposure",
   "samples": 29,
-  "allowed_prompts": 21,
-  "blocked_prompts": 8,
+  "allowed_prompts": 22,
+  "blocked_prompts": 7,
   "benign_prompts": 4,
   "blocked_benign_ids": [
-    "v1-negative-price",
     "v1-negative-combining"
   ],
   "altered_benign_ids": [],

@@ -1,0 +1,11 @@
+{
+  "training_sha256": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+  "address_forms_sha256": "08c5344e8d8d947496f0f51f011707994276ba49920156569f89b8e92061a9e6",
+  "pack_sha256": "f3e3d9470773e481915f8f42c9015c93c4761e37531657b2a7e171c307aa4f31",
+  "names": 4431,
+  "addresses": 23636,
+  "bytes": 437132,
+  "minimum": 1,
+  "purity": 0.95,
+  "training_sentences": 45332
+}

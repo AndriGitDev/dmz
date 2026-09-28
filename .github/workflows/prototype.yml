@@ -12,6 +12,7 @@ jobs:
         with:
           go-version-file: go.mod
       - run: go test ./...
+      - run: ./scripts/check-lexicon.sh
       - run: python3 -m unittest discover -s bench/datasets -p 'test_*.py'
       - run: sha256sum --check bench/gates/corpus.sha256
       - run: ./scripts/check-detector-v2.sh

@@ -26,18 +26,23 @@ type sample struct {
 	Entities []entity `json:"entities"`
 }
 type report struct {
-	SHA256    string  `json:"input_sha256"`
-	Split     string  `json:"split"`
-	Sentences int     `json:"sentences"`
-	TP        int     `json:"tp"`
-	FP        int     `json:"fp"`
-	FN        int     `json:"fn"`
-	Precision float64 `json:"precision"`
-	Recall    float64 `json:"recall"`
-	Method    string  `json:"method"`
+	LexiconSHA256 string  `json:"lexicon_sha256,omitempty"`
+	SHA256        string  `json:"input_sha256"`
+	Split         string  `json:"split"`
+	Sentences     int     `json:"sentences"`
+	TP            int     `json:"tp"`
+	FP            int     `json:"fp"`
+	FN            int     `json:"fn"`
+	Precision     float64 `json:"precision"`
+	Recall        float64 `json:"recall"`
+	Method        string  `json:"method"`
 }
 
 func evaluate(reader io.Reader, split string) (report, error) {
+	return evaluateWithFinder(reader, split, detect.Detect)
+}
+
+func evaluateWithFinder(reader io.Reader, split string, finder func(string) []detect.Match) (report, error) {
 	r := report{Split: split, Method: "exact UTF-8 span; detect.Name vs corpus Person; reconstructed token-spaced text; no outbound-exposure claim"}
 	hash := sha256.New()
 	scanner := bufio.NewScanner(io.TeeReader(reader, hash))
@@ -59,7 +64,7 @@ func evaluate(reader io.Reader, split string) (report, error) {
 				gold[[2]int{e.Start, e.End}] = true
 			}
 		}
-		for _, m := range detect.Detect(s.Text) {
+		for _, m := range finder(s.Text) {
 			if m.Kind != detect.Name {
 				continue
 			}
@@ -93,6 +98,7 @@ func evaluate(reader io.Reader, split string) (report, error) {
 func main() {
 	path := flag.String("input", "", "local prepared JSONL file")
 	split := flag.String("split", "dev", "split to evaluate; defaults to dev to reserve test")
+	lexiconPath := flag.String("lexicon", "", "optional local lexicon data pack")
 	flag.Parse()
 	if *split != "train" && *split != "dev" && *split != "test" {
 		fmt.Fprintln(os.Stderr, "invalid split")
@@ -104,7 +110,25 @@ func main() {
 		os.Exit(1)
 	}
 	defer f.Close()
-	r, err := evaluate(f, *split)
+	finder := detect.Detect
+	var lexiconHash string
+	if *lexiconPath != "" {
+		data, err := os.ReadFile(*lexiconPath)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "cannot read lexicon")
+			os.Exit(1)
+		}
+		l, err := detect.LoadLexicon(data)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		sum := sha256.Sum256(data)
+		lexiconHash = hex.EncodeToString(sum[:])
+		finder = func(s string) []detect.Match { return l.Detect(s, nil) }
+	}
+	r, err := evaluateWithFinder(f, *split, finder)
+	r.LexiconSHA256 = lexiconHash
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
