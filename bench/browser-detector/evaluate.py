@@ -48,6 +48,7 @@ def main():
     a=p.parse_args()
     for key in ['model','tokenizer','input','crf','reference','predictions']:setattr(a,key,external(getattr(a,key)))
     if a.predictions.exists():raise ValueError('refusing to overwrite prediction cache')
+    if a.output.exists():raise ValueError('refusing to overwrite evaluation report')
     from transformers import AutoTokenizer
     tokenizer=AutoTokenizer.from_pretrained(a.tokenizer,local_files_only=True,add_prefix_space=True,trust_remote_code=False)
     crf=json.loads(a.crf.read_text());reference=json.loads(a.reference.read_text())

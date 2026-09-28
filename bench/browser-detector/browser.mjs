@@ -10,6 +10,8 @@ const root = dirname(fileURLToPath(import.meta.url));
 const assets = process.env.DMZ_MODEL_ASSETS;
 const reportPath = process.env.DMZ_BROWSER_REPORT;
 if (!assets || !reportPath) throw new Error('Set DMZ_MODEL_ASSETS and DMZ_BROWSER_REPORT');
+try { await stat(reportPath); throw new Error('Refusing to replace benchmark report'); }
+catch(error) { if(error.code!=='ENOENT')throw error; }
 const fixtures = JSON.parse(await readFile(join(assets, 'fixtures.json'), 'utf8'));
 for (const [model, expected] of Object.entries(fixtures.models)) {
   assert.ok(['fp32', 'int8', 'int4'].includes(model));
@@ -191,6 +193,8 @@ finally {
   if(browser)await browser.close();if(browserServer)await browserServer.close();if(server)await new Promise(r=>server.close(r));
   result.requests=traffic.length;
   result.loadScope='Fresh worker/context with no-store HTTP, same browser process; not a fresh OS or browser cache cold start';
-  await writeFile(reportPath,JSON.stringify(result,null,2)+'\n');
+  result.allRunCasesSucceeded=!result.fatal && !result.sessions.some(session=>session.error) && !result.multiTab?.error;
+  if(!result.allRunCasesSucceeded)process.exitCode=1;
+  await writeFile(reportPath,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
   console.log(JSON.stringify({report:reportPath,fatal:result.fatal,sessions:result.sessions.length}));
 }

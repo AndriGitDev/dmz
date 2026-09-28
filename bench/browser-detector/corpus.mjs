@@ -70,5 +70,5 @@ try {
     console.log(JSON.stringify({set:run.name,complete:run.labels.length,seconds:run.seconds}));
   }
   assert.deepEqual(result.externalRequests,[]);
-  await writeFile(output,JSON.stringify(result),'utf8');
+  await writeFile(output,JSON.stringify(result),{encoding:'utf8',flag:'wx'});
 } finally {if(browser)await browser.close();await new Promise(r=>server.close(r));}

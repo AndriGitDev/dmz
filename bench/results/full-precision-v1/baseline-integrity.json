@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "scope": "Preserved pre-training baseline integrity and exact-span reconstruction; reused development only",
+  "files": {
+    "encoder": {
+      "sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+      "bytes": 651803232
+    },
+    "head": {
+      "sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+      "bytes": 401844
+    },
+    "crf": {
+      "sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "bytes": 2172152
+    }
+  },
+  "scores": {
+    "general": {
+      "tp": 1435,
+      "fp": 61,
+      "fn": 71,
+      "precision": 0.9592245989304813,
+      "recall": 0.952855245683931,
+      "rows": 5582,
+      "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0"
+    },
+    "domain": {
+      "tp": 462,
+      "fp": 7,
+      "fn": 18,
+      "precision": 0.9850746268656716,
+      "recall": 0.9625,
+      "rows": 256,
+      "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87"
+    }
+  }
+}

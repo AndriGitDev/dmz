@@ -22,6 +22,7 @@ def main():
     p.add_argument('--selection',type=Path,default=Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json')
     p.add_argument('--neural-prefix',default='neural-epoch-12-predictions')
     a=p.parse_args()
+    if a.report and a.report.exists():raise ValueError('refusing to overwrite browser report')
     for key in ['assets','reference_dir','general_input','vectors']:
         setattr(a,key,external(getattr(a,key)))
     if a.mode=='prepare':
