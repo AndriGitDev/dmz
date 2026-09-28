@@ -110,6 +110,9 @@ def main():
             reference_records=matching[0]['records']
             reports[-1]['versus_fp32_browser']=compression_changes(records,reference_records,crf['records'])
             reports[-1]['fp32_browser_combined']=score(reference_records,crf['records'])
+            empty_crf=[dict(gold=r['gold'],predictions=[]) for r in records]
+            reports[-1]['versus_fp32_browser_neural']=compression_changes(records,reference_records,empty_crf)
+            reports[-1]['fp32_browser_neural']=score(reference_records)
     report={k:v for k,v in predictions.items() if k!='sets'}
     report.update(scope='Full fixed development replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end Shield',independent_validation=False,sets=reports)
     if a.browser_reference:report['fp32_browser_reference_sha256']=digest(a.browser_reference)

@@ -85,3 +85,15 @@ tokenizer and matching cached CRF spans. `finetune.py evaluate --text-mode origi
 keeps those UTF-8 byte offsets rather than scoring canonical spaced text. This is
 a typography/offset regression check on the same generated development examples,
 not independent evidence of production tokenization or document accuracy.
+
+## Standalone candidate inclusion before first epoch results
+
+The evaluator already reports both the neural-only detector and CRF combination.
+Include both forms of each retained epoch in selection, alongside the preserved
+baseline composition. This yields four new candidates for two complete epochs.
+Use neural threshold 0.0 in both forms; CRF 0.75 and overlap priority remain fixed
+when CRF is used. Apply the same two-dataset precision floor / lower-recall rule.
+This inclusion was recorded before any fine-tuned development result was available.
+An improved encoder may no longer benefit from CRF, so do not force that component
+into the final candidate. Report which composition wins and compare compression
+losses for that composition, retaining both neural and combined diagnostics.
