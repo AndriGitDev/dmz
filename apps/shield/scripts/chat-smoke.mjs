@@ -179,6 +179,48 @@ try {
   assert.notEqual(await claude.evaluate(() => window.sent[1]), oldMarker, 'reset reused the old session namespace');
   await claude.locator('[data-dmz-restored="true"]').waitFor();
   assert.equal(await claude.locator('[data-dmz-restored="true"]').count(), 1, 'old reply restored after reset');
+  // Reported new-chat layouts: ChatGPT has no ID; Claude's placeholder is a child.
+  for (const [origin, editor] of [
+    ['https://chatgpt.com', '<div contenteditable="true" role="textbox" class="ProseMirror" data-composer-markdown="" aria-label="Ask ChatGPT"><p data-empty-paragraph="true" data-placeholder="Ask ChatGPT" class="placeholder"><br class="ProseMirror-trailingBreak"></p></div>'],
+    ['https://claude.ai', '<div class="ProseMirror" contenteditable="true"><p data-placeholder="How can I help you today?" class="is-empty is-editor-empty"><br class="ProseMirror-trailingBreak"></p></div>'],
+  ]) {
+    const modern = await browser.newPage();
+    const fixture = `<!doctype html><form>${editor}<button data-testid="send-button">Send</button></form>
+      <script>
+        window.sent = [];
+        const field = document.querySelector('[contenteditable]');
+        let model = '';
+        field.addEventListener('input', () => { model = field.innerText; });
+        field.addEventListener('keydown', event => {
+          if (event.key === 'Enter') { event.preventDefault(); document.querySelector('form').requestSubmit(); }
+        });
+        document.querySelector('form').addEventListener('submit', event => {
+          event.preventDefault(); window.sent.push(model);
+        });
+      </script>`;
+    await modern.route(`${origin}/**`, route => route.fulfill({ contentType: 'text/html', body: fixture }));
+    await modern.goto(`${origin}/new`);
+    const field = modern.locator('[contenteditable]');
+    for (const action of ['click', 'enter']) {
+      await field.fill('demo@example.com');
+      if (action === 'click') await modern.locator('button').click();
+      else await field.press('Enter');
+      await modern.waitForFunction(count => window.sent.length === count, action === 'click' ? 1 : 2);
+    }
+    const sent = await modern.evaluate(() => window.sent);
+    assert.ok(sent.every(text => text.includes('⟦EMAIL-') && !text.includes('demo@example.com')), `${origin}: unmasked new-chat submission`);
+    await field.fill('sk-test_key_000000000000');
+    await modern.locator('button').click();
+    assert.equal(await modern.evaluate(() => window.sent.length), 2, 'new editor allowed secret');
+    await field.evaluate(element => element.after(element.cloneNode(true)));
+    await modern.locator('button').click();
+    assert.equal(await modern.evaluate(() => window.sent.length), 2, 'ambiguous editor submitted');
+    await modern.locator('[contenteditable]').last().evaluate(element => { element.hidden = true; });
+    await modern.locator('[contenteditable]').first().fill('demo@example.com');
+    await modern.locator('button').click();
+    await modern.waitForFunction(() => window.sent.length === 3);
+    await modern.close();
+  }
   assert.deepEqual(errors, []);
   console.log('ChatGPT and Claude synthetic interception, block and restore smoke tests passed');
 } finally {

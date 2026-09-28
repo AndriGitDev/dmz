@@ -11,8 +11,8 @@ type Core = {
 
 const site = location.hostname === 'chatgpt.com' ? 'chatgpt' : 'claude';
 const composers = site === 'chatgpt'
-  ? ['#prompt-textarea', 'textarea[data-testid="prompt-textarea"]']
-  : ['[data-testid="chat-input"] [contenteditable="true"]', '[contenteditable="true"][data-placeholder]'];
+  ? ['#prompt-textarea', 'textarea[data-testid="prompt-textarea"]', '[contenteditable="true"][data-composer-markdown][role="textbox"]']
+  : ['[data-testid="chat-input"] [contenteditable="true"]', '[contenteditable="true"][data-placeholder]', '.ProseMirror[contenteditable="true"]'];
 const sendButtons = site === 'chatgpt'
   ? ['button[data-testid="send-button"]']
   : ['button[aria-label="Send message"]', 'button[data-testid="send-button"]'];
@@ -188,11 +188,15 @@ export default defineContentScript({
     }
 
     function composer(): HTMLElement | null {
+      const candidates = new Set<HTMLElement>();
       for (const selector of composers) {
-        const found = document.querySelector<HTMLElement>(selector);
-        if (found && (found instanceof HTMLTextAreaElement || found.isContentEditable)) return found;
+        for (const found of document.querySelectorAll<HTMLElement>(selector)) {
+          if (found.getClientRects().length && getComputedStyle(found).visibility === 'visible'
+            && ((found instanceof HTMLTextAreaElement && !found.disabled && !found.readOnly) || found.isContentEditable)) candidates.add(found);
+        }
       }
-      return null;
+      // Never guess which draft will be submitted when several editors match.
+      return candidates.size === 1 ? [...candidates][0] ?? null : null;
     }
 
     function read(element: HTMLElement): string {
@@ -377,7 +381,10 @@ export default defineContentScript({
       if (typeof core.dmzProcess !== 'function') throw new Error('WASM did not start');
       ready = true;
       message = 'Shield tilbúinn á þessari síðu.';
-      new MutationObserver(queueResponseScan).observe(document.documentElement, { childList: true, characterData: true, subtree: true });
+      new MutationObserver(queueResponseScan).observe(document.documentElement, {
+        childList: true, characterData: true, subtree: true, attributes: true,
+        attributeFilter: ['contenteditable', 'role', 'id', 'class', 'hidden', 'disabled', 'readonly', 'data-composer-markdown', 'data-testid', 'data-placeholder'],
+      });
       queueResponseScan();
     })().catch(coreFailed);
   },

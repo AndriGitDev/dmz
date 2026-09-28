@@ -2,7 +2,7 @@
 
 Status: experimental development build, 28 September 2026. Use fabricated data only. This is an installable browser preview, not a safe path for customer or other sensitive information.
 
-The owner's daily testing target is **desktop Chrome with both ChatGPT and Claude**. Synthetic automated checks currently use Playwright Chromium; successful authenticated flows in the owner's Chrome profile are still required.
+The owner's daily testing target is **desktop Chrome with both ChatGPT and Claude**; initial live testing is in **Brave with Brave Shields disabled**. Synthetic automated checks use Playwright Chromium. The first live report found unsupported composers on both new-chat pages. Updated selectors cover the reported ChatGPT markdown textbox and a Claude ProseMirror editor with a child placeholder; the Claude parent attributes still need live confirmation. Successful authenticated flows remain required.
 
 ## Install and try
 
