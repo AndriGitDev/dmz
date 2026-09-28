@@ -1,0 +1,12 @@
+{
+  "lexicon_sha256": "6cdc7bd0b3c506f99a313e00623f9811806164a8cef4a17a679838f9c8832781",
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "split": "dev",
+  "sentences": 5582,
+  "tp": 586,
+  "fp": 33,
+  "fn": 920,
+  "precision": 0.9466882067851373,
+  "recall": 0.3891102257636122,
+  "method": "exact UTF-8 span; detect.Name vs corpus Person; reconstructed token-spaced text; no outbound-exposure claim"
+}

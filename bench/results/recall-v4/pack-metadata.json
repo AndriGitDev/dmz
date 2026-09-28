@@ -1,0 +1,17 @@
+{
+  "training_sha256": "b922e85e98b6e4b0c55f6ff5150e7838f296d6c03993f9668be92a92aa60d363",
+  "address_forms_sha256": "08c5344e8d8d947496f0f51f011707994276ba49920156569f89b8e92061a9e6",
+  "pack_sha256": "bbed53a046f3feac95e52fe7ff6afc9eadbce82c7714086c98684645ba197312",
+  "seed_minimum": 1,
+  "seed_purity": 0.99,
+  "name_seeds": 4518,
+  "part_minimum": 1,
+  "part_purity": 0.5,
+  "name_parts": 4738,
+  "names": 955,
+  "addresses": 23636,
+  "bytes": 471050,
+  "minimum": 2,
+  "purity": 0.95,
+  "training_sentences": 45332
+}

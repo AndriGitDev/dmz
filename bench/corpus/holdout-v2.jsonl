@@ -1,0 +1,30 @@
+{"id":"holdout-kt","text":"Tilbúin 1800s kennitala: 290280.0008.","entities":[{"kind":"kennitala","value":"290280.0008"}]}
+{"id":"holdout-kt-nbsp","text":"Tilbúin 1800s kennitala: 010180 0008.","entities":[{"kind":"kennitala","value":"010180 0008"}]}
+{"id":"holdout-kt-tab","text":"Tilbúin 1800s kennitala: 010180\t0008.","entities":[{"kind":"kennitala","value":"010180\t0008"}]}
+{"id":"holdout-kt-dash","text":"Tilbúin 1800s kennitala: 010180–0008.","entities":[{"kind":"kennitala","value":"010180–0008"}]}
+{"id":"holdout-card","text":"Tilbúið prófkort: 5555.5555.5555.4444.","entities":[{"kind":"card","value":"5555.5555.5555.4444"}]}
+{"id":"holdout-card-nbsp","text":"Tilbúið prófkort: 5555 5555 5555 4444.","entities":[{"kind":"card","value":"5555 5555 5555 4444"}]}
+{"id":"holdout-card-amex","text":"Tilbúið prófkort: 3782 822463 10005.","entities":[{"kind":"card","value":"3782 822463 10005"}]}
+{"id":"holdout-card-newline","text":"Tilbúið prófkort: 5555 5555\n5555 4444.","entities":[{"kind":"card","value":"5555 5555\n5555 4444"}]}
+{"id":"holdout-phone","text":"Óúthlutað prófnúmer: (+354) 000.0002.","entities":[{"kind":"phone","value":"(+354) 000.0002"}]}
+{"id":"holdout-phone-idd","text":"Óúthlutað prófnúmer: 00354 000 0002.","entities":[{"kind":"phone","value":"00354 000 0002"}]}
+{"id":"holdout-phone-local","text":"Óúthlutað prófnúmer: 000 0002.","entities":[{"kind":"phone","value":"000 0002"}]}
+{"id":"holdout-phone-tab","text":"Óúthlutað prófnúmer: +354\t000\t0002.","entities":[{"kind":"phone","value":"+354\t000\t0002"}]}
+{"id":"holdout-email","text":"Tilbúið netfang: other+demo@prófun.invalid.","entities":[{"kind":"email","value":"other+demo@prófun.invalid"}]}
+{"id":"holdout-email-case","text":"Tilbúið netfang: Example@LAB.EXAMPLE.INVALID.","entities":[{"kind":"email","value":"Example@LAB.EXAMPLE.INVALID"}]}
+{"id":"holdout-email-nfd","text":"Tilbúið netfang: próf@example.invalid.","entities":[{"kind":"email","value":"próf@example.invalid"}]}
+{"id":"holdout-email-zero","text":"Tilbúið netfang: other@exa​mple.invalid.","entities":[{"kind":"email","value":"other@exa​mple.invalid"}]}
+{"id":"holdout-name","text":"Tilbúið dæmi: Nora Demo.","entities":[{"kind":"name_demo","value":"Nora Demo"}]}
+{"id":"holdout-address","text":"Tilbúið dæmi: Gervigata 8/3, 999 Sýnibær.","entities":[{"kind":"address","value":"Gervigata 8/3, 999 Sýnibær"}]}
+{"id":"holdout-secret","text":"Tilbúið dæmi: svc_demo_111111111111111111111111.","entities":[{"kind":"secret","value":"svc_demo_111111111111111111111111"}]}
+{"id":"holdout-term","text":"Tilbúið dæmi: VERKEFNI GERVI.","entities":[{"kind":"tenant_dictionary","value":"VERKEFNI GERVI"}]}
+{"id":"holdout-date","text":"Dagsetning: 29.02.1800.","entities":[]}
+{"id":"holdout-bad-date","text":"Ógildur kóði 290280.0008X.","entities":[]}
+{"id":"holdout-decimal","text":"Upphæð 987.654,32 kr.","entities":[]}
+{"id":"holdout-version","text":"Version 2.34.56.78.","entities":[]}
+{"id":"holdout-price","text":"Prófgata 88, 888 krónur er vöruheiti og verð.","entities":[]}
+{"id":"holdout-plain","text":"Gerviverkefni er í prófun.","entities":[]}
+{"id":"holdout-code","text":"const checksum = \"abcdef0123456789abcdef0123456789\";","entities":[]}
+{"id":"holdout-unicode","text":"Góðan daginn.","entities":[]}
+{"id":"holdout-invalid-card","text":"5555.5555.5555.4445","entities":[]}
+{"id":"holdout-domain","text":"demo@sub..example.invalid","entities":[]}

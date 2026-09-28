@@ -1,0 +1,41 @@
+{"id":"format-kt-compact","text":"Tilbúið dæmi: (1401828858).","entities":[{"kind":"kennitala","value":"1401828858"}]}
+{"id":"format-kt-dash","text":"Tilbúið dæmi: (140182-8858).","entities":[{"kind":"kennitala","value":"140182-8858"}]}
+{"id":"format-kt-space","text":"Tilbúið dæmi: (140182 8858).","entities":[{"kind":"kennitala","value":"140182 8858"}]}
+{"id":"format-kt-dot","text":"Tilbúið dæmi: (140182.8858).","entities":[{"kind":"kennitala","value":"140182.8858"}]}
+{"id":"format-kt-nbsp","text":"Tilbúið dæmi: (140182 8858).","entities":[{"kind":"kennitala","value":"140182 8858"}]}
+{"id":"format-kt-nnbsp","text":"Tilbúið dæmi: (140182 8858).","entities":[{"kind":"kennitala","value":"140182 8858"}]}
+{"id":"format-card-compact","text":"Prófunarkort: 4111111111111111.","entities":[{"kind":"card","value":"4111111111111111"}]}
+{"id":"format-card-space","text":"Prófunarkort: 4111 1111 1111 1111.","entities":[{"kind":"card","value":"4111 1111 1111 1111"}]}
+{"id":"format-card-dash","text":"Prófunarkort: 4111-1111-1111-1111.","entities":[{"kind":"card","value":"4111-1111-1111-1111"}]}
+{"id":"format-card-dot","text":"Prófunarkort: 4111.1111.1111.1111.","entities":[{"kind":"card","value":"4111.1111.1111.1111"}]}
+{"id":"format-card-nbsp","text":"Prófunarkort: 4111 1111 1111 1111.","entities":[{"kind":"card","value":"4111 1111 1111 1111"}]}
+{"id":"format-card-nnbsp","text":"Prófunarkort: 4111 1111 1111 1111.","entities":[{"kind":"card","value":"4111 1111 1111 1111"}]}
+{"id":"format-phone-dot","text":"Óúthlutað prófnúmer: +354 000.0001.","entities":[{"kind":"phone","value":"+354 000.0001"}]}
+{"id":"format-phone-parentheses","text":"Óúthlutað prófnúmer: (+354) 000 0001.","entities":[{"kind":"phone","value":"(+354) 000 0001"}]}
+{"id":"format-phone-nbsp","text":"Óúthlutað prófnúmer: +354 000 0001.","entities":[{"kind":"phone","value":"+354 000 0001"}]}
+{"id":"format-phone-nnbsp","text":"Óúthlutað prófnúmer: +354 000 0001.","entities":[{"kind":"phone","value":"+354 000 0001"}]}
+{"id":"format-phone-idd","text":"Óúthlutað prófnúmer: 00354 000.0001.","entities":[{"kind":"phone","value":"00354 000.0001"}]}
+{"id":"format-phone-local","text":"Óúthlutað prófnúmer: 000.0001.","entities":[{"kind":"phone","value":"000.0001"}]}
+{"id":"format-email-unicode-domain","text":"Tilbúið netfang: demo@dæmi.invalid.","entities":[{"kind":"email","value":"demo@dæmi.invalid"}]}
+{"id":"format-email-unicode-local","text":"Tilbúið netfang: próf@example.invalid.","entities":[{"kind":"email","value":"próf@example.invalid"}]}
+{"id":"format-email-subdomain","text":"Tilbúið netfang: demo@próf.example.invalid.","entities":[{"kind":"email","value":"demo@próf.example.invalid"}]}
+{"id":"format-email-plus","text":"Tilbúið netfang: demo+tag@example.invalid.","entities":[{"kind":"email","value":"demo+tag@example.invalid"}]}
+{"id":"format-email-case","text":"Tilbúið netfang: Demo@EXAMPLE.INVALID.","entities":[{"kind":"email","value":"Demo@EXAMPLE.INVALID"}]}
+{"id":"negative-date","text":"Dagsetning: 14.01.1882.","entities":[]}
+{"id":"negative-decimal","text":"Upphæð: 123.456,78 kr.","entities":[]}
+{"id":"negative-version","text":"Útgáfa 1.2.3.4.","entities":[]}
+{"id":"negative-ip","text":"Documentation address 192.0.2.1.","entities":[]}
+{"id":"negative-kt-date","text":"Ógild dagsetning: 310282.8858.","entities":[]}
+{"id":"negative-kt-month","text":"Ógild dagsetning: 141382 8858.","entities":[]}
+{"id":"negative-kt-word","text":"Vörukóði X140182.8858Y.","entities":[]}
+{"id":"negative-card-luhn","text":"Ógilt prófkort 4111.1111.1111.1112.","entities":[]}
+{"id":"negative-card-word","text":"Vörukóði X4111.1111.1111.1111Y.","entities":[]}
+{"id":"negative-phone-long","text":"Vörukóði 12.000.0001.34.","entities":[]}
+{"id":"negative-phone-word","text":"Vörukóði X000.0001Y.","entities":[]}
+{"id":"negative-email-no-tld","text":"Netfangslíki demo@invalid.","entities":[]}
+{"id":"negative-email-empty-label","text":"Netfangslíki demo@example..invalid.","entities":[]}
+{"id":"negative-email-leading-hyphen","text":"Netfangslíki demo@-example.invalid.","entities":[]}
+{"id":"negative-price","text":"Verð er 99, 999 krónur.","entities":[]}
+{"id":"negative-plain","text":"Þetta er venjulegur tilbúinn texti.","entities":[]}
+{"id":"negative-code","text":"const item_count = 42;","entities":[]}
+{"id":"negative-name-product","text":"Project Gervison er tilbúið vörumerki.","entities":[]}

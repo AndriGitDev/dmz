@@ -1,0 +1,68 @@
+{
+  "corpus": "bench/corpus/holdout-v2.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 30,
+  "allowed_prompts": 24,
+  "blocked_prompts": 6,
+  "benign_prompts": 10,
+  "blocked_benign_ids": [
+    "holdout-unicode"
+  ],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [
+    "holdout-kt-tab",
+    "holdout-kt-dash",
+    "holdout-card-newline",
+    "holdout-phone-tab",
+    "holdout-name",
+    "holdout-address",
+    "holdout-secret",
+    "holdout-term"
+  ],
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "address": {
+      "masked": 0,
+      "blocked": 0,
+      "exposed": 1
+    },
+    "card": {
+      "masked": 3,
+      "blocked": 0,
+      "exposed": 1
+    },
+    "email": {
+      "masked": 1,
+      "blocked": 3,
+      "exposed": 0
+    },
+    "kennitala": {
+      "masked": 2,
+      "blocked": 0,
+      "exposed": 2
+    },
+    "name_demo": {
+      "masked": 0,
+      "blocked": 0,
+      "exposed": 1
+    },
+    "phone": {
+      "masked": 1,
+      "blocked": 2,
+      "exposed": 1
+    },
+    "secret": {
+      "masked": 0,
+      "blocked": 0,
+      "exposed": 1
+    },
+    "tenant_dictionary": {
+      "masked": 0,
+      "blocked": 0,
+      "exposed": 1
+    }
+  }
+}

@@ -6,31 +6,31 @@
   "per_kind": {
     "address": {
       "tp": 1,
-      "fp": 1,
+      "fp": 0,
       "fn": 3,
-      "precision": 0.5,
+      "precision": 1,
       "recall": 0.25
     },
     "card": {
-      "tp": 1,
+      "tp": 2,
       "fp": 0,
-      "fn": 1,
+      "fn": 0,
       "precision": 1,
-      "recall": 0.5
+      "recall": 1
     },
     "email": {
-      "tp": 1,
-      "fp": 0,
-      "fn": 3,
-      "precision": 1,
-      "recall": 0.25
-    },
-    "kennitala": {
-      "tp": 1,
+      "tp": 2,
       "fp": 0,
       "fn": 2,
       "precision": 1,
-      "recall": 0.3333333333333333
+      "recall": 0.5
+    },
+    "kennitala": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1
     },
     "name_demo": {
       "tp": 2,
@@ -40,11 +40,11 @@
       "recall": 0.5
     },
     "phone": {
-      "tp": 1,
-      "fp": 1,
-      "fn": 2,
-      "precision": 0.5,
-      "recall": 0.3333333333333333
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1
     },
     "secret": {
       "tp": 1,
