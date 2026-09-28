@@ -2,12 +2,13 @@
 """Select development candidates under the recorded two-dataset precision rule."""
 import argparse
 import json
+import math
 from pathlib import Path
 from gate import check
 
 
 def select(candidates):
-    eligible=[];trials=[];identities=None;gold_counts=None
+    eligible=[];trials=[];identities=None;gold_counts=None;grid=None
     for name,general,domain in candidates:
         if general['split']!='dev' or domain['split']!='dev':raise ValueError('selection is development-only')
         pair=(general['input_sha256'],domain['input_sha256'],general.get('text_mode','canonical'),domain.get('text_mode','canonical'))
@@ -16,6 +17,10 @@ def select(candidates):
         model=lambda report:report.get('head_sha256',report.get('model_sha256'))
         if not model(general) or model(general)!=model(domain):raise ValueError('mismatched model pair')
         if set(general['scores'])!=set(domain['scores']):raise ValueError('mismatched threshold grids')
+        current=set(general['scores'])
+        if not current or any(not math.isfinite(float(t)) or not 0<=float(t)<=1 for t in current):raise ValueError('invalid threshold grid')
+        if grid is None:grid=current
+        if current!=grid:raise ValueError('candidates use different threshold grids')
         for threshold,g in general['scores'].items():
             d=domain['scores'][threshold];check(g);check(d)
             totals=(g['tp']+g['fn'],d['tp']+d['fn'])

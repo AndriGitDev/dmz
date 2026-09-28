@@ -173,12 +173,14 @@ if __name__=='__main__':
     e=sub.add_parser('encode');e.add_argument('--input',type=Path,required=True);e.add_argument('--split',choices=['train','dev'],required=True);e.add_argument('--base',type=Path,required=True);e.add_argument('--output',type=Path,required=True);e.add_argument('--text-mode',choices=['canonical','original'],default='canonical')
     t=sub.add_parser('train');t.add_argument('--cache',type=Path,required=True);t.add_argument('--output',type=Path,required=True);t.add_argument('--epochs',type=int,default=8);t.add_argument('--hidden',type=int,default=128)
     v=sub.add_parser('evaluate');v.add_argument('--cache',type=Path,required=True);v.add_argument('--head',type=Path,required=True);v.add_argument('--epoch',type=int,required=True);v.add_argument('--thresholds',type=float,nargs='+',default=[0,.5,.6,.65,.7,.75,.8,.9,.95])
+    for command in (e,t,v):command.add_argument('--threads',type=int,default=3)
     a=p.parse_args()
-    if a.command=='encode':result=encode(a.input,a.split,a.base,a.output,text_mode=a.text_mode)
+    if a.threads<1:p.error('threads must be positive')
+    if a.command=='encode':result=encode(a.input,a.split,a.base,a.output,threads=a.threads,text_mode=a.text_mode)
     elif a.command=='train':
         if a.epochs<1 or a.hidden<0:p.error('invalid training settings')
-        result=train(a.cache,a.output,a.epochs,a.hidden)
+        result=train(a.cache,a.output,a.epochs,a.hidden,threads=a.threads)
     else:
         if any(not 0<=t<=1 for t in a.thresholds):p.error('invalid threshold')
-        result=evaluate(a.cache,a.head,a.epoch,a.thresholds)
+        result=evaluate(a.cache,a.head,a.epoch,a.thresholds,threads=a.threads)
     print(json.dumps(result,indent=2))

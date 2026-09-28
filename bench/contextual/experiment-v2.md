@@ -51,9 +51,24 @@ No remote code or remote inference is used; embeddings and learned heads remain
 outside Git. Retain attribution to Miðeind and Snæbjarnarson et al., 2022,
 [A Warm Start and a Clean Crawled Corpus](https://aclanthology.org/2022.lrec-1.464/).
 Our derived classifier is experimental and trained locally on the stated mixture.
+The encoder runs in float32 on CPU; mean-subword vectors are cached as float16
+and converted back to float32 for classifier training. Contexts longer than 256
+subwords are split at word boundaries without dropping tokens. Length bucketing
+reduces padding; output indices preserve the original sentence/token order.
 
 Its pretraining includes Icelandic web/news/book corpora. Overlap with MIM source
 text is not excluded; do not claim uncontaminated held-out language-model exposure.
 The final independent corpus must be newly sourced/reviewed. The large Python
 encoder is not suitable evidence of browser readiness: package size, memory,
 latency, and a local browser inference implementation require separate work.
+
+## Added development experiment after the CRF audit
+
+The augmented model found 117/120 full-form synthetic development names, versus
+87/120 initial forms, 102/120 uppercase forms and 94/120 single names. These
+are diagnostic subsets, not independent performance estimates. Add one targeted
+CRF feature-v3 run (Person labels, same mixture/100 iterations/regularization):
+explicit single-letter/initial-before-period, length bucket, hyphen/digit flags,
+and uncollapsed case shape in the local context. This comparison was added after
+observing the CRF development audit and must not be described as preselected.
+It still uses the same threshold grid and final selection rule.

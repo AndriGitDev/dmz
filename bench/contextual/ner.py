@@ -75,14 +75,17 @@ def shape(word):
 
 
 def features(tokens, version=1):
-    if version not in (1, 2):
+    if version not in (1, 2, 3):
         raise ValueError("unsupported feature version")
     basic = []
-    for token in tokens:
+    for index, token in enumerate(tokens):
         lower = token.lower()
         values = ['word='+lower, 'shape='+shape(token), 'title='+str(token.istitle()),
                   'upper='+str(token.isupper()), 'digit='+str(token.isdigit()),
                   'patronymic='+str(bool(PATRONYMIC.search(lower)))]
+        if version == 3:
+            single = len(token)==1 and token.isalpha()
+            values += ['single_letter='+str(single), 'initial_before_dot='+str(single and index+1<len(tokens) and tokens[index+1]=='.'), 'length='+str(min(len(token),6)), 'hyphen='+str('-' in token), 'has_digit='+str(any(c.isdigit() for c in token)), 'case_pattern='+''.join('X' if c.isupper() else 'x' if c.islower() else '_' for c in token[:6])]
         values += ['suffix'+str(n)+'='+lower[-n:] for n in range(1, 6)]
         values += ['prefix'+str(n)+'='+lower[:n] for n in range(1, 4)]
         basic.append(values)
@@ -92,7 +95,7 @@ def features(tokens, version=1):
         for delta in [-2, -1, 0, 1, 2]:
             j = i + delta
             if 0 <= j < len(tokens):
-                selected = basic[j] if delta == 0 or version == 2 else basic[j][:6]
+                selected = basic[j] if delta == 0 or version == 2 else basic[j][:(12 if version == 3 else 6)]
                 fs.extend(str(delta)+':'+f for f in selected)
             else:
                 fs.append(str(delta)+':boundary')
@@ -158,7 +161,7 @@ def train(source, model, iterations, c1, c2, version=1, label_mode="person", pro
     metadata = dict(schema=1, training_sha256=sha(source), model_sha256=sha(model),
                     label_mode=label_mode, feature_version=version, training_sentences=count, iterations=iterations, c1=c1, c2=c2,
                     seconds=round(time.monotonic()-started, 3), bytes=model.stat().st_size,
-                    features='word/shape/affixes/patronymic; +/-2 token context; BIO Person; v2 adds neighbor affixes and pairs',
+                    features='word/shape/affixes/patronymic; +/-2 token context; BIO Person; v2 adds neighbor affixes/pairs; v3 adds initial/length/case features',
                     runtime='python-crfsuite 0.9.12; experimental offline baseline, not Shield')
     model.with_suffix('.metadata.json').write_text(json.dumps(metadata, indent=2)+'\n')
     return metadata
@@ -205,7 +208,7 @@ def main():
     t.add_argument('--model',type=Path,required=True)
     t.add_argument('--label-mode',choices=['person','entities'],default='person')
     t.add_argument('--progress',action='store_true')
-    t.add_argument('--feature-version',type=int,choices=[1,2],default=1)
+    t.add_argument('--feature-version',type=int,choices=[1,2,3],default=1)
     t.add_argument('--iterations',type=int,default=100)
     t.add_argument('--c1',type=float,default=.1)
     t.add_argument('--c2',type=float,default=.1)

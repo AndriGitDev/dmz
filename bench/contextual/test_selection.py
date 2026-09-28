@@ -21,5 +21,13 @@ class SelectionTests(unittest.TestCase):
         with self.assertRaises(ValueError):select([('a',a[1],report('d','different',90,2,10))])
         with self.assertRaises(ValueError):select([('a',report('g','a',90,2,10,split='test'),a[2])])
 
+    def test_candidate_threshold_grid_cannot_change(self):
+        a=('a',report('g','a',90,2,10),report('d','a',90,2,10))
+        b=('b',report('g','b',90,2,10),report('d','b',90,2,10))
+        for r in b[1:]:r['scores']['0.7']=r['scores'].pop('0.65')
+        with self.assertRaises(ValueError):select([a,b])
+        for r in b[1:]:r['scores']['nan']=r['scores'].pop('0.7')
+        with self.assertRaises(ValueError):select([b])
+
 
 if __name__=='__main__':unittest.main()

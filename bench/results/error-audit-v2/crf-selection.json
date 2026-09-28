@@ -9,27 +9,27 @@
     "canonical"
   ],
   "selected": {
-    "candidate": "augmented",
-    "model_sha256": "2cf5fb6562c0c7199686d1fccd471be673bca7dc99533a8d4e66efcfef9bfb43",
+    "candidate": "initials",
+    "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
     "threshold": 0.65,
     "general": {
-      "tp": 1263,
-      "fp": 57,
-      "fn": 243,
-      "precision": 0.9568181818181818,
-      "recall": 0.8386454183266933,
+      "tp": 1267,
+      "fp": 59,
+      "fn": 239,
+      "precision": 0.9555052790346908,
+      "recall": 0.8413014608233732,
       "target_met": false
     },
     "domain": {
-      "tp": 400,
-      "fp": 1,
-      "fn": 80,
-      "precision": 0.9975062344139651,
-      "recall": 0.8333333333333334,
+      "tp": 433,
+      "fp": 0,
+      "fn": 47,
+      "precision": 1.0,
+      "recall": 0.9020833333333333,
       "target_met": false
     },
     "precision_qualified": true,
-    "lower_recall": 0.8333333333333334,
+    "lower_recall": 0.8413014608233732,
     "target_met": false
   },
   "trials": [
@@ -895,6 +895,222 @@
       },
       "precision_qualified": true,
       "lower_recall": 0.6420982735723771,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.0,
+      "general": {
+        "tp": 1320,
+        "fp": 91,
+        "fn": 186,
+        "precision": 0.9355067328136074,
+        "recall": 0.8764940239043825,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 448,
+        "fp": 1,
+        "fn": 32,
+        "precision": 0.9977728285077951,
+        "recall": 0.9333333333333333,
+        "target_met": false
+      },
+      "precision_qualified": false,
+      "lower_recall": 0.8764940239043825,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.5,
+      "general": {
+        "tp": 1316,
+        "fp": 86,
+        "fn": 190,
+        "precision": 0.9386590584878745,
+        "recall": 0.8738379814077025,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 448,
+        "fp": 0,
+        "fn": 32,
+        "precision": 1.0,
+        "recall": 0.9333333333333333,
+        "target_met": false
+      },
+      "precision_qualified": false,
+      "lower_recall": 0.8738379814077025,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.6,
+      "general": {
+        "tp": 1286,
+        "fp": 64,
+        "fn": 220,
+        "precision": 0.9525925925925925,
+        "recall": 0.8539176626826029,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 435,
+        "fp": 0,
+        "fn": 45,
+        "precision": 1.0,
+        "recall": 0.90625,
+        "target_met": false
+      },
+      "precision_qualified": false,
+      "lower_recall": 0.8539176626826029,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.65,
+      "general": {
+        "tp": 1267,
+        "fp": 59,
+        "fn": 239,
+        "precision": 0.9555052790346908,
+        "recall": 0.8413014608233732,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 433,
+        "fp": 0,
+        "fn": 47,
+        "precision": 1.0,
+        "recall": 0.9020833333333333,
+        "target_met": false
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.8413014608233732,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.7,
+      "general": {
+        "tp": 1252,
+        "fp": 47,
+        "fn": 254,
+        "precision": 0.9638183217859893,
+        "recall": 0.8313413014608234,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 428,
+        "fp": 0,
+        "fn": 52,
+        "precision": 1.0,
+        "recall": 0.8916666666666667,
+        "target_met": false
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.8313413014608234,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.75,
+      "general": {
+        "tp": 1229,
+        "fp": 39,
+        "fn": 277,
+        "precision": 0.9692429022082019,
+        "recall": 0.8160690571049137,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 418,
+        "fp": 0,
+        "fn": 62,
+        "precision": 1.0,
+        "recall": 0.8708333333333333,
+        "target_met": false
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.8160690571049137,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.8,
+      "general": {
+        "tp": 1194,
+        "fp": 31,
+        "fn": 312,
+        "precision": 0.9746938775510204,
+        "recall": 0.7928286852589641,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 409,
+        "fp": 0,
+        "fn": 71,
+        "precision": 1.0,
+        "recall": 0.8520833333333333,
+        "target_met": false
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.7928286852589641,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.9,
+      "general": {
+        "tp": 1088,
+        "fp": 21,
+        "fn": 418,
+        "precision": 0.9810640216411182,
+        "recall": 0.7224435590969456,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 368,
+        "fp": 0,
+        "fn": 112,
+        "precision": 1.0,
+        "recall": 0.7666666666666667,
+        "target_met": false
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.7224435590969456,
+      "target_met": false
+    },
+    {
+      "candidate": "initials",
+      "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "threshold": 0.95,
+      "general": {
+        "tp": 968,
+        "fp": 13,
+        "fn": 538,
+        "precision": 0.9867482161060143,
+        "recall": 0.6427622841965471,
+        "target_met": false
+      },
+      "domain": {
+        "tp": 336,
+        "fp": 0,
+        "fn": 144,
+        "precision": 1.0,
+        "recall": 0.7,
+        "target_met": false
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.6427622841965471,
       "target_met": false
     }
   ],

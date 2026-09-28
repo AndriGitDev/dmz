@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "split": "dev",
+  "model_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "training_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "threshold": 0.65,
+  "counts": {
+    "sentences": 256,
+    "tp": 433,
+    "fp": 0,
+    "fn": 47,
+    "negative_documents": 64,
+    "negative_documents_with_name_findings": 0
+  },
+  "false_negatives": {
+    "no_name_prediction": 31,
+    "removed_by_confidence_threshold": 15,
+    "boundary_or_merged_name": 1
+  },
+  "false_positives": {},
+  "gold_characteristics": {
+    "multiple_tokens": {
+      "gold": 360,
+      "correct": 338,
+      "missed": 22
+    },
+    "full_name_unseen_in_training": {
+      "gold": 366,
+      "correct": 341,
+      "missed": 25
+    },
+    "unseen_person_component": {
+      "gold": 360,
+      "correct": 338,
+      "missed": 22
+    },
+    "unseen_word": {
+      "gold": 360,
+      "correct": 338,
+      "missed": 22
+    },
+    "oblique_patronymic_shape": {
+      "gold": 54,
+      "correct": 53,
+      "missed": 1
+    },
+    "single_token": {
+      "gold": 120,
+      "correct": 95,
+      "missed": 25
+    },
+    "full_name_seen_in_training": {
+      "gold": 114,
+      "correct": 92,
+      "missed": 22
+    },
+    "all_components_seen_as_person": {
+      "gold": 120,
+      "correct": 95,
+      "missed": 25
+    },
+    "all_uppercase": {
+      "gold": 120,
+      "correct": 110,
+      "missed": 10
+    },
+    "initial": {
+      "gold": 120,
+      "correct": 112,
+      "missed": 8
+    },
+    "ambiguous_component": {
+      "gold": 129,
+      "correct": 117,
+      "missed": 12
+    }
+  },
+  "synthetic_variants": {
+    "full": {
+      "documents": 48,
+      "tp": 116,
+      "fp": 0,
+      "fn": 4
+    },
+    "single": {
+      "documents": 48,
+      "tp": 95,
+      "fp": 0,
+      "fn": 25
+    },
+    "upper": {
+      "documents": 48,
+      "tp": 110,
+      "fp": 0,
+      "fn": 10
+    },
+    "initial": {
+      "documents": 48,
+      "tp": 112,
+      "fp": 0,
+      "fn": 8
+    },
+    "negative": {
+      "documents": 64,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    }
+  },
+  "caveats": "Exclusive error reasons; overlapping characteristic groups. Automated shape/coverage audit, not human adjudication. No test data inspected."
+}

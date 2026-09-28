@@ -70,6 +70,7 @@ def audit(source, training, model, threshold, errors_out=None):
     tagger = pycrfsuite.Tagger(); tagger.open(str(model))
     fn, fp, counts = Counter(), Counter(), Counter()
     groups = defaultdict(Counter)
+    variants = defaultdict(Counter)
     details = []
     for row in rows(source, 'dev'):
         tokens, offsets, labels = tokens_and_labels(row)
@@ -82,6 +83,10 @@ def audit(source, training, model, threshold, errors_out=None):
         missed, false = error_categories(gold, selected, candidates, other)
         fn.update(missed.values()); fp.update(false.values())
         counts.update(sentences=1, tp=len(gold & selected), fp=len(false), fn=len(missed))
+        counts['negative_documents'] += not bool(gold)
+        counts['negative_documents_with_name_findings'] += not bool(gold) and bool(selected)
+        if row.get('variant') in {'full','single','upper','initial','negative'}:
+            variants[row['variant']].update(documents=1,tp=len(gold & selected),fp=len(false),fn=len(missed))
         for a,b,i,j in gold_spans:
             for group in characteristics(tokens[i:j], inventory):
                 groups[group]['gold'] += 1
@@ -97,7 +102,7 @@ def audit(source, training, model, threshold, errors_out=None):
             for item in details: f.write(json.dumps(item, ensure_ascii=False)+'\n')
     return dict(schema=1, split='dev', model_sha256=sha(model), input_sha256=sha(source), training_sha256=sha(training),
                 threshold=threshold, counts=dict(counts), false_negatives=dict(fn), false_positives=dict(fp),
-                gold_characteristics=dict(groups),
+                gold_characteristics=dict(groups), synthetic_variants=dict(variants),
                 caveats='Exclusive error reasons; overlapping characteristic groups. Automated shape/coverage audit, not human adjudication. No test data inspected.')
 
 

@@ -18,5 +18,10 @@
     "name": "entities-augmented",
     "general": "entities-augmented-dev.json",
     "domain": "entities-augmented-domain-dev.json"
+  },
+  {
+    "name": "initials",
+    "general": "initials-dev.json",
+    "domain": "initials-domain-dev.json"
   }
 ]

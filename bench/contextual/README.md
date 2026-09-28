@@ -31,7 +31,8 @@ Select features and a confidence threshold using development results, then freez
 them before evaluating test data. Keep unsuccessful development runs. Training
 rejects non-training rows; evaluation checks the model checksum against its
 metadata. Feature v1 uses local affixes and neighboring words/shapes; v2 adds
-neighboring affixes and word/shape pairs. Minimum BIO token marginal is a ranking
+neighboring affixes and word/shape pairs; v3 adds explicit initials, length and
+case features. Minimum BIO token marginal is a ranking
 score, not a calibrated probability that a whole name is correct.
 
 Metrics require an exact UTF-8 span match. A partial name counts as one false
@@ -108,3 +109,32 @@ only the small BIO classifier and saves safetensors checkpoints, and `evaluate`
 checks development spans. Corpus and model/cache hashes bind each result. No
 remote inference or uploaded prompts are involved. These large research caches
 and models are not extension assets.
+
+Example encoder commands (all paths below are outside the checkout):
+
+```sh
+export HF_HUB_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
+python bench/contextual/encoder.py encode --input /outside/train-domain.jsonl \
+  --split train --base /outside/icebert-base --output /outside/encoder-train
+python bench/contextual/encoder.py encode --input /outside/dev.jsonl \
+  --split dev --base /outside/icebert-base --output /outside/encoder-dev
+python bench/contextual/encoder.py encode --input /outside/domain-dev.jsonl \
+  --split dev --base /outside/icebert-base --output /outside/encoder-domain
+python bench/contextual/encoder.py train --cache /outside/encoder-train \
+  --output /outside/head-linear --hidden 0 --epochs 8
+python bench/contextual/encoder.py train --cache /outside/encoder-train \
+  --output /outside/head-mlp --hidden 128 --epochs 8
+python bench/contextual/encoder.py evaluate --cache /outside/encoder-dev \
+  --head /outside/head-linear --epoch 1
+```
+
+Evaluate each epoch 1–8 of both heads against both development caches, preserving
+every report. The default encoder threshold grid matches the protocol. Cache and
+head output directories must be new; a cache is complete only when its metadata
+and checksums have been written. Use `--threads` to limit local CPU usage.
+
+The [error-audit report](../../docs/detector-error-audit-2026-09-28.md) records
+this round separately from the older reused-test results. Candidate selection is
+reproduced with `python bench/contextual/selection.py
+bench/results/error-audit-v2/crf-candidates.json`. It checks one common threshold
+grid and requires the precision floor on both development datasets.
