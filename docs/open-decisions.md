@@ -1,5 +1,11 @@
 # Open decisions and evidence requests
 
+Accepted direction: [ADR 0004](adr/0004-portal-hosting-and-pii-policy.md) selects initial Hetzner EU hosting and policy-controlled masking/approved PII processing. The following account and deployment evidence is still required:
+
+- Verify the actual VPS region, backup locations, operator access and processor arrangements.
+- Verify the reported $100 Bedrock credit eligibility/expiry and first invocation; `eu-north-1` is provisional.
+- Select one model/API/profile; approve its destinations, retention configuration and applicable terms before live PII.
+
 These items are unresolved in the supplied plan or require time-sensitive verification. Owners and evidence links are intentionally blank until assigned.
 
 | Priority | Decision or evidence | Why it matters |
