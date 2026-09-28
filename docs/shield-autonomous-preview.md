@@ -6,7 +6,7 @@ The owner's daily testing target is **desktop Chrome with both ChatGPT and Claud
 
 ## Install and try
 
-For a build that needs no local compiler, open the draft PR's successful **Prototype** Actions run and download **shield-chromium-prototype**. Extract the archive and load that extracted folder using **Load unpacked** in `chrome://extensions`. `BUILD.json` records the source commit and SHA-256 of each packaged file. Include that commit when reporting a problem. CI creates this record only after the browser tests pass; it does not certify live-site behavior.
+For a build that needs no local compiler, open the draft PR's successful **Prototype** Actions run and download **shield-chromium-prototype**. Extract the archive and load that extracted folder using **Load unpacked** in `chrome://extensions`. Chrome's manifest version name and `BUILD.json` identify the source commit; the record also gives the SHA-256 of each packaged file. Include that commit when reporting a problem. The record command rejects a dirty checkout or a manifest from a different commit. CI creates this record only after the browser tests pass; it does not certify live-site behavior.
 
 To build locally:
 

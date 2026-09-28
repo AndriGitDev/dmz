@@ -25,9 +25,13 @@ async function hashDirectory(relative = '') {
 }
 await hashDirectory();
 const manifest = JSON.parse(await readFile(path.join(output, 'manifest.json'), 'utf8'));
+const sourceCommit = git('rev-parse', 'HEAD');
+if (manifest.version_name !== `${manifest.version} preview ${sourceCommit}`) {
+  throw new Error('The built manifest does not match this clean commit. Run npm run build first.');
+}
 const record = {
   format: 1,
-  sourceCommit: git('rev-parse', 'HEAD'),
+  sourceCommit,
   extensionVersion: manifest.version,
   browser: 'Chrome (Manifest V3)',
   sha256: files,
