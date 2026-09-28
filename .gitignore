@@ -12,3 +12,8 @@ apps/shield/public/wasm_exec.js
 *.db
 .wxt/
 .output/
+
+# External dataset working copies stay outside the checkout.
+bench/datasets/raw/
+bench/datasets/prepared/
+__pycache__/

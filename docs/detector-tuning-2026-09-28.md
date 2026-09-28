@@ -103,7 +103,11 @@ No real credentials, customer documents or personal records in this repository.
 Useful source metadata: owner, source URL/version, licence/permission, commercial
 use and redistribution terms, intended entity types and update cadence.
 
-## Public-data candidates (discovery only)
+## Public-data candidates (initial discovery)
+
+**Subsequent update:** the owner confirmed use of HMS and MIM-GOLD-NER.
+[Preparation and the first development baseline](../bench/datasets/README.md)
+are now available; the discovery notes below describe the earlier state.
 
 - [HMS Staðfangaskrá](https://hms.is/gogn-og-maelabord/grunngogntilnidurhals/stadfangaskra)
   provides a downloadable CSV and describes weekly updates. Useful for street/place

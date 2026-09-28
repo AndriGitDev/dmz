@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "inputs": {
+    "hms": {
+      "sha256": "117d173fb19e390453f0078940d26e6a21c40ddfd431a0fdba262526947121a3",
+      "bytes": 38095306
+    },
+    "mim": {
+      "sha256": "2b763b82baf67d7d97107e538f674411b86252d604348cbed584870956eb184c",
+      "bytes": 2560426
+    }
+  },
+  "hms": {
+    "rows": 139561,
+    "unique_address_forms": 24401,
+    "columns_used": [
+      "HEITI_NF",
+      "HEITI_TGF"
+    ]
+  },
+  "mim": {
+    "sentences": {
+      "train": 45332,
+      "dev": 5582,
+      "test": 5758
+    },
+    "entities": {
+      "Organization": 8674,
+      "Date": 5311,
+      "Person": 15285,
+      "Location": 8645,
+      "Money": 1011,
+      "Percent": 728,
+      "Miscellaneous": 6169,
+      "Time": 1168
+    },
+    "sources": {
+      "MIM-GOLD-2_0/adjudications.txt": 618,
+      "MIM-GOLD-2_0/blog.txt": 8737,
+      "MIM-GOLD-2_0/books.txt": 13594,
+      "MIM-GOLD-2_0/emails.txt": 326,
+      "MIM-GOLD-2_0/fbl.txt": 6894,
+      "MIM-GOLD-2_0/laws.txt": 1730,
+      "MIM-GOLD-2_0/mbl.txt": 12532,
+      "MIM-GOLD-2_0/radio_tv_news.txt": 559,
+      "MIM-GOLD-2_0/school_essays.txt": 1633,
+      "MIM-GOLD-2_0/scienceweb.txt": 4627,
+      "MIM-GOLD-2_0/webmedia.txt": 460,
+      "MIM-GOLD-2_0/websites.txt": 4003,
+      "MIM-GOLD-2_0/written-to-be-spoken.txt": 959
+    },
+    "duplicate_sentences_removed": 1750,
+    "quarantined_sentences": [
+      {
+        "source": "MIM-GOLD-2_0/webmedia.txt",
+        "malformed_lines": [
+          128
+        ]
+      },
+      {
+        "source": "MIM-GOLD-2_0/webmedia.txt",
+        "malformed_lines": [
+          3287
+        ]
+      },
+      {
+        "source": "MIM-GOLD-2_0/written-to-be-spoken.txt",
+        "malformed_lines": [
+          12746
+        ]
+      }
+    ],
+    "orphan_inside_tags_recovered": 19,
+    "reconstruction": "single spaces between tokens; UTF-8 byte offsets",
+    "split": "SHA256 reconstructed text, first 32 bits modulo 10: 0 test, 1 dev, remainder train; exact-text disjoint, not document-disjoint"
+  }
+}
