@@ -267,6 +267,36 @@ try {
     const inline = modern.frameLocator('[data-dmz-restored]').first();
     assert.equal(await inline.locator('strong').count(), 0, 'extra Shield heading still shown');
     assert.equal(await inline.locator('p').evaluate(p => getComputedStyle(p).fontSize), '18px', 'reply typography lost');
+    for (const [mode, background, foreground] of [
+      ['dark', 'rgb(21, 21, 21)', 'rgb(240, 239, 236)'],
+      ['light', 'rgb(250, 250, 250)', 'rgb(32, 32, 32)'],
+    ]) {
+      await modern.evaluate(({ mode, background, foreground }) => {
+        document.documentElement.dataset.mode = mode;
+        document.documentElement.style.colorScheme = mode;
+        document.body.style.backgroundColor = background;
+        for (const p of document.querySelectorAll('#replies p')) p.style.color = foreground;
+      }, { mode, background, foreground });
+      await inline.locator(`html[style*="${background}"]`).waitFor({ state: 'attached' });
+      assert.equal(await inline.locator('html').evaluate(element => getComputedStyle(element).colorScheme), mode);
+      assert.equal(await inline.locator('p').evaluate(element => getComputedStyle(element).color), foreground);
+      assert.equal(await modern.locator('[data-dmz-restored]').first().evaluate(element => getComputedStyle(element).colorScheme), mode);
+      if (process.env.SHIELD_SCREENSHOTS) {
+        await modern.locator('[data-dmz-restored]').first().screenshot({ path: path.join(process.env.SHIELD_SCREENSHOTS, `shield-${new URL(origin).hostname}-${mode}.png`) });
+      }
+    }
+    // A background-only theme update must refresh an unchanged restored reply.
+    await modern.evaluate(() => { document.body.style.backgroundColor = 'rgb(230, 230, 230)'; });
+    await inline.locator('html[style*="rgb(230, 230, 230)"]').waitFor({ state: 'attached' });
+    await modern.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = '@media (prefers-color-scheme: dark) { body { background-color: rgb(30, 30, 30) !important; } #replies p { color: rgb(240, 240, 240) !important; } }';
+      document.head.append(style);
+    });
+    await modern.emulateMedia({ colorScheme: 'dark' });
+    await inline.locator('html[style*="rgb(30, 30, 30)"]').waitFor({ state: 'attached' });
+    await modern.emulateMedia({ colorScheme: 'light' });
+    await inline.locator('html[style*="rgb(230, 230, 230)"]').waitFor({ state: 'attached' });
     assert.ok(!(await modern.locator('#replies').textContent()).includes('demo@example.com'), 'restored value written into host DOM');
     assert.equal(await modern.locator('[data-dmz-restored]').first().evaluate(frame => frame.contentDocument), null);
     await modern.locator('#replies > div').first().evaluate(response => {

@@ -38,16 +38,38 @@ export default defineContentScript({
     let sessionEpoch = 0;
     let composerAvailable: boolean | undefined;
     const extensionOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
-    type RestoredEntry = { host: HTMLIFrameElement; source: string; restored: string; nodes: RestoredNode[]; signature: string; nonce: string; loaded: boolean; originals: Element[]; presented: boolean };
+    type Surface = { background: string; colorScheme: 'dark' | 'light' };
+    type RestoredEntry = { host: HTMLIFrameElement; source: string; restored: string; nodes: RestoredNode[]; surface: Surface; signature: string; nonce: string; loaded: boolean; originals: Element[]; presented: boolean };
     const restoredMessages = new Map<Element, RestoredEntry>();
     let scanQueued = false;
+
+    const surfaceCanvas = document.createElement('canvas');
+    surfaceCanvas.width = surfaceCanvas.height = 1;
+    const surfaceContext = surfaceCanvas.getContext('2d', { willReadFrequently: true })!;
+    function replySurface(original: Element): Surface {
+      const scheme = getComputedStyle(original).colorScheme;
+      const dark = scheme.includes('dark') && (!scheme.includes('light') || matchMedia('(prefers-color-scheme: dark)').matches);
+      // Composite ancestor background colours, including translucent layers.
+      // An explicit opaque canvas avoids cross-origin iframe colour-scheme
+      // mismatches turning a transparent dark reply into a white rectangle.
+      surfaceContext.fillStyle = dark ? '#121212' : '#ffffff';
+      surfaceContext.fillRect(0, 0, 1, 1);
+      const ancestors: Element[] = [];
+      for (let node: Element | null = original; node; node = node.parentElement) ancestors.push(node);
+      for (const node of ancestors.reverse()) {
+        surfaceContext.fillStyle = getComputedStyle(node).backgroundColor;
+        surfaceContext.fillRect(0, 0, 1, 1);
+      }
+      const [r = 255, g = 255, b = 255] = surfaceContext.getImageData(0, 0, 1, 1).data;
+      return { background: `rgb(${r}, ${g}, ${b})`, colorScheme: 0.2126 * r + 0.7152 * g + 0.0722 * b < 128 ? 'dark' : 'light' };
+    }
 
     function displayRestored(entry: RestoredEntry) {
       if (!entry.loaded || !entry.host.isConnected) return;
       const original = entry.originals[0];
       const style = original ? getComputedStyle(original) : undefined;
       const typography = style ? Object.fromEntries(['color', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'letter-spacing', 'text-align'].map(key => [key, style.getPropertyValue(key)])) : {};
-      entry.host.contentWindow?.postMessage({ type: 'dmz:restored', nonce: entry.nonce, text: entry.restored, nodes: entry.nodes, typography }, extensionOrigin);
+      entry.host.contentWindow?.postMessage({ type: 'dmz:restored', nonce: entry.nonce, text: entry.restored, nodes: entry.nodes, typography, surface: entry.surface }, extensionOrigin);
     }
 
     const originalStyle = document.createElement('style');
@@ -174,13 +196,14 @@ export default defineContentScript({
           continue;
         }
         let entry = existing;
+        const surface = replySurface(originals[0] ?? response);
         if (!entry) {
           const host = document.createElement('iframe');
           host.setAttribute('data-dmz-restored', 'true');
           host.title = 'Shield · endurheimt aðeins á þessu tæki';
           host.referrerPolicy = 'no-referrer';
           host.style.cssText = 'display:block;width:100%;height:1px;margin:0;border:0;background:transparent';
-          entry = { host, source: '', restored: '', nodes: [], signature: '', nonce: crypto.randomUUID(), loaded: false, originals, presented: false };
+          entry = { host, source: '', restored: '', nodes: [], surface, signature: '', nonce: crypto.randomUUID(), loaded: false, originals, presented: false };
           restoredMessages.set(response, entry);
           const frameEntry = entry;
           host.addEventListener('load', () => {
@@ -194,7 +217,9 @@ export default defineContentScript({
         entry.originals = originals;
         if (entry.presented) for (const original of originals) original.setAttribute('data-dmz-original', 'hidden');
         if (!entry.host.isConnected) (originals[0] ?? response).before(entry.host);
-        const signature = JSON.stringify(nodes);
+        entry.surface = surface;
+        if (entry.host.style.colorScheme !== surface.colorScheme) entry.host.style.colorScheme = surface.colorScheme;
+        const signature = JSON.stringify({ nodes, surface });
         if (entry.source !== source || entry.signature !== signature) {
           entry.restored = restored;
           entry.source = source;
@@ -211,6 +236,8 @@ export default defineContentScript({
       scanQueued = true;
       requestAnimationFrame(scanResponses);
     }
+
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', queueResponseScan);
 
     function inform(text: string, review = false) {
       message = text;
@@ -473,7 +500,7 @@ export default defineContentScript({
       message = 'Shield tilbúinn á þessari síðu.';
       new MutationObserver(queueResponseScan).observe(document.documentElement, {
         childList: true, characterData: true, subtree: true, attributes: true,
-        attributeFilter: ['contenteditable', 'role', 'id', 'class', 'style', 'hidden', 'aria-hidden', 'disabled', 'readonly', 'data-composer-markdown', 'data-testid', 'data-placeholder', 'data-message-author-role', 'data-markdown-text-style'],
+        attributeFilter: ['contenteditable', 'role', 'id', 'class', 'style', 'hidden', 'aria-hidden', 'disabled', 'readonly', 'data-theme', 'data-mode', 'data-composer-markdown', 'data-testid', 'data-placeholder', 'data-message-author-role', 'data-markdown-text-style'],
       });
       queueResponseScan();
     })().catch(coreFailed);

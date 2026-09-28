@@ -22,6 +22,12 @@ window.addEventListener('message', (event: MessageEvent) => {
   const data = event.data;
   if (!nonce || data?.type !== 'dmz:restored' || data.nonce !== nonce || typeof data.text !== 'string') return;
   parentOrigin = event.origin;
+  if (typeof data.surface?.background === 'string' && CSS.supports('background-color', data.surface.background)) {
+    document.documentElement.style.backgroundColor = data.surface.background;
+  }
+  if (data.surface?.colorScheme === 'dark' || data.surface?.colorScheme === 'light') {
+    document.documentElement.style.colorScheme = data.surface.colorScheme;
+  }
   for (const key of ['color', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'letter-spacing', 'text-align']) {
     if (typeof data.typography?.[key] === 'string') output.style.setProperty(key, data.typography[key]);
   }
