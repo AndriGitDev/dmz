@@ -43,7 +43,7 @@ Load `apps/shield/.output/chrome-mv3` as an unpacked extension in Chromium. The 
 
 The draft PR's `shield-browser` GitHub Actions job uploads the tested `shield-chromium-prototype` build for review. Download and extract it, then use Chromium's **Load unpacked** on the extracted directory. It is an unsigned prototype, not a store release.
 
-**Do not use this prototype for sensitive data.** The original untuned 18-case synthetic challenge set exposed eight annotated identifiers in allowed outbound text. After targeted detector changes, the same set still exposes two; a separate 29-case exploratory probe exposes 13. None of these small synthetic sets estimates field quality. The automatic site adapter has not been validated on authenticated live ChatGPT/Claude pages, and DOM changes or unsupported send paths can bypass it. Use fabricated examples when reviewing it.
+**Do not use this prototype for sensitive data.** The original untuned 18-case synthetic challenge set exposed eight annotated identifiers in allowed outbound text. After targeted detector changes, the same set still exposes two; a separate 29-case exploratory probe exposes 13. None of these small synthetic sets estimates field quality. Initial owner testing in Brave confirms masking on both sites and restoration on Claude; full authenticated validation remains pending, and DOM changes or unsupported send paths can bypass it. Use fabricated examples when reviewing it.
 
 The [benchmark readme](bench/README.md), [detector follow-up](docs/detector-follow-up.md), [visible-mask decision](docs/adr/0002-visible-masks.md) and [kennitala update](docs/adr/0003-kennitala-2026.md) explain results, constraints and next steps.
 
