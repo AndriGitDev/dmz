@@ -1,9 +1,11 @@
+import importlib.util
 import unittest
-from corpus import compression_changes
 
 
 class ComparisonTests(unittest.TestCase):
+    @unittest.skipUnless(all(importlib.util.find_spec(name) for name in ['numpy','onnxruntime']), 'optional browser encoder environment')
     def test_boundary_regression_and_recovery_are_separate(self):
+        from corpus import compression_changes
         gold=[[0,4],[10,14]]
         primary=[dict(gold=gold,predictions=[])]
         frozen=[dict(gold=gold,predictions=[[0,4,1.],[20,24,1.]])]

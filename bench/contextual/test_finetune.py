@@ -1,3 +1,4 @@
+import importlib.util
 import json
 from pathlib import Path
 import tempfile
@@ -12,6 +13,7 @@ class Encoded(dict):
 
 
 class FineTuneTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec('torch'), 'optional encoder environment')
     def test_pooling_padding_and_masked_targets(self):
         import torch
         jobs=[dict(ids=[0,4,5,6,2],word_ids=[None,0,0,1,None],words=2,labels=[1,2]),
