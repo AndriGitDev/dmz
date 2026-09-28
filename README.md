@@ -2,7 +2,7 @@
 
 Private product stack for dmz.is. The public marketing site is a separate repository: `AndriGitDev/dmz-web`.
 
-dmz is an Icelandic data-minimisation layer for AI. The product is in validation. A **manual, local-only Shield prototype** now runs the Go detector compiled to WASM in a WXT side panel. It masks selected identifiers with visible markers, e.g. `⟦KT-<session>-1: XXXXX-XXXX⟧`, and restores unchanged markers in a pasted answer. It does not intercept AI sites or secure file uploads. Portal, Gateway, a production vault, ZDR agreements and ISO certification do not exist yet.
+dmz is an Icelandic data-minimisation layer for AI. The product is in validation. Shield runs the Go detector compiled to WASM in a WXT side panel and an experimental ChatGPT/Claude content script. It masks selected identifiers with visible markers, e.g. `⟦KT-<session>-1: XXXXX-XXXX⟧`, and restores unchanged markers locally. The content script intercepts selected text submissions and shows a local restored copy of recognized assistant markers. It does not cover every send path or secure file uploads. Portal, Gateway, a production vault, ZDR agreements and ISO certification do not exist yet.
 
 ## Repository map
 
@@ -39,11 +39,11 @@ npm run check
 npm run build
 ```
 
-Load `apps/shield/.output/chrome-mv3` as an unpacked extension in Chromium, then click its toolbar icon to open the side panel. Paste text into field 01, mask it, copy **only** field 02 to an AI tool, then paste the answer into field 03 to restore unchanged markers. The optional local dictionary accepts up to 32 exact, case-sensitive terms; saving it starts a new session. Reset clears both the map and dictionary. `npm run test:browser` tests the built extension in Chromium; install Playwright's Chromium or set `CHROMIUM_EXECUTABLE` to an existing binary. No extension host permissions are requested and no prompt is sent to dmz servers.
+Load `apps/shield/.output/chrome-mv3` as an unpacked extension in Chromium. The [autonomous preview guide](docs/shield-autonomous-preview.md) describes the supported chat pages, test workflow and limits. Click the toolbar icon to open the manual side panel: paste text into field 01, mask it, copy **only** field 02 to an AI tool, then paste the answer into field 03 to restore unchanged markers. The optional local dictionary accepts up to 32 exact, case-sensitive terms; saving it starts a new session. Reset clears both the map and dictionary. `npm run test:browser` tests both the panel and synthetic supported-site flows in Chromium; install Playwright's Chromium or set `CHROMIUM_EXECUTABLE` to an existing binary. The extension requests no broad host permissions and sends no prompt to dmz servers.
 
 The draft PR's `shield-browser` GitHub Actions job uploads the tested `shield-chromium-prototype` build for review. Download and extract it, then use Chromium's **Load unpacked** on the extracted directory. It is an unsigned prototype, not a store release.
 
-**Do not use this prototype for sensitive data.** The original untuned 18-case synthetic challenge set exposed eight annotated identifiers in allowed outbound text. After targeted detector changes, the same set still exposes two; a separate 29-case exploratory probe exposes 13. None of these small synthetic sets estimates field quality. The extension has no automatic protection on AI sites, and manual masking alone is not a reliable safeguard. Use fabricated examples when reviewing it.
+**Do not use this prototype for sensitive data.** The original untuned 18-case synthetic challenge set exposed eight annotated identifiers in allowed outbound text. After targeted detector changes, the same set still exposes two; a separate 29-case exploratory probe exposes 13. None of these small synthetic sets estimates field quality. The automatic site adapter has not been validated on authenticated live ChatGPT/Claude pages, and DOM changes or unsupported send paths can bypass it. Use fabricated examples when reviewing it.
 
 The [benchmark readme](bench/README.md), [detector follow-up](docs/detector-follow-up.md), [visible-mask decision](docs/adr/0002-visible-masks.md) and [kennitala update](docs/adr/0003-kennitala-2026.md) explain results, constraints and next steps.
 

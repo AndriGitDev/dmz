@@ -1,6 +1,6 @@
 # Product and architecture specification, working v0.1
 
-Source: 27 September 2026 business plan, with prototype decisions recorded in ADR 0002 and 0003. Planned behaviour is marked as a requirement; Shield's manual side panel and a small Go/WASM detector are now implemented.
+Source: 27 September 2026 business plan, with prototype decisions recorded in ADR 0002 and 0003. Planned behaviour is marked as a requirement; Shield's manual side panel, experimental ChatGPT/Claude content script and small Go/WASM detector are now implemented. The content script has synthetic browser-fixture coverage but no authenticated live-site verification.
 
 ## Principles
 
@@ -8,7 +8,7 @@ Source: 27 September 2026 business plan, with prototype decisions recorded in AD
 2. Direct identifiers and the per-session re-identification map remain on the user's device (Shield) or Icelandic RunAtlas infrastructure (Portal/Gateway). Model providers receive visible masks, such as `⟦KT-<session>-1: XXXXX-XXXX⟧`.
 3. Pseudonymisation does not guarantee anonymity; quasi-identifiers and detection misses remain risks.
 4. Prompt and response bodies must never be written to gateway disk, logs, traces or audit records. Metadata-only audit: user, time, detected entity types, route and model.
-5. Tenant policy will determine `mask`, `warn` or `block` for each entity type. The current prototype masks date-shaped uncertain kennitölur, blocks other uncertain matches and secrets, and offers no automatic upload interception.
+5. Tenant policy will determine `mask`, `warn` or `block` for each entity type. The current prototype masks date-shaped uncertain kennitölur, blocks other uncertain matches and secrets, and offers no automatic upload interception. Its experimental text-submission interception is limited to selected ChatGPT/Claude DOM paths.
 
 ## Surfaces and data flow
 
@@ -29,7 +29,7 @@ flowchart LR
   D2 --> E[Metadata-only audit]
 ```
 
-Shield never sends real prompt contents or its map to dmz servers. Portal and Gateway see real values transiently in the Icelandic core, then route pseudonyms. Staff retain their own ChatGPT/Claude subscriptions for ordinary work; dmz supplies an additional sensitive-work path. The source plan's Shield slogan “we cannot leak what we never see” is **Shield-only**; it cannot describe Portal or Gateway.
+Shield never sends real prompt contents or its map to dmz servers. Portal and Gateway see real values transiently in the Icelandic core, then route pseudonyms. The current content script keeps the map in an isolated per-tab WASM instance and displays restored replies in a closed local overlay; the site reply stays masked. Its DOM hooks can be bypassed by site changes or unsupported send paths and are not yet a security boundary. Staff retain their own ChatGPT/Claude subscriptions for ordinary work; dmz supplies an additional sensitive-work path. The source plan's Shield slogan “we cannot leak what we never see” is **Shield-only**; it cannot describe Portal or Gateway.
 
 ## Phase 1 detection inventory
 
