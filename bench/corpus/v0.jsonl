@@ -1,0 +1,42 @@
+{"id":"kt-legacy-hyphen","text":"Tilbúið kt: 140182-8858.","entities":[{"kind":"kennitala","value":"140182-8858"}]}
+{"id":"kt-legacy-plain","text":"Tilbúið kt 1401828858 er í prófun.","entities":[{"kind":"kennitala","value":"1401828858"}]}
+{"id":"kt-new-shape","text":"Ný lögun: 140182-8868.","entities":[{"kind":"kennitala","value":"140182-8868"}]}
+{"id":"kt-entity-shape","text":"Tilbúin lögaðili 540182-8898.","entities":[{"kind":"kennitala","value":"540182-8898"}]}
+{"id":"kt-bad-date","text":"Ógild dagsetning 310282-8858.","entities":[]}
+{"id":"kt-boundary","text":"Ekki hluti úr lengri tölu: 1140182-88581.","entities":[]}
+{"id":"email-one","text":"Skrifaðu á demo@example.com.","entities":[{"kind":"email","value":"demo@example.com"}]}
+{"id":"email-two","text":"Tveir viðtakendur: a+b@example.com og c_d@example.com.","entities":[{"kind":"email","value":"a+b@example.com"},{"kind":"email","value":"c_d@example.com"}]}
+{"id":"email-near-miss","text":"Ógilt netfang demo@invalid.","entities":[]}
+{"id":"iban-compact","text":"Prófunarreikningur IS460000000000000000000000.","entities":[{"kind":"iban","value":"IS460000000000000000000000"}]}
+{"id":"iban-invalid","text":"Rangt gátstafapar IS990000000000000000000000.","entities":[]}
+{"id":"card-spaces","text":"Prófunarkort 4111 1111 1111 1111.","entities":[{"kind":"card","value":"4111 1111 1111 1111"}]}
+{"id":"card-invalid","text":"Rangt prófunarkort 4111 1111 1111 1112.","entities":[]}
+{"id":"phone-country","text":"Tilbúið símanúmer +354 0000001.","entities":[{"kind":"phone","value":"+354 0000001"}]}
+{"id":"phone-local","text":"Óvíst staðarnúmer 0000001.","entities":[{"kind":"phone","value":"0000001"}]}
+{"id":"secret-test","text":"Gervilykill sk-test_key_000000000000.","entities":[{"kind":"secret","value":"sk-test_key_000000000000"}]}
+{"id":"secret-url","text":"Gervitenging postgres://example:placeholder@invalid.invalid/db.","entities":[{"kind":"secret","value":"postgres://example:placeholder@invalid.invalid/db"}]}
+{"id":"name-nominative","text":"Skálduð persóna Arna Jónsdóttir.","entities":[{"kind":"name_demo","value":"Arna Jónsdóttir"}]}
+{"id":"name-oblique","text":"Senda til Arnu Jónsdóttur.","entities":[{"kind":"name_demo","value":"Arnu Jónsdóttur"}]}
+{"id":"name-unsupported","text":"Annað nafn Guðrún Sigurðardóttir.","entities":[{"kind":"name_demo","value":"Guðrún Sigurðardóttir"}]}
+{"id":"mixed","text":"Arna Jónsdóttir: 140182-8858, demo@example.com.","entities":[{"kind":"name_demo","value":"Arna Jónsdóttir"},{"kind":"kennitala","value":"140182-8858"},{"kind":"email","value":"demo@example.com"}]}
+{"id":"plain","text":"Þetta er venjulegur prófunartexti án auðkenna.","entities":[]}
+{"id":"kt-in-parentheses","text":"Eldra tilbúið kt (140182-8858).","entities":[{"kind":"kennitala","value":"140182-8858"}]}
+{"id":"kt-invalid-month","text":"Ógilt mánuður 141382-8858.","entities":[]}
+{"id":"kt-invalid-boundary","text":"Ófullgerð prófunarkennitala 140182-8858A.","entities":[]}
+{"id":"email-upper","text":"Póstur TEST@EXAMPLE.COM.","entities":[{"kind":"email","value":"TEST@EXAMPLE.COM"}]}
+{"id":"email-subdomain","text":"Póstur demo@lab.example.com.","entities":[{"kind":"email","value":"demo@lab.example.com"}]}
+{"id":"iban-spaces","text":"Prófunarreikningur IS46 0000 0000 0000 0000 0000 00.","entities":[{"kind":"iban","value":"IS46 0000 0000 0000 0000 0000 00"}]}
+{"id":"iban-lower","text":"Lágstafir is460000000000000000000000.","entities":[{"kind":"iban","value":"is460000000000000000000000"}]}
+{"id":"iban-hyphens","text":"Prófunarreikningur IS46-0000-0000-0000-0000-0000-00.","entities":[{"kind":"iban","value":"IS46-0000-0000-0000-0000-0000-00"}]}
+{"id":"card-hyphens","text":"Prófunarkort 4111-1111-1111-1111.","entities":[{"kind":"card","value":"4111-1111-1111-1111"}]}
+{"id":"card-compact","text":"Prófunarkort 4111111111111111.","entities":[{"kind":"card","value":"4111111111111111"}]}
+{"id":"phone-dashes","text":"Prófsími +354-000-0001.","entities":[{"kind":"phone","value":"+354-000-0001"}]}
+{"id":"phone-local-dash","text":"Óviss sími 000-0001.","entities":[{"kind":"phone","value":"000-0001"}]}
+{"id":"name-male","text":"Skálduð persóna Bjarni Jónsson.","entities":[{"kind":"name_demo","value":"Bjarni Jónsson"}]}
+{"id":"name-male-oblique","text":"Talaði við Bjarna Jónsson.","entities":[{"kind":"name_demo","value":"Bjarna Jónsson"}]}
+{"id":"name-unsupported-two","text":"Skálduð persóna Elín Björnsdóttir.","entities":[{"kind":"name_demo","value":"Elín Björnsdóttir"}]}
+{"id":"secret-aws-test","text":"Tilbúinn lykill AKIAAAAAAAAAAAAAAAAA.","entities":[{"kind":"secret","value":"AKIAAAAAAAAAAAAAAAAA"}]}
+{"id":"secret-jwt-shape","text":"Gervitákn eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl.","entities":[{"kind":"secret","value":"eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl"}]}
+{"id":"secret-bearer","text":"Gervihaus Authorization: Bearer test_token_abcdefghijklmnop.","entities":[{"kind":"secret","value":"test_token_abcdefghijklmnop"}]}
+{"id":"address-planned","text":"Tilbúið heimilisfang Prófgata 99, 999 Reykjavík.","entities":[{"kind":"address","value":"Prófgata 99, 999 Reykjavík"}]}
+{"id":"tenant-dictionary-planned","text":"Innra heiti Verkefni Gervi er hér.","entities":[{"kind":"tenant_dictionary","value":"Verkefni Gervi"}]}

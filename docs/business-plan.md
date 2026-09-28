@@ -2,6 +2,8 @@
 
 Source: Andri Pétur's plan supplied 27 September 2026. This is a faithful working baseline, not evidence that market, provider, legal or funding claims have been independently verified. Use [source register](source-register.md) and [open decisions](open-decisions.md) before external claims or applications.
 
+Later prototype decisions supersede its realistic-stand-in approach: see [ADR 0002](adr/0002-visible-masks.md). Kennitala check-digit rules changed in February 2026: see [ADR 0003](adr/0003-kennitala-2026.md). This baseline is retained for provenance, not current product copy.
+
 ## Thesis and decision rule
 
 dmz is a RunAtlas product line for data minimisation in AI. It replaces direct Icelandic identifiers with realistic stand-ins before a prompt reaches a model and restores real values in the response. One detection core serves Shield, Portal and Gateway. Real identifiers and the key linking them to stand-ins remain in Iceland. The first wedge is software vendors subject to Stafrænt Ísland's AI rules, followed by regulated mid-size firms and small professional firms. Do not commit to the full build unless at least **3 of 10** target customers commit to a paid pilot at list price by **18 December 2026**.

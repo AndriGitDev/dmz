@@ -6,7 +6,7 @@ These items are unresolved in the supplied plan or require time-sensitive verifi
 | --- | --- | --- |
 | Immediate | RunAtlas legal form, age and ownership | R&D refund and grant eligibility; processor identity |
 | Immediate | Rannís application window and eligible R&D costs | 1 Oct 2026 deadline stated in plan |
-| Immediate | Approved-proxy interpretation and complete evidence mapping for current Stafrænt Ísland rules | Rules checked 28 Sep; direct-identifier swapping alone does not cover confidential/case material or process evidence |
+| Immediate | Approved-proxy interpretation and complete evidence mapping for current Stafrænt Ísland rules | Rules checked 28 Sep; direct-identifier masking alone does not cover confidential/case material or process evidence |
 | Immediate | Actual count of vendors delivering to Stafrænt Ísland | Weakest 2029 customer assumption; <40 triggers model reset |
 | Immediate | Current firm counts from Hagstofa PxWeb | Old 2015/2017 market sizing is unsuitable for investors |
 | Immediate | Pilot mailbox, legal controller and message retention period | Public launch readiness |

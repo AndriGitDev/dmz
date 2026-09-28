@@ -1,15 +1,15 @@
 {
   "version": 0,
   "entities": {
-    "kennitala": "swap",
-    "name": "swap",
-    "iban": "swap",
-    "card": "swap",
-    "phone": "swap",
-    "email": "swap",
-    "address": "swap",
-    "secret": "swap",
-    "tenant_dictionary": "swap"
+    "kennitala": "mask",
+    "name": "mask",
+    "iban": "mask",
+    "card": "mask",
+    "phone": "mask",
+    "email": "mask",
+    "address": "mask",
+    "secret": "block",
+    "tenant_dictionary": "mask"
   },
   "uploads": "block",
   "uncertain": "ask"

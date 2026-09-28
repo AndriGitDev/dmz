@@ -1,0 +1,60 @@
+name: Prototype
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go test ./...
+      - run: go run ./bench/scorers -baseline bench/results/v0.json > /tmp/dmz-benchmark-current.json
+      - run: diff -u bench/results/v0.json /tmp/dmz-benchmark-current.json
+      - run: go run ./bench/scorers -detector regex > /tmp/dmz-regex-current.json
+      - run: diff -u bench/results/regex-v0.json /tmp/dmz-regex-current.json
+  presidio-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r bench/baselines/requirements.txt
+      - run: python bench/baselines/presidio.py > /tmp/dmz-presidio-current.json
+      - run: diff -u bench/results/presidio-v0.json /tmp/dmz-presidio-current.json
+  shield-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/shield/package-lock.json
+      - run: npm ci
+        working-directory: apps/shield
+      - run: npm run check
+        working-directory: apps/shield
+      - name: Install verified TinyGo 0.42.0
+        run: |
+          curl --fail --location --retry 3 --output /tmp/tinygo.tar.gz https://github.com/tinygo-org/tinygo/releases/download/v0.42.0/tinygo0.42.0.linux-amd64.tar.gz
+          echo 'b87688fa2e19cee7d813cad7fd7dadb71dff3198e47125aba66ba4af5e490438  /tmp/tinygo.tar.gz' | sha256sum --check
+          tar -xzf /tmp/tinygo.tar.gz -C /tmp
+      - run: GO_BIN=go TINYGO_BIN=/tmp/tinygo/bin/tinygo ./scripts/build-wasm.sh
+      - run: npm run build
+        working-directory: apps/shield
+      - run: node scripts/wasm-smoke.mjs
+        working-directory: apps/shield
+      - run: npx playwright install --with-deps chromium
+        working-directory: apps/shield
+      - run: npm run test:browser
+        working-directory: apps/shield
+      - run: npm audit --omit=dev --audit-level=high
+        working-directory: apps/shield

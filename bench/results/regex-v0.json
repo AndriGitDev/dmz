@@ -1,0 +1,71 @@
+{
+  "corpus": "bench/corpus/v0.jsonl",
+  "detector": "regex",
+  "samples": 42,
+  "scoring": "exact span and entity type",
+  "per_kind": {
+    "address": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0,
+      "recall": 0
+    },
+    "card": {
+      "tp": 3,
+      "fp": 7,
+      "fn": 0,
+      "precision": 0.3,
+      "recall": 1
+    },
+    "email": {
+      "tp": 6,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.8571428571428571,
+      "recall": 1
+    },
+    "iban": {
+      "tp": 3,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.75,
+      "recall": 0.75
+    },
+    "kennitala": {
+      "tp": 6,
+      "fp": 12,
+      "fn": 0,
+      "precision": 0.3333333333333333,
+      "recall": 1
+    },
+    "name_demo": {
+      "tp": 6,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.8571428571428571
+    },
+    "phone": {
+      "tp": 4,
+      "fp": 32,
+      "fn": 0,
+      "precision": 0.1111111111111111,
+      "recall": 1
+    },
+    "secret": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1,
+      "recall": 0.6
+    },
+    "tenant_dictionary": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0,
+      "recall": 0
+    }
+  }
+}

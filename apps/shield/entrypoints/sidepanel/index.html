@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="is">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dmz Shield prototype</title>
+    <script src="/wasm_exec.js"></script>
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar"><div class="brand">d<span>m</span>z<span class="dot">.</span></div><span class="chip">AÐEINS Á TÆKI</span></header>
+      <main>
+        <div class="intro"><p class="eyebrow">SHIELD / PROTOTYPE</p><h1>Sjáðu hvað fer út.</h1><p>Maskaðu texta áður en þú afritar hann í AI-tól. Raungildin eru aðeins í minni þessa hliðarspjalds.</p></div>
+        <section class="panel"><div class="label-row"><label for="prompt">01 / Fyrirspurn</label><span>TILBÚIÐ DÆMI</span></div><textarea id="prompt" spellcheck="false">Geturðu samið svar fyrir Arnu Jónsdóttur, kt. 140182-8858? Senda á demo@example.com.</textarea><button class="primary" id="mask" type="button" disabled>Maska fyrirspurn <span>↗</span></button></section>
+        <section class="panel"><div class="label-row"><label for="masked">02 / Það sem líkanið sér</label><span>MERKI ERU SÝNILEG</span></div><textarea id="masked" readonly placeholder="Maskaði textinn birtist hér."></textarea><div class="row"><button class="secondary" id="copy" type="button" disabled>Afrita maskað</button><span id="finding-count" class="count"></span></div><div id="findings" class="findings" aria-live="polite"></div></section>
+        <section class="panel"><div class="label-row"><label for="answer">03 / Svar frá líkani</label><span>LÍMDU SVAR HÉR</span></div><textarea id="answer" placeholder="Límdu hér svar sem inniheldur óbreytta ⟦…⟧ merkimiða."></textarea><button class="secondary" id="restore" type="button" disabled>Setja raungildi aftur inn</button><label class="output-label" for="restored">Svar á þínu tæki</label><textarea id="restored" readonly placeholder="Endurheimt svar birtist hér."></textarea></section>
+        <div class="controls"><button id="reset" type="button">Hreinsa lotu</button><span id="status" role="status">Hleð WASM-kjarna…</span></div>
+        <div class="note"><b>Tilraunaútgáfa.</b> Engin sjálfvirk stöðvun á ChatGPT/Claude enn. Afritaðu aðeins maskaðan texta. Óþekkt nöfn, heimilisföng, skjöl og samhengi geta enn auðkennt fólk. Merkimiðar verða að haldast óbreyttir til að endurheimt virki.</div>
+      </main>
+    </div>
+  </body>
+</html>
