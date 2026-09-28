@@ -5,14 +5,14 @@ import json
 import math
 
 
-def check(score, minimum=.955):
+def check(score, minimum=.955, allow_empty_predictions=False):
     for key in ('tp','fp','fn'):
         if type(score.get(key)) is not int or score[key] < 0:
             raise ValueError('invalid confusion counts')
     tp,fp,fn=(score[k] for k in ('tp','fp','fn'))
-    if tp+fp == 0 or tp+fn == 0:
+    if (tp+fp == 0 and not allow_empty_predictions) or tp+fn == 0:
         raise ValueError('no predictions or annotated positives')
-    precision,recall=tp/(tp+fp),tp/(tp+fn)
+    precision,recall=tp/max(1,tp+fp),tp/(tp+fn)
     for key,value in [('precision',precision),('recall',recall)]:
         if not math.isclose(score.get(key,-1),value,rel_tol=1e-12,abs_tol=1e-12):
             raise ValueError('reported metric disagrees with confusion counts')

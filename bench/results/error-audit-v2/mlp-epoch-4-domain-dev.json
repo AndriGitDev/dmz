@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "12cf5cae53dea39110bcb2b4cb4c30f8e8e0d8657627d40bbef8abbdb0595edc",
+  "epoch": 4,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 428,
+      "fp": 25,
+      "fn": 52,
+      "precision": 0.9448123620309051,
+      "recall": 0.8916666666666667,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 427,
+      "fp": 21,
+      "fn": 53,
+      "precision": 0.953125,
+      "recall": 0.8895833333333333,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 412,
+      "fp": 16,
+      "fn": 68,
+      "precision": 0.9626168224299065,
+      "recall": 0.8583333333333333,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 410,
+      "fp": 15,
+      "fn": 70,
+      "precision": 0.9647058823529412,
+      "recall": 0.8541666666666666,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 406,
+      "fp": 14,
+      "fn": 74,
+      "precision": 0.9666666666666667,
+      "recall": 0.8458333333333333,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 400,
+      "fp": 12,
+      "fn": 80,
+      "precision": 0.970873786407767,
+      "recall": 0.8333333333333334,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 392,
+      "fp": 8,
+      "fn": 88,
+      "precision": 0.98,
+      "recall": 0.8166666666666667,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 374,
+      "fp": 2,
+      "fn": 106,
+      "precision": 0.9946808510638298,
+      "recall": 0.7791666666666667,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 352,
+      "fp": 1,
+      "fn": 128,
+      "precision": 0.9971671388101983,
+      "recall": 0.7333333333333333,
+      "target_met": false
+    }
+  },
+  "seconds": 0.129,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "9d06862219338a1a2f0b54d1ebb1d257215c5f0b9c1287b5ebb01049cd3f975f",
+  "epoch": 15,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 440,
+      "fp": 31,
+      "fn": 40,
+      "precision": 0.9341825902335457,
+      "recall": 0.9166666666666666,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 439,
+      "fp": 30,
+      "fn": 41,
+      "precision": 0.9360341151385928,
+      "recall": 0.9145833333333333,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 433,
+      "fp": 28,
+      "fn": 47,
+      "precision": 0.9392624728850325,
+      "recall": 0.9020833333333333,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 432,
+      "fp": 26,
+      "fn": 48,
+      "precision": 0.9432314410480349,
+      "recall": 0.9,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 429,
+      "fp": 25,
+      "fn": 51,
+      "precision": 0.9449339207048458,
+      "recall": 0.89375,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 426,
+      "fp": 24,
+      "fn": 54,
+      "precision": 0.9466666666666667,
+      "recall": 0.8875,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 422,
+      "fp": 23,
+      "fn": 58,
+      "precision": 0.9483146067415731,
+      "recall": 0.8791666666666667,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 410,
+      "fp": 16,
+      "fn": 70,
+      "precision": 0.9624413145539906,
+      "recall": 0.8541666666666666,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 391,
+      "fp": 15,
+      "fn": 89,
+      "precision": 0.9630541871921182,
+      "recall": 0.8145833333333333,
+      "target_met": false
+    }
+  },
+  "seconds": 0.15,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

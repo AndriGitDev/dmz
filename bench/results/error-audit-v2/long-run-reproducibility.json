@@ -1,0 +1,13 @@
+{
+  "first_eight_checkpoint_hashes_match": true,
+  "weights": {
+    "epoch-1.safetensors": "9a278272b5d6a1faaecc0a06706772c4e8a35ee55698d2264ef64f099f4e7d9f",
+    "epoch-2.safetensors": "28abe23662d25fdb13376a9555d82d616ef4e96fc176a063be6306779f806ad4",
+    "epoch-3.safetensors": "d725adc416ae6c0b4e7d00622154e3511574ae2f0d0401d45a8d1cefe06182cd",
+    "epoch-4.safetensors": "12cf5cae53dea39110bcb2b4cb4c30f8e8e0d8657627d40bbef8abbdb0595edc",
+    "epoch-5.safetensors": "129ba1eb32bd83688735f9127099d9b58916d0ee69d1168b617bb970625ec95f",
+    "epoch-6.safetensors": "ae365567040d4076000a2fa9fc462a090f5402e20cca15398799a60997a90eed",
+    "epoch-7.safetensors": "02217a6561db2efe78505ee71f39d3dae60dd86027c445eee3d57866eb97c406",
+    "epoch-8.safetensors": "3396836f92fdc6a691068d1cd398280d8064baa8f90221dd3f39a6cc7f63ed53"
+  }
+}

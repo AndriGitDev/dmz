@@ -1,0 +1,16 @@
+{
+  "python": "3.12.3",
+  "machine": "x86_64",
+  "logical_cpus": 4,
+  "packages": {
+    "torch": "2.8.0+cpu",
+    "transformers": "4.57.6",
+    "safetensors": "0.6.2",
+    "numpy": "2.5.3",
+    "tokenizers": "0.22.2"
+  },
+  "device": "CPU",
+  "encoder_train_threads": 3,
+  "encoder_development_threads": 1,
+  "head_threads": 3
+}

@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "status": "research-only; target not met; not integrated into Shield",
+  "candidate": {
+    "candidate": "ensemble-epoch-12-crf-0.75",
+    "model_sha256": "946398e59545c6bc295a07def67a04b314c21302f35eda1e8b4030380dfcb881",
+    "threshold": 0.0,
+    "general": {
+      "tp": 1435,
+      "fp": 61,
+      "fn": 71,
+      "precision": 0.9592245989304813,
+      "recall": 0.952855245683931,
+      "target_met": false
+    },
+    "domain": {
+      "tp": 462,
+      "fp": 7,
+      "fn": 18,
+      "precision": 0.9850746268656716,
+      "recall": 0.9625,
+      "target_met": true
+    },
+    "precision_qualified": true,
+    "lower_recall": 0.952855245683931,
+    "target_met": false
+  },
+  "composition": {
+    "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+    "neural_sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+    "crf_threshold": 0.75,
+    "overlap_policy": "CRF priority; add only non-overlapping neural spans"
+  },
+  "neural_head": {
+    "architecture": "LayerNorm(768), Linear(768,128), GELU, Dropout(0.1), Linear(128,3)",
+    "epoch": 12,
+    "training_report": "head-mlp-16-training.json"
+  },
+  "encoder": {
+    "model": "mideind/IceBERT",
+    "revision": "24c145af7b7d092ecb082897db2e16107301d657",
+    "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a"
+  },
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  },
+  "independent_final_evaluation": false
+}

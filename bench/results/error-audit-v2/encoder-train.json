@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "split": "train",
+  "text_mode": "canonical",
+  "rows": 46196,
+  "tokens": 824869,
+  "hidden_size": 768,
+  "base_model": "mideind/IceBERT",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "pooling": "mean subwords; <=256-subword chunks at word boundaries",
+  "seconds": 1747.256,
+  "files": {
+    "x.npy": "099e37d55971b5fc97492412fdf389c56504373bb620feda18ecc897e0f83b81",
+    "y.npy": "08aee6ac25c4cc56febc6f272fd0880eb45694e8d1f61bcee7b65fa985d153df",
+    "records.jsonl": "c45bd0f0ea373034a56c2bef778000d910e98456777c23707ebb9cdeb563837e"
+  }
+}

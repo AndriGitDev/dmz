@@ -1,0 +1,24 @@
+{
+  "crf_threshold": 0.75,
+  "neural_threshold": 0.65,
+  "counts": {
+    "dev": {
+      "both_correct": 1163,
+      "crf_only_correct": 66,
+      "neural_added_correct": 200,
+      "below_threshold": 22,
+      "boundary": 17,
+      "no_prediction": 35,
+      "correct_neural_span_blocked_by_crf_overlap": 3
+    },
+    "domain": {
+      "both_correct": 384,
+      "crf_only_correct": 34,
+      "neural_added_correct": 43,
+      "below_threshold": 10,
+      "boundary": 6,
+      "no_prediction": 3
+    }
+  },
+  "split": "dev"
+}

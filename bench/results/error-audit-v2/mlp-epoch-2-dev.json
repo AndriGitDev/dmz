@@ -1,0 +1,85 @@
+{
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "28abe23662d25fdb13376a9555d82d616ef4e96fc176a063be6306779f806ad4",
+  "epoch": 2,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 5582,
+  "scores": {
+    "0": {
+      "tp": 1384,
+      "fp": 98,
+      "fn": 122,
+      "precision": 0.9338731443994602,
+      "recall": 0.9189907038512616,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 1375,
+      "fp": 96,
+      "fn": 131,
+      "precision": 0.9347382732834806,
+      "recall": 0.9130146082337317,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 1353,
+      "fp": 77,
+      "fn": 153,
+      "precision": 0.9461538461538461,
+      "recall": 0.898406374501992,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 1336,
+      "fp": 67,
+      "fn": 170,
+      "precision": 0.9522451888809693,
+      "recall": 0.8871181938911022,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 1313,
+      "fp": 59,
+      "fn": 193,
+      "precision": 0.956997084548105,
+      "recall": 0.8718459495351926,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 1288,
+      "fp": 55,
+      "fn": 218,
+      "precision": 0.9590469099032017,
+      "recall": 0.8552456839309429,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 1257,
+      "fp": 47,
+      "fn": 249,
+      "precision": 0.963957055214724,
+      "recall": 0.8346613545816733,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 1149,
+      "fp": 36,
+      "fn": 357,
+      "precision": 0.9696202531645569,
+      "recall": 0.7629482071713147,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 979,
+      "fp": 21,
+      "fn": 527,
+      "precision": 0.979,
+      "recall": 0.650066401062417,
+      "target_met": false
+    }
+  },
+  "seconds": 1.248,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "9a278272b5d6a1faaecc0a06706772c4e8a35ee55698d2264ef64f099f4e7d9f",
+  "epoch": 1,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 360,
+      "fp": 74,
+      "fn": 120,
+      "precision": 0.8294930875576036,
+      "recall": 0.75,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 357,
+      "fp": 71,
+      "fn": 123,
+      "precision": 0.8341121495327103,
+      "recall": 0.74375,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 346,
+      "fp": 62,
+      "fn": 134,
+      "precision": 0.8480392156862745,
+      "recall": 0.7208333333333333,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 344,
+      "fp": 53,
+      "fn": 136,
+      "precision": 0.8664987405541562,
+      "recall": 0.7166666666666667,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 335,
+      "fp": 48,
+      "fn": 145,
+      "precision": 0.8746736292428199,
+      "recall": 0.6979166666666666,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 331,
+      "fp": 39,
+      "fn": 149,
+      "precision": 0.8945945945945946,
+      "recall": 0.6895833333333333,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 325,
+      "fp": 34,
+      "fn": 155,
+      "precision": 0.9052924791086351,
+      "recall": 0.6770833333333334,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 297,
+      "fp": 11,
+      "fn": 183,
+      "precision": 0.9642857142857143,
+      "recall": 0.61875,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 252,
+      "fp": 1,
+      "fn": 228,
+      "precision": 0.9960474308300395,
+      "recall": 0.525,
+      "target_met": false
+    }
+  },
+  "seconds": 0.158,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

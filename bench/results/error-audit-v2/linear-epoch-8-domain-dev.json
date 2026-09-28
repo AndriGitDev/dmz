@@ -1,0 +1,85 @@
+{
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "5ad3a52ad77fd35d9aa4ca48d42d57fbc5195ed5ce98d1f6d244d5b5d7eca061",
+  "epoch": 8,
+  "split": "dev",
+  "text_mode": "canonical",
+  "sentences": 256,
+  "scores": {
+    "0": {
+      "tp": 366,
+      "fp": 59,
+      "fn": 114,
+      "precision": 0.8611764705882353,
+      "recall": 0.7625,
+      "target_met": false
+    },
+    "0.5": {
+      "tp": 363,
+      "fp": 55,
+      "fn": 117,
+      "precision": 0.868421052631579,
+      "recall": 0.75625,
+      "target_met": false
+    },
+    "0.6": {
+      "tp": 355,
+      "fp": 42,
+      "fn": 125,
+      "precision": 0.8942065491183879,
+      "recall": 0.7395833333333334,
+      "target_met": false
+    },
+    "0.65": {
+      "tp": 348,
+      "fp": 40,
+      "fn": 132,
+      "precision": 0.8969072164948454,
+      "recall": 0.725,
+      "target_met": false
+    },
+    "0.7": {
+      "tp": 345,
+      "fp": 31,
+      "fn": 135,
+      "precision": 0.9175531914893617,
+      "recall": 0.71875,
+      "target_met": false
+    },
+    "0.75": {
+      "tp": 340,
+      "fp": 25,
+      "fn": 140,
+      "precision": 0.9315068493150684,
+      "recall": 0.7083333333333334,
+      "target_met": false
+    },
+    "0.8": {
+      "tp": 331,
+      "fp": 21,
+      "fn": 149,
+      "precision": 0.9403409090909091,
+      "recall": 0.6895833333333333,
+      "target_met": false
+    },
+    "0.9": {
+      "tp": 302,
+      "fp": 9,
+      "fn": 178,
+      "precision": 0.9710610932475884,
+      "recall": 0.6291666666666667,
+      "target_met": false
+    },
+    "0.95": {
+      "tp": 240,
+      "fp": 1,
+      "fn": 240,
+      "precision": 0.995850622406639,
+      "recall": 0.5,
+      "target_met": false
+    }
+  },
+  "seconds": 0.098,
+  "method": "Exact Person spans; frozen encoder and BIO classifier; min predicted token probability; development only"
+}

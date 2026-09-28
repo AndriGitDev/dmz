@@ -1,0 +1,597 @@
+[
+  {
+    "name": "baseline",
+    "general": "../contextual-v1/dev-feature-v1.json",
+    "domain": "baseline-domain-dev.json"
+  },
+  {
+    "name": "entities",
+    "general": "entities-dev.json",
+    "domain": "entities-domain-dev.json"
+  },
+  {
+    "name": "augmented",
+    "general": "augmented-dev.json",
+    "domain": "augmented-domain-dev.json"
+  },
+  {
+    "name": "entities-augmented",
+    "general": "entities-augmented-dev.json",
+    "domain": "entities-augmented-domain-dev.json"
+  },
+  {
+    "name": "initials",
+    "general": "initials-dev.json",
+    "domain": "initials-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-1",
+    "general": "linear-epoch-1-dev.json",
+    "domain": "linear-epoch-1-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-2",
+    "general": "linear-epoch-2-dev.json",
+    "domain": "linear-epoch-2-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-3",
+    "general": "linear-epoch-3-dev.json",
+    "domain": "linear-epoch-3-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-4",
+    "general": "linear-epoch-4-dev.json",
+    "domain": "linear-epoch-4-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-5",
+    "general": "linear-epoch-5-dev.json",
+    "domain": "linear-epoch-5-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-6",
+    "general": "linear-epoch-6-dev.json",
+    "domain": "linear-epoch-6-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-7",
+    "general": "linear-epoch-7-dev.json",
+    "domain": "linear-epoch-7-domain-dev.json"
+  },
+  {
+    "name": "linear-epoch-8",
+    "general": "linear-epoch-8-dev.json",
+    "domain": "linear-epoch-8-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-1",
+    "general": "mlp-epoch-1-dev.json",
+    "domain": "mlp-epoch-1-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-2",
+    "general": "mlp-epoch-2-dev.json",
+    "domain": "mlp-epoch-2-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-3",
+    "general": "mlp-epoch-3-dev.json",
+    "domain": "mlp-epoch-3-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-4",
+    "general": "mlp-epoch-4-dev.json",
+    "domain": "mlp-epoch-4-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-5",
+    "general": "mlp-epoch-5-dev.json",
+    "domain": "mlp-epoch-5-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-6",
+    "general": "mlp-epoch-6-dev.json",
+    "domain": "mlp-epoch-6-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-7",
+    "general": "mlp-epoch-7-dev.json",
+    "domain": "mlp-epoch-7-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-8",
+    "general": "mlp-epoch-8-dev.json",
+    "domain": "mlp-epoch-8-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-9",
+    "general": "mlp-epoch-9-dev.json",
+    "domain": "mlp-epoch-9-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-10",
+    "general": "mlp-epoch-10-dev.json",
+    "domain": "mlp-epoch-10-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-11",
+    "general": "mlp-epoch-11-dev.json",
+    "domain": "mlp-epoch-11-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-12",
+    "general": "mlp-epoch-12-dev.json",
+    "domain": "mlp-epoch-12-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-13",
+    "general": "mlp-epoch-13-dev.json",
+    "domain": "mlp-epoch-13-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-14",
+    "general": "mlp-epoch-14-dev.json",
+    "domain": "mlp-epoch-14-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-15",
+    "general": "mlp-epoch-15-dev.json",
+    "domain": "mlp-epoch-15-domain-dev.json"
+  },
+  {
+    "name": "mlp-epoch-16",
+    "general": "mlp-epoch-16-dev.json",
+    "domain": "mlp-epoch-16-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0",
+    "general": "ensemble-crf-0-dev.json",
+    "domain": "ensemble-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.5",
+    "general": "ensemble-crf-0.5-dev.json",
+    "domain": "ensemble-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.6",
+    "general": "ensemble-crf-0.6-dev.json",
+    "domain": "ensemble-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.65",
+    "general": "ensemble-crf-0.65-dev.json",
+    "domain": "ensemble-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.7",
+    "general": "ensemble-crf-0.7-dev.json",
+    "domain": "ensemble-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.75",
+    "general": "ensemble-crf-0.75-dev.json",
+    "domain": "ensemble-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.8",
+    "general": "ensemble-crf-0.8-dev.json",
+    "domain": "ensemble-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.9",
+    "general": "ensemble-crf-0.9-dev.json",
+    "domain": "ensemble-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-crf-0.95",
+    "general": "ensemble-crf-0.95-dev.json",
+    "domain": "ensemble-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0",
+    "general": "ensemble-epoch-9-crf-0-dev.json",
+    "domain": "ensemble-epoch-9-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.5",
+    "general": "ensemble-epoch-9-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.6",
+    "general": "ensemble-epoch-9-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.65",
+    "general": "ensemble-epoch-9-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.7",
+    "general": "ensemble-epoch-9-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.75",
+    "general": "ensemble-epoch-9-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.8",
+    "general": "ensemble-epoch-9-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.9",
+    "general": "ensemble-epoch-9-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-9-crf-0.95",
+    "general": "ensemble-epoch-9-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-9-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0",
+    "general": "ensemble-epoch-10-crf-0-dev.json",
+    "domain": "ensemble-epoch-10-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.5",
+    "general": "ensemble-epoch-10-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.6",
+    "general": "ensemble-epoch-10-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.65",
+    "general": "ensemble-epoch-10-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.7",
+    "general": "ensemble-epoch-10-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.75",
+    "general": "ensemble-epoch-10-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.8",
+    "general": "ensemble-epoch-10-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.9",
+    "general": "ensemble-epoch-10-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-10-crf-0.95",
+    "general": "ensemble-epoch-10-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-10-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0",
+    "general": "ensemble-epoch-11-crf-0-dev.json",
+    "domain": "ensemble-epoch-11-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.5",
+    "general": "ensemble-epoch-11-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.6",
+    "general": "ensemble-epoch-11-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.65",
+    "general": "ensemble-epoch-11-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.7",
+    "general": "ensemble-epoch-11-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.75",
+    "general": "ensemble-epoch-11-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.8",
+    "general": "ensemble-epoch-11-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.9",
+    "general": "ensemble-epoch-11-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-11-crf-0.95",
+    "general": "ensemble-epoch-11-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-11-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0",
+    "general": "ensemble-epoch-12-crf-0-dev.json",
+    "domain": "ensemble-epoch-12-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.5",
+    "general": "ensemble-epoch-12-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.6",
+    "general": "ensemble-epoch-12-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.65",
+    "general": "ensemble-epoch-12-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.7",
+    "general": "ensemble-epoch-12-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.75",
+    "general": "ensemble-epoch-12-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.8",
+    "general": "ensemble-epoch-12-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.9",
+    "general": "ensemble-epoch-12-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-12-crf-0.95",
+    "general": "ensemble-epoch-12-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-12-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0",
+    "general": "ensemble-epoch-13-crf-0-dev.json",
+    "domain": "ensemble-epoch-13-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.5",
+    "general": "ensemble-epoch-13-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.6",
+    "general": "ensemble-epoch-13-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.65",
+    "general": "ensemble-epoch-13-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.7",
+    "general": "ensemble-epoch-13-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.75",
+    "general": "ensemble-epoch-13-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.8",
+    "general": "ensemble-epoch-13-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.9",
+    "general": "ensemble-epoch-13-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-13-crf-0.95",
+    "general": "ensemble-epoch-13-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-13-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0",
+    "general": "ensemble-epoch-14-crf-0-dev.json",
+    "domain": "ensemble-epoch-14-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.5",
+    "general": "ensemble-epoch-14-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.6",
+    "general": "ensemble-epoch-14-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.65",
+    "general": "ensemble-epoch-14-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.7",
+    "general": "ensemble-epoch-14-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.75",
+    "general": "ensemble-epoch-14-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.8",
+    "general": "ensemble-epoch-14-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.9",
+    "general": "ensemble-epoch-14-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-14-crf-0.95",
+    "general": "ensemble-epoch-14-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-14-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0",
+    "general": "ensemble-epoch-15-crf-0-dev.json",
+    "domain": "ensemble-epoch-15-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.5",
+    "general": "ensemble-epoch-15-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.6",
+    "general": "ensemble-epoch-15-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.65",
+    "general": "ensemble-epoch-15-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.7",
+    "general": "ensemble-epoch-15-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.75",
+    "general": "ensemble-epoch-15-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.8",
+    "general": "ensemble-epoch-15-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.9",
+    "general": "ensemble-epoch-15-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-15-crf-0.95",
+    "general": "ensemble-epoch-15-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-15-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0",
+    "general": "ensemble-epoch-16-crf-0-dev.json",
+    "domain": "ensemble-epoch-16-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.5",
+    "general": "ensemble-epoch-16-crf-0.5-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.6",
+    "general": "ensemble-epoch-16-crf-0.6-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.65",
+    "general": "ensemble-epoch-16-crf-0.65-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.7",
+    "general": "ensemble-epoch-16-crf-0.7-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.75",
+    "general": "ensemble-epoch-16-crf-0.75-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.8",
+    "general": "ensemble-epoch-16-crf-0.8-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.9",
+    "general": "ensemble-epoch-16-crf-0.9-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-epoch-16-crf-0.95",
+    "general": "ensemble-epoch-16-crf-0.95-dev.json",
+    "domain": "ensemble-epoch-16-crf-0.95-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0",
+    "general": "ensemble-average-crf-0-dev.json",
+    "domain": "ensemble-average-crf-0-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.5",
+    "general": "ensemble-average-crf-0.5-dev.json",
+    "domain": "ensemble-average-crf-0.5-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.6",
+    "general": "ensemble-average-crf-0.6-dev.json",
+    "domain": "ensemble-average-crf-0.6-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.65",
+    "general": "ensemble-average-crf-0.65-dev.json",
+    "domain": "ensemble-average-crf-0.65-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.7",
+    "general": "ensemble-average-crf-0.7-dev.json",
+    "domain": "ensemble-average-crf-0.7-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.75",
+    "general": "ensemble-average-crf-0.75-dev.json",
+    "domain": "ensemble-average-crf-0.75-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.8",
+    "general": "ensemble-average-crf-0.8-dev.json",
+    "domain": "ensemble-average-crf-0.8-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.9",
+    "general": "ensemble-average-crf-0.9-dev.json",
+    "domain": "ensemble-average-crf-0.9-domain-dev.json"
+  },
+  {
+    "name": "ensemble-average-crf-0.95",
+    "general": "ensemble-average-crf-0.95-dev.json",
+    "domain": "ensemble-average-crf-0.95-domain-dev.json"
+  }
+]
