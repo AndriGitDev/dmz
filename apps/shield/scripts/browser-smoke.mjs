@@ -15,6 +15,7 @@ let browser;
 try {
   browser = await chromium.launchPersistentContext(profile, {
     headless: true,
+    channel: 'chromium',
     viewport: { width: 380, height: 900 },
     executablePath: process.env.CHROMIUM_EXECUTABLE || undefined,
     args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`],

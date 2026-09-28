@@ -44,6 +44,27 @@ func TestEmailAndUnicodeByteOffsets(t *testing.T) {
 	}
 }
 
+func TestIBANFormattingAndChecksum(t *testing.T) {
+	for _, value := range []string{
+		"IS460000000000000000000000",
+		"IS46 0000 0000 0000 0000 0000 00",
+		"IS46-0000-0000-0000-0000-0000-00",
+	} {
+		matches := Detect(value)
+		if len(matches) != 1 || matches[0].Kind != IBAN || matches[0].Start != 0 || matches[0].End != len(value) {
+			t.Errorf("%q: %#v", value, matches)
+		}
+		if got := Canonical(IBAN, value); got != "IS460000000000000000000000" {
+			t.Errorf("canonical %q = %q", value, got)
+		}
+	}
+	for _, value := range []string{"IS990000000000000000000000", "IS46-0000-0000-0000-0000-0000-01"} {
+		if matches := Detect(value); len(matches) != 0 {
+			t.Errorf("invalid IBAN %q: %#v", value, matches)
+		}
+	}
+}
+
 func TestPhoneConfidence(t *testing.T) {
 	for _, tc := range []struct {
 		input string

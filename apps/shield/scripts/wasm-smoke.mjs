@@ -20,6 +20,11 @@ assert.match(first.transformed, /⟦KT-[A-F0-9]{16}-\d+: XXXXX-XXXX⟧/);
 assert.ok(!first.transformed.includes('140182-8858'));
 assert.equal(globalThis.dmzRestore(first.transformed), 'Arna Jónsdóttir, 140182-8858.');
 
+const iban = JSON.parse(globalThis.dmzProcess('IS46-0000-0000-0000-0000-0000-00'));
+assert.equal(iban.allowed, true);
+assert.match(iban.transformed, /⟦IBAN-[A-F0-9]{16}-\d+:/);
+assert.equal(globalThis.dmzRestore(iban.transformed), 'IS46-0000-0000-0000-0000-0000-00');
+
 const unchecked = JSON.parse(globalThis.dmzProcess('140182-8868'));
 assert.equal(unchecked.allowed, true);
 assert.match(unchecked.transformed, /XXXXX-XXXX/);

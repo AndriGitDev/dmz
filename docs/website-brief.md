@@ -12,12 +12,12 @@ Public repository: `AndriGitDev/dmz-web`. Icelandic is default (`/`); English mi
 | `/tilraun` | `/en/pilot` | Pilot intake/conversion | Gate 1 launch; email until API exists |
 | `/skilmalar`, `/personuvernd`, `/vinnslusamningur`, `/undirvinnsluadilar` | `/en/terms`, `/en/privacy`, `/en/dpa`, `/en/subprocessors` | Procurement/legal | Gate 1 status pages; final text after counsel |
 | `/profun` | `/en/benchmark` | Per-entity measured recall by release, method, synthetic corpus | With benchmark v0, no placeholder scores |
-| `/skjoldur` | `/en/shield` | Extension prompt example, supported sites, device deployment | Product detail, before v1.0 |
-| `/gatt` | `/en/portal` | Sensitive-work lane, routing and retention distinctions | Product detail, before v1.0 |
-| `/forritarar` | `/en/gateway` | Compatible API path, secret/log detection | Product detail, before v1.1 |
-| `/verd` | `/en/pricing` | Three plans, onboarding, ten-seat minimum | After approved ISK price book |
-| `/greinar` | `/en/blog` | Leak patterns, ZDR explainer, retention updates | With reviewed articles |
-| `/um` | `/en/about` | Founder credentials, RunAtlas and Kastro | After factual/partner review |
+| `/skjoldur` | `/en/shield` | Current manual extension prototype and planned interception | Product detail live; automatic interception pending |
+| `/gatt` | `/en/portal` | Sensitive-work lane, routing and retention distinctions | Planned-product detail live; service pending |
+| `/forritarar` | `/en/gateway` | Compatible API path, secret/log detection | Planned-product detail live; service pending |
+| `/verd` | `/en/pricing` | Three plans, onboarding, ten-seat minimum | Indicative dated ISK conversion live; approved price book pending |
+| `/greinar` | `/en/blog` | Benchmark link and planned article topics | Index live; reviewed articles pending |
+| `/um` | `/en/about` | Founder credentials, RunAtlas and Kastro | About page live; partner status qualified |
 
 Subdomains: `portal.dmz.is` app, `api.dmz.is` Gateway/intake, `docs.dmz.is` Starlight, `status.dmz.is` Uptime Kuma. Do not point public navigation to unavailable subdomains.
 

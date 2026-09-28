@@ -12,7 +12,7 @@ Checked against the user-supplied 27 September 2026 plan. **Captured** means a r
 | Architecture, vault, routing and audit | [product spec](product-spec.md), [threat model](threat-model.md) | Captured; implementation and controls pending |
 | Positioning, precise claims and proof | [website brief](website-brief.md) | Bilingual marketing site and preliminary synthetic results page built; market, legal and provider evidence pending |
 | Competitive landscape | [business plan](business-plan.md), [sources](source-register.md) | Captured; current comparisons not verified |
-| Pricing, segments and GTM | [business plan](business-plan.md) | EUR assumptions captured; ISK price book pending |
+| Pricing, segments and GTM | [business plan](business-plan.md), public pricing page | EUR assumptions captured; dated indicative ISK conversion shown publicly, approved ISK price book pending |
 | Unit economics and financial model | [business plan](business-plan.md), [arithmetic check](financial-model.md) | Year-end ARR checked; quarterly model source missing |
 | Roadmap, MRR and recall gates | [roadmap](roadmap.md), [product spec](product-spec.md) | Captured; execution pending |
 | Organisation, grants and hiring | [business plan](business-plan.md), [open decisions](open-decisions.md) | Captured; entity/grant eligibility pending |
@@ -20,7 +20,7 @@ Checked against the user-supplied 27 September 2026 plan. **Captured** means a r
 | Risks and mitigations | [business plan](business-plan.md), [threat model](threat-model.md) | Captured; controls not proven |
 | Interviews and kill criteria | [validation](validation.md), [launch checklist](launch-checklist.md) | Captured; interviews pending |
 | Repo blueprint and CI | [product spec](product-spec.md), root README | Prototype core and Shield build implemented; Go benchmark and Chromium extension gates added; service stack pending |
-| Website map, copy and build notes | [website brief](website-brief.md), public `dmz-web` | Gate 1 pages plus preliminary benchmark page built; later product/pricing pages pending |
+| Website map, copy and build notes | [website brief](website-brief.md), public `dmz-web` | All 30 bilingual routes built; product and article pages clearly label planned features, and price conversion is indicative |
 
 ## What the first 10-minute pass missed
 

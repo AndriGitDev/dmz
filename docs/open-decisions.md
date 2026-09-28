@@ -10,7 +10,7 @@ These items are unresolved in the supplied plan or require time-sensitive verifi
 | Immediate | Actual count of vendors delivering to Stafrænt Ísland | Weakest 2029 customer assumption; <40 triggers model reset |
 | Immediate | Current firm counts from Hagstofa PxWeb | Old 2015/2017 market sizing is unsuitable for investors |
 | Immediate | Pilot mailbox, legal controller and message retention period | Public launch readiness |
-| Immediate | Approved ISK price book and VAT/legal review | Icelandic pricing page; avoid invented FX conversion |
+| Immediate | Approved ISK price book and VAT/legal review | Public page shows dated, cited indicative FX conversion only; final quoted prices need approval |
 | Immediate | Whether Portal seats are additional to or replace Shield seats in account examples | The €960 example uses 100 Shield + 20 Portal; Portal is also described as including Shield |
 | Near-term | Bedrock EU model availability and `none` retention in a real account | Portal route and provider claim |
 | Near-term | OpenAI/Anthropic written ZDR eligibility and multi-tenant service rights | ZDR roadmap, provider terms |

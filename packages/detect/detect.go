@@ -44,7 +44,7 @@ type Match struct {
 var (
 	kennitalaRE = regexp.MustCompile(`[0-9]{6}-?[0-9]{4}`)
 	emailRE     = regexp.MustCompile(`[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}`)
-	ibanRE      = regexp.MustCompile(`(?i)IS(?: ?[0-9]){24}`)
+	ibanRE      = regexp.MustCompile(`(?i)IS(?:[ -]?[0-9]){24}`)
 	cardRE      = regexp.MustCompile(`[0-9](?:[0-9 \-]{11,25})[0-9]`)
 	phoneRE     = regexp.MustCompile(`(?:\+354[ \-]?)?[0-9]{3}[ \-]?[0-9]{4}`)
 	secretRE    = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
@@ -210,7 +210,7 @@ func validateKennitala(raw string) (Confidence, string, bool) {
 }
 
 func validateIBAN(raw string) (Confidence, string, bool) {
-	s := strings.ToUpper(strings.ReplaceAll(raw, " ", ""))
+	s := strings.ToUpper(strings.NewReplacer(" ", "", "-", "").Replace(raw))
 	if len(s) != 26 || !strings.HasPrefix(s, "IS") {
 		return "", "", false
 	}
@@ -268,7 +268,7 @@ func Canonical(kind Kind, raw string) string {
 	case Kennitala, Card, Phone:
 		return digits(raw)
 	case IBAN:
-		return strings.ToUpper(strings.ReplaceAll(raw, " ", ""))
+		return strings.ToUpper(strings.NewReplacer(" ", "", "-", "").Replace(raw))
 	case Email:
 		return strings.ToLower(raw)
 	default:
