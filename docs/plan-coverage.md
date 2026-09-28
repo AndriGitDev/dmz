@@ -22,6 +22,10 @@ Checked against the user-supplied 27 September 2026 plan. **Captured** means a r
 | Repo blueprint and CI | [product spec](product-spec.md), root README | Prototype core and Shield build implemented; Go benchmark and Chromium extension gates added; service stack pending |
 | Website map, copy and build notes | [website brief](website-brief.md), public `dmz-web` | All 30 bilingual routes built; product and article pages clearly label planned features, and price conversion is indicative |
 
+## Accepted architecture update
+
+[ADR 0004](adr/0004-portal-hosting-and-pii-policy.md) supersedes the baseline’s universal Iceland-hosting and provider-masking assumptions for Portal/Gateway. Initial hosting is Hetzner EU; customers may use masking or explicitly approved original-PII processing on a verified route. The [preview plan](portal-gateway-plan.md) is captured, not implemented.
+
 ## What the first 10-minute pass missed
 
 It created a working launch-site skeleton and directory scaffold, but omitted durable records for market evidence, exact financial assumptions, risk register, full detector and architecture spec, provider/legal dependencies, detailed interview protocol, complete website map, and the distinction between plan claims and verified facts. The documentation gap was closed in the subsequent audit. A limited detector and Shield side panel now exist; customer validation, production security controls and the broader stack remain future work.

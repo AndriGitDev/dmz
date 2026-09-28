@@ -20,7 +20,7 @@ dmz is an Icelandic data-minimisation layer for AI. The product is in validation
 | `packages/policy` | Tenant policy schema |
 | `packages/ui` | Shared UI components |
 | `bench` | Synthetic corpus, scorers and published results |
-| `deploy` | Icelandic deployment manifests and key management |
+| `deploy` | Approved deployment configuration and key management |
 | `docs` | Architecture decisions, threat model and legal drafts |
 
 Empty directories contain `.gitkeep` until the corresponding work starts. Do not add real personal data or licensed BÍN/Mannanafnaskrá datasets to the repository. Synthetic kennitölur must use century digit 8.
@@ -56,3 +56,7 @@ Start with the [coverage audit](docs/plan-coverage.md). The [business-plan basel
 ## Validation gate
 
 By 18 December 2026, commit to building only if at least 3 of 10 target customers agree to a paid pilot at list price. The [launch checklist](docs/launch-checklist.md) tracks prerequisites.
+
+## Portal and Gateway direction
+
+The accepted [hosting and PII policy decision](docs/adr/0004-portal-hosting-and-pii-policy.md) uses existing Hetzner EU infrastructure initially, with an Iceland-hosted option for specific customer requirements. Portal will use a shared Go gateway with either masking or explicitly approved original-PII processing on a verified provider route. See the [preview implementation plan](docs/portal-gateway-plan.md); no Portal/Gateway or Bedrock route is implemented yet.

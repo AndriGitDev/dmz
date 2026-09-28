@@ -11,6 +11,10 @@ Working baseline from 27 September 2026 plan. The embedded four-phase chart was 
 
 The plan targets ISO 27001 certification by end-2028 through an accredited body, with ISO 42001 later. These are roadmap targets, not existing credentials for dmz. Founder auditor credentials do not substitute for product certification.
 
+## Next implementation sequence
+
+Under [ADR 0004](adr/0004-portal-hosting-and-pii-policy.md), build a shared Go gateway with Portal as its first client: verify one Bedrock route, implement authenticated policy enforcement, add the SvelteKit chat, complete workflow/isolation checks, then integrate one external API client. See [acceptance gates and proposed credit allocation](portal-gateway-plan.md). Original milestone dates above remain hypotheses.
+
 ## Dated work
 
 | Date | Deliverable |
