@@ -23,7 +23,7 @@ The public [RunAtlas/Atlas terms](https://atlascloud.is/is/terms) identify the s
 3. Test Go/TinyGo conformance and device-side latency and size as recognition complexity grows.
 4. Test visible-mask consistency and streaming restoration under chunk splitting, marker modification, session reset and cross-tenant boundaries. Keep prompt bodies out of logs and durable storage.
 
-The first three points contain measurable technical uncertainty. Routine website work, sales outreach, legal review, hosting operation and product administration should be costed separately until the current handbook and an accountant establish what is eligible. This scope is a draft; it does not assert that Rannís will classify each activity as R&D.
+The first three points are candidate technical uncertainties, to be demonstrated with competing methods, failed attempts and measured outcomes. The prior-year Rannís handbook distinguishes experimental development from ordinary operations and routine software updates; a detector regex change alone is not proof of eligible R&D. Routine website work, sales outreach, legal review, hosting operation and product administration should be costed separately until the current handbook and an accountant establish what is eligible. This scope is a draft; it does not assert that Rannís will classify each activity as R&D.
 
 ## Evidence already in the repository
 
