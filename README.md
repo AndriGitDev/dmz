@@ -25,6 +25,10 @@ dmz is an Icelandic data-minimisation layer for AI. The product is in validation
 
 Empty directories contain `.gitkeep` until the corresponding work starts. Do not add real personal data or licensed BÍN/Mannanafnaskrá datasets to the repository. Synthetic kennitölur must use century digit 8.
 
+## Working source of truth
+
+Start with the [coverage audit](docs/plan-coverage.md). The [business-plan baseline](docs/business-plan.md), [product spec](docs/product-spec.md), [roadmap](docs/roadmap.md), [financial arithmetic check](docs/financial-model.md), [website brief](docs/website-brief.md), [source register](docs/source-register.md) and [open decisions](docs/open-decisions.md) separate requirements from evidence and implementation.
+
 ## Validation gate
 
 By 18 December 2026, commit to building only if at least 3 of 10 target customers agree to a paid pilot at list price. The [launch checklist](docs/launch-checklist.md) tracks prerequisites.

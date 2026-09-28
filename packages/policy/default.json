@@ -8,7 +8,7 @@
     "phone": "swap",
     "email": "swap",
     "address": "swap",
-    "secret": "block",
+    "secret": "swap",
     "tenant_dictionary": "swap"
   },
   "uploads": "block",
