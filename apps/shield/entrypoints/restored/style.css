@@ -1,5 +1,6 @@
-html { color-scheme: dark; background: #18181b; color: #fff; font: 14px/1.5 system-ui; }
+html { background: transparent; color: inherit; font: 16px/1.5 system-ui; }
 body { margin: 0; }
-main { border: 1px solid #ef4444; border-radius: 8px; padding: 12px 16px; overflow-wrap: anywhere; }
-strong { display: block; margin-bottom: 8px; }
-#restored-text { white-space: pre-wrap; }
+main { overflow-wrap: anywhere; display: flow-root; }
+table { border-collapse: collapse; }
+pre { overflow-x: auto; }
+#restored-text { white-space: pre-wrap; display: flow-root; }

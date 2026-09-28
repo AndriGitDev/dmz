@@ -1,4 +1,5 @@
 import '../public/wasm_exec.js';
+import { restoredTags, restoredStyles, type RestoredNode } from '../utils/restored-model';
 
 type Finding = { kind: string; confidence: 'high' | 'uncertain'; action: string; reason: string };
 type Result = { allowed: boolean; transformed?: string; findings: Finding[]; error?: string };
@@ -17,7 +18,7 @@ const sendButtons = site === 'chatgpt'
   ? ['button[data-testid="send-button"]']
   : ['button[aria-label="Send message"]', 'button[data-testid="send-button"]'];
 const assistantMessages = site === 'chatgpt'
-  ? '[data-message-author-role="assistant"]'
+  ? '[data-message-author-role="assistant"],[data-markdown-text-style="assistant-message"]'
   : '[data-testid="assistant-message"]';
 
 export default defineContentScript({
@@ -37,22 +38,35 @@ export default defineContentScript({
     let sessionEpoch = 0;
     let composerAvailable: boolean | undefined;
     const extensionOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
-    type RestoredEntry = { host: HTMLIFrameElement; source: string; restored: string; nonce: string; loaded: boolean };
+    type RestoredEntry = { host: HTMLIFrameElement; source: string; restored: string; nodes: RestoredNode[]; signature: string; nonce: string; loaded: boolean; originals: Element[]; presented: boolean };
     const restoredMessages = new Map<Element, RestoredEntry>();
     let scanQueued = false;
 
     function displayRestored(entry: RestoredEntry) {
       if (!entry.loaded || !entry.host.isConnected) return;
-      entry.host.contentWindow?.postMessage({ type: 'dmz:restored', nonce: entry.nonce, text: entry.restored }, extensionOrigin);
+      const original = entry.originals[0];
+      const style = original ? getComputedStyle(original) : undefined;
+      const typography = style ? Object.fromEntries(['color', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'letter-spacing', 'text-align'].map(key => [key, style.getPropertyValue(key)])) : {};
+      entry.host.contentWindow?.postMessage({ type: 'dmz:restored', nonce: entry.nonce, text: entry.restored, nodes: entry.nodes, typography }, extensionOrigin);
     }
 
-    function responseText(response: Element): string {
+    const originalStyle = document.createElement('style');
+    originalStyle.textContent = '[data-dmz-original="hidden"] { display:none !important; }';
+
+    function removeRestored(entry: RestoredEntry) {
+      entry.restored = '';
+      entry.nodes = [];
+      for (const original of entry.originals) original.removeAttribute('data-dmz-original');
+      entry.host.remove();
+    }
+
+    function responseContent(response: Element): { source: string; originals: Element[]; nodes: RestoredNode[] } {
       const excluded = 'button,[role="button"],nav,time,svg,script,style,textarea,input,iframe,[hidden],[aria-hidden="true"],.sr-only,[data-cds="MessageActions"]';
       function visible(element: Element): boolean {
         for (let current: Element | null = element; current; current = current.parentElement) {
           if (current.matches(excluded)) return false;
           const style = getComputedStyle(current);
-          if (style.display === 'none' || style.visibility === 'hidden') return false;
+          if ((style.display === 'none' && current.getAttribute('data-dmz-original') !== 'hidden') || style.visibility === 'hidden') return false;
           if (current === response) break;
         }
         return true;
@@ -69,7 +83,49 @@ export default defineContentScript({
       const blocks = [...response.querySelectorAll('p,pre,ul,ol,table,blockquote,h1,h2,h3,h4,h5,h6')]
         .filter(visible);
       const roots = blocks.filter(block => !blocks.some(other => other !== block && other.contains(block)));
-      return (roots.length ? roots.map(text).join('\n') : text(response)).trim();
+      function structure(node: Node): RestoredNode[] {
+        if (node.nodeType === Node.TEXT_NODE) return [{ text: node.textContent ?? '' }];
+        if (!(node instanceof Element) || !visible(node)) return [];
+        const tag = node.tagName.toLowerCase();
+        const computed = getComputedStyle(node);
+        return [{ tag: restoredTags.has(tag) ? tag : 'span',
+          style: Object.fromEntries(restoredStyles.map(key => [key, computed.getPropertyValue(key)])),
+          children: [...node.childNodes].flatMap(structure) }];
+      }
+      const originals = roots.length ? roots : [response];
+      return { source: (roots.length ? roots.map(text).join('\n') : text(response)).trim(), originals, nodes: originals.flatMap(structure) };
+    }
+
+    function restoreNodes(nodes: RestoredNode[]): void {
+      const leaves: { node: { text: string }; start: number; end: number }[] = [];
+      let flat = '';
+      function collect(node: RestoredNode) {
+        if ('text' in node) {
+          leaves.push({ node, start: flat.length, end: flat.length + node.text.length });
+          flat += node.text;
+        } else {
+          if (node.tag === 'br') flat += '\n';
+          node.children.forEach(collect);
+          if (['p', 'div', 'pre', 'li', 'tr', 'blockquote'].includes(node.tag)) flat += '\n';
+        }
+      }
+      nodes.forEach(collect);
+      // Restore complete markers even when the site splits one across spans
+      // and an autolink. Apply edits backwards to preserve leaf offsets.
+      for (const match of [...flat.matchAll(/⟦[^⟦⟧]*⟧/g)].reverse()) {
+        const replacement = (globalThis as unknown as Core).dmzRestore?.(match[0]);
+        if (!replacement || replacement === match[0]) continue;
+        const start = match.index!;
+        const end = start + match[0].length;
+        let first = true;
+        for (const leaf of leaves) {
+          if (leaf.end <= start || leaf.start >= end) continue;
+          const from = Math.max(0, start - leaf.start);
+          const to = Math.min(leaf.end, end) - leaf.start;
+          leaf.node.text = leaf.node.text.slice(0, from) + (first ? replacement : '') + leaf.node.text.slice(to);
+          first = false;
+        }
+      }
     }
 
     // Only dimensions cross back into the host page; restored content never does.
@@ -78,7 +134,9 @@ export default defineContentScript({
       for (const entry of restoredMessages.values()) {
         if (event.source === entry.host.contentWindow && event.data.nonce === entry.nonce
           && Number.isFinite(event.data.height)) {
-          entry.host.style.height = `${Math.max(80, Math.min(480, event.data.height))}px`;
+          entry.host.style.height = `${Math.max(1, Math.min(100000, event.data.height))}px`;
+          entry.presented = true;
+          for (const original of entry.originals) original.setAttribute('data-dmz-original', 'hidden');
           break;
         }
       }
@@ -87,10 +145,11 @@ export default defineContentScript({
     function scanResponses() {
       scanQueued = false;
       if (!ready) return;
+      if (!originalStyle.isConnected) (document.head ?? document.documentElement).append(originalStyle);
+      const responses = [...document.querySelectorAll(assistantMessages)].filter(response => !response.querySelector(assistantMessages));
       for (const [response, entry] of restoredMessages) {
-        if (!response.isConnected || !response.matches(assistantMessages)) {
-          entry.restored = '';
-          entry.host.remove();
+        if (!responses.includes(response)) {
+          removeRestored(entry);
           restoredMessages.delete(response);
         }
       }
@@ -100,19 +159,17 @@ export default defineContentScript({
         inform(available ? 'Shield virkur fyrir texta á þessari síðu.' : 'Shield finnur ekki studdan textareit. Ekki senda gögn.');
       }
       const core = globalThis as unknown as Core;
-      for (const response of document.querySelectorAll(assistantMessages)) {
-        const source = responseText(response);
+      for (const response of responses) {
+        const { source, originals, nodes } = responseContent(response);
         const existing = restoredMessages.get(response);
         if (!source.includes('⟦')) {
-          if (existing) existing.restored = '';
-          existing?.host.remove();
+          if (existing) removeRestored(existing);
           restoredMessages.delete(response);
           continue;
         }
         const restored = core.dmzRestore?.(source);
         if (!restored || restored === source) {
-          if (existing) existing.restored = '';
-          existing?.host.remove();
+          if (existing) removeRestored(existing);
           restoredMessages.delete(response);
           continue;
         }
@@ -122,8 +179,8 @@ export default defineContentScript({
           host.setAttribute('data-dmz-restored', 'true');
           host.title = 'Shield · endurheimt aðeins á þessu tæki';
           host.referrerPolicy = 'no-referrer';
-          host.style.cssText = 'display:block;width:100%;height:100px;margin:12px 0;border:0';
-          entry = { host, source: '', restored: '', nonce: crypto.randomUUID(), loaded: false };
+          host.style.cssText = 'display:block;width:100%;height:1px;margin:0;border:0;background:transparent';
+          entry = { host, source: '', restored: '', nodes: [], signature: '', nonce: crypto.randomUUID(), loaded: false, originals, presented: false };
           restoredMessages.set(response, entry);
           const frameEntry = entry;
           host.addEventListener('load', () => {
@@ -131,12 +188,19 @@ export default defineContentScript({
             if (restoredMessages.get(response) === frameEntry) displayRestored(frameEntry);
           });
           host.src = `${chrome.runtime.getURL('restored.html')}#${entry.nonce}`;
-          response.after(host);
+          (originals[0] ?? response).before(host);
         }
-        if (!entry.host.isConnected) response.after(entry.host);
-        if (entry.source !== source) {
+        for (const original of entry.originals) if (!originals.includes(original)) original.removeAttribute('data-dmz-original');
+        entry.originals = originals;
+        if (entry.presented) for (const original of originals) original.setAttribute('data-dmz-original', 'hidden');
+        if (!entry.host.isConnected) (originals[0] ?? response).before(entry.host);
+        const signature = JSON.stringify(nodes);
+        if (entry.source !== source || entry.signature !== signature) {
           entry.restored = restored;
           entry.source = source;
+          entry.signature = signature;
+          restoreNodes(nodes);
+          entry.nodes = nodes;
           displayRestored(entry);
         }
       }
@@ -172,8 +236,7 @@ export default defineContentScript({
           sessionEpoch++;
           if (replayPermit) replayPermit.cancelled = true;
           for (const entry of restoredMessages.values()) {
-            entry.restored = '';
-            entry.host.remove();
+            removeRestored(entry);
           }
           restoredMessages.clear();
           try {
@@ -410,7 +473,7 @@ export default defineContentScript({
       message = 'Shield tilbúinn á þessari síðu.';
       new MutationObserver(queueResponseScan).observe(document.documentElement, {
         childList: true, characterData: true, subtree: true, attributes: true,
-        attributeFilter: ['contenteditable', 'role', 'id', 'class', 'style', 'hidden', 'aria-hidden', 'disabled', 'readonly', 'data-composer-markdown', 'data-testid', 'data-placeholder', 'data-message-author-role'],
+        attributeFilter: ['contenteditable', 'role', 'id', 'class', 'style', 'hidden', 'aria-hidden', 'disabled', 'readonly', 'data-composer-markdown', 'data-testid', 'data-placeholder', 'data-message-author-role', 'data-markdown-text-style'],
       });
       queueResponseScan();
     })().catch(coreFailed);

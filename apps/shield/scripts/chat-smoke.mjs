@@ -202,10 +202,12 @@ try {
   // Legitimate repeated paragraphs and streamed updates must survive extraction.
   await claude.locator('[data-testid="assistant-message"] p').evaluate(p => p.after(p.cloneNode(true)));
   await claude.waitForTimeout(150);
-  assert.equal(await claude.frameLocator('[data-dmz-restored="true"]').locator('#restored-text').textContent(), 'demo@example.com\n\ndemo@example.com');
+  assert.equal(await claude.frameLocator('[data-dmz-restored="true"]').locator('#restored-text').innerText(), 'demo@example.com\n\ndemo@example.com');
   const oldMarker = await claude.evaluate(() => window.sent[0]);
   await clickShieldControl(claude, 'data-dmz-reset');
   await claude.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
+  assert.equal(await claude.locator('[data-dmz-original]').count(), 0, 'reset left the site reply hidden');
+  assert.ok(await claude.locator('[data-testid="assistant-message"] p').first().isVisible(), 'reset failed to reveal masked answer');
   await claude.locator('[contenteditable]').fill('demo@example.com');
   await claude.locator('button[aria-label="Send message"]').click();
   await claude.waitForFunction(() => window.sent.length === 2);
@@ -219,6 +221,7 @@ try {
   ]) {
     const modern = await browser.newPage();
     const fixture = `<!doctype html><form>${editor}<button data-testid="send-button">Send</button></form>
+      <div id="replies"></div>
       <script>
         window.sent = [];
         const field = document.querySelector('[contenteditable]');
@@ -229,6 +232,22 @@ try {
         });
         document.querySelector('form').addEventListener('submit', event => {
           event.preventDefault(); window.sent.push(model);
+          const response = document.createElement('div');
+          response.setAttribute('${origin.includes('chatgpt') ? 'data-markdown-text-style' : 'data-testid'}', 'assistant-message');
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:18px;color:rgb(40, 50, 60);margin:0';
+          const [prefix, suffix = ''] = model.split('XXXXX@XXXXX.XXX');
+          const link = document.createElement('a');
+          link.href = 'mailto:XXXXX@XXXXX.XXX';
+          const span = document.createElement('span');
+          span.textContent = 'XXXXX@XXXXX.XXX';
+          const icon = document.createElement('span');
+          icon.setAttribute('aria-hidden', 'true');
+          icon.textContent = 'icon';
+          link.append(span, icon);
+          p.append(prefix, link, suffix);
+          response.append(p);
+          document.querySelector('#replies').append(response);
         });
       </script>`;
     await modern.route(`${origin}/**`, route => route.fulfill({ contentType: 'text/html', body: fixture }));
@@ -242,6 +261,37 @@ try {
     }
     const sent = await modern.evaluate(() => window.sent);
     assert.ok(sent.every(text => text.includes('⟦EMAIL-') && !text.includes('demo@example.com')), `${origin}: unmasked new-chat submission`);
+    await modern.frameLocator('[data-dmz-restored]').first().getByText('demo@example.com', { exact: true }).waitFor();
+    await modern.waitForFunction(() => document.querySelectorAll('[data-dmz-original="hidden"]').length === 2);
+    assert.equal(await modern.locator('#replies p').first().isVisible(), false, 'masked reply was not replaced visually');
+    const inline = modern.frameLocator('[data-dmz-restored]').first();
+    assert.equal(await inline.locator('strong').count(), 0, 'extra Shield heading still shown');
+    assert.equal(await inline.locator('p').evaluate(p => getComputedStyle(p).fontSize), '18px', 'reply typography lost');
+    assert.ok(!(await modern.locator('#replies').textContent()).includes('demo@example.com'), 'restored value written into host DOM');
+    assert.equal(await modern.locator('[data-dmz-restored]').first().evaluate(frame => frame.contentDocument), null);
+    await modern.locator('#replies > div').first().evaluate(response => {
+      const marker = window.sent[0];
+      const heading = document.createElement('h2');
+      heading.textContent = 'Synthetic reply';
+      const p = document.createElement('p');
+      const strong = document.createElement('strong');
+      strong.textContent = marker;
+      p.append(strong);
+      const list = document.createElement('ul');
+      const item = document.createElement('li');
+      item.textContent = 'Fabricated example';
+      list.append(item);
+      const pre = document.createElement('pre');
+      const code = document.createElement('code');
+      code.textContent = 'example = ' + marker;
+      pre.append(code);
+      response.replaceChildren(heading, p, list, pre);
+    });
+    await inline.locator('strong').getByText('demo@example.com', { exact: true }).waitFor();
+    assert.equal(await inline.locator('h2').textContent(), 'Synthetic reply');
+    assert.equal(await inline.locator('li').textContent(), 'Fabricated example');
+    assert.equal(await inline.locator('pre code').textContent(), 'example = demo@example.com');
+    assert.equal(await inline.locator('#restored-text').locator('a,script,img,iframe').count(), 0, 'host resources copied into restored frame');
     await field.fill('sk-test_key_000000000000');
     await modern.locator('button').click();
     assert.equal(await modern.evaluate(() => window.sent.length), 2, 'new editor allowed secret');

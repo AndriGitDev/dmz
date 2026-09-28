@@ -1,6 +1,6 @@
 # Product and architecture specification, working v0.1
 
-Source: 27 September 2026 business plan, with prototype decisions recorded in ADR 0002 and 0003. Planned behaviour is marked as a requirement; Shield's manual side panel, experimental ChatGPT/Claude content script and small Go/WASM detector are now implemented. The content script has synthetic browser-fixture coverage but no authenticated live-site verification.
+Source: 27 September 2026 business plan, with prototype decisions recorded in ADR 0002 and 0003. Planned behaviour is marked as a requirement; Shield's manual side panel, experimental ChatGPT/Claude content script and small Go/WASM detector are now implemented. The content script has synthetic browser-fixture coverage and owner-reported live masking on both sites and restoration on Claude; full authenticated verification remains pending.
 
 ## Principles
 
@@ -29,7 +29,7 @@ flowchart LR
   D2 --> E[Metadata-only audit]
 ```
 
-Shield never sends real prompt contents or its map to dmz servers. Portal and Gateway see real values transiently in the Icelandic core, then route pseudonyms. The current content script keeps the map in an isolated per-tab WASM instance and displays restored replies in an extension-origin frame; the site reply stays masked. Browser tests check that the parent page cannot read the restored frame document or recover restored text through selection. Its submission DOM hooks can still be bypassed by site changes or unsupported send paths and are not yet a complete security boundary. Staff retain their own ChatGPT/Claude subscriptions for ordinary work; dmz supplies an additional sensitive-work path. The source plan's Shield slogan “we cannot leak what we never see” is **Shield-only**; it cannot describe Portal or Gateway.
+Shield never sends real prompt contents or its map to dmz servers. Portal and Gateway see real values transiently in the Icelandic core, then route pseudonyms. The current content script keeps the map in an isolated per-tab WASM instance and displays restored replies in an extension-origin frame in place of the answer; the site DOM retains its masked text, hidden until reset. Browser tests check that the parent page cannot read the restored frame document or recover restored text through selection. Its submission DOM hooks can still be bypassed by site changes or unsupported send paths and are not yet a complete security boundary. Staff retain their own ChatGPT/Claude subscriptions for ordinary work; dmz supplies an additional sensitive-work path. The source plan's Shield slogan “we cannot leak what we never see” is **Shield-only**; it cannot describe Portal or Gateway.
 
 ## Phase 1 detection inventory
 
