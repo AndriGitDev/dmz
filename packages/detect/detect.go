@@ -49,6 +49,8 @@ var (
 	cardRE      = regexp.MustCompile(`[0-9](?:[0-9 \-]{11,25})[0-9]`)
 	phoneRE     = regexp.MustCompile(`(?:\+354[ \-]?)?[0-9]{3}[ \-]?[0-9]{4}`)
 	secretRE    = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
+	jwtRE       = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
+	bearerRE    = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
 )
 
 // Hand-authored demonstration forms; not a licensed lexicon or a general name detector.
@@ -77,6 +79,13 @@ func DetectWithTerms(input string, terms []string) []Match {
 		}
 	}
 	add(secretRE, Secret, simple("secret-pattern"))
+	add(jwtRE, Secret, simple("jwt-shape"))
+	for _, loc := range bearerRE.FindAllStringSubmatchIndex(input, -1) {
+		start, end := loc[2], loc[3]
+		if bounded(input, start, end) {
+			candidates = append(candidates, Match{start, end, Secret, High, "bearer-token"})
+		}
+	}
 	add(ibanRE, IBAN, validateIBAN)
 	add(emailRE, Email, simple("email-shape"))
 	add(kennitalaRE, Kennitala, validateKennitala)

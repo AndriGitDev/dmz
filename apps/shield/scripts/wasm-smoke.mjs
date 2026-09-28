@@ -33,6 +33,9 @@ assert.equal(unchecked.findings[0].confidence, 'uncertain');
 const blocked = JSON.parse(globalThis.dmzProcess('sk-test_key_000000000000'));
 assert.equal(blocked.allowed, false);
 assert.equal(blocked.transformed, undefined);
+const jwtBlocked = JSON.parse(globalThis.dmzProcess('eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl'));
+assert.equal(jwtBlocked.allowed, false);
+assert.equal(jwtBlocked.transformed, undefined);
 
 assert.equal(JSON.parse(globalThis.dmzSetTenantTerms(JSON.stringify(['Verkefni Gervi']))).ok, true);
 const tenant = JSON.parse(globalThis.dmzProcess('Ræddu Verkefni Gervi.'));

@@ -47,6 +47,8 @@ Shield never sends real prompt contents or its map to dmz servers. Portal and Ga
 
 The planned policy schema lives in [`packages/policy/default.json`](../packages/policy/default.json); it has not been wired into the Shield prototype yet. The prototype uses the fixed behaviour in ADR 0002 and 0003. A tenant policy UI and enforcement still need to be built before a pilot.
 
+Current implementation includes a device-local, exact, case-sensitive dictionary of up to 32 user-entered terms. It is cleared on reset and does not provide the planned tenant-admin workflow, inflection or per-tenant distribution. Selected API-key, JWT, bearer-token, PEM-header and database-URL patterns block the entire prompt. General high-entropy-token and log-line detection remain unimplemented.
+
 ## Surrogate and vault requirements
 
 - Every detected value becomes a visible, typed marker, consistently within a session. Name case forms need complete coverage and mapping before launch; the prototype recognizes only four hand-authored full-name forms.
