@@ -2,7 +2,7 @@
 
 ## Gate 1: 18 December 2026
 
-- [ ] Apply for the Rannís R&D refund by 1 October 2026.
+- [ ] Submit the Rannís R&D project application by 1 October 2026, 23:59 Icelandic time, and retain the receipt. See the [2026 readiness note](rannis-2026-readiness.md); company and cost inputs remain missing.
 - [ ] Apply for OpenAI and Anthropic ZDR by 16 October 2026. Do not use a ZDR claim until a signed agreement exists.
 - [ ] Test Bedrock EU retention mode `none` in a real account by 16 October 2026.
 - [ ] Confirm commercial BÍN rights and a Mannanafnaskrá export by 30 October 2026.
