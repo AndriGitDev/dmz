@@ -61,3 +61,9 @@ go test ./...
 CI checks the new corpus pins separately in `gates/corpus-v2.sha256`. Existing
 pins and floors are unchanged. Updating the new pins or weakening the format
 regression assertions requires review, as do existing gates.
+
+## Contextual name experiments
+
+See [the offline contextual experiment](contextual/README.md) for local CRF training,
+the separate 95.5% precision-and-recall check, and the frozen synthetic legal/financial
+probe. These research results do not change the shipped Shield detector.
