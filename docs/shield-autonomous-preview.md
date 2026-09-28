@@ -19,6 +19,8 @@ Each tab has an in-memory Go/WASM session map. Closing or reloading the tab lose
 
 The floating Shield status panel includes **Hreinsa Shield-lotu** (clear Shield session). It clears this tab's mapping and restored copies and cancels a send still waiting for replay. Old markers in the conversation cannot be restored after reset; a new prompt starts a fresh mapping. Restored copies are also removed when their source reply disappears or stops being an assistant reply.
 
+When the detector blocks a message, the status lists only the categories and counts that need review. **Breyta texta** (edit text) returns focus to the unchanged draft. Remove or change those items and send again; Shield scans the new text. This control does not override a block or send anything itself.
+
 ## Current coverage and limits
 
 - Content scripts run only on `https://chatgpt.com/*` and `https://claude.ai/*`. The preview gates recognized text composers on submit, Enter and recognized send-button clicks. It blocks ordinary file-picker, drag/drop and file-paste events on those pages. A website layout or event-handler change can bypass these hooks. Other send paths, mobile apps, voice and images outside those file events are not protected.
@@ -30,3 +32,14 @@ The floating Shield status panel includes **Hreinsa Shield-lotu** (clear Shield 
 ## Verification before daily use
 
 The next gate is a supervised live-site smoke pass on signed-in ChatGPT and Claude, with synthetic prompts only: button, Enter, multi-turn marker reuse, blocked review, streaming reply restoration, reload/reset, and upload paths. Record the browser/version and observed outbound request body. If either site bypasses the gate, stop testing there and fix the adapter before using it again.
+
+Record results for **each** site using the following checklist. Share outcomes and the build commit, not a browser profile, cookies, credentials or a full network archive.
+
+- Chrome version and `BUILD.json` source commit.
+- Button and Enter sends of `Repeat exactly: demo@example.com`: outgoing chat request contains an EMAIL marker and no literal email; the page's reply stays masked and the Shield frame restores the email.
+- Repeat the email in the same tab: the marker stays consistent. Confirm the restored reply also updates when the reply arrives in chunks.
+- Send `sk-test_key_000000000000`: no chat submission, a secret review appears, and **Breyta texta** returns to the draft. Replace it with benign text and confirm a fresh send works.
+- Try attaching, dropping and pasting a fabricated file: no attachment is created.
+- Reset Shield: restored copies disappear and the next masked prompt uses a new namespace. Reload: old markers remain unrestored.
+
+Automated fixtures prove these mechanisms only against the fixture pages. Passing CI and a downloadable package do not close the authenticated-site gate. The current environment has no access to the owner's signed-in Chrome session; public-site inspection reached challenge pages.

@@ -33,6 +33,7 @@ export default defineContentScript({
     let message = 'Shield hleður staðbundnum kjarna…';
     let toast: HTMLElement | undefined;
     let resetButton: HTMLButtonElement | undefined;
+    let reviewButton: HTMLButtonElement | undefined;
     let sessionEpoch = 0;
     let composerAvailable: boolean | undefined;
     const extensionOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
@@ -121,7 +122,7 @@ export default defineContentScript({
       requestAnimationFrame(scanResponses);
     }
 
-    function inform(text: string) {
+    function inform(text: string, review = false) {
       message = text;
       if (!document.documentElement) return;
       if (!toast) {
@@ -154,12 +155,36 @@ export default defineContentScript({
             inform('Shield-lota hreinsuð. Eldri merkimiðar verða ekki endurheimtir.');
           } catch { coreFailed(); }
         });
-        panel.append(toast, resetButton);
+        reviewButton = document.createElement('button');
+        reviewButton.type = 'button';
+        reviewButton.setAttribute('data-dmz-review', 'true');
+        reviewButton.textContent = 'Breyta texta';
+        reviewButton.style.cssText = resetButton.style.cssText;
+        reviewButton.addEventListener('click', () => composer()?.focus());
+        panel.append(toast, reviewButton, resetButton);
         root.append(panel);
         document.documentElement.append(host);
       }
       toast.textContent = text;
       if (resetButton) resetButton.disabled = !ready;
+      if (reviewButton) reviewButton.hidden = !review;
+    }
+
+    function reviewSummary(findings: Finding[]): string {
+      // Show categories and counts only; never echo values or arbitrary reason text
+      // into the host page, including the closed status shadow root.
+      const labels: Record<string, string> = {
+        secret: 'leyndarmál', name_demo: 'nafn', address: 'heimilisfang',
+        phone: 'símanúmer', email: 'netfang', unicode_review: 'Unicode-tákn',
+      };
+      const counts = new Map<string, number>();
+      for (const finding of findings) {
+        if (finding.action !== 'review' && finding.action !== 'block') continue;
+        const label = labels[finding.kind] ?? 'óviss gögn';
+        counts.set(label, (counts.get(label) ?? 0) + 1);
+      }
+      const summary = [...counts].map(([label, count]) => `${label} (${count})`).join(', ');
+      return `Sending stöðvuð: ${summary || 'óviss eða óstudd gögn'}. Fjarlægðu eða breyttu þessum atriðum og sendu aftur til yfirferðar.`;
     }
 
     function composer(): HTMLElement | null {
@@ -235,8 +260,13 @@ export default defineContentScript({
         const input = read(field);
         const core = globalThis as unknown as Core;
         const result = JSON.parse(core.dmzProcess!(input)) as Result;
-        if (result.error || !result.allowed || result.transformed === undefined) {
-          inform('Shield stöðvaði sendingu: óviss eða óstudd gögn. Breyttu textanum eða notaðu handvirka hliðarspjaldið.');
+        if (result.error) throw new Error('Core processing failed');
+        if (!result.allowed) {
+          inform(reviewSummary(result.findings ?? []), true);
+          return;
+        }
+        if (result.transformed === undefined) {
+          inform('Shield gat ekki yfirfarið textann. Sending stöðvuð.');
           return;
         }
         if (!write(field, result.transformed)) {

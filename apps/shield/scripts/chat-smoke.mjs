@@ -55,6 +55,27 @@ const claudeHtml = `<!doctype html><html><body>
 </body></html>`;
 let browser;
 
+// DevTools can operate extension controls in closed roots without adding a
+// production test bridge that the host page could invoke.
+async function clickShieldControl(page, attribute) {
+  const cdp = await browser.newCDPSession(page);
+  try {
+    const { root: dom } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    function find(node) {
+      if (node.attributes?.includes(attribute)) return node;
+      for (const child of [...(node.children ?? []), ...(node.shadowRoots ?? [])]) {
+        const found = find(child);
+        if (found) return found;
+      }
+    }
+    const control = find(dom);
+    assert.ok(control, `Shield control missing: ${attribute}`);
+    const { object } = await cdp.send('DOM.resolveNode', { backendNodeId: control.backendNodeId });
+    await cdp.send('Runtime.callFunctionOn', { objectId: object.objectId, functionDeclaration: 'function() { this.click(); }' });
+    await cdp.send('Runtime.releaseObject', { objectId: object.objectId });
+  } finally { await cdp.detach(); }
+}
+
 try {
   browser = await chromium.launchPersistentContext(profile, {
     headless: true,
@@ -98,6 +119,15 @@ try {
   await page.locator('#prompt-textarea').fill('sk-test_key_000000000000');
   await page.locator('[data-testid="send-button"]').click();
   assert.equal(await page.evaluate(() => window.sent.length), 1, 'blocked secret reached page submit handler');
+  const reviewCdp = await browser.newCDPSession(page);
+  const reviewTree = await reviewCdp.send('Accessibility.getFullAXTree');
+  await reviewCdp.detach();
+  const reviewText = reviewTree.nodes.map(node => node.name?.value ?? '').find(text => text.startsWith('Sending stöðvuð:'));
+  assert.match(reviewText ?? '', /leyndarmál \(1\)/, 'review did not identify the blocking category');
+  assert.ok(!reviewText.includes('sk-test'), 'review status echoed a secret');
+  await clickShieldControl(page, 'data-dmz-review');
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'prompt-textarea', 'review did not return focus to composer');
+  assert.equal(await page.locator('#prompt-textarea').inputValue(), 'sk-test_key_000000000000', 'blocked draft was changed');
   await page.locator('#prompt-textarea').fill('demo@example.com');
   await page.locator('#prompt-textarea').press('Enter');
   await page.waitForFunction(() => window.sent.length === 2, null, { timeout: 10000 });
@@ -141,21 +171,7 @@ try {
   await claude.locator('[data-dmz-restored="true"]').waitFor();
   await claude.frameLocator('[data-dmz-restored="true"]').getByText('demo@example.com', { exact: true }).waitFor();
   const oldMarker = await claude.evaluate(() => window.sent[0]);
-  // DevTools can inspect closed roots for verification; the page itself cannot.
-  const claudeCdp = await browser.newCDPSession(claude);
-  const { root: dom } = await claudeCdp.send('DOM.getDocument', { depth: -1, pierce: true });
-  function findReset(node) {
-    if (node.attributes?.includes('data-dmz-reset')) return node;
-    for (const child of [...(node.children ?? []), ...(node.shadowRoots ?? [])]) {
-      const found = findReset(child);
-      if (found) return found;
-    }
-  }
-  const control = findReset(dom);
-  assert.ok(control, 'tab reset control missing');
-  const { object } = await claudeCdp.send('DOM.resolveNode', { backendNodeId: control.backendNodeId });
-  await claudeCdp.send('Runtime.callFunctionOn', { objectId: object.objectId, functionDeclaration: 'function() { this.click(); }' });
-  await claudeCdp.send('Runtime.releaseObject', { objectId: object.objectId });
+  await clickShieldControl(claude, 'data-dmz-reset');
   await claude.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
   await claude.locator('[contenteditable]').fill('demo@example.com');
   await claude.locator('button[aria-label="Send message"]').click();
