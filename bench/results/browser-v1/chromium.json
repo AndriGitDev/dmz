@@ -1,0 +1,231 @@
+{
+  "schema": 1,
+  "scope": "Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration",
+  "models": {
+    "fp32": "fa15c87f5c1ae43ce385463da60f7775a3f3e73581dd9789a5c3192537d45797",
+    "int8": "fd9dc540ece872fed154e72e2a5a8fda9843ddc4630ec343fc2e770572065082"
+  },
+  "sessions": [
+    {
+      "model": "fp32",
+      "threads": 1,
+      "baselineTreeRssKiB": 454860,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 669.6999999880791,
+          "warmMedianMs": 568.6999999880791,
+          "warmMaxMs": 587.4000000059605,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00024366378784179688
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 1917.7999999821186,
+          "warmMedianMs": 1935.2000000178814,
+          "warmMaxMs": 1999.0999999940395,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0005502700805664062
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 7593.800000011921,
+          "warmMedianMs": 7624.799999982119,
+          "warmMaxMs": 7851.700000017881,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0006575584411621094
+        }
+      ],
+      "load": {
+        "loadMs": 6501.600000023842,
+        "isolated": false,
+        "wallMs": 6574
+      },
+      "loadedTreeRssKiB": 1614432,
+      "peakTreeRssKiB": 2141076
+    },
+    {
+      "model": "int8",
+      "threads": 1,
+      "baselineTreeRssKiB": 436940,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 481.30000001192093,
+          "warmMedianMs": 294.7000000178814,
+          "warmMaxMs": 378.40000000596046,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 2.263068199157715
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 1367.699999988079,
+          "warmMedianMs": 1025.5999999940395,
+          "warmMaxMs": 1089.9000000059605,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 3.3770627975463867
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3930.5999999940395,
+          "warmMedianMs": 3944.7000000178814,
+          "warmMaxMs": 4005.5,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 5.07429313659668
+        }
+      ],
+      "load": {
+        "loadMs": 2538.4000000059605,
+        "isolated": false,
+        "wallMs": 2621
+      },
+      "loadedTreeRssKiB": 808868,
+      "peakTreeRssKiB": 919376
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "baselineTreeRssKiB": 436916,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 277.1850000023842,
+          "warmMedianMs": 119.78499999642372,
+          "warmMaxMs": 176.375,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 2.263068199157715
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 415.0149999856949,
+          "warmMedianMs": 417.2099999785423,
+          "warmMaxMs": 509.50999999046326,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 3.3770627975463867
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 1603.344999998808,
+          "warmMedianMs": 1543.1000000238419,
+          "warmMaxMs": 1947.2450000047684,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 5.07429313659668
+        }
+      ],
+      "load": {
+        "loadMs": 1996.6649999916553,
+        "isolated": true,
+        "wallMs": 2053
+      },
+      "loadedTreeRssKiB": 830340,
+      "peakTreeRssKiB": 947232
+    }
+  ],
+  "failures": [
+    {
+      "model": "fp32",
+      "threads": 1,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "fp32",
+      "threads": 1,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 1,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 1,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "test": "worker-termination-rejects-pending",
+      "passed": true
+    },
+    {
+      "test": "not-ready",
+      "passed": true
+    },
+    {
+      "test": "corrupt-model",
+      "passed": true
+    },
+    {
+      "test": "worker-crash-rejects-pending",
+      "passed": true
+    }
+  ],
+  "memory": "Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory",
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "runtime": "onnxruntime-web 1.23.2",
+  "hardwareConcurrency": 4,
+  "multiTab": {
+    "tabs": 3,
+    "model": "int8",
+    "threadsPerTab": 1,
+    "baselineTreeRssKiB": 645060,
+    "loadWallMs": 3828,
+    "loadedTreeRssKiB": 1854136,
+    "inferenceWallMs": [
+      4926.199999988079,
+      5065.700000017881,
+      4610.0999999940395
+    ],
+    "parity": [
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 5.07429313659668
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 5.07429313659668
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 5.07429313659668
+      }
+    ],
+    "peakTreeRssKiB": 2078120
+  },
+  "requests": 50,
+  "loadScope": "Fresh worker/context with no-store HTTP, same browser process; not a fresh OS or browser cache cold start"
+}

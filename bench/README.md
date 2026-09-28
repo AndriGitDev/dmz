@@ -28,7 +28,7 @@ The detector has since been tuned against those cases. The current exact-span re
 
 The **original untuned** `corpus/exploratory-v1.jsonl` evaluation is a further 29-case synthetic probe written after the targeted fixes and scored without tuning the detector to it. The committed corpus SHA-256 is `9fbd1039bf26cc85decb6629f611c8c4aa92383c5b108b0b221fd694af4c07aa`. It deliberately samples unsupported formatting, name, address, token and dictionary variants and includes four negatives; it is **not** a random or field-representative sample. `results/exploratory-untuned-exposure-v1.json` records **13 annotated literals in allowed outbound text**. They comprise three addresses, two kennitölur, two names, two secrets, one email, one phone, one card and one differently cased tenant term. One benign price line is falsely flagged as an address, and a harmless combining-mark word is blocked for Unicode review. The exact-span report also counts a partial phone match as a false positive even though that prompt is blocked. These results show both coverage gaps and review burden; do not combine counts across the sets into a field leak rate.
 
-For the public website, run `./scripts/sync-public-benchmark.sh` from the product repository. It copies only this synthetic corpus and aggregate result JSON into the sibling `dmz-web/public/benchmark` directory. Review both copies before publishing.
+Public disclosure policy: keep corpora, model recipes, provenance, selection trials and detailed benchmark artifacts in this private repository. The legacy `sync-public-benchmark.sh` command is disabled. The website carries reviewed summary figures and limitations only; do not recreate downloadable benchmark artifacts.
 
 These results **do not** establish production detection quality. The corpus is tiny and partly built around the initial rules. All seven name examples are detected, but only five are masked; the other two match an uncertain patronymic shape and block the prompt. No general Icelandic name lexicon is loaded. The one address example matches a narrow street-suffix/number/postcode/city heuristic and blocks; no gazetteer is loaded. The dmz scorer configures one exact synthetic tenant term, `Verkefni Gervi`; that one example is not evidence of general dictionary quality. `results/regex-v0.json` is a simple pattern-only comparison on the same corpus, without date/checksum/IBAN/Luhn checks or a lexicon. Its recognizers can overlap, so it generates many false positives. `results/presidio-v0.json` scores Presidio Analyzer 2.2.364 with its default English `en_core_web_lg` model and recognizers, mapped to matching benchmark types. It has no Icelandic recognizer or tenant dictionary configuration. Expand the corpus independently, add hard negatives and licensed-data-safe name forms before publishing broad quality claims.
 
@@ -67,3 +67,10 @@ regression assertions requires review, as do existing gates.
 See [the offline contextual experiment](contextual/README.md) for local CRF training,
 the separate 95.5% precision-and-recall check, and the frozen synthetic legal/financial
 probe. These research results do not change the shipped Shield detector.
+
+## Browser deployment benchmark
+
+See [the private browser harness](browser-detector/README.md) for frozen ONNX
+export, compression accuracy checks and local Chromium runtime measurements.
+[Results and the deployment decision](results/browser-v1/README.md) distinguish
+native development parity from browser feasibility.

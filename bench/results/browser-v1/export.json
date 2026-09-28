@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "reference": "946398e59545c6bc295a07def67a04b314c21302f35eda1e8b4030380dfcb881",
+  "encoder_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "head_sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+  "torch": "2.8.0+cpu",
+  "onnx": "1.19.0",
+  "onnxruntime": "1.23.2",
+  "opset": 17,
+  "exporter": "torchscript dynamo=False; eager attention; dynamic batch/sequence/words",
+  "quantization": "dynamic signed int8 per-channel constant MatMul and Gather; no calibration or retuning",
+  "seconds": 39.2060512000171,
+  "files": {
+    "fp32.onnx": {
+      "bytes": 496010421,
+      "sha256": "fa15c87f5c1ae43ce385463da60f7775a3f3e73581dd9789a5c3192537d45797"
+    },
+    "int8.onnx": {
+      "bytes": 125119018,
+      "sha256": "fd9dc540ece872fed154e72e2a5a8fda9843ddc4630ec343fc2e770572065082"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "os": "Linux",
+  "kernel": "6.8.0-142-generic",
+  "architecture": "x86_64",
+  "cpu": "Intel Xeon Processor (Skylake, IBRS, no TSX)",
+  "logical_cpus": 4,
+  "ram_kib": 7937232,
+  "environment": "headless Linux VPS; not owner desktop; shared-host interference not controlled",
+  "measured_date_utc": "2026-09-28",
+  "relevant_cpu_flags": [
+    "avx",
+    "avx2",
+    "avx512f",
+    "sse4_2"
+  ]
+}

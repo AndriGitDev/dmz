@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "scope": "Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration",
+  "models": {
+    "fp32": "fa15c87f5c1ae43ce385463da60f7775a3f3e73581dd9789a5c3192537d45797",
+    "int8": "fd9dc540ece872fed154e72e2a5a8fda9843ddc4630ec343fc2e770572065082"
+  },
+  "sessions": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "baselineTreeRssKiB": 454888,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 348.7950000166893,
+          "warmMedianMs": 218.9800000190735,
+          "warmMaxMs": 252.51499998569489,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00024366378784179688
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 806.1800000071526,
+          "warmMedianMs": 766.2599999904633,
+          "warmMaxMs": 852.5550000071526,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0005502700805664062
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 2832.229999989271,
+          "warmMedianMs": 2888.25,
+          "warmMaxMs": 2959.2600000202656,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0006575584411621094
+        }
+      ],
+      "load": {
+        "loadMs": 6348.0199999809265,
+        "isolated": true,
+        "wallMs": 6387
+      },
+      "loadedTreeRssKiB": 1682664,
+      "peakTreeRssKiB": 2142808
+    }
+  ],
+  "failures": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "test": "not-ready",
+      "passed": true
+    },
+    {
+      "test": "corrupt-model",
+      "passed": true
+    },
+    {
+      "test": "worker-crash-rejects-pending",
+      "passed": true
+    }
+  ],
+  "memory": "Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory",
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "runtime": "onnxruntime-web 1.23.2",
+  "hardwareConcurrency": 4,
+  "requests": 15,
+  "loadScope": "Fresh worker/context with no-store HTTP, same browser process; not a fresh OS or browser cache cold start"
+}
