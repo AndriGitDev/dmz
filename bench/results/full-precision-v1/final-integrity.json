@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "checked_utc": "2026-09-29T14:23:46.140133+00:00",
+  "git_head_at_check": "6f4e8e638d011c9ed2d6f7dc6e3d12d0308a4e21",
+  "baseline_commit": "c6a8b0d60428a145527975e3acf1146a984844bb",
+  "artifacts": {
+    "baseline_encoder": {
+      "sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+      "bytes": 651803232
+    },
+    "baseline_head": {
+      "sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+      "bytes": 401844
+    },
+    "crf": {
+      "sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+      "bytes": 2172152
+    },
+    "frozen_checkpoint": {
+      "sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+      "bytes": 495831740
+    },
+    "selection": {
+      "sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+      "bytes": 2964
+    },
+    "frozen_comparison": {
+      "sha256": "e734e13d6341a84381ed0bc13c8b021c2f4537769585616aa4ba9193c61bfb81",
+      "bytes": 9246
+    },
+    "frozen_stability": {
+      "sha256": "12938cc58099fb29115f81648c6f25161c4c9ab2be48d0b16519c1246383bfd3",
+      "bytes": 1929
+    },
+    "frozen_training_manifest": {
+      "sha256": "e7d56edc7f3edcce0e0e67c7896edd7d37405fb0f8ab7798b737b6cccfcfc1ed",
+      "bytes": 1476
+    },
+    "tokenizer_config.json": {
+      "sha256": "bb2aab75de313a000361546746865e7ecbfc1699b013e2bd19730b29a5d183c7",
+      "bytes": 516
+    },
+    "tokenizer_merges.txt": {
+      "sha256": "471f0071ad08185f525016d1dd224ea5b3b9932ff7ae5a833303037439fe8dfa",
+      "bytes": 595064
+    },
+    "tokenizer_special_tokens_map.json": {
+      "sha256": "c611b1f7d416eb001ee4f293d903ea8c88e703463f1d403f1866a0352743fd00",
+      "bytes": 772
+    },
+    "tokenizer_tokenizer_config.json": {
+      "sha256": "d1b20de886b976382c12deceb6444477064b3f19aea42be01362eb7dfbc18cc7",
+      "bytes": 940
+    },
+    "tokenizer_vocab.json": {
+      "sha256": "a0805beb6192f40e2fe03917339a5b77da7ebbbf27e357e3cabc49f9369e2ffe",
+      "bytes": 1034907
+    },
+    "general_evaluation_input": {
+      "sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+      "bytes": 1667746
+    },
+    "canonical_domain_input": {
+      "sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+      "bytes": 244812
+    },
+    "correction_training_input": {
+      "sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+      "bytes": 14563635
+    },
+    "correction_epoch_1": {
+      "sha256": "3f8bd631c7baf95099785051f791a260b6837a0f2f2c092fde45644ceba39e4c",
+      "bytes": 11037252
+    },
+    "correction_epoch_2": {
+      "sha256": "c1a34c919c7043b84f02e3802f44d8237ebbe59c4d8cfc9be5f8ff090b0f136c",
+      "bytes": 11037252
+    },
+    "blind_annotation_template": {
+      "sha256": "66b1fdbd2c323c48c941af9484da0f769b9b3cc2880e3335f219eda650db7e5e",
+      "bytes": 16332
+    }
+  },
+  "all_checks_passed": true,
+  "selection_matches_private_freeze": true,
+  "repository_changes_confined_to_bench": true,
+  "shield_application_changed": false,
+  "forbidden_artifact_extensions_added": [],
+  "blind_review": {
+    "records": 42,
+    "documents": 9,
+    "all_text_and_source_hashes_intact": true,
+    "independent_labels": 0,
+    "final_eligible_records": 0
+  },
+  "scope": "Artifact identity and repository boundaries; not independent quality or end-to-end Shield validation"
+}

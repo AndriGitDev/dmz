@@ -1,152 +1,134 @@
 # Frozen FP32 and compression review
 
-**Status: development targets met by FP32; overall goal not complete.** All scores are exact Person spans on reused development data. The domain set is synthetic legal/financial text. These are not independent validation or production-readiness results.
+**Status: reused-development results only; overall goal not complete.** The domain set is synthetic legal/financial text. Independent human labels and representative real-document validation remain unavailable. No model is approved for deployment.
 
-## Actual Chromium accuracy
+For review, `fp16storage` is the smallest measured graph with zero observed FP32 span changes: 237.044 MiB. `repair2` is the highest-ranked sub-100-MiB candidate at 98.945 MiB; it meets both development floors but loses one net general true span versus FP32. Neither result establishes independent quality.
 
-| Graph | MiB | General precision / recall | Domain precision / recall |
-| --- | ---: | --- | --- |
-| fp32 | 473.032 | 95.5526% / 97.0120% | 99.3711% / 98.7500% |
-| int8 | 119.642 | 95.6152% / 97.0120% | 99.3671% / 98.1250% |
-| int4 | 88.750 | 95.7532% / 95.8167% | 99.1489% / 97.0833% |
-| mixed | 99.120 | 95.1666% / 96.7463% | 99.5798% / 98.7500% |
+## Actual Chromium exact-span accuracy
 
-FP32 epoch 2 was selected from 13 candidates after two full encoder epochs, a fixed parameter average, a bounded lower-rate refinement, and fixed merge-priority alternatives. The refinement and priority alternatives did not improve the predeclared selection rule. `final-comparison.json` preserves every candidate. General FP32 precision has a narrow margin above the floor.
+| Graph | Graph MiB | General precision / recall | Domain precision / recall | Development floors |
+| --- | ---: | --- | --- | --- |
+| fp32 | 473.032 | 95.5526% / 97.0120% | 99.3711% / 98.7500% | pass |
+| int8 | 119.642 | 95.6152% / 97.0120% | 99.3671% / 98.1250% | pass |
+| int4 | 88.750 | 95.7532% / 95.8167% | 99.1489% / 97.0833% | pass |
+| mixed | 99.120 | 95.1666% / 96.7463% | 99.5798% / 98.7500% | fail |
+| int4b16 | 98.875 | 95.8968% / 96.2151% | 98.9451% / 97.7083% | pass |
+| int4a32 | 90.021 | 96.1282% / 95.6175% | 99.3603% / 97.0833% | pass |
+| hqq4 | 98.880 | 96.0265% / 96.2815% | 99.1507% / 97.2917% | pass |
+| repair1 | 98.945 | 95.3625% / 96.9456% | 99.5816% / 99.1667% | fail |
+| repair2 | 98.945 | 95.7377% / 96.9456% | 99.5798% / 98.7500% | pass |
+| fp16storage | 237.044 | 95.5526% / 97.0120% | 99.3711% / 98.7500% | pass |
+| int8fp16 | 156.639 | 95.6094% / 96.8792% | 99.3711% / 98.7500% | pass |
 
-The checkpoint has 123,951,875 parameters, all 203 tensors FP32, and is 472.862 MiB. It was frozen before compression at 05:01 UTC on 29 September 2026. `selected-candidate.json` pins checkpoint, tokenizer/configuration, thresholds, input and stability hashes and remains immutable. Batch-8/batch-1 PyTorch spans, native ONNX spans and FP32 Chromium spans agree exactly on both sets; the separate original UTF-8 domain PyTorch check also agrees. Original-text native and Chromium checks are tracked separately below.
+The frozen FP32 epoch-2 reference remains unchanged. It was selected from 13 full-precision composition candidates after full encoder training, a fixed average and a bounded refinement. Its checkpoint is 472.862 MiB; the ONNX graph is 473.032 MiB. See [selected-candidate.json](selected-candidate.json), [final-comparison.json](final-comparison.json) and [stability.json](stability.json) for immutable identities and selection evidence. General FP32 precision has a narrow margin above the floor.
 
-## Compression decision
+Thresholds are unchanged at CRF 0.75 / neural 0.0, using CRF priority with non-overlapping neural spans added. Training and evaluation inputs remain separate. Compression correction training uses the original training mixture; it does not make these repeatedly used development sets independent.
 
-Retain frozen FP32 reference. Int8 is closest compressed candidate but exceeds 100 MiB and loses domain recall. Int4 meets graph size with material recall loss and slower inference; mixed fails general precision floor.
+Measured compressed graphs preserving every reference aggregate precision/recall value: fp16storage. Equal aggregate scores do not prove identical predictions; span changes follow below.
 
-| Candidate | General added misses / recovered | Domain added misses / recovered | General / domain recall change, pp |
-| --- | --- | --- | --- |
-| int8 | 1 / 1 | 4 / 1 | +0.0000 / -0.6250 |
-| int4 | 20 / 2 | 8 / 0 | -1.1952 / -1.6667 |
-| mixed | 4 / 0 | 1 / 1 | -0.2656 / +0.0000 |
+The minimum-recall ranking among precision-qualified sub-100-MiB graphs is: repair2, hqq4, int4b16, int4, int4a32. This is a development ranking, not release acceptance.
 
-Thresholds remain CRF 0.75 / neural 0.0 with CRF priority throughout. The initial four compression recipes used no calibration labels, threshold retuning or retraining. Reports also include added/removed false positives and native/browser differences. Equal aggregate recall does not mean identical predictions.
+## Compression losses against frozen FP32
 
-Tokenizer, CRF and WASM inventory totals 18.598 MiB beyond each graph. Graph-plus-inventory sizes are fp32 491.631 MiB, int8 138.240 MiB, int4 107.349 MiB, mixed 117.718 MiB. These are uncompressed file sums, not packaged extension or network-transfer measurements. No 50 MiB model was obtained.
+| Graph | Set | TP / FP / FN | Precision / recall delta, pp | Added misses / recovered | Added FP / removed | Native/browser changed records |
+| --- | --- | --- | --- | --- | --- | ---: |
+| int8 | general | 1461 / 67 / 45 | +0.0625 / +0.0000 | 1 / 1 | 5 / 6 | 4 |
+| int8 | domain | 471 / 3 / 9 | -0.0040 / -0.6250 | 4 / 1 | 2 / 2 | 2 |
+| int4 | general | 1443 / 64 / 63 | +0.2005 / -1.1952 | 20 / 2 | 10 / 14 | 0 |
+| int4 | domain | 466 / 4 / 14 | -0.2221 / -1.6667 | 8 / 0 | 4 / 3 | 0 |
+| mixed | general | 1457 / 74 / 49 | -0.3861 / -0.2656 | 4 / 0 | 11 / 5 | 3 |
+| mixed | domain | 474 / 2 / 6 | +0.2088 / +0.0000 | 1 / 1 | 1 / 2 | 1 |
+| int4b16 | general | 1449 / 62 / 57 | +0.3441 / -0.7968 | 15 / 3 | 5 / 11 | 0 |
+| int4b16 | domain | 469 / 5 / 11 | -0.4259 / -1.0417 | 5 / 0 | 4 / 2 | 0 |
+| int4a32 | general | 1440 / 58 / 66 | +0.5755 / -1.3944 | 23 / 2 | 6 / 16 | 0 |
+| int4a32 | domain | 466 / 3 / 14 | -0.0107 / -1.6667 | 8 / 0 | 2 / 2 | 0 |
+| hqq4 | general | 1450 / 60 / 56 | +0.4738 / -0.7304 | 14 / 3 | 9 / 17 | 0 |
+| hqq4 | domain | 467 / 4 / 13 | -0.2203 / -1.4583 | 7 / 0 | 2 / 1 | 0 |
+| repair1 | general | 1460 / 71 / 46 | -0.1901 / -0.0664 | 3 / 2 | 9 / 6 | 0 |
+| repair1 | domain | 476 / 2 / 4 | +0.2105 / +0.4167 | 2 / 4 | 0 / 1 | 0 |
+| repair2 | general | 1460 / 65 / 46 | +0.1851 / -0.0664 | 3 / 2 | 4 / 7 | 0 |
+| repair2 | domain | 474 / 2 / 6 | +0.2088 / +0.0000 | 1 / 1 | 1 / 2 | 0 |
+| fp16storage | general | 1461 / 68 / 45 | +0.0000 / +0.0000 | 0 / 0 | 0 / 0 | 0 |
+| fp16storage | domain | 474 / 3 / 6 | +0.0000 / +0.0000 | 0 / 0 | 0 / 0 | 0 |
+| int8fp16 | general | 1459 / 67 / 47 | +0.0568 / -0.1328 | 3 / 1 | 8 / 9 | 5 |
+| int8fp16 | domain | 474 / 3 / 6 | +0.0000 / +0.0000 | 1 / 1 | 1 / 1 | 3 |
 
-## Chromium runtime
+## Storage scope
 
-Chromium 153.0.8010.12 / ONNX Runtime Web 1.23.2, CPU WASM, three threads, batch one. Warm figures are medians of five runs on fabricated pretokenized inputs after an initial run.
+Tokenizer, CRF and WASM inventory adds 18.598 MiB to each graph. These are uncompressed file sums, not a packaged extension or network-transfer measurement. No model below 50 MiB was obtained.
 
-| Graph | Load ms | Warm ms, 32 / 128 / 512 words | Peak summed RSS MiB |
-| --- | ---: | --- | ---: |
-| fp32 | 6121 | 295.5 / 785.6 / 3082.8 | 2112.6 |
-| int8 | 2420 | 134.8 / 406.5 / 1744.4 | 928.5 |
-| int4 | 1871 | 445.2 / 1038.1 / 3774.9 | 846.5 |
-| mixed | 2253 | 306.1 / 822.0 / 3109.0 | 874.8 |
+| Graph | Graph plus supporting inventory MiB |
+| --- | ---: |
+| fp32 | 491.631 |
+| int8 | 138.240 |
+| int4 | 107.349 |
+| mixed | 117.718 |
+| int4b16 | 117.474 |
+| int4a32 | 108.619 |
+| hqq4 | 117.479 |
+| repair1 | 117.544 |
+| repair2 | 117.544 |
+| fp16storage | 255.643 |
+| int8fp16 | 175.238 |
 
-Three independent int8 tabs: peak summed RSS 2051.9 MiB; inference wall times [4512.800000011921, 4580.9000000059605, 4472.800000011921] ms. Failure checks passed: 12/12. All run cases succeeded: True. External requests: 0.
-
-RSS is sampled Linux Chromium process-tree RSS; shared pages may be counted more than once. Load uses a fresh worker/context and no-store loopback HTTP in the same browser process, not a cold OS cache. The three-tab result measures separate model copies, not a shared extension worker.
-
-Accuracy replay uses native pretokenization and cached CRF merge; runtime timings exclude tokenization, CRF, masking and Shield integration. Failure tests cover malformed input, deadline termination, pending-request rejection, not-ready inference, corrupt models and worker crashes. They test this harness, not an end-to-end Shield release gate.
-
-## Review and remaining work
-
-The private blind-review-v2 pilot has 42 unlabelled records from nine documents. It awaits independent human annotation, extraction/source review and a document-disjoint sampling protocol. No candidate predictions were used to create gold labels. See `../../holdout/README.md`.
-
-Weights, data, token vectors, individual predictions and detailed logs remain outside Git. Aggregate reports contain hashes. Baselines and failed experiments are preserved; Shield code is unchanged. Draft PR #11 is stacked on unmerged PR #10; no merge or deployment is authorized. See `../../contextual/full-precision-protocol.md` for the training and compression recipes.
-
-## Extended investigation in progress
-
-The owner authorized up to eight additional hours through 15:16:30 UTC on
-29 September 2026. The four-graph comparison above remains preserved.
-
-`int4b16` (symmetric blocks of 16) is 98.875 MiB. Actual Chromium reproduces its
-native scores exactly: general 95.8968% precision / 96.2151% recall, synthetic
-domain 98.9451% / 97.7083%. Against frozen FP32 it adds 15 general misses and
-recovers three; it adds five domain misses and recovers none. General replay took
-1804.530 seconds. It improves on the original int4 recall but is not an accepted
-replacement. The asymmetric block-32 graph is 90.021 MiB. Chromium exactly matches native:
-general 96.1282% precision / 95.6175% recall, domain 99.3603% / 97.0833%.
-It adds 23 general misses and recovers two; it adds eight domain misses and
-recovers none. General replay takes 2051.638 seconds. It is not selected.
-The HQQ block-32 graph is 98.880 MiB. Chromium exactly matches native:
-general 96.0265% precision / 96.2815% recall, domain 99.1507% / 97.2917%.
-It adds 14 general misses and recovers three; it adds seven domain misses and
-recovers none. General/domain replay takes 1576.711/120.143 seconds. It is not
-an accepted replacement. The separate original-domain FP32 native/Chromium check
-also reproduces all frozen spans exactly: 99.3711% precision / 98.7500% recall,
-with Chromium replay taking 85.782 seconds and zero external requests.
-
-The separate rank-16 correction-training job started at approximately 09:34 UTC.
-Both complete epochs finished in 9,448 seconds of optimization under the
-12,717-second cap. The first repaired graph is 98.945 MiB and passed its trained
-PyTorch/ORT parity probe (eight training chunks, zero changed labels). Separate
-native and Chromium development evaluation is separate from this probe.
-`repair-training.json` pins both complete checkpoints.
-It keeps the int4 backbone fixed and trains only additive FP32 matrices plus the
-BIO head on the original training mixture. The real initial implementation probe
-passes on eight training chunks: maximum PyTorch/ORT logit difference 0.0000401,
-zero changed word labels. This probe is not an accuracy evaluation. Hash guards
-reject changed references and nontraining inputs; export guards preserve backbone
-initializers and require complete checkpoints. See the predeclared protocol for
-limits, subsequent export parity checks and separate development evaluation.
-
-The conditional FP16-storage fallback generated successfully at 237.044 MiB.
-It converts all 72 encoder matrix constants and three embedding tables, restoring
-them to FP32 before computation while retaining the FP32 head. Numerical guard
-tests pass. It has not been quality- or runtime-evaluated and is not an accepted
-model; lower storage size does not imply lower runtime memory. Its short,
-label-free conversion overlapped correction training, not browser measurements.
-
-The optional `repairhalf` follow-up is prepared but not generated or evaluated.
-It stores only correction matrices as FP16 with FP32 computation, preserving the
-backbone and trained head. A command-level guard requires a parent Chromium
-report preserving all reference precision/recall values on both development
-sets. Any generated follow-up still requires fresh native and browser evaluation.
+## Extended Chromium runtime
 
 
-### Correction epoch 1 browser result
+Report: [extended-runtime.json](extended-runtime.json).
 
-The 98.945-MiB `repair1` graph exactly matches native spans in Chromium on both
-reused development sets. General precision/recall is 95.3625% / 96.9456%
-(TP 1460, FP 71, FN 46); synthetic domain is 99.5816% / 99.1667%
-(TP 476, FP 2, FN 4). It fails the general precision floor and is not a qualifying
-replacement or parent for the conditional correction-storage trial.
+Chromium 153.0.8010.12 / onnxruntime-web 1.23.2; CPU WASM, batch one. Each warm latency is the median of five fabricated pretokenized runs. See [extended-runtime.json](extended-runtime.json) for individual cases and failures.
 
-Against frozen FP32, it adds three general misses and recovers two, adding nine
-false positives and removing six. In the domain set it adds two misses and
-recovers four, adds no false positives and removes one. Browser replay takes
-1701.590 / 126.619 seconds; external requests are zero. The second trained epoch
-is now being evaluated. No thresholds or merge rules changed.
+| Graph | Threads | Load wall ms | Warm ms, 32 / 128 / 512 words | Peak summed RSS MiB |
+| --- | ---: | ---: | --- | ---: |
+| fp32 | 3 | 6370 | 261.6 / 927.2 / 3135.8 | 2093.1 |
+| int8 | 3 | 2151 | 144.6 / 425.6 / 1687.0 | 922.6 |
+| int4b16 | 3 | 2141 | 481.4 / 986.4 / 3875.1 | 849.9 |
+| int4a32 | 3 | 1950 | 487.8 / 999.6 / 4126.1 | 842.8 |
+| hqq4 | 3 | 2346 | 402.5 / 984.9 / 3818.5 | 870.6 |
+| repair1 | 3 | 2288 | 430.7 / 969.6 / 3938.8 | 964.9 |
+| repair2 | 3 | 2897 | 546.7 / 1071.8 / 4184.4 | 869.1 |
+| fp16storage | 3 | 5986 | 244.4 / 835.7 / 3205.8 | 1976.2 |
 
+Failure checks: 20/20 passed. All run cases succeeded: True. External requests: 0.
 
-### Correction epoch 2 browser result
+Three independent repair2 tab workers, one thread each: peak summed RSS 2044.5 MiB; inference wall times [11530.6, 11369.6, 11554.1] ms. This measures separate model copies, not a shared extension worker.
 
-The 98.945-MiB `repair2` graph exactly matches native spans in Chromium on both
-reused development sets. General precision/recall is 95.7377% / 96.9456%
-(TP 1460, FP 65, FN 46); synthetic domain is 99.5798% / 98.7500%
-(TP 474, FP 2, FN 6). It meets both development floors and is the highest-ranked
-sub-100-MiB candidate under the predeclared minimum-recall/precision rule.
-It does not establish independent quality or deployment readiness.
+Report: [int8fp16-runtime.json](int8fp16-runtime.json).
 
-Against frozen FP32, general precision increases 0.1851 percentage points and
-recall decreases 0.0664 points: three added misses and two recoveries, four added
-false positives and seven removed. Domain recall is unchanged in aggregate, but
-one missed span is added and one recovered; one false positive is added and two
-removed. Browser replay takes 1719.570 / 125.955 seconds, with zero external
-requests. Original-text and isolated runtime checks remain pending.
+Chromium 153.0.8010.12 / onnxruntime-web 1.23.2; CPU WASM, batch one. Each warm latency is the median of five fabricated pretokenized runs. See [int8fp16-runtime.json](int8fp16-runtime.json) for individual cases and failures.
 
-Neither correction parent preserves every frozen-reference precision/recall
-value, so the guarded `repairhalf` trial is skipped as predeclared. The command's
-actual quality guard rejects both reports; `followup-decision.json` records their
-hashes and decision. The 237.044-MiB FP16-storage fallback is now being evaluated
-at unchanged thresholds to test whether it preserves more reference quality.
+| Graph | Threads | Load wall ms | Warm ms, 32 / 128 / 512 words | Peak summed RSS MiB |
+| --- | ---: | ---: | --- | ---: |
+| fp32 | 3 | 6307 | 257.1 / 777.8 / 3129.6 | 2093.7 |
+| int8fp16 | 3 | 3962 | 141.4 / 435.0 / 1814.6 | 1599.0 |
 
+Failure checks: 8/8 passed. All run cases succeeded: True. External requests: 0.
 
-### FP16 storage browser result
+Three independent int8fp16 tab workers, one thread each: peak summed RSS 4017.4 MiB; inference wall times [5603.3, 5090.0, 5425.7] ms. This measures separate model copies, not a shared extension worker.
 
-The 237.044-MiB `fp16storage` graph preserves every frozen FP32 span in both native
-and actual Chromium evaluation on the two reused development sets. General
-precision/recall remains 95.5526% / 97.0120%; synthetic domain remains
-99.3711% / 98.7500%. There are zero changed records, added/recovered misses or
-added/removed false positives. Browser replay takes 823.704 / 85.772 seconds,
-with zero external requests. This approximately halves graph storage while
-remaining above 100 MiB; it does not establish independent quality or reduced
-runtime memory. Original-text and isolated runtime measurements are queued.
+Memory is sampled Linux Chromium process-tree RSS; shared pages may be counted more than once. Load uses a fresh worker/context and no-store loopback HTTP in one browser process, not a cold OS cache. Accuracy replay uses native pretokenization and cached CRF merging. Timings exclude tokenization, CRF, masking and Shield integration. Failure tests exercise the harness, not an end-to-end Shield release gate. The original four-graph runtime and comparison reports remain preserved.
+
+## Original UTF-8 domain checks
+
+| Graph | Domain precision / recall | Changed records from native |
+| --- | --- | ---: |
+| fp32 | 99.3711% / 98.7500% | 0 |
+| repair2 | 99.5798% / 98.7500% | 0 |
+| fp16storage | 99.3711% / 98.7500% | 0 |
+| int8fp16 | 99.3711% / 98.7500% | 3 |
+
+These use the same reused synthetic domain examples with original text retained, not an independent corpus.
+
+## Remaining evidence and review
+
+- Independent human labels and document-disjoint real legal/financial validation.
+- End-to-end tokenizer/CRF/Shield integration and owner-hardware validation.
+- No measured sub-100-MiB graph preserving all frozen-reference aggregate precision/recall values.
+
+The private blind-review-v2 annotation pilot contains 42 unlabelled records from nine documents. Source/text hashes are intact; extraction, source-use and human annotation review remain pending. Null labels are not negatives. See [../../holdout/README.md](../../holdout/README.md).
+
+Weights, datasets, token vectors, individual predictions and detailed logs stay outside Git. Aggregate reports pin hashes. Both correction checkpoints and failed exports/experiments are preserved. The commuted ONNX head-bias export bug was fixed and both trained exports passed their training-chunk implementation probes before evaluation. Shield code remains unchanged. Draft PR #11 is stacked on open, unmerged PR #10; no merge or deployment was performed.
+
+The optional `repairhalf` trial was skipped because neither corrected parent preserved every frozen-reference precision/recall value; [followup-decision.json](followup-decision.json) pins the actual guard decisions. [final-integrity.json](final-integrity.json) rechecks 19 baseline, checkpoint, input and tokenizer artifacts, the unchanged freeze, repository boundaries and unlabelled review-packet integrity.
+
+See [extended-comparison.json](extended-comparison.json) for artifact identities, ranking and pending/skipped stages, and [../../contextual/full-precision-protocol.md](../../contextual/full-precision-protocol.md) for recipes.

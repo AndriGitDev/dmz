@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "fixtures_sha256": "b3efe76ba2c35e2880906405a0d73d3cf1dffae50d2439da2ab021c4452cee05",
+  "scope": "Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration",
+  "models": {
+    "fp32": "053feb2c684301d3110a4bdcbfefda2fd31807b6fa4d9d73060dafa67928c1fb",
+    "int8fp16": "47b082c202d70ae33d42baaf7bbfe18a82dffc9ba153054f3f14899b7b4fce4e"
+  },
+  "sessions": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "baselineTreeRssKiB": 448608,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 439.5450000166893,
+          "warmMedianMs": 257.125,
+          "warmMaxMs": 312.4350000023842,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001239776611328125
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 908.75,
+          "warmMedianMs": 777.8200000226498,
+          "warmMaxMs": 873.830000013113,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001049041748046875
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3498.9950000047684,
+          "warmMedianMs": 3129.5950000286102,
+          "warmMaxMs": 3191.3250000178814,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000133514404296875
+        }
+      ],
+      "load": {
+        "loadMs": 6266.655000001192,
+        "isolated": true,
+        "wallMs": 6307
+      },
+      "loadedTreeRssKiB": 1660880,
+      "peakTreeRssKiB": 2143980
+    },
+    {
+      "model": "int8fp16",
+      "threads": 3,
+      "baselineTreeRssKiB": 452944,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 278.74499997496605,
+          "warmMedianMs": 141.4350000023842,
+          "warmMaxMs": 144.0450000166893,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.000003814697265625
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 550.1900000274181,
+          "warmMedianMs": 435.0150000154972,
+          "warmMaxMs": 514.0600000023842,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 1.782918930053711
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 1773.1949999928474,
+          "warmMedianMs": 1814.5799999833107,
+          "warmMaxMs": 1841.5600000023842,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 2.3715343475341797
+        }
+      ],
+      "load": {
+        "loadMs": 3911.705000013113,
+        "isolated": true,
+        "wallMs": 3962
+      },
+      "loadedTreeRssKiB": 1577588,
+      "peakTreeRssKiB": 1637384
+    }
+  ],
+  "failures": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int8fp16",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int8fp16",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "test": "worker-termination-rejects-pending",
+      "passed": true
+    },
+    {
+      "test": "not-ready",
+      "passed": true
+    },
+    {
+      "test": "corrupt-model",
+      "passed": true
+    },
+    {
+      "test": "worker-crash-rejects-pending",
+      "passed": true
+    }
+  ],
+  "memory": "Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory",
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "runtime": "onnxruntime-web 1.23.2",
+  "hardwareConcurrency": 4,
+  "multiTab": {
+    "tabs": 3,
+    "model": "int8fp16",
+    "threadsPerTab": 1,
+    "baselineTreeRssKiB": 655712,
+    "loadWallMs": 5355,
+    "loadedTreeRssKiB": 3954164,
+    "inferenceWallMs": [
+      5603.300000011921,
+      5090,
+      5425.700000017881
+    ],
+    "parity": [
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 2.3715343475341797
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 2.3715343475341797
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 2.3715343475341797
+      }
+    ],
+    "peakTreeRssKiB": 4113860
+  },
+  "requests": 43,
+  "loadScope": "Fresh worker/context with no-store HTTP, same browser process; not a fresh OS or browser cache cold start",
+  "allRunCasesSucceeded": true
+}

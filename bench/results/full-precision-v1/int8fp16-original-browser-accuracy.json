@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "model_sha256": "47b082c202d70ae33d42baaf7bbfe18a82dffc9ba153054f3f14899b7b4fce4e",
+  "vectors_sha256": "c904de10d0fa52585ef88a23f0ac33df2d127dc803ba278acfade35d93f9a7b2",
+  "runtime": "onnxruntime-web 1.23.2",
+  "threads": 3,
+  "batch_size": 1,
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "load": {
+    "loadMs": 3808.130000025034,
+    "isolated": true
+  },
+  "text_mode": "original",
+  "scope": "Selected fixed development sets replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end Shield",
+  "independent_validation": false,
+  "sets": [
+    {
+      "name": "domain",
+      "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+      "rows": 256,
+      "browser_replay_seconds": 53.266,
+      "neural": {
+        "tp": 471,
+        "fp": 5,
+        "fn": 9,
+        "precision": 0.9894957983193278,
+        "recall": 0.98125
+      },
+      "combined": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875
+      },
+      "changed_combined_from_frozen": 3,
+      "changed_combined_from_native_batch1": 3,
+      "versus_frozen": {
+        "added_missed_spans": 1,
+        "recovered_spans": 1,
+        "added_false_positives": 1,
+        "removed_false_positives": 1
+      },
+      "versus_fp32_browser": {
+        "changed_records": 3,
+        "added_missed_spans": 1,
+        "recovered_spans": 1,
+        "added_false_positives": 1,
+        "removed_false_positives": 1
+      },
+      "fp32_browser_combined": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875
+      },
+      "versus_fp32_browser_neural": {
+        "changed_records": 4,
+        "added_missed_spans": 2,
+        "recovered_spans": 1,
+        "added_false_positives": 2,
+        "removed_false_positives": 1
+      },
+      "fp32_browser_neural": {
+        "tp": 472,
+        "fp": 4,
+        "fn": 8,
+        "precision": 0.9915966386554622,
+        "recall": 0.9833333333333333
+      }
+    }
+  ],
+  "fp32_browser_reference_sha256": "8b618e62ad823ab9ef2b9f852493245c9a0e3dea9760c52573f0be660ef6fe81"
+}

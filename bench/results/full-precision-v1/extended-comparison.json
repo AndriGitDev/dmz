@@ -1,0 +1,967 @@
+{
+  "schema": 1,
+  "created_utc": "2026-09-29T14:23:59.810193+00:00",
+  "scope": "Reused development only; native pretokenization, actual Chromium encoder/head, cached CRF merge; not end-to-end Shield",
+  "criteria_met": false,
+  "independent_validation": false,
+  "selected_compressed_replacement": null,
+  "decision": "No production acceptance from reused development scores. Review ranking, reference losses, original-text results and runtime evidence.",
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  },
+  "merge": "CRF priority; add non-overlapping neural spans",
+  "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+  "frozen_browser_report_sha256": "a80f6513c454f3a13568d71916758b6e6846484e088666f50ed799747201cc67",
+  "supporting_inventory_sha256": "3b7cfce1be1e75c3f8e8c75d666ce7b518af2760943b2d0f13b031ce6f5daa2b",
+  "supporting_inventory_bytes": 19501813,
+  "graph_hashes_verified": true,
+  "models": [
+    {
+      "model": "fp32",
+      "sha256": "053feb2c684301d3110a4bdcbfefda2fd31807b6fa4d9d73060dafa67928c1fb",
+      "graph_bytes": 496010299,
+      "graph_mib": 473.03228282928467,
+      "graph_plus_inventory_mib": 491.6306610107422,
+      "metadata_sha256": "7d4a6db960df7d0e8295466472ae830203690d00040f48ebf907d1fb1bb061bf",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.0,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "added_missed_spans": 0,
+            "recovered_spans": 0,
+            "added_false_positives": 0,
+            "removed_false_positives": 0
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 764.101
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": 0.0,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "added_missed_spans": 0,
+            "recovered_spans": 0,
+            "added_false_positives": 0,
+            "removed_false_positives": 0
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 81.025
+        }
+      ],
+      "accuracy_report_sha256": "a80f6513c454f3a13568d71916758b6e6846484e088666f50ed799747201cc67",
+      "minimum_precision": 0.9555264879005886,
+      "minimum_recall": 0.9701195219123506,
+      "preserves_reference_aggregate_quality": true,
+      "passes_development_floors": true
+    },
+    {
+      "model": "int8",
+      "sha256": "72466fbb391d65f498e10fb7c95ce9ae67042ba4cd845cff4a2cad6d4c781956",
+      "graph_bytes": 125453557,
+      "graph_mib": 119.64183521270752,
+      "graph_plus_inventory_mib": 138.24021339416504,
+      "metadata_sha256": "d982d6f4771197a117d12953a6da83b4af00dadbac5e1875508886a7ebedb5d1",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1461,
+            "fp": 67,
+            "fn": 45,
+            "precision": 0.956151832460733,
+            "recall": 0.9701195219123506
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.0625344560144403,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "changed_records": 11,
+            "added_missed_spans": 1,
+            "recovered_spans": 1,
+            "added_false_positives": 5,
+            "removed_false_positives": 6
+          },
+          "changed_from_native": 4,
+          "replay_seconds": 479.292
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 471,
+            "fp": 3,
+            "fn": 9,
+            "precision": 0.9936708860759493,
+            "recall": 0.98125
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": -0.0039805747950039105,
+          "recall_delta_pp": -0.6250000000000089,
+          "versus_fp32_browser": {
+            "changed_records": 7,
+            "added_missed_spans": 4,
+            "recovered_spans": 1,
+            "added_false_positives": 2,
+            "removed_false_positives": 2
+          },
+          "changed_from_native": 2,
+          "replay_seconds": 47.834
+        }
+      ],
+      "accuracy_report_sha256": "0b304b9451a10e64e6b59e693ea0358242bb62a418acd7c296a841ddac058f21",
+      "minimum_precision": 0.956151832460733,
+      "minimum_recall": 0.9701195219123506,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": true
+    },
+    {
+      "model": "int4",
+      "sha256": "e89ca5f05a181928ff0cc9da4f5b6774e2cfb3c3a472ab5dafaff6fb3c7b9779",
+      "graph_bytes": 93061360,
+      "graph_mib": 88.75022888183594,
+      "graph_plus_inventory_mib": 107.34860706329346,
+      "metadata_sha256": "290b7d1ebea13c40696bc39ad953b7a7dd95e19fd5c7972c6a174e2c8fa2f9b0",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1443,
+            "fp": 64,
+            "fn": 63,
+            "precision": 0.9575315195753152,
+            "recall": 0.9581673306772909
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.2005031674726654,
+          "recall_delta_pp": -1.195219123505975,
+          "versus_fp32_browser": {
+            "changed_records": 37,
+            "added_missed_spans": 20,
+            "recovered_spans": 2,
+            "added_false_positives": 10,
+            "removed_false_positives": 14
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 1596.578
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 466,
+            "fp": 4,
+            "fn": 14,
+            "precision": 0.9914893617021276,
+            "recall": 0.9708333333333333
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": -0.22213301217717252,
+          "recall_delta_pp": -1.6666666666666718,
+          "versus_fp32_browser": {
+            "changed_records": 11,
+            "added_missed_spans": 8,
+            "recovered_spans": 0,
+            "added_false_positives": 4,
+            "removed_false_positives": 3
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 117.922
+        }
+      ],
+      "accuracy_report_sha256": "dcf78bc22558f3c9011a310506c8b1795b506e93a57f23f77258936db629859b",
+      "minimum_precision": 0.9575315195753152,
+      "minimum_recall": 0.9581673306772909,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": true
+    },
+    {
+      "model": "mixed",
+      "sha256": "6adf0ccb6368bad3f971fc4333fc7ae4a1ec1716cad76d31bd49963b020c7c52",
+      "graph_bytes": 103934343,
+      "graph_mib": 99.11951351165771,
+      "graph_plus_inventory_mib": 117.71789169311523,
+      "metadata_sha256": "49ebd8617fe7d8fe674544f19a3eb4f808889bfed40bf92e97d8963a12cc2595",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1457,
+            "fp": 74,
+            "fn": 49,
+            "precision": 0.9516655780535598,
+            "recall": 0.9674634794156707
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": -0.3860909847028804,
+          "recall_delta_pp": -0.26560424966799445,
+          "versus_fp32_browser": {
+            "changed_records": 17,
+            "added_missed_spans": 4,
+            "recovered_spans": 0,
+            "added_false_positives": 11,
+            "removed_false_positives": 5
+          },
+          "changed_from_native": 3,
+          "replay_seconds": 1242.653
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 474,
+            "fp": 2,
+            "fn": 6,
+            "precision": 0.9957983193277311,
+            "recall": 0.9875
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": 0.2087627503831735,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "changed_records": 3,
+            "added_missed_spans": 1,
+            "recovered_spans": 1,
+            "added_false_positives": 1,
+            "removed_false_positives": 2
+          },
+          "changed_from_native": 1,
+          "replay_seconds": 96.463
+        }
+      ],
+      "accuracy_report_sha256": "190a69616f93c7325efbff8f105b1928f45ae2d955ef5b34b49edef8a7b0c681",
+      "minimum_precision": 0.9516655780535598,
+      "minimum_recall": 0.9674634794156707,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": false
+    },
+    {
+      "model": "int4b16",
+      "sha256": "cb57bbbba24c00f82983935633c78dc5917d6078b2a4886925c0e350a6fa5d8f",
+      "graph_bytes": 103678204,
+      "graph_mib": 98.87524032592773,
+      "graph_plus_inventory_mib": 117.47361850738525,
+      "metadata_sha256": "794742c89599e7caac03fec2d823ec9eb121b957cd66960c29cbd03e9296638a",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1449,
+            "fp": 62,
+            "fn": 57,
+            "precision": 0.9589675711449371,
+            "recall": 0.9621513944223108
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.3441083244348553,
+          "recall_delta_pp": -0.7968127490039834,
+          "versus_fp32_browser": {
+            "changed_records": 28,
+            "added_missed_spans": 15,
+            "recovered_spans": 3,
+            "added_false_positives": 5,
+            "removed_false_positives": 11
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 1804.53
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 469,
+            "fp": 5,
+            "fn": 11,
+            "precision": 0.989451476793249,
+            "recall": 0.9770833333333333
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": -0.42592150306504095,
+          "recall_delta_pp": -1.041666666666674,
+          "versus_fp32_browser": {
+            "changed_records": 7,
+            "added_missed_spans": 5,
+            "recovered_spans": 0,
+            "added_false_positives": 4,
+            "removed_false_positives": 2
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 135.492
+        }
+      ],
+      "accuracy_report_sha256": "8eb65d4a7fff1342a9d1fbbb428eaa8d7318b4409d12bfde25d686e3b6af7727",
+      "minimum_precision": 0.9589675711449371,
+      "minimum_recall": 0.9621513944223108,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": true
+    },
+    {
+      "model": "int4a32",
+      "sha256": "fef255073d87e0c23ba127fecc9aeab9c6464d1bed46a80e8991b09fc48f89f7",
+      "graph_bytes": 94393792,
+      "graph_mib": 90.02093505859375,
+      "graph_plus_inventory_mib": 108.61931324005127,
+      "metadata_sha256": "713c5373976a09f9658e6dc8a1377a7ecba0f53ffc10a6d2a27144e44aafcc07",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1440,
+            "fp": 58,
+            "fn": 66,
+            "precision": 0.9612817089452603,
+            "recall": 0.9561752988047809
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.5755221044671743,
+          "recall_delta_pp": -1.3944223107569709,
+          "versus_fp32_browser": {
+            "changed_records": 40,
+            "added_missed_spans": 23,
+            "recovered_spans": 2,
+            "added_false_positives": 6,
+            "removed_false_positives": 16
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 2051.638
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 466,
+            "fp": 3,
+            "fn": 14,
+            "precision": 0.9936034115138592,
+            "recall": 0.9708333333333333
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": -0.01072803100401476,
+          "recall_delta_pp": -1.6666666666666718,
+          "versus_fp32_browser": {
+            "changed_records": 10,
+            "added_missed_spans": 8,
+            "recovered_spans": 0,
+            "added_false_positives": 2,
+            "removed_false_positives": 2
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 137.066
+        }
+      ],
+      "accuracy_report_sha256": "04ff1575a7f52b2a7fd992eb400244e6a9ab6bbdc7b6c7bd15f31b7703c1724d",
+      "minimum_precision": 0.9612817089452603,
+      "minimum_recall": 0.9561752988047809,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": true
+    },
+    {
+      "model": "hqq4",
+      "sha256": "d888650efbf3a3b384d711380215ad3cdb9a945259aa032613ffe29502fee2f9",
+      "graph_bytes": 103683664,
+      "graph_mib": 98.88044738769531,
+      "graph_plus_inventory_mib": 117.47882556915283,
+      "metadata_sha256": "33683757f4c388dd7d0f9999dfc46ba105415b155541e524e4e540136b32e65f",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1450,
+            "fp": 60,
+            "fn": 56,
+            "precision": 0.9602649006622517,
+            "recall": 0.9628154050464808
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.4738412761663091,
+          "recall_delta_pp": -0.7304116865869847,
+          "versus_fp32_browser": {
+            "changed_records": 33,
+            "added_missed_spans": 14,
+            "recovered_spans": 3,
+            "added_false_positives": 9,
+            "removed_false_positives": 17
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 1576.711
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 467,
+            "fp": 4,
+            "fn": 13,
+            "precision": 0.9915074309978769,
+            "recall": 0.9729166666666667
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": -0.22032608260225128,
+          "recall_delta_pp": -1.4583333333333393,
+          "versus_fp32_browser": {
+            "changed_records": 8,
+            "added_missed_spans": 7,
+            "recovered_spans": 0,
+            "added_false_positives": 2,
+            "removed_false_positives": 1
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 120.143
+        }
+      ],
+      "accuracy_report_sha256": "d60d1c3e6be342f874a6fa11a8eb7986e34dd9df220c4749777ad833e68827b9",
+      "minimum_precision": 0.9602649006622517,
+      "minimum_recall": 0.9628154050464808,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": true
+    },
+    {
+      "model": "repair1",
+      "sha256": "a8d67c5e33059e5029bd2543dacf103e5039781013420647ad0bee1629f02b24",
+      "graph_bytes": 103751513,
+      "graph_mib": 98.94515323638916,
+      "graph_plus_inventory_mib": 117.54353141784668,
+      "metadata_sha256": "f016cd7ac07c74f49d5bc44351e3a106f6fc5d5ae52d73b34ad7b2b7eb00eeed",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1460,
+            "fp": 71,
+            "fn": 46,
+            "precision": 0.953625081645983,
+            "recall": 0.9694555112881806
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": -0.19014062546055532,
+          "recall_delta_pp": -0.06640106241699861,
+          "versus_fp32_browser": {
+            "changed_records": 15,
+            "added_missed_spans": 3,
+            "recovered_spans": 2,
+            "added_false_positives": 9,
+            "removed_false_positives": 6
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 1701.59
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 476,
+            "fp": 2,
+            "fn": 4,
+            "precision": 0.99581589958159,
+            "recall": 0.9916666666666667
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": 0.21052077576906303,
+          "recall_delta_pp": 0.4166666666666652,
+          "versus_fp32_browser": {
+            "changed_records": 6,
+            "added_missed_spans": 2,
+            "recovered_spans": 4,
+            "added_false_positives": 0,
+            "removed_false_positives": 1
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 126.619
+        }
+      ],
+      "accuracy_report_sha256": "5de74fd1a99ef0fa053bf73a19c1fcfc8b71537aae132e4d8cb8073a1b30e606",
+      "minimum_precision": 0.953625081645983,
+      "minimum_recall": 0.9694555112881806,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": false
+    },
+    {
+      "model": "repair2",
+      "sha256": "c2662c5f708a0570c5e6699a102aa2843bcbbca68e8ed9d164341cde39b22c0a",
+      "graph_bytes": 103751513,
+      "graph_mib": 98.94515323638916,
+      "graph_plus_inventory_mib": 117.54353141784668,
+      "metadata_sha256": "4276f15df8835f50559608639bf6ced0d893c76812f4d46d946b107ba4fea423",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1460,
+            "fp": 65,
+            "fn": 46,
+            "precision": 0.9573770491803278,
+            "recall": 0.9694555112881806
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.185056127973926,
+          "recall_delta_pp": -0.06640106241699861,
+          "versus_fp32_browser": {
+            "changed_records": 14,
+            "added_missed_spans": 3,
+            "recovered_spans": 2,
+            "added_false_positives": 4,
+            "removed_false_positives": 7
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 1719.57
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 474,
+            "fp": 2,
+            "fn": 6,
+            "precision": 0.9957983193277311,
+            "recall": 0.9875
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": 0.2087627503831735,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "changed_records": 4,
+            "added_missed_spans": 1,
+            "recovered_spans": 1,
+            "added_false_positives": 1,
+            "removed_false_positives": 2
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 125.955
+        }
+      ],
+      "accuracy_report_sha256": "732f3a33751a3e4d0e38e07bad72a83cafb8e95f3a5e29715b93855288ad10fa",
+      "minimum_precision": 0.9573770491803278,
+      "minimum_recall": 0.9694555112881806,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": true
+    },
+    {
+      "model": "fp16storage",
+      "sha256": "e5acd596fde1873c6f4a5620db9c5417f11a59f3ad70cd96423614dd667b4690",
+      "graph_bytes": 248558949,
+      "graph_mib": 237.04428577423096,
+      "graph_plus_inventory_mib": 255.64266395568848,
+      "metadata_sha256": "d8e993921257e7f37aa86550638083de315eaf393156e7094c01a0673e3a65a2",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.0,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "changed_records": 0,
+            "added_missed_spans": 0,
+            "recovered_spans": 0,
+            "added_false_positives": 0,
+            "removed_false_positives": 0
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 823.704
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": 0.0,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "changed_records": 0,
+            "added_missed_spans": 0,
+            "recovered_spans": 0,
+            "added_false_positives": 0,
+            "removed_false_positives": 0
+          },
+          "changed_from_native": 0,
+          "replay_seconds": 85.772
+        }
+      ],
+      "accuracy_report_sha256": "c5b36ff0c255bd406fa43684915d62bd29f685d50edd90459f8781446030bd5e",
+      "minimum_precision": 0.9555264879005886,
+      "minimum_recall": 0.9701195219123506,
+      "preserves_reference_aggregate_quality": true,
+      "passes_development_floors": true
+    },
+    {
+      "model": "int8fp16",
+      "sha256": "47b082c202d70ae33d42baaf7bbfe18a82dffc9ba153054f3f14899b7b4fce4e",
+      "graph_bytes": 164248221,
+      "graph_mib": 156.63930988311768,
+      "graph_plus_inventory_mib": 175.2376880645752,
+      "metadata_sha256": "8c6b8c3aec73c5b383c7d978df1cbfa87232435666cd9a4733c78b1bf450e6c3",
+      "quality_evaluated": true,
+      "sets": [
+        {
+          "name": "general",
+          "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+          "rows": 5582,
+          "combined": {
+            "tp": 1459,
+            "fp": 67,
+            "fn": 47,
+            "precision": 0.9560943643512451,
+            "recall": 0.9687915006640107
+          },
+          "reference_combined": {
+            "tp": 1461,
+            "fp": 68,
+            "fn": 45,
+            "precision": 0.9555264879005886,
+            "recall": 0.9701195219123506
+          },
+          "precision_delta_pp": 0.05678764506564793,
+          "recall_delta_pp": -0.13280212483399723,
+          "versus_fp32_browser": {
+            "changed_records": 17,
+            "added_missed_spans": 3,
+            "recovered_spans": 1,
+            "added_false_positives": 8,
+            "removed_false_positives": 9
+          },
+          "changed_from_native": 5,
+          "replay_seconds": 508.734
+        },
+        {
+          "name": "domain",
+          "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+          "rows": 256,
+          "combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "reference_combined": {
+            "tp": 474,
+            "fp": 3,
+            "fn": 6,
+            "precision": 0.9937106918238994,
+            "recall": 0.9875
+          },
+          "precision_delta_pp": 0.0,
+          "recall_delta_pp": 0.0,
+          "versus_fp32_browser": {
+            "changed_records": 3,
+            "added_missed_spans": 1,
+            "recovered_spans": 1,
+            "added_false_positives": 1,
+            "removed_false_positives": 1
+          },
+          "changed_from_native": 3,
+          "replay_seconds": 49.975
+        }
+      ],
+      "accuracy_report_sha256": "1db2a8610d0379019d52d6dd1a8025ad3a6100435a08394b6528ac8aef93a3a9",
+      "minimum_precision": 0.9560943643512451,
+      "minimum_recall": 0.9687915006640107,
+      "preserves_reference_aggregate_quality": false,
+      "passes_development_floors": true
+    }
+  ],
+  "pending": [],
+  "skipped": [
+    {
+      "model": "repairhalf",
+      "status": "skipped-prerequisite",
+      "reason": "Neither trained parent preserves every frozen-reference precision and recall value in actual Chromium",
+      "decision_sha256": "f0acca0e8625b5133e15c942fede55d84cacef596e9b2e79bbcfb9b3aea6075f"
+    }
+  ],
+  "development_ranked_compressed": [
+    "int8",
+    "fp16storage",
+    "repair2",
+    "int8fp16",
+    "hqq4",
+    "int4b16",
+    "int4",
+    "int4a32"
+  ],
+  "development_ranked_sub100": [
+    "repair2",
+    "hqq4",
+    "int4b16",
+    "int4",
+    "int4a32"
+  ],
+  "extended_runtime": {
+    "report_sha256": "5160fcdee929d614f5a9ca832d470ce50b8cd4e126308faebafbb892ae7a2395",
+    "all_run_cases_succeeded": true,
+    "failure_checks": 20,
+    "failure_checks_passed": 20,
+    "external_request_count": 0,
+    "measured_models": [
+      "fp16storage",
+      "fp32",
+      "hqq4",
+      "int4a32",
+      "int4b16",
+      "int8",
+      "repair1",
+      "repair2"
+    ]
+  },
+  "additional_runtime": [
+    {
+      "report": "int8fp16-runtime.json",
+      "report_sha256": "d713d2da6f25b9711fb05e137216b953c98103040b56d2db03d5b23c28cdeb6e",
+      "all_run_cases_succeeded": true,
+      "failure_checks": 8,
+      "failure_checks_passed": 8,
+      "external_request_count": 0,
+      "measured_models": [
+        "fp32",
+        "int8fp16"
+      ]
+    }
+  ],
+  "original_domain_checks": [
+    {
+      "model": "fp32",
+      "report_sha256": "90bac1db904bcce020bd7acd09ab0b87db72b2d1b157d450139b125121a32cc2",
+      "combined": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875
+      },
+      "changed_from_native": 0
+    },
+    {
+      "model": "repair2",
+      "report_sha256": "57e31aaaa02d22938725c685d5e72604cddf924ea38664e1a09dacf9274934c9",
+      "combined": {
+        "tp": 474,
+        "fp": 2,
+        "fn": 6,
+        "precision": 0.9957983193277311,
+        "recall": 0.9875
+      },
+      "changed_from_native": 0
+    },
+    {
+      "model": "fp16storage",
+      "report_sha256": "8fc484465fc2c44ce1cf6ae25326d09f175457291b996166f91fe58fb46df635",
+      "combined": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875
+      },
+      "changed_from_native": 0
+    },
+    {
+      "model": "int8fp16",
+      "report_sha256": "f953665bb269f080871336b8660b9b5efb827229361828b4671108fe2e13d85f",
+      "combined": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875
+      },
+      "changed_from_native": 3
+    }
+  ],
+  "remaining_gaps": [
+    "Independent human labels and document-disjoint real legal/financial validation",
+    "End-to-end tokenizer/CRF/Shield integration and owner-hardware validation",
+    "No measured sub-100-MiB graph preserving all frozen-reference aggregate precision/recall values"
+  ]
+}
