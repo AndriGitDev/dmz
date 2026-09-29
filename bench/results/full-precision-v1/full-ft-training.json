@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "method": "FP32 full encoder and BIO head fine-tuning; mean subword pooling without float16 round-trip",
+  "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "split": "train",
+  "rows": 46196,
+  "chunks": 46236,
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "initial_head_sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+  "settings": {
+    "command": "train",
+    "epochs": 2,
+    "seed": 42,
+    "encoder_lr": 1e-05,
+    "head_lr": 0.0001,
+    "accumulation": 4,
+    "max_seconds": 18000.0,
+    "max_steps": 0,
+    "probe": false,
+    "batch_size": 8,
+    "threads": 3
+  },
+  "torch": "2.8.0+cpu",
+  "checkpoints": [
+    {
+      "epoch": 1,
+      "complete_epoch": true,
+      "optimizer_steps": 1445,
+      "tokens_seen": 824869,
+      "loss": 0.0061147332353227455,
+      "seconds": 6015.455372112978,
+      "file": "epoch-1.safetensors",
+      "sha256": "2f1db979856d90f2d707ee9a6ef9d28e7f39c8d4271cbf1d3acd971faa2a2037",
+      "bytes": 495831740
+    },
+    {
+      "epoch": 2,
+      "complete_epoch": true,
+      "optimizer_steps": 2890,
+      "tokens_seen": 824869,
+      "loss": 0.0030714137201057292,
+      "seconds": 11974.51659942398,
+      "file": "epoch-2.safetensors",
+      "sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+      "bytes": 495831740
+    }
+  ],
+  "independent_final_evaluation": false
+}

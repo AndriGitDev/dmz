@@ -65,16 +65,40 @@ def detector(base, head_path=None):
     return Detector()
 
 
+def warm_start_record(checkpoint, source, base):
+    """Require a complete, intact training checkpoint from this exact mixture."""
+    checkpoint = external(checkpoint)
+    manifest = checkpoint.parent/'training.json'
+    previous = json.loads(manifest.read_text())
+    checksum = digest(checkpoint)
+    matches = [c for c in previous['checkpoints'] if c.get('sha256') == checksum]
+    if len(matches) != 1 or matches[0].get('complete_epoch') is not True:
+        raise ValueError('warm start requires an intact complete checkpoint')
+    if previous.get('split') != 'train' or previous['input_sha256'] != digest(source):
+        raise ValueError('warm start training input mismatch')
+    if previous['base_weights_sha256'] != digest(base/'model.safetensors'):
+        raise ValueError('warm start base mismatch')
+    return dict(checkpoint_sha256=checksum, training_sha256=digest(manifest),
+                source_epoch=matches[0]['epoch'], optimizer='fresh AdamW; not optimizer-state resumption')
+
+
 def train(a):
     import torch
     from transformers import AutoTokenizer
-    from safetensors.torch import save_file
+    from safetensors.torch import load_file, save_file
     output = external(a.output); output.mkdir(parents=True, exist_ok=False)
-    source, base, head = external(a.input), external(a.base), external(a.head)
+    source, base = external(a.input), external(a.base)
+    head = external(a.head) if a.head else None
+    initial = warm_start_record(a.initial_checkpoint, source, base) if a.initial_checkpoint else None
     torch.set_num_threads(a.threads); torch.manual_seed(a.seed)
     tokenizer = AutoTokenizer.from_pretrained(base, local_files_only=True, add_prefix_space=True, trust_remote_code=False)
     records, jobs = prepare(source, 'train', tokenizer)
     model = detector(base, head).train()
+    if initial:
+        state = load_file(str(external(a.initial_checkpoint)))
+        if any(value.dtype != torch.float32 or not value.isfinite().all() for value in state.values()):
+            raise ValueError('warm start requires finite FP32 parameters')
+        model.load_state_dict(state); del state
     optimizer = torch.optim.AdamW([
         {'params': model.encoder.parameters(), 'lr': a.encoder_lr},
         {'params': model.head.parameters(), 'lr': a.head_lr}], weight_decay=.01)
@@ -86,7 +110,8 @@ def train(a):
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, rate)
     report = dict(schema=1, method='FP32 full encoder and BIO head fine-tuning; mean subword pooling without float16 round-trip',
         input_sha256=digest(source), split='train', rows=len(records), chunks=len(jobs),
-        base_weights_sha256=digest(base/'model.safetensors'), initial_head_sha256=digest(head),
+        base_weights_sha256=digest(base/'model.safetensors'), initial_head_sha256=digest(head) if head else None,
+        warm_start=initial,
         settings={k: v for k, v in vars(a).items() if isinstance(v, (str, int, float, bool))},
         torch=torch.__version__, checkpoints=[], independent_final_evaluation=False)
     (output/'protocol.json').write_text(json.dumps(report, indent=2)+'\n')
@@ -192,7 +217,10 @@ def evaluate(a):
 
 def main():
     p=argparse.ArgumentParser(__doc__); sub=p.add_subparsers(dest='command',required=True)
-    t=sub.add_parser('train');t.add_argument('--head',type=Path,required=True)
+    t=sub.add_parser('train')
+    initialization=t.add_mutually_exclusive_group(required=True)
+    initialization.add_argument('--head',type=Path)
+    initialization.add_argument('--initial-checkpoint',type=Path)
     t.add_argument('--epochs',type=int,default=3);t.add_argument('--seed',type=int,default=42)
     t.add_argument('--encoder-lr',type=float,default=1e-5);t.add_argument('--head-lr',type=float,default=1e-4)
     t.add_argument('--accumulation',type=int,default=4);t.add_argument('--max-seconds',type=float,default=18000)

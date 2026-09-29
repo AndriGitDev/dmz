@@ -4,7 +4,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from finetune import prepare, tensors
+from finetune import prepare, tensors, warm_start_record
+from encoder import digest
 
 
 class Encoded(dict):
@@ -13,6 +14,24 @@ class Encoded(dict):
 
 
 class FineTuneTests(unittest.TestCase):
+    def test_warm_start_rejects_partial_tampered_or_different_training(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); checkpoint=root/'epoch.safetensors'
+            checkpoint.write_bytes(b'checkpoint'); source=root/'train.jsonl'; source.write_bytes(b'train')
+            base=root/'base'; base.mkdir(); (base/'model.safetensors').write_bytes(b'base')
+            report=dict(split='train',input_sha256=digest(source),
+                base_weights_sha256=digest(base/'model.safetensors'),
+                checkpoints=[dict(epoch=2,sha256=digest(checkpoint),complete_epoch=True)])
+            manifest=root/'training.json'; manifest.write_text(json.dumps(report))
+            self.assertEqual(warm_start_record(checkpoint,source,base)['source_epoch'],2)
+            report['checkpoints'][0]['complete_epoch']=False; manifest.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,'complete checkpoint'):warm_start_record(checkpoint,source,base)
+            report['checkpoints'][0]['complete_epoch']=True; manifest.write_text(json.dumps(report))
+            source.write_bytes(b'different train')
+            with self.assertRaisesRegex(ValueError,'input mismatch'):warm_start_record(checkpoint,source,base)
+            source.write_bytes(b'train'); checkpoint.write_bytes(b'tampered')
+            with self.assertRaisesRegex(ValueError,'complete checkpoint'):warm_start_record(checkpoint,source,base)
+
     @unittest.skipUnless(importlib.util.find_spec('torch'), 'optional encoder environment')
     def test_pooling_padding_and_masked_targets(self):
         import torch

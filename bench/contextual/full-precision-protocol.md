@@ -119,3 +119,19 @@ tokenizer hashes. Native evaluation and browser-vector preparation check those
 hashes; the browser then binds the private token vectors by checksum. Keep the
 selection manifest immutable after freeze and put later measurements in separate
 reports.
+
+## Bounded FP32 refinement after the two-epoch comparison
+
+The combined detector improved general development recall from 96.55% to 97.01%
+and domain recall from 97.71% to 98.75% between epochs 1 and 2. General precision
+fell from 96.10% to 95.55%, so another round is an experiment, not an assumed gain.
+Before freezing, run one additional full FP32 epoch initialized from epoch 2, with
+fresh AdamW state, encoder LR 5e-6, head LR 5e-5, seed 43, the same mixture and
+batch/accumulation settings, and a 7,200-second cap. Keep the same 10% warmup and
+linear decay. This is a warm start, not continuation of saved optimizer state.
+
+This adjustment is development-informed and adds two candidates (neural-only and
+the fixed CRF combination). Retain all earlier checkpoints and the predeclared
+epoch-1/2 average. Apply the original selection rule without threshold search;
+reject a refinement that does not improve it. Reserve the remaining time for
+freezing, compression, actual browser measurements, and the review package.
