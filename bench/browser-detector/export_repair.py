@@ -43,7 +43,14 @@ def attach(graph, state):
         'head.4.weight':('/head/head.4/MatMul',1,True),
         'head.4.bias':('/head/head.4/Add',1,False)}
     for key,(node,index,transpose) in mappings.items():
-        target=lookup[node].input[index];value=state[key].numpy()
+        operator=lookup[node]
+        if operator.op_type=='Add':
+            constants=[name for name in operator.input if name in initializers]
+            if len(constants)!=1:raise ValueError('head bias Add requires exactly one initializer')
+            target=constants[0]
+        else:
+            target=operator.input[index]
+        value=state[key].numpy()
         if any(target in consumer.input and not consumer.name.startswith('/head/') for consumer in graph.graph.node):
             raise ValueError('head initializer is shared with the frozen backbone')
         if transpose:value=value.T
