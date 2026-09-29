@@ -244,8 +244,8 @@ considering it. Preserve the original FP32 graph and report any rounding losses.
 
 If a repaired checkpoint preserves all frozen-reference aggregate precision and
 recall values on both canonical development sets, and sufficient evaluation time
-remains, test one `repairhalf` follow-up on the best repaired checkpoint under the
-same precision-floor/minimum-recall rule. Store only its 144 correction matrices
+remains, test one `repairhalf` follow-up on the highest-ranked qualifying repaired
+checkpoint under the same precision-floor/minimum-recall rule. Store only its 144 correction matrices
 as FP16, explicitly cast back to FP32 for computation. Preserve every other
 initializer, including the original int4 backbone and the trained FP32 head.
 This should save about 5.06 MiB before cast-node overhead; measure actual bytes.
