@@ -135,3 +135,15 @@ the fixed CRF combination). Retain all earlier checkpoints and the predeclared
 epoch-1/2 average. Apply the original selection rule without threshold search;
 reject a refinement that does not improve it. Reserve the remaining time for
 freezing, compression, actual browser measurements, and the review package.
+
+## Development-informed overlap-priority diagnostic before freeze
+
+The epoch-2 aggregate audit found seven exact general-text neural spans blocked by
+CRF overlap priority. Test the deterministic reverse ordering for every new FP32
+checkpoint (epochs 1 and 2, their fixed average, and the bounded refinement), with
+neural threshold 0.0 and CRF threshold 0.75 unchanged. Neural spans take priority;
+only non-overlapping CRF spans are added. Keep the original combinations and
+standalone neural candidates eligible under the same selection rule. This adds
+four development-selected composition candidates, not independent evidence or a
+threshold search. Record failures and only use this ordering for compression if
+it wins and is explicitly frozen as part of the selected reference.
