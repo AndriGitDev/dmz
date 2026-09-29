@@ -71,6 +71,11 @@ head in FP32 in both cases. No calibration set or confidence retuning is used.
   with unsigned 8-bit Gather weights. Browser operator support and quality are
   measured, not assumed. Failure to load is a recorded failed experiment.
 
+The int4 recipe explicitly requests `accuracy_level=1`. The pinned
+[ORT 1.23.2 CPU implementation](https://github.com/microsoft/onnxruntime/blob/v1.23.2/onnxruntime/contrib_ops/cpu/quantization/matmul_nbits.cc)
+selects FP32 compute for this setting (level 4 may select activation int8).
+Actual WASM support, scores and timings still require measurement.
+
 Report graph bytes, tokenizer/CRF bytes, and runtime asset bytes separately so a
 small graph is not confused with a complete extension download. Full development
 Chromium replay is required for FP32 and any compressed candidate being considered

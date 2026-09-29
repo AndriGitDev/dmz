@@ -46,12 +46,12 @@ def main():
         quantize_dynamic(str(source),str(intermediate),weight_type=QuantType.QUInt8,
             per_channel=True,op_types_to_quantize=['Gather'])
         quantizer=MatMulNBitsQuantizer(str(intermediate),block_size=32,is_symmetric=True,
-            accuracy_level=0,nodes_to_exclude=excluded,op_types_to_quantize=('MatMul',))
+            accuracy_level=1,nodes_to_exclude=excluded,op_types_to_quantize=('MatMul',))
         quantizer.process()
         quantizer.model.save_model_to_file(str(output),use_external_data_format=False)
         # Retain intermediate provenance; remove only this newly generated temporary graph.
         intermediate_sha256=digest(intermediate);intermediate.unlink()
-        description='Weight-only symmetric int4 MatMul, block 32, FP32 activations/head; U8 Gather'
+        description='Weight-only symmetric int4 MatMul, block 32, accuracy_level=1 (FP32 activations), FP32 head; U8 Gather'
     onnx.checker.check_model(str(output))
     graph=onnx.load(str(output))
     report=dict(schema=1,recipe=a.recipe,description=description,reference_sha256=digest(source),
