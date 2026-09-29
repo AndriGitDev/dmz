@@ -10,7 +10,7 @@ from transformers import AutoTokenizer
 
 p=argparse.ArgumentParser(__doc__);p.add_argument('--assets',type=Path,required=True)
 p.add_argument('--output',type=Path,help='Fresh external fixture file; defaults to ASSETS/fixtures.json')
-p.add_argument('--models',nargs='+',choices=['fp32','int8','int4','mixed','int4b16','int4a32','hqq4'],default=['fp32','int8']);a=p.parse_args()
+p.add_argument('--models',nargs='+',choices=['fp32','int8','int4','mixed','int4b16','int4a32','hqq4','repair1','repair2'],default=['fp32','int8']);a=p.parse_args()
 a.assets=external(a.assets)
 output=external(a.output) if a.output else a.assets/'fixtures.json'
 if output.exists():raise ValueError('refusing to overwrite fixtures')

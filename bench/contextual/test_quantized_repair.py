@@ -15,14 +15,15 @@ class QuantizedRepairTests(unittest.TestCase):
             checkpoint=run/'epoch-2.safetensors';checkpoint.write_bytes(b'frozen checkpoint')
             (base/'model.safetensors').write_bytes(b'base')
             (assets/'int4.onnx').write_bytes(b'quantized graph')
+            (assets/'fp32.onnx').write_bytes(b'frozen FP32 graph')
             train=root/'train.jsonl';train.write_bytes(b'training-only records')
             dev=root/'dev.jsonl';dev.write_bytes(b'evaluation-only records')
             manifest=run/'training.json';manifest.write_text(json.dumps(dict(split='train',input_sha256=sha(train))))
             selected=root/'selection.json';selected.write_text(json.dumps(dict(frozen=True,thresholds=dict(crf=.75,neural=0),
                 candidate=dict(model_sha256=sha(checkpoint)),encoder=dict(base_weights_sha256=sha(base/'model.safetensors'),tokenizer_files={}),
                 provenance=dict(training_sha256=sha(manifest)))))
-            (assets/'export.json').write_text(json.dumps(dict(selection_sha256=sha(selected),model_sha256='fp32')))
-            (assets/'int4-compression.json').write_text(json.dumps(dict(selection_sha256=sha(selected),recipe='int4',reference_sha256='fp32',sha256=sha(assets/'int4.onnx'))))
+            (assets/'export.json').write_text(json.dumps(dict(selection_sha256=sha(selected),model_sha256=sha(assets/'fp32.onnx'))))
+            (assets/'int4-compression.json').write_text(json.dumps(dict(selection_sha256=sha(selected),recipe='int4',reference_sha256=sha(assets/'fp32.onnx'),sha256=sha(assets/'int4.onnx'))))
             self.assertEqual(identities(assets,selected,checkpoint,base,train)['input_sha256'],sha(train))
             with self.assertRaisesRegex(ValueError,'original training mixture'):identities(assets,selected,checkpoint,base,dev)
             checkpoint.write_bytes(b'changed checkpoint')

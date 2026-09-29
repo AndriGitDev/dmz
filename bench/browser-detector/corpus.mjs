@@ -23,7 +23,7 @@ catch(error) { if(error.code!=='ENOENT')throw error; }
 async function digest(path) {const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);return hash.digest('hex');}
 const vectors=JSON.parse(await readFile(vectorsPath,'utf8'));
 const model=process.env.DMZ_MODEL_NAME || 'int8';
-assert.ok(['fp32','int8','int4','mixed','int4b16','int4a32','hqq4'].includes(model));
+assert.ok(['fp32','int8','int4','mixed','int4b16','int4a32','hqq4','repair1','repair2'].includes(model));
 assert.equal(await digest(join(assets,model+'.onnx')),vectors.model_sha256);
 const result={schema:1,model_sha256:vectors.model_sha256,vectors_sha256:await digest(vectorsPath),runtime:'onnxruntime-web 1.23.2',threads:3,batch_size:1,externalRequests:[],sets:[]};
 const runtime=join(root,'node_modules/onnxruntime-web/dist');

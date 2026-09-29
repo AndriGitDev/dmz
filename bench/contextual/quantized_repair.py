@@ -43,6 +43,7 @@ def identities(assets, selection, checkpoint, base, source=None):
         raise ValueError('requires frozen reference and unchanged thresholds')
     if export['selection_sha256']!=digest(selection) or compressed['selection_sha256']!=digest(selection):
         raise ValueError('selection changed')
+    if digest(assets/'fp32.onnx')!=export['model_sha256']:raise ValueError('FP32 export changed')
     if compressed['recipe']!='int4' or compressed['reference_sha256']!=export['model_sha256']:
         raise ValueError('requires original frozen-reference int4 recipe')
     if digest(assets/'int4.onnx')!=compressed['sha256'] or digest(checkpoint)!=selected['candidate']['model_sha256']:

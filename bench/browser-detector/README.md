@@ -137,3 +137,11 @@ are predeclared in the same protocol. To measure additional graphs without
 replacing earlier fabricated fixtures, use `fixtures.py --output /outside/new.json`
 and `DMZ_BROWSER_FIXTURES=/outside/new.json`. New runtime reports hash that fixture
 file; prior fixtures and reports remain intact.
+
+`../contextual/quantized_repair.py --probe` checks the frozen int4 training
+backbone against real ORT outputs on training-only chunks before correction
+training. `export_repair.py` requires a complete correction checkpoint and adds
+its FP32 matrices to the original int4 graph without requantizing its backbone.
+Export completed epochs as `repair1.onnx` / `repair2.onnx` for the same native and
+Chromium evaluation tools. These are separately trained compression-recovery
+candidates, not revisions to the frozen FP32 reference.
