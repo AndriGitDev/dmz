@@ -158,3 +158,22 @@ activations), and the unchanged FP32 head. This is `mixed`, a separate artifact;
 it does not replace the int4 failure/quality evidence. No calibration, retraining,
 per-example layer selection, or threshold adjustment is used. Compare it against
 the same immutable FP32 Chromium reference and retain size and quality failures.
+
+## Extended bounded int4 comparison
+
+The owner authorized eight additional hours on 29 September 2026, through
+15:16:30 UTC. The initial four-graph comparison is complete and retained in
+`compression-comparison.json`: no compressed replacement is accepted. The FP32
+reference, datasets, thresholds and CRF priority remain immutable.
+
+Before further evaluation, predeclare two weight-only alternatives to int4:
+`int4b16` uses symmetric blocks of 16 instead of 32, increasing scale overhead
+for potentially lower weight error; `int4a32` uses asymmetric blocks of 32.
+Both preserve FP32 activations (`accuracy_level=1`), the FP32 head and the same
+U8 Gather recipe. These are development-informed experiments, not independent
+validation. No threshold search, calibration or retraining is involved. Preserve
+all results; assess native scores first and perform actual Chromium comparisons
+for any candidate considered for selection. Do not infer quality from byte size.
+ONNX Runtime documents block-wise weight-only options at
+https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html;
+the implementation and runtime remain pinned to the installed 1.23.2 version.

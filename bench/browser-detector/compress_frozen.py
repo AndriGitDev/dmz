@@ -15,7 +15,7 @@ def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--assets',type=Path,required=True)
     p.add_argument('--selection',type=Path,required=True)
-    p.add_argument('--recipe',choices=['int8','int4','mixed'],required=True)
+    p.add_argument('--recipe',choices=['int8','int4','mixed','int4b16','int4a32'],required=True)
     a=p.parse_args();assets=external(a.assets)
     selected=json.loads(a.selection.read_text());export=json.loads((assets/'export.json').read_text())
     if selected.get('frozen') is not True:raise ValueError('full-precision reference must be frozen first')
@@ -53,13 +53,15 @@ def main():
         else:
             quantize_dynamic(str(source),str(intermediate),weight_type=QuantType.QUInt8,
                 per_channel=True,op_types_to_quantize=['Gather'])
-        quantizer=MatMulNBitsQuantizer(str(intermediate),block_size=32,is_symmetric=True,
+        block_size=16 if a.recipe=='int4b16' else 32
+        symmetric=a.recipe!='int4a32'
+        quantizer=MatMulNBitsQuantizer(str(intermediate),block_size=block_size,is_symmetric=symmetric,
             accuracy_level=1,nodes_to_exclude=excluded,op_types_to_quantize=('MatMul',))
         quantizer.process()
         quantizer.model.save_model_to_file(str(output),use_external_data_format=False)
         # Retain intermediate provenance; remove only this newly generated temporary graph.
         intermediate_sha256=digest(intermediate);intermediate.unlink()
-        description='Weight-only symmetric int4 MatMul, block 32, accuracy_level=1 (FP32 activations), FP32 head; U8 Gather'
+        description=f"Weight-only {'symmetric' if symmetric else 'asymmetric'} int4 MatMul, block {block_size}, accuracy_level=1 (FP32 activations), FP32 head; U8 Gather"
         if a.recipe=='mixed':
             description='Dynamic U8/U8 attention MatMul and U8 Gather; weight-only int4 feed-forward MatMul block 32 with FP32 activations; FP32 head'
     onnx.checker.check_model(str(output))
@@ -70,7 +72,8 @@ def main():
         operators=dict(Counter(n.domain+':'+n.op_type for n in graph.graph.node)),
         excluded_head_nodes=excluded,calibration=False,threshold_retuning=False,
         quality_status='not evaluated; size alone is not acceptance')
-    if a.recipe in ('int4','mixed'):report['intermediate_sha256']=intermediate_sha256
+    if a.recipe!='int8':
+        report.update(intermediate_sha256=intermediate_sha256,block_size=block_size,is_symmetric=symmetric,accuracy_level=1)
     (assets/(a.recipe+'-compression.json')).write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 

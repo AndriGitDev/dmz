@@ -9,7 +9,7 @@ from ner import external
 from transformers import AutoTokenizer
 
 p=argparse.ArgumentParser(__doc__);p.add_argument('--assets',type=Path,required=True)
-p.add_argument('--models',nargs='+',choices=['fp32','int8','int4','mixed'],default=['fp32','int8']);a=p.parse_args()
+p.add_argument('--models',nargs='+',choices=['fp32','int8','int4','mixed','int4b16','int4a32'],default=['fp32','int8']);a=p.parse_args()
 a.assets=external(a.assets)
 if (a.assets/'fixtures.json').exists():raise ValueError('refusing to overwrite fixtures')
 verify_tokenizer(a.assets/'tokenizer')
