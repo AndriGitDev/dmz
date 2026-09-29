@@ -78,8 +78,8 @@ The separate rank-16 correction-training job started at approximately 09:34 UTC.
 Both complete epochs finished in 9,448 seconds of optimization under the
 12,717-second cap. The first repaired graph is 98.945 MiB and passed its trained
 PyTorch/ORT parity probe (eight training chunks, zero changed labels). Separate
-native and Chromium development evaluation is running; no quality claim follows
-from this probe. `repair-training.json` pins both complete checkpoints.
+native and Chromium development evaluation is separate from this probe.
+`repair-training.json` pins both complete checkpoints.
 It keeps the int4 backbone fixed and trains only additive FP32 matrices plus the
 BIO head on the original training mixture. The real initial implementation probe
 passes on eight training chunks: maximum PyTorch/ORT logit difference 0.0000401,
@@ -100,3 +100,18 @@ It stores only correction matrices as FP16 with FP32 computation, preserving the
 backbone and trained head. A command-level guard requires a parent Chromium
 report preserving all reference precision/recall values on both development
 sets. Any generated follow-up still requires fresh native and browser evaluation.
+
+
+### Correction epoch 1 browser result
+
+The 98.945-MiB `repair1` graph exactly matches native spans in Chromium on both
+reused development sets. General precision/recall is 95.3625% / 96.9456%
+(TP 1460, FP 71, FN 46); synthetic domain is 99.5816% / 99.1667%
+(TP 476, FP 2, FN 4). It fails the general precision floor and is not a qualifying
+replacement or parent for the conditional correction-storage trial.
+
+Against frozen FP32, it adds three general misses and recovers two, adding nine
+false positives and removing six. In the domain set it adds two misses and
+recovers four, adds no false positives and removes one. Browser replay takes
+1701.590 / 126.619 seconds; external requests are zero. The second trained epoch
+is now being evaluated. No thresholds or merge rules changed.

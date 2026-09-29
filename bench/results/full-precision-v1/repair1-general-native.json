@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "scope": "fixed-threshold development exact Person spans; evaluation only, no threshold retuning",
+  "text_mode": "canonical",
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "model_sha256": "a8d67c5e33059e5029bd2543dacf103e5039781013420647ad0bee1629f02b24",
+  "model_bytes": 103751513,
+  "rows": 5582,
+  "chunks": 5582,
+  "threads": 3,
+  "batch_size": 1,
+  "load_seconds": 0.6294578530068975,
+  "inference_seconds": 278.1596591199923,
+  "onnxruntime": "1.23.2",
+  "neural": {
+    "tp": 1445,
+    "fp": 52,
+    "fn": 61,
+    "precision": 0.9652638610554443,
+    "recall": 0.9594953519256308
+  },
+  "combined": {
+    "tp": 1460,
+    "fp": 71,
+    "fn": 46,
+    "precision": 0.953625081645983,
+    "recall": 0.9694555112881806
+  },
+  "reference_neural": {
+    "tp": 1444,
+    "fp": 49,
+    "fn": 62,
+    "precision": 0.9671801741460148,
+    "recall": 0.9588313413014609
+  },
+  "reference_combined": {
+    "tp": 1461,
+    "fp": 68,
+    "fn": 45,
+    "precision": 0.9555264879005886,
+    "recall": 0.9701195219123506
+  },
+  "changed_neural_records": 23,
+  "changed_combined_records": 15,
+  "independent_validation": false
+}
