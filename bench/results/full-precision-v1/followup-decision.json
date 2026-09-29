@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "created_utc": "2026-09-29T13:29:50.951441+00:00",
+  "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+  "parents": [
+    {
+      "model": "repair1",
+      "eligible": false,
+      "reason": "parent does not preserve frozen-reference quality",
+      "quality_report_sha256": "5de74fd1a99ef0fa053bf73a19c1fcfc8b71537aae132e4d8cb8073a1b30e606"
+    },
+    {
+      "model": "repair2",
+      "eligible": false,
+      "reason": "parent does not preserve frozen-reference quality",
+      "quality_report_sha256": "732f3a33751a3e4d0e38e07bad72a83cafb8e95f3a5e29715b93855288ad10fa"
+    }
+  ],
+  "repairhalf": {
+    "status": "skipped-prerequisite",
+    "reason": "Neither trained parent preserves every frozen-reference precision and recall value in actual Chromium"
+  },
+  "next": "Evaluate fp16storage; original-domain repair2 and fp16storage checks; isolated extended runtime"
+}

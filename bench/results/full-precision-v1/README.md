@@ -115,3 +115,26 @@ false positives and removing six. In the domain set it adds two misses and
 recovers four, adds no false positives and removes one. Browser replay takes
 1701.590 / 126.619 seconds; external requests are zero. The second trained epoch
 is now being evaluated. No thresholds or merge rules changed.
+
+
+### Correction epoch 2 browser result
+
+The 98.945-MiB `repair2` graph exactly matches native spans in Chromium on both
+reused development sets. General precision/recall is 95.7377% / 96.9456%
+(TP 1460, FP 65, FN 46); synthetic domain is 99.5798% / 98.7500%
+(TP 474, FP 2, FN 6). It meets both development floors and is the highest-ranked
+sub-100-MiB candidate under the predeclared minimum-recall/precision rule.
+It does not establish independent quality or deployment readiness.
+
+Against frozen FP32, general precision increases 0.1851 percentage points and
+recall decreases 0.0664 points: three added misses and two recoveries, four added
+false positives and seven removed. Domain recall is unchanged in aggregate, but
+one missed span is added and one recovered; one false positive is added and two
+removed. Browser replay takes 1719.570 / 125.955 seconds, with zero external
+requests. Original-text and isolated runtime checks remain pending.
+
+Neither correction parent preserves every frozen-reference precision/recall
+value, so the guarded `repairhalf` trial is skipped as predeclared. The command's
+actual quality guard rejects both reports; `followup-decision.json` records their
+hashes and decision. The 237.044-MiB FP16-storage fallback is now being evaluated
+at unchanged thresholds to test whether it preserves more reference quality.
