@@ -1,0 +1,290 @@
+{
+  "schema": 1,
+  "scope": "Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration",
+  "models": {
+    "fp32": "053feb2c684301d3110a4bdcbfefda2fd31807b6fa4d9d73060dafa67928c1fb",
+    "int8": "72466fbb391d65f498e10fb7c95ce9ae67042ba4cd845cff4a2cad6d4c781956",
+    "int4": "e89ca5f05a181928ff0cc9da4f5b6774e2cfb3c3a472ab5dafaff6fb3c7b9779",
+    "mixed": "6adf0ccb6368bad3f971fc4333fc7ae4a1ec1716cad76d31bd49963b020c7c52"
+  },
+  "sessions": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "baselineTreeRssKiB": 454876,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 468.65000000596046,
+          "warmMedianMs": 295.53999999165535,
+          "warmMaxMs": 303.3449999988079,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001239776611328125
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 791.080000013113,
+          "warmMedianMs": 785.6450000107288,
+          "warmMaxMs": 900.5150000154972,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001049041748046875
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3112.350000023842,
+          "warmMedianMs": 3082.7849999964237,
+          "warmMaxMs": 3144.9800000190735,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000133514404296875
+        }
+      ],
+      "load": {
+        "loadMs": 6084.064999997616,
+        "isolated": true,
+        "wallMs": 6121
+      },
+      "loadedTreeRssKiB": 1683700,
+      "peakTreeRssKiB": 2163304
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "baselineTreeRssKiB": 458728,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 302.7349999845028,
+          "warmMedianMs": 134.8449999988079,
+          "warmMaxMs": 325.75999999046326,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.07456779479980469
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 501.30499997735023,
+          "warmMedianMs": 406.46000000834465,
+          "warmMaxMs": 494.57000002264977,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 1.4048690795898438
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 1679.4399999976158,
+          "warmMedianMs": 1744.4149999916553,
+          "warmMaxMs": 2069.6599999964237,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 1.8077877759933472
+        }
+      ],
+      "load": {
+        "loadMs": 2346.4650000035763,
+        "isolated": true,
+        "wallMs": 2420
+      },
+      "loadedTreeRssKiB": 857096,
+      "peakTreeRssKiB": 950744
+    },
+    {
+      "model": "int4",
+      "threads": 3,
+      "baselineTreeRssKiB": 458844,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 587.830000013113,
+          "warmMedianMs": 445.22500002384186,
+          "warmMaxMs": 686.5949999988079,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000324249267578125
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 1102.925000011921,
+          "warmMedianMs": 1038.1450000107288,
+          "warmMaxMs": 1064.7549999952316,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00002288818359375
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3725.699999988079,
+          "warmMedianMs": 3774.8700000047684,
+          "warmMaxMs": 4009.939999997616,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00002288818359375
+        }
+      ],
+      "load": {
+        "loadMs": 1820.5099999904633,
+        "isolated": true,
+        "wallMs": 1871
+      },
+      "loadedTreeRssKiB": 773552,
+      "peakTreeRssKiB": 866844
+    },
+    {
+      "model": "mixed",
+      "threads": 3,
+      "baselineTreeRssKiB": 458964,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 539.8050000071526,
+          "warmMedianMs": 306.1299999952316,
+          "warmMaxMs": 339.8349999785423,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.7392845153808594
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 840.4399999976158,
+          "warmMedianMs": 822.0200000107288,
+          "warmMaxMs": 941.4250000119209,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.6680755615234375
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3386.7049999833107,
+          "warmMedianMs": 3109.030000001192,
+          "warmMaxMs": 3232.770000010729,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.849888801574707
+        }
+      ],
+      "load": {
+        "loadMs": 2198.1700000166893,
+        "isolated": true,
+        "wallMs": 2253
+      },
+      "loadedTreeRssKiB": 790508,
+      "peakTreeRssKiB": 895784
+    }
+  ],
+  "failures": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int4",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int4",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "mixed",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "mixed",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "test": "worker-termination-rejects-pending",
+      "passed": true
+    },
+    {
+      "test": "not-ready",
+      "passed": true
+    },
+    {
+      "test": "corrupt-model",
+      "passed": true
+    },
+    {
+      "test": "worker-crash-rejects-pending",
+      "passed": true
+    }
+  ],
+  "memory": "Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory",
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "runtime": "onnxruntime-web 1.23.2",
+  "hardwareConcurrency": 4,
+  "multiTab": {
+    "tabs": 3,
+    "model": "int8",
+    "threadsPerTab": 1,
+    "baselineTreeRssKiB": 669500,
+    "loadWallMs": 3558,
+    "loadedTreeRssKiB": 1764912,
+    "inferenceWallMs": [
+      4512.800000011921,
+      4580.9000000059605,
+      4472.800000011921
+    ],
+    "parity": [
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 1.8077877759933472
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 1.8077877759933472
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 1.8077877759933472
+      }
+    ],
+    "peakTreeRssKiB": 2101108
+  },
+  "requests": 57,
+  "loadScope": "Fresh worker/context with no-store HTTP, same browser process; not a fresh OS or browser cache cold start",
+  "allRunCasesSucceeded": true
+}

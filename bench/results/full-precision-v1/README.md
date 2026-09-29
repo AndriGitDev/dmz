@@ -1,58 +1,53 @@
-# Full-precision development comparison (in progress)
+# Frozen FP32 and compression review
 
-All scores are exact Person spans on reused development data. They do not establish
-independent quality or production readiness. The blind-review-v2 packet has 42
-unlabelled records from nine documents and awaits independent human review.
+**Status: development targets met by FP32; overall goal not complete.** All scores are exact Person spans on reused development data. The domain set is synthetic legal/financial text. These are not independent validation or production-readiness results.
 
-| Fixed CRF combination | General P / R | Synthetic legal/financial P / R |
-| --- | --- | --- |
-| Preserved baseline | 95.92% / 95.29% | 98.51% / 96.25% |
-| Full FP32 epoch 1 | 96.10% / 96.55% | 99.36% / 97.71% |
-| Full FP32 epoch 2 | 95.55% / 97.01% | 99.37% / 98.75% |
-| Equal FP32 average, epochs 1 and 2 | 95.80% / 96.88% | 99.58% / 98.54% |
-| Bounded refinement from epoch 2 | 95.42% / 96.95% | 99.79% / 99.38% |
+## Actual Chromium accuracy
 
-`initial-comparison.json` also retains standalone neural scores. Epoch 2 currently
-wins the predeclared precision-floor / lower-recall rule, but its general precision
-margin is narrow. The completed refinement fails the general precision floor in
-combination; its standalone detector passes but has lower general recall.
-`final-comparison.json` retains all 13 candidates, including the old baseline.
-The reference was frozen at 05:01 UTC on 29 September 2026 after exact batch-8 to
-batch-1 span parity on both sets and a passing original UTF-8 domain check. See
-`../../contextual/full-precision-protocol.md` for the recipes and development-informed
-adjustments.
+| Graph | MiB | General precision / recall | Domain precision / recall |
+| --- | ---: | --- | --- |
+| fp32 | 473.032 | 95.5526% / 97.0120% | 99.3711% / 98.7500% |
+| int8 | 119.642 | 95.6152% / 97.0120% | 99.3671% / 98.1250% |
+| int4 | 88.750 | 95.7532% / 95.8167% | 99.1489% / 97.0833% |
+| mixed | 99.120 | 95.1666% / 96.7463% | 99.5798% / 98.7500% |
 
-`selected-candidate.json` is immutable: checkpoint, tokenizer/configuration,
-thresholds, data identities, comparison and stability hashes are pinned. Later
-browser and compression measurements belong in separate reports. The selected
-checkpoint SHA-256 is `ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a`.
+FP32 epoch 2 was selected from 13 candidates after two full encoder epochs, a fixed parameter average, a bounded lower-rate refinement, and fixed merge-priority alternatives. The refinement and priority alternatives did not improve the predeclared selection rule. `final-comparison.json` preserves every candidate. General FP32 precision has a narrow margin above the floor.
 
-Each new checkpoint has 123,951,875 FP32 parameters and is 495,831,740 bytes
-(472.862 MiB). This is a checkpoint size, not a browser graph or extension download.
-The FP32 ONNX export is 496,010,299 bytes (473.032 MiB). Native parity is exact on
-both datasets. Chromium 153 / ORT Web 1.23.2, three WASM threads and batch one,
-also reproduces every selected combined span on both full development sets.
-Replay took 764.101 seconds for general text and 81.025 seconds for domain text;
-these are corpus replay times, not per-request warm latency measurements.
-The browser scope uses native pretokenization and a cached CRF merge and does not
-establish end-to-end Shield behavior.
+The checkpoint has 123,951,875 parameters, all 203 tensors FP32, and is 472.862 MiB. It was frozen before compression at 05:01 UTC on 29 September 2026. `selected-candidate.json` pins checkpoint, tokenizer/configuration, thresholds, input and stability hashes and remains immutable. Batch-8/batch-1 PyTorch spans, native ONNX spans and FP32 Chromium spans agree exactly on both sets; original UTF-8 domain scores also agree.
 
-The guarded int4 graph is 88.750 MiB; unsigned-int8 is 119.642 MiB; the mixed
-attention-int8/feed-forward-int4 graph is 99.120 MiB. Int4 Chromium exactly matches
-its native results: general 95.75% precision / 95.82% recall; synthetic domain
-99.15% / 97.08%. Against frozen FP32 it adds 20 general misses (recovering two)
-and eight domain misses (recovering none). General replay takes 1596.578 seconds,
-versus FP32 764.101 seconds. It is not selected as a quality-preserving replacement.
-Int8 and mixed accuracy and isolated runtime measurements remain in progress.
-No compressed model is accepted from size alone. `supporting-assets.json` inventories tokenizer, CRF and WASM files separately
-and is not a packaged-extension or compressed-transfer measurement.
+## Compression decision
 
-The epoch-2 error audit motivated a fixed-threshold neural-overlap-priority
-diagnostic. It did not improve any of the three completed candidates. For epoch 2
-on general text, seven recovered gold spans were outweighed by nine newly missed
-spans; precision fell to 95.23%. `priority-comparison.json` preserves this failed
-alternative. The refinement's neural-priority alternative also fails to improve
-the selection rule.
+Retain frozen FP32 reference. Int8 is closest compressed candidate but exceeds 100 MiB and loses domain recall. Int4 meets graph size with material recall loss and slower inference; mixed fails general precision floor.
 
-Weights, source records, predictions and detailed logs remain outside Git.
-Aggregate reports identify input and model hashes. Shield behavior is unchanged.
+| Candidate | General added misses / recovered | Domain added misses / recovered | General / domain recall change, pp |
+| --- | --- | --- | --- |
+| int8 | 1 / 1 | 4 / 1 | +0.0000 / -0.6250 |
+| int4 | 20 / 2 | 8 / 0 | -1.1952 / -1.6667 |
+| mixed | 4 / 0 | 1 / 1 | -0.2656 / +0.0000 |
+
+Thresholds remain CRF 0.75 / neural 0.0 with CRF priority throughout. No calibration labels, threshold retuning or retraining were used for compression. Reports also include added/removed false positives and native/browser differences. Equal aggregate recall does not mean identical predictions.
+
+Tokenizer, CRF and WASM inventory totals 18.598 MiB beyond each graph. Graph-plus-inventory sizes are fp32 491.631 MiB, int8 138.240 MiB, int4 107.349 MiB, mixed 117.718 MiB. These are uncompressed file sums, not packaged extension or network-transfer measurements. No 50 MiB model was obtained.
+
+## Chromium runtime
+
+Chromium 153.0.8010.12 / ONNX Runtime Web 1.23.2, CPU WASM, three threads, batch one. Warm figures are medians of five runs on fabricated pretokenized inputs after an initial run.
+
+| Graph | Load ms | Warm ms, 32 / 128 / 512 words | Peak summed RSS MiB |
+| --- | ---: | --- | ---: |
+| fp32 | 6121 | 295.5 / 785.6 / 3082.8 | 2112.6 |
+| int8 | 2420 | 134.8 / 406.5 / 1744.4 | 928.5 |
+| int4 | 1871 | 445.2 / 1038.1 / 3774.9 | 846.5 |
+| mixed | 2253 | 306.1 / 822.0 / 3109.0 | 874.8 |
+
+Three independent int8 tabs: peak summed RSS 2051.9 MiB; inference wall times [4512.800000011921, 4580.9000000059605, 4472.800000011921] ms. Failure checks passed: 12/12. All run cases succeeded: True. External requests: 0.
+
+RSS is sampled Linux Chromium process-tree RSS; shared pages may be counted more than once. Load uses a fresh worker/context and no-store loopback HTTP in the same browser process, not a cold OS cache. The three-tab result measures separate model copies, not a shared extension worker.
+
+Accuracy replay uses native pretokenization and cached CRF merge; runtime timings exclude tokenization, CRF, masking and Shield integration. Failure tests cover malformed input, deadline termination, pending-request rejection, not-ready inference, corrupt models and worker crashes. They test this harness, not an end-to-end Shield release gate.
+
+## Review and remaining work
+
+The private blind-review-v2 pilot has 42 unlabelled records from nine documents. It awaits independent human annotation, extraction/source review and a document-disjoint sampling protocol. No candidate predictions were used to create gold labels. See `../../holdout/README.md`.
+
+Weights, data, token vectors, individual predictions and detailed logs remain outside Git. Aggregate reports contain hashes. Baselines and failed experiments are preserved; Shield code is unchanged. Draft PR #11 is stacked on unmerged PR #10; no merge or deployment is authorized. See `../../contextual/full-precision-protocol.md` for the training and compression recipes.

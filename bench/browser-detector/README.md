@@ -1,9 +1,11 @@
 # Private browser detector benchmark
 
-Research harness for the frozen contextual name detector. **Not wired into
-Shield**, not a new trained model, and not an independent accuracy evaluation.
-See [protocol.md](protocol.md) for the frozen comparison and
-[results](../results/browser-v1/README.md) for the decision.
+Research harness for contextual name detector exports. **Not wired into Shield**
+and not an independent accuracy evaluation. The historical frozen-encoder
+comparison is in [protocol.md](protocol.md) and
+[results](../results/browser-v1/README.md). The later full-encoder training and
+frozen-reference compression comparison is in
+[full-precision results](../results/full-precision-v1/README.md).
 
 ## Reproduce
 
@@ -110,12 +112,13 @@ The new training round is defined in
 `export_finetuned.py --base ... --checkpoint ... --selection ... --output ...`
 requires a frozen selection manifest and verifies checkpoint/base hashes. It
 exports FP32 only, without the old cache's float16 pooling round-trip.
-`compress_frozen.py --assets ... --selection ... --recipe int8|int4` separately
+`compress_frozen.py --assets ... --selection ... --recipe int8|int4|mixed` separately
 checks the selection and FP32 graph hashes before creating a new candidate.
-Preparing these commands does not mean either compression candidate was accepted.
+The mixed recipe uses int8 attention and int4 feed-forward weights. Acceptance
+requires measured quality; graph size alone is insufficient.
 
 Native `evaluate.py` accepts `--selection`. Browser `corpus.py` additionally accepts
-`--model fp32|int8|int4` and `--neural-prefix` for the selected reference caches.
+`--model fp32|int8|int4|mixed` and `--neural-prefix` for the selected reference caches.
 Use the same selection and prediction hashes throughout. Set `DMZ_MODEL_NAME`
 for `corpus.mjs`; it defaults to the historical int8 replay. `fixtures.py --models`
 selects graphs for fabricated runtime measurements, and `DMZ_MULTI_MODEL` selects
