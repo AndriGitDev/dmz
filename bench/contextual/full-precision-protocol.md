@@ -212,3 +212,10 @@ initializers. Require native and Chromium evaluation after training, with the
 same frozen FP32 reference, thresholds, CRF priority and development disclosure.
 Apply the existing precision-floor / minimum-recall selection rule to completed
 checkpoints; preserve failures. Do not modify the original FP32 selection.
+
+After exporting each completed correction checkpoint, repeat the training-chunk
+numerical probe with `--probe --repair-state ... --probe-graph ...`. It compares
+the trained PyTorch corrections with their exported ONNX graph and verifies both
+artifact hashes. This is an implementation parity check on training inputs,
+not a quality evaluation. Development scoring remains in the separate native
+and Chromium evaluation commands.

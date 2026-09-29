@@ -133,7 +133,7 @@ def parity_probe(model, jobs, tokenizer, graph_path):
 
 def train(a):
     import torch
-    from safetensors.torch import save_file
+    from safetensors.torch import save_file, load_file
     from transformers import AutoTokenizer
     assets,base,checkpoint,source=map(external,[a.assets,a.base,a.checkpoint,a.input])
     identity=identities(assets,a.selection,checkpoint,base,source)
@@ -142,14 +142,25 @@ def train(a):
     tokenizer=AutoTokenizer.from_pretrained(base,local_files_only=True,add_prefix_space=True,trust_remote_code=False)
     records,jobs=prepare(source,'train',tokenizer)
     model,conversion=build(base,checkpoint,assets/'int4.onnx',a.rank)
-    probe=parity_probe(model,jobs,tokenizer,assets/'int4.onnx')
+    comparison=assets/'int4.onnx';verified_export=None
+    if a.repair_state:
+        repair_state=external(a.repair_state);comparison=external(a.probe_graph)
+        exported=json.loads(comparison.with_suffix('.json').read_text())
+        if exported['sha256']!=digest(comparison) or exported['checkpoint_sha256']!=digest(repair_state) or exported['selection_sha256']!=identity['selection_sha256']:
+            raise ValueError('repair export identity mismatch')
+        state=load_file(str(repair_state))
+        if set(state)!={n for n,p in model.named_parameters() if p.requires_grad}:raise ValueError('incomplete repair state')
+        if any(v.dtype!=torch.float32 or not v.isfinite().all() for v in state.values()):raise ValueError('invalid repair state')
+        model.load_state_dict(state,strict=False)
+        verified_export=dict(model_sha256=digest(comparison),checkpoint_sha256=digest(repair_state))
+    probe=parity_probe(model,jobs,tokenizer,comparison)
     adapters=[p for n,p in model.named_parameters() if p.requires_grad and not n.startswith('head.')]
     optimizer=torch.optim.AdamW([{'params':adapters,'lr':a.adapter_lr},{'params':model.head.parameters(),'lr':a.head_lr}],weight_decay=.01)
     total=math.ceil(math.ceil(len(jobs)/a.batch_size)/a.accumulation)*a.epochs;warmup=max(1,int(total*.1))
     def rate(step):return (step+1)/warmup if step<warmup else max(0.,(total-step)/max(1,total-warmup))
     scheduler=torch.optim.lr_scheduler.LambdaLR(optimizer,rate)
     report=dict(schema=1,method='Frozen int4 backbone with trainable FP32 rank-16 additive corrections and BIO head',
-        identity=identity,conversion=conversion,parity_probe=probe,split='train',rows=len(records),chunks=len(jobs),
+        identity=identity,conversion=conversion,parity_probe=probe,verified_export=verified_export,split='train',rows=len(records),chunks=len(jobs),
         settings={k:v for k,v in vars(a).items() if isinstance(v,(str,int,float,bool))},
         source_sha256=digest(Path(__file__)),torch=torch.__version__,checkpoints=[],independent_validation=False)
     (output/'protocol.json').write_text(json.dumps(report,indent=2)+'\n')
@@ -188,8 +199,10 @@ def main():
     p.add_argument('--adapter-lr',type=float,default=1e-4);p.add_argument('--head-lr',type=float,default=5e-5)
     p.add_argument('--batch-size',type=int,default=8);p.add_argument('--accumulation',type=int,default=4)
     p.add_argument('--threads',type=int,default=3);p.add_argument('--seed',type=int,default=44)
+    p.add_argument('--repair-state',type=Path);p.add_argument('--probe-graph',type=Path)
     p.add_argument('--max-seconds',type=float,default=14400);p.add_argument('--probe',action='store_true')
     a=p.parse_args()
+    if (a.repair_state is None)!=(a.probe_graph is None) or (a.repair_state and not a.probe):p.error('repair-state and probe-graph require probe mode together')
     if min(a.epochs,a.batch_size,a.accumulation,a.threads,a.max_seconds,a.adapter_lr,a.head_lr)<=0:p.error('positive limits required')
     train(a)
 
