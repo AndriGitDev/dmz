@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "method": "Development-informed fixed neural-priority diagnostic; thresholds unchanged",
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  },
+  "independent_final_evaluation": false,
+  "candidates": [
+    {
+      "candidate": "epoch-1-neural-priority",
+      "model_sha256": "2f1db979856d90f2d707ee9a6ef9d28e7f39c8d4271cbf1d3acd971faa2a2037",
+      "scores": {
+        "general": {
+          "tp": 1451,
+          "fp": 64,
+          "fn": 55,
+          "precision": 0.9577557755775578,
+          "recall": 0.9634794156706508,
+          "target_met": true
+        },
+        "domain": {
+          "tp": 462,
+          "fp": 10,
+          "fn": 18,
+          "precision": 0.9788135593220338,
+          "recall": 0.9625,
+          "target_met": true
+        }
+      },
+      "versus_crf_priority": {
+        "general": {
+          "changed_records": 12,
+          "recovered_spans": 5,
+          "added_missed_spans": 8,
+          "added_false_positives": 9,
+          "removed_false_positives": 4
+        },
+        "domain": {
+          "changed_records": 6,
+          "recovered_spans": 0,
+          "added_missed_spans": 7,
+          "added_false_positives": 7,
+          "removed_false_positives": 0
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.9625,
+      "target_met": true
+    },
+    {
+      "candidate": "epoch-2-neural-priority",
+      "model_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+      "scores": {
+        "general": {
+          "tp": 1459,
+          "fp": 73,
+          "fn": 47,
+          "precision": 0.9523498694516971,
+          "recall": 0.9687915006640107,
+          "target_met": false
+        },
+        "domain": {
+          "tp": 473,
+          "fp": 4,
+          "fn": 7,
+          "precision": 0.9916142557651991,
+          "recall": 0.9854166666666667,
+          "target_met": true
+        }
+      },
+      "versus_crf_priority": {
+        "general": {
+          "changed_records": 14,
+          "recovered_spans": 7,
+          "added_missed_spans": 9,
+          "added_false_positives": 11,
+          "removed_false_positives": 6
+        },
+        "domain": {
+          "changed_records": 1,
+          "recovered_spans": 0,
+          "added_missed_spans": 1,
+          "added_false_positives": 1,
+          "removed_false_positives": 0
+        }
+      },
+      "precision_qualified": false,
+      "lower_recall": 0.9687915006640107,
+      "target_met": false
+    },
+    {
+      "candidate": "average-neural-priority",
+      "model_sha256": "4ccc19c2239a52d3d17bb9f5312a6842e460627fff68f984bff4d0b83400ed23",
+      "scores": {
+        "general": {
+          "tp": 1459,
+          "fp": 66,
+          "fn": 47,
+          "precision": 0.9567213114754098,
+          "recall": 0.9687915006640107,
+          "target_met": true
+        },
+        "domain": {
+          "tp": 470,
+          "fp": 5,
+          "fn": 10,
+          "precision": 0.9894736842105263,
+          "recall": 0.9791666666666666,
+          "target_met": true
+        }
+      },
+      "versus_crf_priority": {
+        "general": {
+          "changed_records": 11,
+          "recovered_spans": 6,
+          "added_missed_spans": 6,
+          "added_false_positives": 7,
+          "removed_false_positives": 5
+        },
+        "domain": {
+          "changed_records": 3,
+          "recovered_spans": 0,
+          "added_missed_spans": 3,
+          "added_false_positives": 3,
+          "removed_false_positives": 0
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.9687915006640107,
+      "target_met": true
+    }
+  ],
+  "outcome": "No completed candidate improves the original selection rule; refinement comparison pending"
+}

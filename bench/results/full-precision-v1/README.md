@@ -21,5 +21,11 @@ Each new checkpoint has 123,951,875 FP32 parameters and is 495,831,740 bytes
 (472.862 MiB). This is a checkpoint size, not a browser graph or extension download.
 No new candidate has been compressed or measured in Chromium yet.
 
+The epoch-2 error audit motivated a fixed-threshold neural-overlap-priority
+diagnostic. It did not improve any of the three completed candidates. For epoch 2
+on general text, seven recovered gold spans were outweighed by nine newly missed
+spans; precision fell to 95.23%. `priority-comparison.json` preserves this failed
+alternative. The same diagnostic remains pending for the refinement checkpoint.
+
 Weights, source records, predictions and detailed logs remain outside Git.
 Aggregate reports identify input and model hashes. Shield behavior is unchanged.
