@@ -145,3 +145,11 @@ its FP32 matrices to the original int4 graph without requantizing its backbone.
 Export completed epochs as `repair1.onnx` / `repair2.onnx` for the same native and
 Chromium evaluation tools. These are separately trained compression-recovery
 candidates, not revisions to the frozen FP32 reference.
+
+For an original-typography domain check, use fresh private asset/reference/output
+paths, `evaluate.py --text-mode original`, and `corpus.py --text-mode original
+--sets domain`. Supply original-text CRF and frozen prediction caches. First record
+a separate FP32 Chromium span reference in that text mode, then compare the
+compressed finalist against it. Text-mode metadata prevents canonical/original
+cache mixing; old unmarked caches are treated as canonical. This is another reused
+development check, not new independent labels.

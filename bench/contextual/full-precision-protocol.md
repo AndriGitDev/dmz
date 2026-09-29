@@ -219,3 +219,12 @@ the trained PyTorch corrections with their exported ONNX graph and verifies both
 artifact hashes. This is an implementation parity check on training inputs,
 not a quality evaluation. Development scoring remains in the separate native
 and Chromium evaluation commands.
+
+## Original UTF-8 compressed-finalist check
+
+The frozen FP32 PyTorch stability check already covers original domain text.
+Also replay original domain text through native ONNX and Chromium for FP32 and
+the compressed finalist, at unchanged thresholds and with original-mode CRF
+caches. Keep this separate from the canonical-text comparison, with explicit text
+mode metadata and a separate FP32 browser span reference. This is reused domain
+development data, not an independent legal/financial evaluation.

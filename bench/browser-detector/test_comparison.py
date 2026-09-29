@@ -35,4 +35,17 @@ class ComparisonTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'integrity'):verify_tokenizer(tokenizer)
 
 
+class TextModeTests(unittest.TestCase):
+    def test_original_and_legacy_canonical_caches_cannot_be_mixed(self):
+        try:
+            from corpus import require_text_mode
+        except ImportError:self.skipTest('optional encoder/ONNX environment required')
+        require_text_mode('canonical',{},dict(text_mode='canonical'))
+        require_text_mode('original',dict(text_mode='original'))
+        with self.assertRaisesRegex(ValueError,'text mode mismatch'):
+            require_text_mode('original',{})
+        with self.assertRaisesRegex(ValueError,'text mode mismatch'):
+            require_text_mode('canonical',dict(text_mode='original'))
+
+
 if __name__=='__main__':unittest.main()
