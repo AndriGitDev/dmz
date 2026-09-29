@@ -102,3 +102,13 @@ This inclusion was recorded before any fine-tuned development result was availab
 An improved encoder may no longer benefit from CRF, so do not force that component
 into the final candidate. Report which composition wins and compare compression
 losses for that composition, retaining both neural and combined diagnostics.
+
+## Fixed parameter average before epoch scores
+
+Add one equal FP32 parameter average of the two complete fine-tuned checkpoints,
+using `average_finetuned.py`. This is fixed before either epoch's development
+scores are available. Do not choose a favorable subset or include partial epochs.
+Evaluate the averaged model alone and with the unchanged CRF, retaining failure
+results. This adds two composition candidates (six new candidates total for the
+two-epoch run); it does not produce new independent evidence. Averaging weights
+does not itself establish stability or quality, which must still be measured.
