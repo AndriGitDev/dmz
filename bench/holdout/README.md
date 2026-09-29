@@ -93,3 +93,27 @@ structure only; it cannot establish human annotation correctness or independence
 The current private packet is `/root/.local/share/dmz/datasets/blind-review-v1`:
 36 pages, three documents, all unlabelled. It includes the already collected
 financial and legal-opinion pilot pages; no new download or model inference.
+
+## General-prose pilot added 29 September
+
+`collect_general.py` collects only the six URLs frozen in `general-sources-v1.json`:
+the first three article links in each of two retrieved news-index snapshots from
+Náttúrufræðistofnun and Veðurstofa Íslands. These are nature/science and weather
+news, not a representative general-Icelandic sample. The index/search snapshots
+can lag live publication order. Selection was made before any detector inference;
+neither names nor model errors were used to select among these six articles.
+
+Raw HTML, extracted text and null-label review rows stay outside Git at
+`/root/.local/share/dmz/datasets/holdout-general-candidates-v1`. Extraction uses the
+largest article container and must be checked against the source, including
+headings, captions, tables and initials. Source-use review remains pending;
+collection is not permission to redistribute or train on these pages. In
+particular, [Veðurstofan's terms](https://vedur.is/um-vi/vefurinn/notkunarskilmalar/)
+distinguish data from written material; no blanket licence claim is made here.
+
+All six downloads/extractions succeeded and no exact normalized MIM 12-gram
+overlap was found. This does not establish semantic, document or pretraining
+independence. All annotations remain null. The combined private review packet
+`/root/.local/share/dmz/datasets/blind-review-v2` includes the earlier 36 PDF pages
+and these six articles: 42 review records across nine source documents. Version 1
+is preserved. Neither packet has been run through the detector or used in training.

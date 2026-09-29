@@ -43,10 +43,11 @@ def prepare(sources, output):
     (output/'README.md').write_text('''# Blind annotation pilot
 
 No model predictions are included. These pages are a collection pilot, not an
-approved final evaluation sample. Source PDFs remain in each source directory.
+approved final evaluation sample. Source PDFs/HTML remain in each source directory.
 Keep this entire package private and outside Git.
 
-For each row in annotations.jsonl, compare text_file against its source PDF page.
+For each row in annotations.jsonl, compare text_file against its source PDF page
+or the article at its recorded source URL (saved HTML is also available as text).
 Record extraction_verified only after checking reading order, tables and broken
 words. Exclude unusable pages with exclusion_reason; never silently edit text.
 Mark every Person mention, following the MIM Person policy: include single names,
