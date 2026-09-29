@@ -11,11 +11,25 @@ from encoder import digest
 from ner import external
 
 
+def preserve_head(graph, originals):
+    from onnx import TensorProto
+    tensors={v.name:v for v in graph.graph.initializer}
+    for name,raw in originals.items():
+        if name not in tensors:raise ValueError('head initializer missing')
+        original=TensorProto.FromString(raw)
+        actual=TensorProto.FromString(tensors[name].SerializeToString())
+        # ORT can explicitly serialize the protobuf's default storage location.
+        if not original.HasField('data_location') and actual.HasField('data_location') and actual.data_location==TensorProto.DEFAULT:
+            actual.ClearField('data_location')
+        if actual.SerializeToString()!=raw:raise ValueError('head initializer changed')
+        tensors[name].CopyFrom(original)
+
+
 def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--assets',type=Path,required=True)
     p.add_argument('--selection',type=Path,required=True)
-    p.add_argument('--recipe',choices=['int8','int4','mixed','int4b16','int4a32','hqq4'],required=True)
+    p.add_argument('--recipe',choices=['int8','int4','mixed','int4b16','int4a32','hqq4','int8fp16'],required=True)
     a=p.parse_args();assets=external(a.assets)
     selected=json.loads(a.selection.read_text());export=json.loads((assets/'export.json').read_text())
     if selected.get('frozen') is not True:raise ValueError('full-precision reference must be frozen first')
@@ -32,15 +46,31 @@ def main():
     # The small decision head is retained in FP32; the encoder carries most bytes.
     graph=onnx.load(str(source))
     excluded=[n.name for n in graph.graph.node if '/head/' in n.name]
+    head_inputs={name for n in graph.graph.node if '/head/' in n.name for name in n.input}
+    source_head={v.name:v.SerializeToString() for v in graph.graph.initializer if v.name in head_inputs}
+    if a.recipe=='int8fp16' and len(source_head)!=6:raise ValueError('expected six FP32 head initializers')
     attention_and_gather=[n.name for n in graph.graph.node
         if n.op_type=='Gather' or (n.op_type=='MatMul' and '/attention/' in n.name)]
     del graph
-    if a.recipe=='int8':
+    if a.recipe in ('int8','int8fp16'):
         # U8 weights avoid the S8-weight saturation hypothesis of the rejected run.
         quantize_dynamic(str(source),str(output),weight_type=QuantType.QUInt8,
-            per_channel=True,op_types_to_quantize=['MatMul','Gather'],nodes_to_exclude=excluded,
+            per_channel=True,op_types_to_quantize=['MatMul','Gather'] if a.recipe=='int8' else ['MatMul'],nodes_to_exclude=excluded,
             extra_options={'MatMulConstBOnly':True})
         description='Dynamic U8/U8 constant MatMul and U8 Gather; per-channel; FP32 head'
+        if a.recipe=='int8fp16':
+            from store_fp16 import convert
+            graph=onnx.load(str(output))
+            quantized=[n for n in graph.graph.node if n.op_type=='MatMulInteger']
+            if len(quantized)!=72 or any(not n.name.startswith('/encoder/') for n in quantized):
+                raise ValueError('expected exactly 72 quantized encoder matrices')
+            converted=convert(graph,node_suffixes=('/Gather',))
+            if converted!=dict(MatMul=0,Gather=3):raise ValueError('expected exactly three FP16 embedding tables')
+            preserve_head(graph,source_head)
+            after={v.name:v.SerializeToString() for v in graph.graph.initializer}
+            if any(after.get(name)!=value for name,value in source_head.items()):raise ValueError('head initializer changed')
+            onnx.save_model(graph,str(output))
+            description='Dynamic U8/U8 constant MatMul; FP16 stored embeddings cast to FP32; per-channel; FP32 head'
     else:
         from onnxruntime.quantization.matmul_nbits_quantizer import MatMulNBitsQuantizer, HQQWeightOnlyQuantConfig
         intermediate=assets/(a.recipe+'-gather8-intermediate.onnx')
@@ -86,7 +116,10 @@ def main():
         operators=dict(Counter(n.domain+':'+n.op_type for n in graph.graph.node)),
         excluded_head_nodes=excluded,calibration=False,threshold_retuning=False,
         quality_status='not evaluated; size alone is not acceptance')
-    if a.recipe!='int8':
+    if a.recipe=='int8fp16':
+        report.update(converted_embeddings=converted,quantized_encoder_matrices=len(quantized),preserved_head_initializers=len(source_head),
+            exporter_source_sha256=digest(Path(__file__)))
+    elif a.recipe!='int8':
         report.update(intermediate_sha256=intermediate_sha256,block_size=block_size,is_symmetric=symmetric,accuracy_level=1)
     (assets/(a.recipe+'-compression.json')).write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))

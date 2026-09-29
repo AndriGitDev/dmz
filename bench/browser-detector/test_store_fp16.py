@@ -44,6 +44,37 @@ class StorageTest(unittest.TestCase):
         self.assertEqual(self.module.convert(graph), dict(MatMul=0, Gather=0))
         self.assertEqual(graph.SerializeToString(), before)
 
+    def test_embedding_filter_composes_with_integer_matmul(self):
+        import tempfile
+        import numpy as np
+        import onnx
+        import onnxruntime as ort
+        from onnx import helper, numpy_helper, TensorProto
+        from onnxruntime.quantization import quantize_dynamic, QuantType
+        graph=self.graph()
+        del graph.graph.input[:]
+        graph.graph.input.append(helper.make_tensor_value_info('ids',TensorProto.INT64,[1]))
+        table=np.array([[1.345678]],dtype=np.float32)
+        graph.graph.initializer.append(numpy_helper.from_array(table,'embedding'))
+        graph.graph.node.insert(0,helper.make_node('Gather',['embedding','ids'],['x'],name='/encoder/embeddings/Gather'))
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'quantized.onnx'
+            quantize_dynamic(graph,str(path),weight_type=QuantType.QUInt8,per_channel=True,
+                op_types_to_quantize=['MatMul'],nodes_to_exclude=['/head/dense/MatMul'],extra_options={'MatMulConstBOnly':True})
+            quantized=onnx.load(str(path))
+        self.assertTrue(any(n.op_type=='MatMulInteger' for n in quantized.graph.node))
+        before={v.name:v.SerializeToString() for v in quantized.graph.initializer if v.name!='embedding'}
+        expected=onnx.ModelProto.FromString(quantized.SerializeToString())
+        for value in expected.graph.initializer:
+            if value.name=='embedding':value.CopyFrom(numpy_helper.from_array(table.astype(np.float16).astype(np.float32),'embedding'))
+        self.assertEqual(self.module.convert(quantized,node_suffixes=('/Gather',)),dict(MatMul=0,Gather=1))
+        after={v.name:v.SerializeToString() for v in quantized.graph.initializer}
+        self.assertTrue(all(after[name]==value for name,value in before.items()))
+        onnx.checker.check_model(quantized)
+        options=ort.SessionOptions();options.intra_op_num_threads=1;options.inter_op_num_threads=1
+        def run(model):return ort.InferenceSession(model.SerializeToString(),sess_options=options).run(None,{'ids':np.array([0],dtype=np.int64)})[0]
+        np.testing.assert_allclose(run(quantized),run(expected),rtol=1e-6,atol=1e-6)
+
     def test_overflow_is_rejected(self):
         with self.assertRaisesRegex(ValueError, 'finite FP16'):
             self.module.convert(self.graph(value=70000))

@@ -15,7 +15,7 @@ catch(error) { if(error.code!=='ENOENT')throw error; }
 const fixtureBytes = await readFile(process.env.DMZ_BROWSER_FIXTURES || join(assets, 'fixtures.json'));
 const fixtures = JSON.parse(fixtureBytes.toString('utf8'));
 for (const [model, expected] of Object.entries(fixtures.models)) {
-  assert.ok(['fp32', 'int8', 'int4', 'mixed', 'int4b16', 'int4a32', 'hqq4', 'repair1', 'repair2', 'fp16storage', 'repairhalf'].includes(model));
+  assert.ok(['fp32', 'int8', 'int4', 'mixed', 'int4b16', 'int4a32', 'hqq4', 'repair1', 'repair2', 'fp16storage', 'repairhalf', 'int8fp16'].includes(model));
   const hash = createHash('sha256');
   for await (const chunk of createReadStream(join(assets, model + '.onnx'))) hash.update(chunk);
   assert.equal(hash.digest('hex'), expected, 'Model differs from native fixture reference');
@@ -95,7 +95,7 @@ try {
     if (path === '/corrupt.onnx') { response.writeHead(200, headers).end('invalid model'); return; }
     let file;
     if (['/worker.mjs','/client.mjs'].includes(path)) file = join(root, path.slice(1));
-    else if (['/fp32.onnx','/int8.onnx','/int4.onnx','/mixed.onnx','/int4b16.onnx','/int4a32.onnx','/hqq4.onnx','/repair1.onnx','/repair2.onnx','/fp16storage.onnx','/repairhalf.onnx'].includes(path)) file = join(assets, path.slice(1));
+    else if (['/fp32.onnx','/int8.onnx','/int4.onnx','/mixed.onnx','/int4b16.onnx','/int4a32.onnx','/hqq4.onnx','/repair1.onnx','/repair2.onnx','/fp16storage.onnx','/repairhalf.onnx','/int8fp16.onnx'].includes(path)) file = join(assets, path.slice(1));
     else if (/^\/runtime\/[a-z0-9.-]+$/.test(path)) file = join(runtime, path.slice('/runtime/'.length));
     if (!file) { response.writeHead(404, headers).end(); return; }
     try {
