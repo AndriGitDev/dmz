@@ -127,7 +127,7 @@ def parity_probe(model, jobs, tokenizer, graph_path):
             maximum=max(maximum,float(np.max(np.abs(actual-expected))))
             changed+=int(np.sum(actual.argmax(-1)!=expected.argmax(-1)))
             if not np.allclose(actual,expected,rtol=5e-5,atol=5e-4):raise ValueError('dequantized backbone logit mismatch')
-    if changed:raise ValueError('zero-adapter parity changed word labels')
+    if changed:raise ValueError('PyTorch/ONNX parity changed word labels')
     return dict(training_chunks=8,max_absolute_logit_error=maximum,changed_word_labels=changed)
 
 
