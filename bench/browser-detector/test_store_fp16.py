@@ -48,6 +48,24 @@ class StorageTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'finite FP16'):
             self.module.convert(self.graph(value=70000))
 
+    def test_correction_filter_preserves_backbone_constants(self):
+        import numpy as np
+        from onnx import helper, numpy_helper
+        graph = self.graph(); before = graph.SerializeToString()
+        suffixes = ('__repair_A', '__repair_B')
+        self.assertEqual(self.module.convert(graph, node_suffixes=suffixes), dict(MatMul=0, Gather=0))
+        self.assertEqual(graph.SerializeToString(), before)
+        graph.graph.node[0].name = '/encoder/dense__repair_A'
+        table = numpy_helper.from_array(np.array([[128, 129]], dtype=np.uint8), 'quantized_table')
+        index = numpy_helper.from_array(np.array([0], dtype=np.int64), 'index')
+        graph.graph.initializer.extend([table, index])
+        graph.graph.node.append(helper.make_node('Gather', ['quantized_table', 'index'], ['unused'], name='/encoder/embeddings/Gather'))
+        saved = {v.name: v.SerializeToString() for v in graph.graph.initializer if v.name != 'weight'}
+        self.assertEqual(self.module.convert(graph, node_suffixes=suffixes), dict(MatMul=1, Gather=0))
+        for v in graph.graph.initializer:
+            if v.name in saved:
+                self.assertEqual(v.SerializeToString(), saved[v.name])
+
 
 if __name__ == '__main__':
     unittest.main()

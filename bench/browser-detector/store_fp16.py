@@ -10,7 +10,7 @@ from encoder import digest
 from ner import external
 
 
-def convert(graph):
+def convert(graph, node_suffixes=None):
     import numpy as np
     from onnx import TensorProto, helper, numpy_helper
     initializers = {v.name: v for v in graph.graph.initializer}
@@ -18,6 +18,8 @@ def convert(graph):
     selected = {}
     for node in graph.graph.node:
         if not node.name.startswith('/encoder/') or node.op_type not in ('MatMul', 'Gather'):
+            continue
+        if node_suffixes is not None and not node.name.endswith(tuple(node_suffixes)):
             continue
         name = node.input[1 if node.op_type == 'MatMul' else 0]
         if name in initializers and name not in protected:

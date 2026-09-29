@@ -239,3 +239,18 @@ calibration or threshold changes during conversion. This is expected to exceed
 100 MiB and is not FP16 arithmetic or a claim of lower runtime memory. Measure
 bytes, full native/Chromium exact-span results, runtime and memory before
 considering it. Preserve the original FP32 graph and report any rounding losses.
+
+## Conditional correction-storage reduction
+
+If a repaired checkpoint preserves all frozen-reference aggregate precision and
+recall values on both canonical development sets, and sufficient evaluation time
+remains, test one `repairhalf` follow-up on the best repaired checkpoint under the
+same precision-floor/minimum-recall rule. Store only its 144 correction matrices
+as FP16, explicitly cast back to FP32 for computation. Preserve every other
+initializer, including the original int4 backbone and the trained FP32 head.
+This should save about 5.06 MiB before cast-node overhead; measure actual bytes.
+Use no calibration labels or threshold changes. Require new native and full
+Chromium comparisons against the original frozen FP32 reference, followed by
+original-domain and runtime checks for any proposed finalist. Do not infer
+quality or runtime-memory preservation from storage size or unchanged backbone
+weights. Skip this follow-up if the prerequisite quality comparison fails.

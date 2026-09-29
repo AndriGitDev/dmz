@@ -91,3 +91,9 @@ them to FP32 before computation while retaining the FP32 head. Numerical guard
 tests pass. It has not been quality- or runtime-evaluated and is not an accepted
 model; lower storage size does not imply lower runtime memory. Its short,
 label-free conversion overlapped correction training, not browser measurements.
+
+The optional `repairhalf` follow-up is prepared but not generated or evaluated.
+It stores only correction matrices as FP16 with FP32 computation, preserving the
+backbone and trained head. A command-level guard requires a parent Chromium
+report preserving all reference precision/recall values on both development
+sets. Any generated follow-up still requires fresh native and browser evaluation.
