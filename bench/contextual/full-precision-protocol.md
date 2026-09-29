@@ -189,3 +189,26 @@ path does not propagate that constructor option. Verify native and actual browse
 support for floating zero points before considering selection. This optimizes
 weight reconstruction, not an asserted guarantee of task-quality preservation.
 Source: https://github.com/microsoft/onnxruntime/blob/v1.23.2/onnxruntime/python/tools/quantization/matmul_nbits_quantizer.py
+
+## Compression-aware correction training, separately gated
+
+If post-training recipes do not preserve the reference quality, prepare one
+bounded recovery experiment on the original block-32 symmetric int4 graph. Decode
+its fixed backbone weights into FP32 for CPU training and add rank-16 FP32 linear
+corrections to all 72 encoder matrix layers (scale 1, random A and zero B). Train
+only those corrections and the BIO head; the quantized backbone is frozen.
+This adds 2,654,208 correction parameters (10.125 MiB), before graph overhead.
+The byte size must be measured rather than inferred from that estimate.
+
+Predeclare two epochs on exactly the original training mixture, seed 44, fresh
+AdamW with weight decay 0.01, adapter LR 1e-4, head LR 5e-5, batch 8 with four-way
+accumulation, 10% warmup/linear decay, clipping 1.0 and a 14,400-second cap.
+Training has no evaluation input or threshold-selection path. Gate startup on a
+real ORT-versus-decoded-backbone numerical probe using eight training chunks.
+Save only trainable FP32 tensors; incomplete epochs are not eligible for export.
+The exported graph attaches additive correction nodes to the preserved int4
+matrix operations and replaces the trained head, without requantizing backbone
+initializers. Require native and Chromium evaluation after training, with the
+same frozen FP32 reference, thresholds, CRF priority and development disclosure.
+Apply the existing precision-floor / minimum-recall selection rule to completed
+checkpoints; preserve failures. Do not modify the original FP32 selection.
