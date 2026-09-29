@@ -36,7 +36,7 @@ def main():
     p.add_argument('--vectors',type=Path,required=True)
     p.add_argument('--predictions',type=Path)
     p.add_argument('--report',type=Path)
-    p.add_argument('--model',default='int8',choices=['fp32','int8','int4'])
+    p.add_argument('--model',default='int8',choices=['fp32','int8','int4','mixed'])
     p.add_argument('--selection',type=Path,default=Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json')
     p.add_argument('--neural-prefix',default='neural-epoch-12-predictions')
     p.add_argument('--cache-output',type=Path,help='Private decoded browser spans for subsequent same-runtime comparison')

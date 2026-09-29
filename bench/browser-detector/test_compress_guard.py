@@ -14,11 +14,12 @@ class CompressionGuardTests(unittest.TestCase):
             root=Path(directory);selection=root/'selected.json';model=root/'fp32.onnx'
             model.write_bytes(b'fabricated graph placeholder')
             def run(expected):
-                result=subprocess.run([sys.executable,str(script),'--assets',str(root),
-                    '--selection',str(selection),'--recipe','int4'],capture_output=True,text=True)
-                self.assertNotEqual(result.returncode,0)
-                self.assertIn(expected,result.stderr)
-                self.assertFalse((root/'int4.onnx').exists())
+                for recipe in ('int4','int8','mixed'):
+                    result=subprocess.run([sys.executable,str(script),'--assets',str(root),
+                        '--selection',str(selection),'--recipe',recipe],capture_output=True,text=True)
+                    self.assertNotEqual(result.returncode,0)
+                    self.assertIn(expected,result.stderr)
+                    self.assertFalse((root/(recipe+'.onnx')).exists())
             selection.write_text(json.dumps(dict(frozen=False,thresholds=dict(crf=.75,neural=0))))
             (root/'export.json').write_text('{}')
             run('must be frozen')

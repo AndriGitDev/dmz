@@ -14,7 +14,7 @@ try { await stat(reportPath); throw new Error('Refusing to replace benchmark rep
 catch(error) { if(error.code!=='ENOENT')throw error; }
 const fixtures = JSON.parse(await readFile(join(assets, 'fixtures.json'), 'utf8'));
 for (const [model, expected] of Object.entries(fixtures.models)) {
-  assert.ok(['fp32', 'int8', 'int4'].includes(model));
+  assert.ok(['fp32', 'int8', 'int4', 'mixed'].includes(model));
   const hash = createHash('sha256');
   for await (const chunk of createReadStream(join(assets, model + '.onnx'))) hash.update(chunk);
   assert.equal(hash.digest('hex'), expected, 'Model differs from native fixture reference');
@@ -94,7 +94,7 @@ try {
     if (path === '/corrupt.onnx') { response.writeHead(200, headers).end('invalid model'); return; }
     let file;
     if (['/worker.mjs','/client.mjs'].includes(path)) file = join(root, path.slice(1));
-    else if (['/fp32.onnx','/int8.onnx','/int4.onnx'].includes(path)) file = join(assets, path.slice(1));
+    else if (['/fp32.onnx','/int8.onnx','/int4.onnx','/mixed.onnx'].includes(path)) file = join(assets, path.slice(1));
     else if (/^\/runtime\/[a-z0-9.-]+$/.test(path)) file = join(runtime, path.slice('/runtime/'.length));
     if (!file) { response.writeHead(404, headers).end(); return; }
     try {

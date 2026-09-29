@@ -147,3 +147,14 @@ standalone neural candidates eligible under the same selection rule. This adds
 four development-selected composition candidates, not independent evidence or a
 threshold search. Record failures and only use this ordering for compression if
 it wins and is explicitly frozen as part of the selected reference.
+
+## Bounded mixed compression follow-up
+
+After freeze and full Chromium FP32 parity, the initial int4 graph measures
+88.750 MiB but native recall falls to 95.82% general and 97.08% domain. Add one
+architecture-defined alternative: dynamic unsigned 8-bit attention MatMul and
+Gather, weight-only 4-bit feed-forward MatMul (block 32, FP32 feed-forward
+activations), and the unchanged FP32 head. This is `mixed`, a separate artifact;
+it does not replace the int4 failure/quality evidence. No calibration, retraining,
+per-example layer selection, or threshold adjustment is used. Compare it against
+the same immutable FP32 Chromium reference and retain size and quality failures.

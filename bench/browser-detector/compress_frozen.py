@@ -15,7 +15,7 @@ def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--assets',type=Path,required=True)
     p.add_argument('--selection',type=Path,required=True)
-    p.add_argument('--recipe',choices=['int8','int4'],required=True)
+    p.add_argument('--recipe',choices=['int8','int4','mixed'],required=True)
     a=p.parse_args();assets=external(a.assets)
     selected=json.loads(a.selection.read_text());export=json.loads((assets/'export.json').read_text())
     if selected.get('frozen') is not True:raise ValueError('full-precision reference must be frozen first')
@@ -32,6 +32,8 @@ def main():
     # The small decision head is retained in FP32; the encoder carries most bytes.
     graph=onnx.load(str(source))
     excluded=[n.name for n in graph.graph.node if '/head/' in n.name]
+    attention_and_gather=[n.name for n in graph.graph.node
+        if n.op_type=='Gather' or (n.op_type=='MatMul' and '/attention/' in n.name)]
     del graph
     if a.recipe=='int8':
         # U8 weights avoid the S8-weight saturation hypothesis of the rejected run.
@@ -41,10 +43,16 @@ def main():
         description='Dynamic U8/U8 constant MatMul and U8 Gather; per-channel; FP32 head'
     else:
         from onnxruntime.quantization.matmul_nbits_quantizer import MatMulNBitsQuantizer
-        intermediate=assets/'gather8-intermediate.onnx'
+        intermediate=assets/(a.recipe+'-gather8-intermediate.onnx')
         if intermediate.exists():raise ValueError('intermediate already exists')
-        quantize_dynamic(str(source),str(intermediate),weight_type=QuantType.QUInt8,
-            per_channel=True,op_types_to_quantize=['Gather'])
+        if a.recipe=='mixed':
+            quantize_dynamic(str(source),str(intermediate),weight_type=QuantType.QUInt8,
+                per_channel=True,op_types_to_quantize=['MatMul','Gather'],
+                nodes_to_quantize=attention_and_gather,nodes_to_exclude=excluded,
+                extra_options={'MatMulConstBOnly':True})
+        else:
+            quantize_dynamic(str(source),str(intermediate),weight_type=QuantType.QUInt8,
+                per_channel=True,op_types_to_quantize=['Gather'])
         quantizer=MatMulNBitsQuantizer(str(intermediate),block_size=32,is_symmetric=True,
             accuracy_level=1,nodes_to_exclude=excluded,op_types_to_quantize=('MatMul',))
         quantizer.process()
@@ -52,6 +60,8 @@ def main():
         # Retain intermediate provenance; remove only this newly generated temporary graph.
         intermediate_sha256=digest(intermediate);intermediate.unlink()
         description='Weight-only symmetric int4 MatMul, block 32, accuracy_level=1 (FP32 activations), FP32 head; U8 Gather'
+        if a.recipe=='mixed':
+            description='Dynamic U8/U8 attention MatMul and U8 Gather; weight-only int4 feed-forward MatMul block 32 with FP32 activations; FP32 head'
     onnx.checker.check_model(str(output))
     graph=onnx.load(str(output))
     report=dict(schema=1,recipe=a.recipe,description=description,reference_sha256=digest(source),
@@ -60,7 +70,7 @@ def main():
         operators=dict(Counter(n.domain+':'+n.op_type for n in graph.graph.node)),
         excluded_head_nodes=excluded,calibration=False,threshold_retuning=False,
         quality_status='not evaluated; size alone is not acceptance')
-    if a.recipe=='int4':report['intermediate_sha256']=intermediate_sha256
+    if a.recipe in ('int4','mixed'):report['intermediate_sha256']=intermediate_sha256
     (assets/(a.recipe+'-compression.json')).write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 
