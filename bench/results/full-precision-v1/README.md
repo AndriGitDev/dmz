@@ -85,6 +85,9 @@ reject changed references and nontraining inputs; export guards preserve backbon
 initializers and require complete checkpoints. See the predeclared protocol for
 limits, subsequent export parity checks and separate development evaluation.
 
-A conditional FP16-storage fallback is prepared and unit-tested but has not been
-generated or evaluated. It restores stored encoder constants to FP32 before
-computation and is expected to exceed 100 MiB. It is not an accepted model.
+The conditional FP16-storage fallback generated successfully at 237.044 MiB.
+It converts all 72 encoder matrix constants and three embedding tables, restoring
+them to FP32 before computation while retaining the FP32 head. Numerical guard
+tests pass. It has not been quality- or runtime-evaluated and is not an accepted
+model; lower storage size does not imply lower runtime memory. Its short,
+label-free conversion overlapped correction training, not browser measurements.
