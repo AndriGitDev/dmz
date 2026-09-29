@@ -37,9 +37,14 @@ these are corpus replay times, not per-request warm latency measurements.
 The browser scope uses native pretokenization and a cached CRF merge and does not
 establish end-to-end Shield behavior.
 
-The guarded int4 graph is 88.750 MiB; unsigned-int8 is 119.642 MiB. Compression
-quality and browser measurements are in progress. Neither is accepted from size
-alone. `supporting-assets.json` inventories tokenizer, CRF and WASM files separately
+The guarded int4 graph is 88.750 MiB; unsigned-int8 is 119.642 MiB; the mixed
+attention-int8/feed-forward-int4 graph is 99.120 MiB. Int4 Chromium exactly matches
+its native results: general 95.75% precision / 95.82% recall; synthetic domain
+99.15% / 97.08%. Against frozen FP32 it adds 20 general misses (recovering two)
+and eight domain misses (recovering none). General replay takes 1596.578 seconds,
+versus FP32 764.101 seconds. It is not selected as a quality-preserving replacement.
+Int8 and mixed accuracy and isolated runtime measurements remain in progress.
+No compressed model is accepted from size alone. `supporting-assets.json` inventories tokenizer, CRF and WASM files separately
 and is not a packaged-extension or compressed-transfer measurement.
 
 The epoch-2 error audit motivated a fixed-threshold neural-overlap-priority
