@@ -66,9 +66,17 @@ replacement. The asymmetric block-32 graph is 90.021 MiB. Chromium exactly match
 general 96.1282% precision / 95.6175% recall, domain 99.3603% / 97.0833%.
 It adds 23 general misses and recovers two; it adds eight domain misses and
 recovers none. General replay takes 2051.638 seconds. It is not selected.
-The HQQ block-32 graph is 98.880 MiB; its quality evaluation is running.
+The HQQ block-32 graph is 98.880 MiB. Chromium exactly matches native:
+general 96.0265% precision / 96.2815% recall, domain 99.1507% / 97.2917%.
+It adds 14 general misses and recovers three; it adds seven domain misses and
+recovers none. General/domain replay takes 1576.711/120.143 seconds. It is not
+an accepted replacement. The separate original-domain FP32 native/Chromium check
+also reproduces all frozen spans exactly: 99.3711% precision / 98.7500% recall,
+with Chromium replay taking 85.782 seconds and zero external requests.
 
-A separate rank-16 correction-training path is prepared but has not trained yet.
+The separate rank-16 correction-training job started at approximately 09:34 UTC.
+It is bounded to 12,717 seconds to preserve evaluation/reporting time. No trained
+checkpoint has been evaluated yet.
 It keeps the int4 backbone fixed and trains only additive FP32 matrices plus the
 BIO head on the original training mixture. The real initial implementation probe
 passes on eight training chunks: maximum PyTorch/ORT logit difference 0.0000401,
@@ -76,3 +84,7 @@ zero changed word labels. This probe is not an accuracy evaluation. Hash guards
 reject changed references and nontraining inputs; export guards preserve backbone
 initializers and require complete checkpoints. See the predeclared protocol for
 limits, subsequent export parity checks and separate development evaluation.
+
+A conditional FP16-storage fallback is prepared and unit-tested but has not been
+generated or evaluated. It restores stored encoder constants to FP32 before
+computation and is expected to exceed 100 MiB. It is not an accepted model.

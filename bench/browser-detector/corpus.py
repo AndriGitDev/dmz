@@ -43,7 +43,7 @@ def main():
     p.add_argument('--report',type=Path)
     p.add_argument('--text-mode',choices=['canonical','original'],default='canonical')
     p.add_argument('--sets',nargs='+',choices=['general','domain'],default=['general','domain'])
-    p.add_argument('--model',default='int8',choices=['fp32','int8','int4','mixed','int4b16','int4a32','hqq4','repair1','repair2'])
+    p.add_argument('--model',default='int8',choices=['fp32','int8','int4','mixed','int4b16','int4a32','hqq4','repair1','repair2','fp16storage'])
     p.add_argument('--selection',type=Path,default=Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json')
     p.add_argument('--neural-prefix',default='neural-epoch-12-predictions')
     p.add_argument('--cache-output',type=Path,help='Private decoded browser spans for subsequent same-runtime comparison')

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "model_sha256": "053feb2c684301d3110a4bdcbfefda2fd31807b6fa4d9d73060dafa67928c1fb",
+  "vectors_sha256": "979dfb037bf0d5cdd0d645eae56cbbaef34ee3064a7c03eacdb45137285269ed",
+  "runtime": "onnxruntime-web 1.23.2",
+  "threads": 3,
+  "batch_size": 1,
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "load": {
+    "loadMs": 6333.539999991655,
+    "isolated": true
+  },
+  "text_mode": "original",
+  "scope": "Selected fixed development sets replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end Shield",
+  "independent_validation": false,
+  "sets": [
+    {
+      "name": "domain",
+      "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+      "rows": 256,
+      "browser_replay_seconds": 85.782,
+      "neural": {
+        "tp": 472,
+        "fp": 4,
+        "fn": 8,
+        "precision": 0.9915966386554622,
+        "recall": 0.9833333333333333
+      },
+      "combined": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875
+      },
+      "changed_combined_from_frozen": 0,
+      "changed_combined_from_native_batch1": 0,
+      "versus_frozen": {
+        "added_missed_spans": 0,
+        "recovered_spans": 0,
+        "added_false_positives": 0,
+        "removed_false_positives": 0
+      }
+    }
+  ]
+}
