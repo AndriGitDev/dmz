@@ -62,8 +62,11 @@ native scores exactly: general 95.8968% precision / 96.2151% recall, synthetic
 domain 98.9451% / 97.7083%. Against frozen FP32 it adds 15 general misses and
 recovers three; it adds five domain misses and recovers none. General replay took
 1804.530 seconds. It improves on the original int4 recall but is not an accepted
-replacement. The asymmetric block-32 graph is 90.021 MiB and HQQ block-32 graph
-98.880 MiB; their quality evaluation is running.
+replacement. The asymmetric block-32 graph is 90.021 MiB. Chromium exactly matches native:
+general 96.1282% precision / 95.6175% recall, domain 99.3603% / 97.0833%.
+It adds 23 general misses and recovers two; it adds eight domain misses and
+recovers none. General replay takes 2051.638 seconds. It is not selected.
+The HQQ block-32 graph is 98.880 MiB; its quality evaluation is running.
 
 A separate rank-16 correction-training path is prepared but has not trained yet.
 It keeps the int4 backbone fixed and trains only additive FP32 matrices plus the
