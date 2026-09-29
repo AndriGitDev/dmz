@@ -254,3 +254,24 @@ Chromium comparisons against the original frozen FP32 reference, followed by
 original-domain and runtime checks for any proposed finalist. Do not infer
 quality or runtime-memory preservation from storage size or unchanged backbone
 weights. Skip this follow-up if the prerequisite quality comparison fails.
+
+
+### Bounded embedding-preservation ablation (29 September, 13:54 UTC)
+
+After observing that FP16 storage preserves every reference development span,
+predeclare one `int8fp16` trial before its generation or evaluation. Use the frozen
+FP32 graph, dynamic U8/U8 per-channel constant MatMul quantization with the FP32
+head excluded, and store only the three embedding tables as FP16 with explicit
+casts back to FP32. This tests whether replacing the earlier int8 graph's U8
+embedding storage avoids its recall loss. No labels, calibration, retraining,
+threshold change, interpolation or parameter search are used for conversion.
+
+Generate only after the current original-text/runtime queue finishes, preserving
+all existing graphs and reports. Validate exact embedding coverage, unchanged
+head initializer bytes, ONNX structure and numerical conversion tests. Measure
+full native and Chromium development accuracy at the frozen thresholds, original
+domain text, and separate isolated runtime/failure cases with an FP32 anchor.
+These remain reused development results. Keep the 15:16:30 UTC deadline and a
+15-minute final-review reserve; do not start if insufficient measurement time
+remains. Quality remains the priority, and neither size nor development floors
+alone establish release acceptance.
