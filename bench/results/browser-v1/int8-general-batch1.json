@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "scope": "fixed-threshold development exact Person spans; no training or threshold retuning",
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "model_sha256": "fd9dc540ece872fed154e72e2a5a8fda9843ddc4630ec343fc2e770572065082",
+  "model_bytes": 125119018,
+  "rows": 5582,
+  "chunks": 5582,
+  "threads": 3,
+  "batch_size": 1,
+  "load_seconds": 0.57596193801146,
+  "inference_seconds": 140.74897505700937,
+  "onnxruntime": "1.23.2",
+  "neural": {
+    "tp": 1327,
+    "fp": 72,
+    "fn": 179,
+    "precision": 0.9485346676197284,
+    "recall": 0.8811420982735724
+  },
+  "combined": {
+    "tp": 1421,
+    "fp": 67,
+    "fn": 85,
+    "precision": 0.9549731182795699,
+    "recall": 0.9435590969455512
+  },
+  "reference_neural": {
+    "tp": 1367,
+    "fp": 54,
+    "fn": 139,
+    "precision": 0.9619985925404645,
+    "recall": 0.9077025232403718
+  },
+  "reference_combined": {
+    "tp": 1435,
+    "fp": 61,
+    "fn": 71,
+    "precision": 0.9592245989304813,
+    "recall": 0.952855245683931
+  },
+  "changed_neural_records": 58,
+  "changed_combined_records": 22,
+  "independent_validation": false
+}

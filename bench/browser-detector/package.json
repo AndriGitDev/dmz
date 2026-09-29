@@ -1,0 +1,7 @@
+{
+  "name": "dmz-private-browser-benchmark",
+  "private": true,
+  "type": "module",
+  "scripts": { "benchmark": "node browser.mjs" },
+  "devDependencies": { "onnxruntime-web": "1.23.2", "playwright": "1.63.0" }
+}

@@ -1,0 +1,3 @@
+# In addition to ../contextual/encoder-requirements.txt
+onnx==1.19.0
+onnxruntime==1.23.2

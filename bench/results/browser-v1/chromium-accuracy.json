@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "model_sha256": "fd9dc540ece872fed154e72e2a5a8fda9843ddc4630ec343fc2e770572065082",
+  "vectors_sha256": "e2eefa6f54e5a9f890c64b05cc208ebd64b7e74efaff165081014b18465d70b2",
+  "runtime": "onnxruntime-web 1.23.2",
+  "threads": 3,
+  "batch_size": 1,
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "load": {
+    "loadMs": 2404.425000011921,
+    "isolated": true
+  },
+  "scope": "Full fixed development replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end Shield",
+  "independent_validation": false,
+  "sets": [
+    {
+      "name": "general",
+      "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+      "rows": 5582,
+      "browser_replay_seconds": 486.664,
+      "neural": {
+        "tp": 1333,
+        "fp": 58,
+        "fn": 173,
+        "precision": 0.9583033788641265,
+        "recall": 0.8851261620185923
+      },
+      "combined": {
+        "tp": 1423,
+        "fp": 57,
+        "fn": 83,
+        "precision": 0.9614864864864865,
+        "recall": 0.9448871181938912
+      },
+      "changed_combined_from_frozen": 22,
+      "changed_combined_from_native_int8_batch1": 20,
+      "versus_frozen": {
+        "added_missed_spans": 14,
+        "recovered_spans": 2,
+        "added_false_positives": 3,
+        "removed_false_positives": 7
+      }
+    },
+    {
+      "name": "domain",
+      "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+      "rows": 256,
+      "browser_replay_seconds": 49.804,
+      "neural": {
+        "tp": 410,
+        "fp": 35,
+        "fn": 70,
+        "precision": 0.9213483146067416,
+        "recall": 0.8541666666666666
+      },
+      "combined": {
+        "tp": 455,
+        "fp": 11,
+        "fn": 25,
+        "precision": 0.9763948497854077,
+        "recall": 0.9479166666666666
+      },
+      "changed_combined_from_frozen": 8,
+      "changed_combined_from_native_int8_batch1": 10,
+      "versus_frozen": {
+        "added_missed_spans": 7,
+        "recovered_spans": 0,
+        "added_false_positives": 5,
+        "removed_false_positives": 1
+      }
+    }
+  ]
+}
