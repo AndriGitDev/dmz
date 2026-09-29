@@ -228,3 +228,14 @@ the compressed finalist, at unchanged thresholds and with original-mode CRF
 caches. Keep this separate from the canonical-text comparison, with explicit text
 mode metadata and a separate FP32 browser span reference. This is reused domain
 development data, not an independent legal/financial evaluation.
+
+## Conditional storage-only fallback
+
+If sub-100-MiB experiments still lose reference quality and time permits, evaluate
+one `fp16storage` fallback. Store the frozen encoder's 72 constant MatMul weights
+and three Gather tables as FP16, with explicit casts back to FP32 before all
+existing computation. Preserve the FP32 head and other constants. Use no data,
+calibration or threshold changes during conversion. This is expected to exceed
+100 MiB and is not FP16 arithmetic or a claim of lower runtime memory. Measure
+bytes, full native/Chromium exact-span results, runtime and memory before
+considering it. Preserve the original FP32 graph and report any rounding losses.

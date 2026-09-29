@@ -13,7 +13,7 @@
 
 FP32 epoch 2 was selected from 13 candidates after two full encoder epochs, a fixed parameter average, a bounded lower-rate refinement, and fixed merge-priority alternatives. The refinement and priority alternatives did not improve the predeclared selection rule. `final-comparison.json` preserves every candidate. General FP32 precision has a narrow margin above the floor.
 
-The checkpoint has 123,951,875 parameters, all 203 tensors FP32, and is 472.862 MiB. It was frozen before compression at 05:01 UTC on 29 September 2026. `selected-candidate.json` pins checkpoint, tokenizer/configuration, thresholds, input and stability hashes and remains immutable. Batch-8/batch-1 PyTorch spans, native ONNX spans and FP32 Chromium spans agree exactly on both sets; original UTF-8 domain scores also agree.
+The checkpoint has 123,951,875 parameters, all 203 tensors FP32, and is 472.862 MiB. It was frozen before compression at 05:01 UTC on 29 September 2026. `selected-candidate.json` pins checkpoint, tokenizer/configuration, thresholds, input and stability hashes and remains immutable. Batch-8/batch-1 PyTorch spans, native ONNX spans and FP32 Chromium spans agree exactly on both sets; the separate original UTF-8 domain PyTorch check also agrees. Original-text native and Chromium checks are tracked separately below.
 
 ## Compression decision
 
@@ -25,7 +25,7 @@ Retain frozen FP32 reference. Int8 is closest compressed candidate but exceeds 1
 | int4 | 20 / 2 | 8 / 0 | -1.1952 / -1.6667 |
 | mixed | 4 / 0 | 1 / 1 | -0.2656 / +0.0000 |
 
-Thresholds remain CRF 0.75 / neural 0.0 with CRF priority throughout. No calibration labels, threshold retuning or retraining were used for compression. Reports also include added/removed false positives and native/browser differences. Equal aggregate recall does not mean identical predictions.
+Thresholds remain CRF 0.75 / neural 0.0 with CRF priority throughout. The initial four compression recipes used no calibration labels, threshold retuning or retraining. Reports also include added/removed false positives and native/browser differences. Equal aggregate recall does not mean identical predictions.
 
 Tokenizer, CRF and WASM inventory totals 18.598 MiB beyond each graph. Graph-plus-inventory sizes are fp32 491.631 MiB, int8 138.240 MiB, int4 107.349 MiB, mixed 117.718 MiB. These are uncompressed file sums, not packaged extension or network-transfer measurements. No 50 MiB model was obtained.
 

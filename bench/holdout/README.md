@@ -53,8 +53,11 @@ No model predictions have been generated for these documents.
 
 ## Freeze, annotate, then evaluate
 
-1. Freeze `bench/results/error-audit-v2/selected-candidate.json` and its component
-   hashes. Do not choose thresholds using these documents.
+1. For the current full-precision run, use the immutable
+   `bench/results/full-precision-v1/selected-candidate.json` and its pinned
+   component hashes. The earlier `error-audit-v2` selection remains a preserved
+   baseline. Freeze any subsequently accepted compressed candidate separately
+   before independent inference. Do not choose thresholds using these documents.
 2. Expand to a predeclared sample across independent documents, issuers and
    legal/financial genres. Keep whole documents and duplicate versions together.
    Separate collection/annotation pilots from the final sample before inference.
