@@ -1,4 +1,7 @@
 import importlib.util
+import json
+from pathlib import Path
+import tempfile
 import unittest
 
 
@@ -16,6 +19,20 @@ class ComparisonTests(unittest.TestCase):
         with self.assertRaises(ValueError):compression_changes(compressed,[],primary)
         wrong=[dict(gold=[],predictions=[])]
         with self.assertRaisesRegex(ValueError,'annotation'):compression_changes(compressed,wrong,primary)
+
+    @unittest.skipUnless(all(importlib.util.find_spec(name) for name in ['numpy','onnxruntime']), 'optional browser encoder environment')
+    def test_changed_or_added_tokenizer_file_is_rejected(self):
+        from evaluate import verify_tokenizer
+        from encoder import digest
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);tokenizer=root/'tokenizer';tokenizer.mkdir()
+            vocab=tokenizer/'vocab.json';vocab.write_text('{}')
+            (root/'export.json').write_text(json.dumps(dict(tokenizer_files={'vocab.json':digest(vocab)})))
+            verify_tokenizer(tokenizer)
+            added=tokenizer/'added_tokens.json';added.write_text('{}')
+            with self.assertRaisesRegex(ValueError,'file set'):verify_tokenizer(tokenizer)
+            added.unlink();vocab.write_text('{"changed":1}')
+            with self.assertRaisesRegex(ValueError,'integrity'):verify_tokenizer(tokenizer)
 
 
 if __name__=='__main__':unittest.main()

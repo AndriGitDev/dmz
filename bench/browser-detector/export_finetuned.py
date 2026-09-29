@@ -21,6 +21,11 @@ def main():
     if selected.get('frozen') is not True:raise ValueError('freeze reference before export')
     if selected['composition']['neural_sha256']!=digest(checkpoint):raise ValueError('checkpoint mismatch')
     if selected['encoder']['base_weights_sha256']!=digest(base/'model.safetensors'):raise ValueError('base mismatch')
+    recognized={'config.json','tokenizer.json','merges.txt','vocab.json','special_tokens_map.json','tokenizer_config.json','added_tokens.json','tokenizer.model'}
+    if {name for name in recognized if (base/name).exists()}!=set(selected['encoder']['tokenizer_files']):
+        raise ValueError('frozen tokenizer file set mismatch')
+    for name,expected in selected['encoder']['tokenizer_files'].items():
+        if Path(name).name!=name or digest(base/name)!=expected:raise ValueError('frozen tokenizer mismatch')
     if selected['thresholds']!=dict(crf=.75,neural=0):raise ValueError('threshold mismatch')
     output.mkdir(parents=True,exist_ok=False)
     import torch
@@ -42,6 +47,7 @@ def main():
     onnx.checker.check_model(str(output/'fp32.onnx'))
     report=dict(schema=1,checkpoint_sha256=digest(checkpoint),selection_sha256=digest(a.selection),
         model_sha256=digest(output/'fp32.onnx'),bytes=(output/'fp32.onnx').stat().st_size,
+        tokenizer_files={p.name:digest(p) for p in sorted((output/'tokenizer').iterdir()) if p.is_file()},
         seconds=time.monotonic()-started,precision='FP32 encoder, pooling and head; no float16 round-trip',
         torch=torch.__version__,onnx=onnx.__version__,opset=17,compression=False)
     (output/'export.json').write_text(json.dumps(report,indent=2)+'\n')

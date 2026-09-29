@@ -3,7 +3,7 @@
 import argparse
 import json
 from pathlib import Path
-from evaluate import inputs,score
+from evaluate import inputs,score,verify_tokenizer
 from encoder import chunks,digest,DECODE
 from ner import external,rows,tokens_and_labels,spans
 from ensemble import merge
@@ -49,6 +49,7 @@ def main():
     if a.mode=='prepare':
         if a.vectors.exists():raise ValueError('refusing to replace vectors')
         from transformers import AutoTokenizer
+        verify_tokenizer(a.assets/'tokenizer')
         tokenizer=AutoTokenizer.from_pretrained(a.assets/'tokenizer',local_files_only=True,add_prefix_space=True)
         sets=[]
         for name,path in [('general',a.general_input),('domain',a.reference_dir/'domain-dev.jsonl')]:

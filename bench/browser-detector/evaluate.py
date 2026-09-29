@@ -40,6 +40,17 @@ def session(model,threads=3):
     return ort.InferenceSession(str(model),sess_options=options,providers=['CPUExecutionProvider'])
 
 
+def verify_tokenizer(directory):
+    manifest=directory.parent/'export.json'
+    if manifest.exists():
+        export=json.loads(manifest.read_text())
+        if 'tokenizer_files' in export and {p.name for p in directory.iterdir() if p.is_file()}!=set(export['tokenizer_files']):
+            raise ValueError('exported tokenizer file set mismatch')
+        for name,expected in export.get('tokenizer_files',{}).items():
+            if Path(name).name!=name or digest(directory/name)!=expected:
+                raise ValueError('exported tokenizer integrity mismatch')
+
+
 def main():
     p=argparse.ArgumentParser(__doc__)
     for key in ['model','tokenizer','input','crf','reference','output','predictions']:p.add_argument('--'+key,type=Path,required=True)
@@ -50,6 +61,7 @@ def main():
     if a.predictions.exists():raise ValueError('refusing to overwrite prediction cache')
     if a.output.exists():raise ValueError('refusing to overwrite evaluation report')
     from transformers import AutoTokenizer
+    verify_tokenizer(a.tokenizer)
     tokenizer=AutoTokenizer.from_pretrained(a.tokenizer,local_files_only=True,add_prefix_space=True,trust_remote_code=False)
     crf=json.loads(a.crf.read_text());reference=json.loads(a.reference.read_text())
     sha=digest(a.input)

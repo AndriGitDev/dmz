@@ -3,7 +3,7 @@
 import argparse
 import json
 from pathlib import Path
-from evaluate import inputs,session
+from evaluate import inputs,session,verify_tokenizer
 from encoder import chunks,digest
 from ner import external
 from transformers import AutoTokenizer
@@ -12,6 +12,7 @@ p=argparse.ArgumentParser(__doc__);p.add_argument('--assets',type=Path,required=
 p.add_argument('--models',nargs='+',choices=['fp32','int8','int4'],default=['fp32','int8']);a=p.parse_args()
 a.assets=external(a.assets)
 if (a.assets/'fixtures.json').exists():raise ValueError('refusing to overwrite fixtures')
+verify_tokenizer(a.assets/'tokenizer')
 tokenizer=AutoTokenizer.from_pretrained(a.assets/'tokenizer',local_files_only=True,add_prefix_space=True)
 phrase='Tilbúið próf Arna Jónsdóttir sendi samning til yfirferðar og greiðsla verður bókuð á morgun .'.split()
 cases=[]

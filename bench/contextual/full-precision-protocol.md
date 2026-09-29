@@ -112,3 +112,10 @@ Evaluate the averaged model alone and with the unchanged CRF, retaining failure
 results. This adds two composition candidates (six new candidates total for the
 two-epoch run); it does not produce new independent evidence. Averaging weights
 does not itself establish stability or quality, which must still be measured.
+
+The selected manifest must also pin the local tokenizer/configuration files.
+Export validates these before loading the tokenizer and records the exported
+tokenizer hashes. Native evaluation and browser-vector preparation check those
+hashes; the browser then binds the private token vectors by checksum. Keep the
+selection manifest immutable after freeze and put later measurements in separate
+reports.
