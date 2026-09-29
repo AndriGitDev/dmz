@@ -75,8 +75,11 @@ also reproduces all frozen spans exactly: 99.3711% precision / 98.7500% recall,
 with Chromium replay taking 85.782 seconds and zero external requests.
 
 The separate rank-16 correction-training job started at approximately 09:34 UTC.
-It is bounded to 12,717 seconds to preserve evaluation/reporting time. No trained
-checkpoint has been evaluated yet.
+Both complete epochs finished in 9,448 seconds of optimization under the
+12,717-second cap. The first repaired graph is 98.945 MiB and passed its trained
+PyTorch/ORT parity probe (eight training chunks, zero changed labels). Separate
+native and Chromium development evaluation is running; no quality claim follows
+from this probe. `repair-training.json` pins both complete checkpoints.
 It keeps the int4 backbone fixed and trains only additive FP32 matrices plus the
 BIO head on the original training mixture. The real initial implementation probe
 passes on eight training chunks: maximum PyTorch/ORT logit difference 0.0000401,
