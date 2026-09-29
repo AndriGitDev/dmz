@@ -131,3 +131,9 @@ This reports both native-reference differences and compression changes relative
 to FP32 in the **same browser/runtime/thread/batch configuration**, including added
 misses, recoveries and false-positive changes. A native reference is not a
 substitute for this same-runtime comparison. The decoded span cache is private.
+
+The extended recipes `int4b16`, `int4a32` and `hqq4` retain FP32 activations and
+are predeclared in the same protocol. To measure additional graphs without
+replacing earlier fabricated fixtures, use `fixtures.py --output /outside/new.json`
+and `DMZ_BROWSER_FIXTURES=/outside/new.json`. New runtime reports hash that fixture
+file; prior fixtures and reports remain intact.

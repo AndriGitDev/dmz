@@ -12,7 +12,8 @@ const reportPath = process.env.DMZ_BROWSER_REPORT;
 if (!assets || !reportPath) throw new Error('Set DMZ_MODEL_ASSETS and DMZ_BROWSER_REPORT');
 try { await stat(reportPath); throw new Error('Refusing to replace benchmark report'); }
 catch(error) { if(error.code!=='ENOENT')throw error; }
-const fixtures = JSON.parse(await readFile(join(assets, 'fixtures.json'), 'utf8'));
+const fixtureBytes = await readFile(process.env.DMZ_BROWSER_FIXTURES || join(assets, 'fixtures.json'));
+const fixtures = JSON.parse(fixtureBytes.toString('utf8'));
 for (const [model, expected] of Object.entries(fixtures.models)) {
   assert.ok(['fp32', 'int8', 'int4', 'mixed', 'int4b16', 'int4a32', 'hqq4'].includes(model));
   const hash = createHash('sha256');
@@ -33,7 +34,7 @@ const multiModel=process.env.DMZ_MULTI_MODEL || (Object.hasOwn(fixtures.models,'
 assert.ok(Object.hasOwn(fixtures.models,multiModel));
 const traffic = [];
 const failures = [];
-const result = { schema: 1, scope: 'Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration', models: fixtures.models, sessions: [], failures, memory: 'Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory', externalRequests: [] };
+const result = { schema: 1, fixtures_sha256: createHash('sha256').update(fixtureBytes).digest('hex'), scope: 'Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration', models: fixtures.models, sessions: [], failures, memory: 'Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory', externalRequests: [] };
 function treeRss(rootPid) {
   const rows = [];
   for (const pid of readdirSync('/proc').filter(n => /^\d+$/.test(n))) {

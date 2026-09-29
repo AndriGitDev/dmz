@@ -9,9 +9,11 @@ from ner import external
 from transformers import AutoTokenizer
 
 p=argparse.ArgumentParser(__doc__);p.add_argument('--assets',type=Path,required=True)
+p.add_argument('--output',type=Path,help='Fresh external fixture file; defaults to ASSETS/fixtures.json')
 p.add_argument('--models',nargs='+',choices=['fp32','int8','int4','mixed','int4b16','int4a32','hqq4'],default=['fp32','int8']);a=p.parse_args()
 a.assets=external(a.assets)
-if (a.assets/'fixtures.json').exists():raise ValueError('refusing to overwrite fixtures')
+output=external(a.output) if a.output else a.assets/'fixtures.json'
+if output.exists():raise ValueError('refusing to overwrite fixtures')
 verify_tokenizer(a.assets/'tokenizer')
 tokenizer=AutoTokenizer.from_pretrained(a.assets/'tokenizer',local_files_only=True,add_prefix_space=True)
 phrase='Tilbúið próf Arna Jónsdóttir sendi samning til yfirferðar og greiðsla verður bókuð á morgun .'.split()
@@ -32,5 +34,5 @@ for model in a.models:
             logits=runtime.run(['logits'],feed)[0]
             chunk.setdefault('expected',{})[model]=dict(labels=logits.argmax(-1).flatten().tolist(),logits=logits.flatten().tolist())
     del runtime
-(a.assets/'fixtures.json').write_text(json.dumps(dict(schema=1,scope='fabricated pretokenized words; excludes browser tokenization, CRF and masking',models={m:digest(a.assets/(m+'.onnx')) for m in a.models},cases=cases)))
+output.write_text(json.dumps(dict(schema=1,scope='fabricated pretokenized words; excludes browser tokenization, CRF and masking',models={m:digest(a.assets/(m+'.onnx')) for m in a.models},cases=cases)))
 print(json.dumps(dict(cases=len(cases),words=[c['words'] for c in cases])))
