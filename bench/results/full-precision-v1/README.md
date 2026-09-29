@@ -138,3 +138,15 @@ value, so the guarded `repairhalf` trial is skipped as predeclared. The command'
 actual quality guard rejects both reports; `followup-decision.json` records their
 hashes and decision. The 237.044-MiB FP16-storage fallback is now being evaluated
 at unchanged thresholds to test whether it preserves more reference quality.
+
+
+### FP16 storage browser result
+
+The 237.044-MiB `fp16storage` graph preserves every frozen FP32 span in both native
+and actual Chromium evaluation on the two reused development sets. General
+precision/recall remains 95.5526% / 97.0120%; synthetic domain remains
+99.3711% / 98.7500%. There are zero changed records, added/recovered misses or
+added/removed false positives. Browser replay takes 823.704 / 85.772 seconds,
+with zero external requests. This approximately halves graph storage while
+remaining above 100 MiB; it does not establish independent quality or reduced
+runtime memory. Original-text and isolated runtime measurements are queued.
