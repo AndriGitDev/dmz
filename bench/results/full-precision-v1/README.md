@@ -51,3 +51,25 @@ Accuracy replay uses native pretokenization and cached CRF merge; runtime timing
 The private blind-review-v2 pilot has 42 unlabelled records from nine documents. It awaits independent human annotation, extraction/source review and a document-disjoint sampling protocol. No candidate predictions were used to create gold labels. See `../../holdout/README.md`.
 
 Weights, data, token vectors, individual predictions and detailed logs remain outside Git. Aggregate reports contain hashes. Baselines and failed experiments are preserved; Shield code is unchanged. Draft PR #11 is stacked on unmerged PR #10; no merge or deployment is authorized. See `../../contextual/full-precision-protocol.md` for the training and compression recipes.
+
+## Extended investigation in progress
+
+The owner authorized up to eight additional hours through 15:16:30 UTC on
+29 September 2026. The four-graph comparison above remains preserved.
+
+`int4b16` (symmetric blocks of 16) is 98.875 MiB. Actual Chromium reproduces its
+native scores exactly: general 95.8968% precision / 96.2151% recall, synthetic
+domain 98.9451% / 97.7083%. Against frozen FP32 it adds 15 general misses and
+recovers three; it adds five domain misses and recovers none. General replay took
+1804.530 seconds. It improves on the original int4 recall but is not an accepted
+replacement. The asymmetric block-32 graph is 90.021 MiB and HQQ block-32 graph
+98.880 MiB; their quality evaluation is running.
+
+A separate rank-16 correction-training path is prepared but has not trained yet.
+It keeps the int4 backbone fixed and trains only additive FP32 matrices plus the
+BIO head on the original training mixture. The real initial implementation probe
+passes on eight training chunks: maximum PyTorch/ORT logit difference 0.0000401,
+zero changed word labels. This probe is not an accuracy evaluation. Hash guards
+reject changed references and nontraining inputs; export guards preserve backbone
+initializers and require complete checkpoints. See the predeclared protocol for
+limits, subsequent export parity checks and separate development evaluation.
