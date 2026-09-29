@@ -14,7 +14,7 @@ class CompressionGuardTests(unittest.TestCase):
             root=Path(directory);selection=root/'selected.json';model=root/'fp32.onnx'
             model.write_bytes(b'fabricated graph placeholder')
             def run(expected):
-                for recipe in ('int4','int8','mixed','int4b16','int4a32'):
+                for recipe in ('int4','int8','mixed','int4b16','int4a32','hqq4'):
                     result=subprocess.run([sys.executable,str(script),'--assets',str(root),
                         '--selection',str(selection),'--recipe',recipe],capture_output=True,text=True)
                     self.assertNotEqual(result.returncode,0)

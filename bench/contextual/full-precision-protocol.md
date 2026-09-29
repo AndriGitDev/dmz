@@ -177,3 +177,15 @@ for any candidate considered for selection. Do not infer quality from byte size.
 ONNX Runtime documents block-wise weight-only options at
 https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html;
 the implementation and runtime remain pinned to the installed 1.23.2 version.
+
+### Weight-error optimization alternative
+
+Also predeclare one `hqq4` candidate using the installed ONNX Runtime 1.23.2 HQQ
+implementation: four-bit MatMul weights, block 32, axis 1, default weight-only
+optimization (up to 20 iterations), FP32 floating zero points, unchanged U8
+Gather and FP32 head. HQQ consumes no calibration examples or evaluation labels.
+Force `accuracy_level=1` on generated MatMulNBits nodes because this installed HQQ
+path does not propagate that constructor option. Verify native and actual browser
+support for floating zero points before considering selection. This optimizes
+weight reconstruction, not an asserted guarantee of task-quality preservation.
+Source: https://github.com/microsoft/onnxruntime/blob/v1.23.2/onnxruntime/python/tools/quantization/matmul_nbits_quantizer.py

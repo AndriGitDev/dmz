@@ -15,7 +15,7 @@ def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--assets',type=Path,required=True)
     p.add_argument('--selection',type=Path,required=True)
-    p.add_argument('--recipe',choices=['int8','int4','mixed','int4b16','int4a32'],required=True)
+    p.add_argument('--recipe',choices=['int8','int4','mixed','int4b16','int4a32','hqq4'],required=True)
     a=p.parse_args();assets=external(a.assets)
     selected=json.loads(a.selection.read_text());export=json.loads((assets/'export.json').read_text())
     if selected.get('frozen') is not True:raise ValueError('full-precision reference must be frozen first')
@@ -42,7 +42,7 @@ def main():
             extra_options={'MatMulConstBOnly':True})
         description='Dynamic U8/U8 constant MatMul and U8 Gather; per-channel; FP32 head'
     else:
-        from onnxruntime.quantization.matmul_nbits_quantizer import MatMulNBitsQuantizer
+        from onnxruntime.quantization.matmul_nbits_quantizer import MatMulNBitsQuantizer, HQQWeightOnlyQuantConfig
         intermediate=assets/(a.recipe+'-gather8-intermediate.onnx')
         if intermediate.exists():raise ValueError('intermediate already exists')
         if a.recipe=='mixed':
@@ -54,14 +54,28 @@ def main():
             quantize_dynamic(str(source),str(intermediate),weight_type=QuantType.QUInt8,
                 per_channel=True,op_types_to_quantize=['Gather'])
         block_size=16 if a.recipe=='int4b16' else 32
-        symmetric=a.recipe!='int4a32'
+        symmetric=a.recipe not in ('int4a32','hqq4')
+        algorithm=None
+        if a.recipe=='hqq4':
+            import torch
+            torch.set_num_threads(3)
+            algorithm=HQQWeightOnlyQuantConfig(block_size=32,bits=4,axis=1,op_types_to_quantize=('MatMul',))
         quantizer=MatMulNBitsQuantizer(str(intermediate),block_size=block_size,is_symmetric=symmetric,
-            accuracy_level=1,nodes_to_exclude=excluded,op_types_to_quantize=('MatMul',))
+            accuracy_level=1,nodes_to_exclude=excluded,op_types_to_quantize=('MatMul',),algo_config=algorithm)
         quantizer.process()
+        if a.recipe=='hqq4':
+            # ORT 1.23.2 HQQ does not propagate accuracy_level to generated nodes.
+            for node in quantizer.model.model.graph.node:
+                if node.op_type=='MatMulNBits':
+                    retained=[attr for attr in node.attribute if attr.name!='accuracy_level']
+                    del node.attribute[:];node.attribute.extend(retained)
+                    node.attribute.append(onnx.helper.make_attribute('accuracy_level',1))
         quantizer.model.save_model_to_file(str(output),use_external_data_format=False)
         # Retain intermediate provenance; remove only this newly generated temporary graph.
         intermediate_sha256=digest(intermediate);intermediate.unlink()
         description=f"Weight-only {'symmetric' if symmetric else 'asymmetric'} int4 MatMul, block {block_size}, accuracy_level=1 (FP32 activations), FP32 head; U8 Gather"
+        if a.recipe=='hqq4':
+            description='HQQ weight-only int4 MatMul, block 32, FP32 floating zero points and activations, FP32 head; U8 Gather; no calibration data'
         if a.recipe=='mixed':
             description='Dynamic U8/U8 attention MatMul and U8 Gather; weight-only int4 feed-forward MatMul block 32 with FP32 activations; FP32 head'
     onnx.checker.check_model(str(output))
