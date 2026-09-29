@@ -1,0 +1,31 @@
+{
+  "split": "dev",
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "model_sha256": "318d2daf6dec075631bea7816d505a08640278981e9bf54af9a24a63ea5b82f8",
+  "text_mode": "canonical",
+  "scores": {
+    "neural": {
+      "tp": 475,
+      "fp": 2,
+      "fn": 5,
+      "precision": 0.9958071278825996,
+      "recall": 0.9895833333333334,
+      "target_met": true
+    },
+    "combined": {
+      "tp": 477,
+      "fp": 1,
+      "fn": 3,
+      "precision": 0.997907949790795,
+      "recall": 0.99375,
+      "target_met": true
+    }
+  },
+  "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+  "crf_threshold": 0.75,
+  "neural_threshold": 0.0,
+  "seconds": 16.88523645600071,
+  "rows": 256,
+  "independent_final_evaluation": false,
+  "method": "Reused development; exact Person spans; FP32 fine-tuned encoder"
+}
