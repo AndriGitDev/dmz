@@ -17,13 +17,20 @@ wins the predeclared precision-floor / lower-recall rule, but its general precis
 margin is narrow. The completed refinement fails the general precision floor in
 combination; its standalone detector passes but has lower general recall.
 `final-comparison.json` retains all 13 candidates, including the old baseline.
-Reproducibility and original-text checks are in progress before freeze. See
+The reference was frozen at 05:01 UTC on 29 September 2026 after exact batch-8 to
+batch-1 span parity on both sets and a passing original UTF-8 domain check. See
 `../../contextual/full-precision-protocol.md` for the recipes and development-informed
 adjustments.
 
+`selected-candidate.json` is immutable: checkpoint, tokenizer/configuration,
+thresholds, data identities, comparison and stability hashes are pinned. Later
+browser and compression measurements belong in separate reports. The selected
+checkpoint SHA-256 is `ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a`.
+
 Each new checkpoint has 123,951,875 FP32 parameters and is 495,831,740 bytes
 (472.862 MiB). This is a checkpoint size, not a browser graph or extension download.
-No new candidate has been compressed or measured in Chromium yet.
+The FP32 ONNX export is 496,010,299 bytes (473.032 MiB). Native parity and full
+Chromium replay are running before compressed browser comparisons.
 
 The epoch-2 error audit motivated a fixed-threshold neural-overlap-priority
 diagnostic. It did not improve any of the three completed candidates. For epoch 2

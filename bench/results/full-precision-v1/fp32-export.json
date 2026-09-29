@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "checkpoint_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+  "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+  "model_sha256": "053feb2c684301d3110a4bdcbfefda2fd31807b6fa4d9d73060dafa67928c1fb",
+  "bytes": 496010299,
+  "tokenizer_files": {
+    "merges.txt": "471f0071ad08185f525016d1dd224ea5b3b9932ff7ae5a833303037439fe8dfa",
+    "special_tokens_map.json": "8293ae960b0a0852d4d3813118030a1149a3ed9fe37bc2e1e7b3c2e62eb2d4b7",
+    "tokenizer.json": "0305755b907b7a616fed8aa81aa0d12fe45a0916111988189b8646cc066fe20a",
+    "tokenizer_config.json": "0fa7f06dda621d44e2c21c4812ed71fc9ed1920e64edb712f553f158dc8f59a1",
+    "vocab.json": "23468caebe8e047dac3a6ffe59b767c8bf06917b8a8db191b35c74bbcc1a0ae5"
+  },
+  "seconds": 17.412764085980598,
+  "precision": "FP32 encoder, pooling and head; no float16 round-trip",
+  "torch": "2.8.0+cpu",
+  "onnx": "1.19.0",
+  "opset": 17,
+  "compression": false
+}
