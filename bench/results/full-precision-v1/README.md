@@ -29,8 +29,18 @@ checkpoint SHA-256 is `ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d06545
 
 Each new checkpoint has 123,951,875 FP32 parameters and is 495,831,740 bytes
 (472.862 MiB). This is a checkpoint size, not a browser graph or extension download.
-The FP32 ONNX export is 496,010,299 bytes (473.032 MiB). Native parity and full
-Chromium replay are running before compressed browser comparisons.
+The FP32 ONNX export is 496,010,299 bytes (473.032 MiB). Native parity is exact on
+both datasets. Chromium 153 / ORT Web 1.23.2, three WASM threads and batch one,
+also reproduces every selected combined span on both full development sets.
+Replay took 764.101 seconds for general text and 81.025 seconds for domain text;
+these are corpus replay times, not per-request warm latency measurements.
+The browser scope uses native pretokenization and a cached CRF merge and does not
+establish end-to-end Shield behavior.
+
+The guarded int4 graph is 88.750 MiB; unsigned-int8 is 119.642 MiB. Compression
+quality and browser measurements are in progress. Neither is accepted from size
+alone. `supporting-assets.json` inventories tokenizer, CRF and WASM files separately
+and is not a packaged-extension or compressed-transfer measurement.
 
 The epoch-2 error audit motivated a fixed-threshold neural-overlap-priority
 diagnostic. It did not improve any of the three completed candidates. For epoch 2

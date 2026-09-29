@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "tokenizer": [
+    {
+      "file": "merges.txt",
+      "bytes": 595064,
+      "sha256": "471f0071ad08185f525016d1dd224ea5b3b9932ff7ae5a833303037439fe8dfa"
+    },
+    {
+      "file": "special_tokens_map.json",
+      "bytes": 957,
+      "sha256": "8293ae960b0a0852d4d3813118030a1149a3ed9fe37bc2e1e7b3c2e62eb2d4b7"
+    },
+    {
+      "file": "tokenizer.json",
+      "bytes": 3821746,
+      "sha256": "0305755b907b7a616fed8aa81aa0d12fe45a0916111988189b8646cc066fe20a"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "bytes": 1268,
+      "sha256": "0fa7f06dda621d44e2c21c4812ed71fc9ed1920e64edb712f553f158dc8f59a1"
+    },
+    {
+      "file": "vocab.json",
+      "bytes": 934908,
+      "sha256": "23468caebe8e047dac3a6ffe59b767c8bf06917b8a8db191b35c74bbcc1a0ae5"
+    }
+  ],
+  "crf": {
+    "file": "initials.crfsuite",
+    "bytes": 2172152,
+    "sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c"
+  },
+  "runtime": [
+    {
+      "file": "ort.wasm.min.mjs",
+      "bytes": 49856,
+      "sha256": "69751720f611e37d1ce2fa3c6ebaa80f949014752636c5f8887a63d40feadcc7"
+    },
+    {
+      "file": "ort-wasm-simd-threaded.mjs",
+      "bytes": 20321,
+      "sha256": "90a557d15c02bac4504d95b67f431d8594635ed2a0a62a7f2cd83d090ff91d3e"
+    },
+    {
+      "file": "ort-wasm-simd-threaded.wasm",
+      "bytes": 11905541,
+      "sha256": "45eaee27761ad883742a8d4b8fce1538d60ce43b51adf1726fafccc59b8c1a15"
+    }
+  ],
+  "scope": "Uncompressed supporting-file inventory; not a packaged extension or measured compressed network transfer; excludes CRF/tokenizer execution integration and browser installation",
+  "totals": {
+    "tokenizer_bytes": 5353943,
+    "crf_bytes": 2172152,
+    "wasm_runtime_bytes": 11975718
+  }
+}
