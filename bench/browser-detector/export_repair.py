@@ -44,6 +44,8 @@ def attach(graph, state):
         'head.4.bias':('/head/head.4/Add',1,False)}
     for key,(node,index,transpose) in mappings.items():
         target=lookup[node].input[index];value=state[key].numpy()
+        if any(target in consumer.input and not consumer.name.startswith('/head/') for consumer in graph.graph.node):
+            raise ValueError('head initializer is shared with the frozen backbone')
         if transpose:value=value.T
         if list(value.shape)!=list(initializers[target].dims):raise ValueError('head shape mismatch')
         initializers[target].CopyFrom(numpy_helper.from_array(np.ascontiguousarray(value),target))

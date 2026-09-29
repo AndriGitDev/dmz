@@ -44,6 +44,8 @@ class RepairExportTests(unittest.TestCase):
         onnx.checker.check_model(model);np.testing.assert_allclose(run(model),expected,rtol=1e-6,atol=1e-6)
         changed=onnx.ModelProto.FromString(original);state['head.4.bias']+=1;attach(changed,state)
         np.testing.assert_allclose(run(changed),expected+1,rtol=1e-6,atol=1e-6)
+        shared=onnx.ModelProto.FromString(original);shared.graph.node[0].input[2]='head.0.weight'
+        with self.assertRaisesRegex(ValueError,'shared with the frozen backbone'):attach(shared,state)
 
 
 if __name__=='__main__':unittest.main()
