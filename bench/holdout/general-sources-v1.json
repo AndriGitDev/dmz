@@ -1,0 +1,8 @@
+[
+  {"id":"general-natt-1","url":"https://www.natt.is/is/frettir/2026/09/villt-jardarber-nordurlondum-rannsokud","index":"https://www.natt.is/is/frettir","observed_rank":1,"genre":"nature-science news"},
+  {"id":"general-natt-2","url":"https://www.natt.is/is/frettir/2026/09/elin-gunnlaugsdottir-grasafraedingur-latin","index":"https://www.natt.is/is/frettir","observed_rank":2,"genre":"nature-science news"},
+  {"id":"general-natt-3","url":"https://www.natt.is/is/frettir/2026/09/evropskt-samstarf-um-sjalfvirkar-frjomaelingar","index":"https://www.natt.is/is/frettir","observed_rank":3,"genre":"nature-science news"},
+  {"id":"general-vedur-1","url":"https://vedur.is/um-vi/frettir/maelingar-og-boranir-i-strandartindi-a-seydisfirdi","index":"https://vedur.is/um-vi/frettir","observed_rank":1,"genre":"weather-geoscience news"},
+  {"id":"general-vedur-2","url":"https://vedur.is/um-vi/frettir/tidarfar-i-agust-2026","index":"https://vedur.is/um-vi/frettir","observed_rank":2,"genre":"weather-geoscience news"},
+  {"id":"general-vedur-3","url":"https://vedur.is/um-vi/frettir/litil-hlaup-i-mulakvisl","index":"https://vedur.is/um-vi/frettir","observed_rank":3,"genre":"weather-geoscience news"}
+]

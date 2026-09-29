@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "reason": "ORT added explicit default data_location metadata to four unchanged head tensors; strict serialized-head guard rejected export",
+  "artifact_sha256": "7077f6f9de31a0f51cf6e546332b359b211ab37f4d6f2814f83c76effd8253fe",
+  "bytes": 241838672,
+  "quality_evaluated": false,
+  "workflow": "embedding-ablation-workflow.json",
+  "failed_stage_log": "int8fp16-export-ablation.log"
+}

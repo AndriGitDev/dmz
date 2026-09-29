@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "identity": {
+    "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+    "frozen_checkpoint_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+    "quantized_sha256": "e89ca5f05a181928ff0cc9da4f5b6774e2cfb3c3a472ab5dafaff6fb3c7b9779",
+    "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+    "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a"
+  },
+  "parity_probe": {
+    "training_chunks": 8,
+    "max_absolute_logit_error": 3.337860107421875e-05,
+    "changed_word_labels": 0
+  },
+  "verified_export": {
+    "model_sha256": "a8d67c5e33059e5029bd2543dacf103e5039781013420647ad0bee1629f02b24",
+    "checkpoint_sha256": "3f8bd631c7baf95099785051f791a260b6837a0f2f2c092fde45644ceba39e4c"
+  },
+  "split": "train",
+  "source_sha256": "03936f247a7c84a0a714f3f1a3e684de0039bf612820f244de7fb4176bc39d19",
+  "torch": "2.8.0+cpu",
+  "independent_validation": false
+}

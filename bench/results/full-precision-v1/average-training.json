@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "method": "Fixed equal FP32 parameter average, no new training or threshold tuning",
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "split": "train",
+  "source_training_sha256": "e7d56edc7f3edcce0e0e67c7896edd7d37405fb0f8ab7798b737b6cccfcfc1ed",
+  "source_epochs": [
+    1,
+    2
+  ],
+  "source_sha256": [
+    "2f1db979856d90f2d707ee9a6ef9d28e7f39c8d4271cbf1d3acd971faa2a2037",
+    "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a"
+  ],
+  "independent_final_evaluation": false,
+  "checkpoints": [
+    {
+      "epoch": 1,
+      "kind": "parameter_average",
+      "complete_epoch": false,
+      "file": "averaged.safetensors",
+      "sha256": "4ccc19c2239a52d3d17bb9f5312a6842e460627fff68f984bff4d0b83400ed23",
+      "bytes": 495831740
+    }
+  ]
+}

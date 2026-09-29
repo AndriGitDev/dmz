@@ -1,0 +1,519 @@
+{
+  "schema": 1,
+  "fixtures_sha256": "ff821e45a4626e119dc63f3ada34ff27d848db879e81067b12d26819f8987961",
+  "scope": "Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration",
+  "models": {
+    "fp32": "053feb2c684301d3110a4bdcbfefda2fd31807b6fa4d9d73060dafa67928c1fb",
+    "int8": "72466fbb391d65f498e10fb7c95ce9ae67042ba4cd845cff4a2cad6d4c781956",
+    "int4b16": "cb57bbbba24c00f82983935633c78dc5917d6078b2a4886925c0e350a6fa5d8f",
+    "int4a32": "fef255073d87e0c23ba127fecc9aeab9c6464d1bed46a80e8991b09fc48f89f7",
+    "hqq4": "d888650efbf3a3b384d711380215ad3cdb9a945259aa032613ffe29502fee2f9",
+    "repair1": "a8d67c5e33059e5029bd2543dacf103e5039781013420647ad0bee1629f02b24",
+    "repair2": "c2662c5f708a0570c5e6699a102aa2843bcbbca68e8ed9d164341cde39b22c0a",
+    "fp16storage": "e5acd596fde1873c6f4a5620db9c5417f11a59f3ad70cd96423614dd667b4690"
+  },
+  "sessions": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "baselineTreeRssKiB": 450176,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 373.19499999284744,
+          "warmMedianMs": 261.58500000834465,
+          "warmMaxMs": 418.65000000596046,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001239776611328125
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 753.0150000154972,
+          "warmMedianMs": 927.2249999940395,
+          "warmMaxMs": 999.5349999964237,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001049041748046875
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3232.6650000214577,
+          "warmMedianMs": 3135.814999997616,
+          "warmMaxMs": 3414.8850000202656,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000133514404296875
+        }
+      ],
+      "load": {
+        "loadMs": 6309.669999986887,
+        "isolated": true,
+        "wallMs": 6370
+      },
+      "loadedTreeRssKiB": 1676512,
+      "peakTreeRssKiB": 2143384
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "baselineTreeRssKiB": 455756,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 310.22499999403954,
+          "warmMedianMs": 144.55500000715256,
+          "warmMaxMs": 169.07499998807907,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.07456779479980469
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 524.4149999916553,
+          "warmMedianMs": 425.58500000834465,
+          "warmMaxMs": 531.5699999928474,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 1.4048690795898438
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 1607.800000011921,
+          "warmMedianMs": 1687.005000025034,
+          "warmMaxMs": 1812.7299999892712,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 1.8077877759933472
+        }
+      ],
+      "load": {
+        "loadMs": 2085.9800000190735,
+        "isolated": true,
+        "wallMs": 2151
+      },
+      "loadedTreeRssKiB": 856280,
+      "peakTreeRssKiB": 944696
+    },
+    {
+      "model": "int4b16",
+      "threads": 3,
+      "baselineTreeRssKiB": 455680,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 679.7800000011921,
+          "warmMedianMs": 481.419999986887,
+          "warmMaxMs": 665.0699999928474,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.000030517578125
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 1162.1949999928474,
+          "warmMedianMs": 986.4099999964237,
+          "warmMaxMs": 1057.6049999892712,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001811981201171875
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 4018.9650000035763,
+          "warmMedianMs": 3875.1449999809265,
+          "warmMaxMs": 4087.3499999940395,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00018024444580078125
+        }
+      ],
+      "load": {
+        "loadMs": 2087.655000001192,
+        "isolated": true,
+        "wallMs": 2141
+      },
+      "loadedTreeRssKiB": 789732,
+      "peakTreeRssKiB": 870324
+    },
+    {
+      "model": "int4a32",
+      "threads": 3,
+      "baselineTreeRssKiB": 455276,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 637.5649999976158,
+          "warmMedianMs": 487.75,
+          "warmMaxMs": 568.4449999928474,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000171661376953125
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 1107.830000013113,
+          "warmMedianMs": 999.6349999904633,
+          "warmMaxMs": 1159.0049999952316,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000247955322265625
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 4616.560000002384,
+          "warmMedianMs": 4126.074999988079,
+          "warmMaxMs": 4253.020000010729,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00003147125244140625
+        }
+      ],
+      "load": {
+        "loadMs": 1904.5450000166893,
+        "isolated": true,
+        "wallMs": 1950
+      },
+      "loadedTreeRssKiB": 779236,
+      "peakTreeRssKiB": 863072
+    },
+    {
+      "model": "hqq4",
+      "threads": 3,
+      "baselineTreeRssKiB": 455848,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 556.7400000095367,
+          "warmMedianMs": 402.4950000047684,
+          "warmMaxMs": 452.4850000143051,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.000011444091796875
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 1013.205000013113,
+          "warmMedianMs": 984.9200000166893,
+          "warmMaxMs": 1096.8100000023842,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00000858306884765625
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3756.4249999821186,
+          "warmMedianMs": 3818.4800000190735,
+          "warmMaxMs": 4288.069999992847,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001239776611328125
+        }
+      ],
+      "load": {
+        "loadMs": 2272.4800000190735,
+        "isolated": true,
+        "wallMs": 2346
+      },
+      "loadedTreeRssKiB": 796432,
+      "peakTreeRssKiB": 891444
+    },
+    {
+      "model": "repair1",
+      "threads": 3,
+      "baselineTreeRssKiB": 455916,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 565.9050000011921,
+          "warmMedianMs": 430.74499997496605,
+          "warmMaxMs": 486.0649999976158,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001430511474609375
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 981.6499999761581,
+          "warmMedianMs": 969.625,
+          "warmMaxMs": 1020.544999986887,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000171661376953125
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 4142.259999990463,
+          "warmMedianMs": 3938.8400000035763,
+          "warmMaxMs": 4090.985000014305,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00002574920654296875
+        }
+      ],
+      "load": {
+        "loadMs": 2234.2950000166893,
+        "isolated": true,
+        "wallMs": 2288
+      },
+      "loadedTreeRssKiB": 785240,
+      "peakTreeRssKiB": 988072
+    },
+    {
+      "model": "repair2",
+      "threads": 3,
+      "baselineTreeRssKiB": 455888,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 697.7000000178814,
+          "warmMedianMs": 546.6949999928474,
+          "warmMaxMs": 659.8650000095367,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000171661376953125
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 1184.905000001192,
+          "warmMedianMs": 1071.8299999833107,
+          "warmMaxMs": 1154.8050000071526,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000171661376953125
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 4138.405000001192,
+          "warmMedianMs": 4184.384999990463,
+          "warmMaxMs": 4331.870000004768,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00002384185791015625
+        }
+      ],
+      "load": {
+        "loadMs": 2845.020000010729,
+        "isolated": true,
+        "wallMs": 2897
+      },
+      "loadedTreeRssKiB": 799724,
+      "peakTreeRssKiB": 889988
+    },
+    {
+      "model": "fp16storage",
+      "threads": 3,
+      "baselineTreeRssKiB": 456172,
+      "timings": [
+        {
+          "words": 32,
+          "chunks": 1,
+          "firstMs": 332.96000000834465,
+          "warmMedianMs": 244.4350000023842,
+          "warmMaxMs": 283.6599999964237,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.0000095367431640625
+        },
+        {
+          "words": 128,
+          "chunks": 1,
+          "firstMs": 813.3600000143051,
+          "warmMedianMs": 835.705000013113,
+          "warmMaxMs": 954.7350000143051,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.000011444091796875
+        },
+        {
+          "words": 512,
+          "chunks": 4,
+          "firstMs": 3471.25,
+          "warmMedianMs": 3205.7999999821186,
+          "warmMaxMs": 3436.0900000035763,
+          "repeats": 5,
+          "changedWordLabels": 0,
+          "maxAbsoluteLogitError": 0.00001811981201171875
+        }
+      ],
+      "load": {
+        "loadMs": 5919.810000002384,
+        "isolated": true,
+        "wallMs": 5986
+      },
+      "loadedTreeRssKiB": 1674720,
+      "peakTreeRssKiB": 2023672
+    }
+  ],
+  "failures": [
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "fp32",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int8",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int4b16",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int4b16",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "int4a32",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "int4a32",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "hqq4",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "hqq4",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "repair1",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "repair1",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "repair2",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "repair2",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "model": "fp16storage",
+      "threads": 3,
+      "test": "invalid-input-rejected",
+      "passed": true
+    },
+    {
+      "model": "fp16storage",
+      "threads": 3,
+      "test": "deadline-terminates-worker",
+      "passed": true
+    },
+    {
+      "test": "worker-termination-rejects-pending",
+      "passed": true
+    },
+    {
+      "test": "not-ready",
+      "passed": true
+    },
+    {
+      "test": "corrupt-model",
+      "passed": true
+    },
+    {
+      "test": "worker-crash-rejects-pending",
+      "passed": true
+    }
+  ],
+  "memory": "Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory",
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "runtime": "onnxruntime-web 1.23.2",
+  "hardwareConcurrency": 4,
+  "multiTab": {
+    "tabs": 3,
+    "model": "repair2",
+    "threadsPerTab": 1,
+    "baselineTreeRssKiB": 660696,
+    "loadWallMs": 3868,
+    "loadedTreeRssKiB": 1937416,
+    "inferenceWallMs": [
+      11530.600000023842,
+      11369.600000023842,
+      11554.09999999404
+    ],
+    "parity": [
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 0.00002384185791015625
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 0.00002384185791015625
+      },
+      {
+        "changedWordLabels": 0,
+        "maxAbsoluteLogitError": 0.00002384185791015625
+      }
+    ],
+    "peakTreeRssKiB": 2093528
+  },
+  "requests": 85,
+  "loadScope": "Fresh worker/context with no-store HTTP, same browser process; not a fresh OS or browser cache cold start",
+  "allRunCasesSucceeded": true
+}

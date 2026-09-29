@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "method": "Frozen int4 backbone plus FP32 rank-16 corrections and repaired head",
+  "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+  "base_quantized_sha256": "e89ca5f05a181928ff0cc9da4f5b6774e2cfb3c3a472ab5dafaff6fb3c7b9779",
+  "training_sha256": "cc4bca48f037ec2f9204b30e2ade005bcb67aa615b1c96f3c75c6f0e891e059d",
+  "checkpoint_sha256": "c1a34c919c7043b84f02e3802f44d8237ebbe59c4d8cfc9be5f8ff090b0f136c",
+  "sha256": "c2662c5f708a0570c5e6699a102aa2843bcbbca68e8ed9d164341cde39b22c0a",
+  "bytes": 103751513,
+  "details": {
+    "adapter_matrices": 144,
+    "rank": 16,
+    "head_tensors_replaced": 6,
+    "frozen_initializers_preserved": 275,
+    "backbone_requantized": false
+  },
+  "threshold_retuning": false,
+  "quality_status": "not evaluated; unchanged quantized weights do not guarantee unchanged predictions"
+}

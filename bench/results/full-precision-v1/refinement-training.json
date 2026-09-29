@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "method": "FP32 full encoder and BIO head fine-tuning; mean subword pooling without float16 round-trip",
+  "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "split": "train",
+  "rows": 46196,
+  "chunks": 46236,
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "initial_head_sha256": null,
+  "warm_start": {
+    "checkpoint_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+    "training_sha256": "e7d56edc7f3edcce0e0e67c7896edd7d37405fb0f8ab7798b737b6cccfcfc1ed",
+    "source_epoch": 2,
+    "optimizer": "fresh AdamW; not optimizer-state resumption"
+  },
+  "settings": {
+    "command": "train",
+    "epochs": 1,
+    "seed": 43,
+    "encoder_lr": 5e-06,
+    "head_lr": 5e-05,
+    "accumulation": 4,
+    "max_seconds": 7200.0,
+    "max_steps": 0,
+    "probe": false,
+    "batch_size": 8,
+    "threads": 3
+  },
+  "torch": "2.8.0+cpu",
+  "checkpoints": [
+    {
+      "epoch": 1,
+      "complete_epoch": true,
+      "optimizer_steps": 1445,
+      "tokens_seen": 824869,
+      "loss": 0.0024922680763050996,
+      "seconds": 6157.066996148002,
+      "file": "epoch-1.safetensors",
+      "sha256": "318d2daf6dec075631bea7816d505a08640278981e9bf54af9a24a63ea5b82f8",
+      "bytes": 495831740
+    }
+  ],
+  "independent_final_evaluation": false
+}

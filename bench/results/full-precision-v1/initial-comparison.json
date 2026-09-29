@@ -1,0 +1,188 @@
+{
+  "schema": 1,
+  "status": "provisional; one bounded FP32 refinement running; not frozen",
+  "independent_final_evaluation": false,
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  },
+  "candidates": [
+    {
+      "candidate": "preserved-baseline-combined",
+      "model_sha256": "dafa42c86fa8014dfc80f93fcf365a9c40650a14a109875492ebec2bfd9d7bb2",
+      "model_scope": "head-only with frozen original encoder and float16 embedding round-trip",
+      "scores": {
+        "general": {
+          "tp": 1435,
+          "fp": 61,
+          "fn": 71,
+          "precision": 0.9592245989304813,
+          "recall": 0.952855245683931,
+          "target_met": false
+        },
+        "domain": {
+          "tp": 462,
+          "fp": 7,
+          "fn": 18,
+          "precision": 0.9850746268656716,
+          "recall": 0.9625,
+          "target_met": true
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.952855245683931,
+      "target_met": false
+    },
+    {
+      "candidate": "epoch-1-neural",
+      "model_sha256": "2f1db979856d90f2d707ee9a6ef9d28e7f39c8d4271cbf1d3acd971faa2a2037",
+      "scores": {
+        "general": {
+          "tp": 1430,
+          "fp": 39,
+          "fn": 76,
+          "precision": 0.9734513274336283,
+          "recall": 0.949535192563081,
+          "target_met": false
+        },
+        "domain": {
+          "tp": 458,
+          "fp": 10,
+          "fn": 22,
+          "precision": 0.9786324786324786,
+          "recall": 0.9541666666666667,
+          "target_met": false
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.949535192563081,
+      "target_met": false
+    },
+    {
+      "candidate": "epoch-1-combined",
+      "model_sha256": "2f1db979856d90f2d707ee9a6ef9d28e7f39c8d4271cbf1d3acd971faa2a2037",
+      "scores": {
+        "general": {
+          "tp": 1454,
+          "fp": 59,
+          "fn": 52,
+          "precision": 0.9610046265697291,
+          "recall": 0.9654714475431607,
+          "target_met": true
+        },
+        "domain": {
+          "tp": 469,
+          "fp": 3,
+          "fn": 11,
+          "precision": 0.9936440677966102,
+          "recall": 0.9770833333333333,
+          "target_met": true
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.9654714475431607,
+      "target_met": true
+    },
+    {
+      "candidate": "epoch-2-neural",
+      "model_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+      "scores": {
+        "general": {
+          "tp": 1444,
+          "fp": 49,
+          "fn": 62,
+          "precision": 0.9671801741460148,
+          "recall": 0.9588313413014609,
+          "target_met": true
+        },
+        "domain": {
+          "tp": 472,
+          "fp": 4,
+          "fn": 8,
+          "precision": 0.9915966386554622,
+          "recall": 0.9833333333333333,
+          "target_met": true
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.9588313413014609,
+      "target_met": true
+    },
+    {
+      "candidate": "epoch-2-combined",
+      "model_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+      "scores": {
+        "general": {
+          "tp": 1461,
+          "fp": 68,
+          "fn": 45,
+          "precision": 0.9555264879005886,
+          "recall": 0.9701195219123506,
+          "target_met": true
+        },
+        "domain": {
+          "tp": 474,
+          "fp": 3,
+          "fn": 6,
+          "precision": 0.9937106918238994,
+          "recall": 0.9875,
+          "target_met": true
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.9701195219123506,
+      "target_met": true
+    },
+    {
+      "candidate": "average-neural",
+      "model_sha256": "4ccc19c2239a52d3d17bb9f5312a6842e460627fff68f984bff4d0b83400ed23",
+      "scores": {
+        "general": {
+          "tp": 1441,
+          "fp": 42,
+          "fn": 65,
+          "precision": 0.9716790289952798,
+          "recall": 0.9568393094289509,
+          "target_met": true
+        },
+        "domain": {
+          "tp": 468,
+          "fp": 5,
+          "fn": 12,
+          "precision": 0.9894291754756871,
+          "recall": 0.975,
+          "target_met": true
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.9568393094289509,
+      "target_met": true
+    },
+    {
+      "candidate": "average-combined",
+      "model_sha256": "4ccc19c2239a52d3d17bb9f5312a6842e460627fff68f984bff4d0b83400ed23",
+      "scores": {
+        "general": {
+          "tp": 1459,
+          "fp": 64,
+          "fn": 47,
+          "precision": 0.9579776756401839,
+          "recall": 0.9687915006640107,
+          "target_met": true
+        },
+        "domain": {
+          "tp": 473,
+          "fp": 2,
+          "fn": 7,
+          "precision": 0.9957894736842106,
+          "recall": 0.9854166666666667,
+          "target_met": true
+        }
+      },
+      "precision_qualified": true,
+      "lower_recall": 0.9687915006640107,
+      "target_met": true
+    }
+  ],
+  "provisional_best": "epoch-2-combined"
+}

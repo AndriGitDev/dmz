@@ -40,27 +40,42 @@ def session(model,threads=3):
     return ort.InferenceSession(str(model),sess_options=options,providers=['CPUExecutionProvider'])
 
 
+def verify_tokenizer(directory):
+    manifest=directory.parent/'export.json'
+    if manifest.exists():
+        export=json.loads(manifest.read_text())
+        if 'tokenizer_files' in export and {p.name for p in directory.iterdir() if p.is_file()}!=set(export['tokenizer_files']):
+            raise ValueError('exported tokenizer file set mismatch')
+        for name,expected in export.get('tokenizer_files',{}).items():
+            if Path(name).name!=name or digest(directory/name)!=expected:
+                raise ValueError('exported tokenizer integrity mismatch')
+
+
 def main():
     p=argparse.ArgumentParser(__doc__)
     for key in ['model','tokenizer','input','crf','reference','output','predictions']:p.add_argument('--'+key,type=Path,required=True)
+    p.add_argument('--text-mode',choices=['canonical','original'],default='canonical')
     p.add_argument('--batch-size',type=int,default=8)
+    p.add_argument('--selection',type=Path,default=Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json')
     a=p.parse_args()
     for key in ['model','tokenizer','input','crf','reference','predictions']:setattr(a,key,external(getattr(a,key)))
     if a.predictions.exists():raise ValueError('refusing to overwrite prediction cache')
+    if a.output.exists():raise ValueError('refusing to overwrite evaluation report')
     from transformers import AutoTokenizer
+    verify_tokenizer(a.tokenizer)
     tokenizer=AutoTokenizer.from_pretrained(a.tokenizer,local_files_only=True,add_prefix_space=True,trust_remote_code=False)
     crf=json.loads(a.crf.read_text());reference=json.loads(a.reference.read_text())
     sha=digest(a.input)
     for cache in [crf,reference]:
-        if cache['input_sha256']!=sha or cache['split']!='dev' or cache['text_mode']!='canonical':raise ValueError('cache identity mismatch')
-    selected=json.loads((Path(__file__).resolve().parents[1]/'results/error-audit-v2/selected-candidate.json').read_text())
+        if cache['input_sha256']!=sha or cache['split']!='dev' or cache.get('text_mode','canonical')!=a.text_mode:raise ValueError('cache identity mismatch')
+    selected=json.loads(a.selection.read_text())
     assert selected['thresholds']==dict(crf=.75,neural=0)
     assert crf['model_sha256']==selected['composition']['crf_sha256']
     assert reference['model_sha256']==selected['composition']['neural_sha256']
     records=[];jobs=[];predictions=[]
     started=time.monotonic();runtime=session(a.model);load=time.monotonic()-started
     for index,row in enumerate(rows(a.input,'dev')):
-        words,offsets,labels=tokens_and_labels(row)
+        words,offsets,labels=tokens_and_labels(row,text_mode=a.text_mode)
         gold=[[s,e] for s,e,_,_ in spans(labels,offsets)]
         if gold!=reference['records'][index]['gold'] or gold!=crf['records'][index]['gold']:raise ValueError('gold mismatch')
         records.append(dict(gold=gold,offsets=offsets));predictions.append(np.zeros(len(words),dtype=np.int8))
@@ -80,8 +95,8 @@ def main():
         output.append(dict(gold=record['gold'],predictions=pred))
         changed+=({tuple(s[:2]) for s in pred}!={tuple(s[:2]) for s in reference['records'][i]['predictions']})
         combined_changed+=(merge(crf['records'][i]['predictions'],pred,.75,0)!=merge(crf['records'][i]['predictions'],reference['records'][i]['predictions'],.75,0))
-    report=dict(schema=1,scope='fixed-threshold development exact Person spans; no training or threshold retuning',input_sha256=sha,model_sha256=digest(a.model),model_bytes=a.model.stat().st_size,rows=len(records),chunks=len(jobs),threads=3,batch_size=a.batch_size,load_seconds=load,inference_seconds=time.monotonic()-inference_start,onnxruntime=ort.__version__,neural=score(output),combined=score(output,crf['records']),reference_neural=score(reference['records']),reference_combined=score(reference['records'],crf['records']),changed_neural_records=changed,changed_combined_records=combined_changed,independent_validation=False)
-    a.predictions.write_text(json.dumps(dict(split='dev',input_sha256=sha,model_sha256=report['model_sha256'],records=output)))
+    report=dict(schema=1,scope='fixed-threshold development exact Person spans; evaluation only, no threshold retuning',text_mode=a.text_mode,input_sha256=sha,model_sha256=digest(a.model),model_bytes=a.model.stat().st_size,rows=len(records),chunks=len(jobs),threads=3,batch_size=a.batch_size,load_seconds=load,inference_seconds=time.monotonic()-inference_start,onnxruntime=ort.__version__,neural=score(output),combined=score(output,crf['records']),reference_neural=score(reference['records']),reference_combined=score(reference['records'],crf['records']),changed_neural_records=changed,changed_combined_records=combined_changed,independent_validation=False)
+    a.predictions.write_text(json.dumps(dict(split='dev',text_mode=a.text_mode,input_sha256=sha,model_sha256=report['model_sha256'],records=output)))
     a.output.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 

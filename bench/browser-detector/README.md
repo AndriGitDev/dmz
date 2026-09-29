@@ -1,9 +1,11 @@
 # Private browser detector benchmark
 
-Research harness for the frozen contextual name detector. **Not wired into
-Shield**, not a new trained model, and not an independent accuracy evaluation.
-See [protocol.md](protocol.md) for the frozen comparison and
-[results](../results/browser-v1/README.md) for the decision.
+Research harness for contextual name detector exports. **Not wired into Shield**
+and not an independent accuracy evaluation. The historical frozen-encoder
+comparison is in [protocol.md](protocol.md) and
+[results](../results/browser-v1/README.md). The later full-encoder training and
+frozen-reference compression comparison is in
+[full-precision results](../results/full-precision-v1/README.md).
 
 ## Reproduce
 
@@ -102,3 +104,52 @@ To add one missing measurement without repeating the complete matrix, set e.g.
 `DMZ_BENCH_CASES=fp32:3 DMZ_BENCH_SINGLE_ONLY=1`. Use a separate report file.
 The original report has FP32/1 and int8/1/3; `chromium-fp32-threads3.json` records
 the additional FP32/3 run, taken after corpus replay ended to avoid contention.
+
+## Fine-tuned reference comparisons
+
+The new training round is defined in
+[`full-precision-protocol.md`](../contextual/full-precision-protocol.md).
+`export_finetuned.py --base ... --checkpoint ... --selection ... --output ...`
+requires a frozen selection manifest and verifies checkpoint/base hashes. It
+exports FP32 only, without the old cache's float16 pooling round-trip.
+`compress_frozen.py --assets ... --selection ... --recipe int8|int4|mixed` separately
+checks the selection and FP32 graph hashes before creating a new candidate.
+The mixed recipe uses int8 attention and int4 feed-forward weights. Acceptance
+requires measured quality; graph size alone is insufficient.
+
+Native `evaluate.py` accepts `--selection`. Browser `corpus.py` additionally accepts
+`--model fp32|int8|int4|mixed` and `--neural-prefix` for the selected reference caches.
+Use the same selection and prediction hashes throughout. Set `DMZ_MODEL_NAME`
+for `corpus.mjs`; it defaults to the historical int8 replay. `fixtures.py --models`
+selects graphs for fabricated runtime measurements, and `DMZ_MULTI_MODEL` selects
+the graph used in the three-tab run. Use new output paths, and perform timing and
+memory measurements after training has stopped.
+
+Score FP32 Chromium replay with `--cache-output /outside/fp32-browser-spans.json`.
+Pass that file as `--browser-reference` when scoring each compressed Chromium run.
+This reports both native-reference differences and compression changes relative
+to FP32 in the **same browser/runtime/thread/batch configuration**, including added
+misses, recoveries and false-positive changes. A native reference is not a
+substitute for this same-runtime comparison. The decoded span cache is private.
+
+The extended recipes `int4b16`, `int4a32` and `hqq4` retain FP32 activations and
+are predeclared in the same protocol. To measure additional graphs without
+replacing earlier fabricated fixtures, use `fixtures.py --output /outside/new.json`
+and `DMZ_BROWSER_FIXTURES=/outside/new.json`. New runtime reports hash that fixture
+file; prior fixtures and reports remain intact.
+
+`../contextual/quantized_repair.py --probe` checks the frozen int4 training
+backbone against real ORT outputs on training-only chunks before correction
+training. `export_repair.py` requires a complete correction checkpoint and adds
+its FP32 matrices to the original int4 graph without requantizing its backbone.
+Export completed epochs as `repair1.onnx` / `repair2.onnx` for the same native and
+Chromium evaluation tools. These are separately trained compression-recovery
+candidates, not revisions to the frozen FP32 reference.
+
+For an original-typography domain check, use fresh private asset/reference/output
+paths, `evaluate.py --text-mode original`, and `corpus.py --text-mode original
+--sets domain`. Supply original-text CRF and frozen prediction caches. First record
+a separate FP32 Chromium span reference in that text mode, then compare the
+compressed finalist against it. Text-mode metadata prevents canonical/original
+cache mixing; old unmarked caches are treated as canonical. This is another reused
+development check, not new independent labels.

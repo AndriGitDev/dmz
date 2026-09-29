@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "recipe": "fp16storage",
+  "description": "FP16 stored encoder MatMul/Gather constants cast to FP32; FP32 computation and head",
+  "reference_sha256": "053feb2c684301d3110a4bdcbfefda2fd31807b6fa4d9d73060dafa67928c1fb",
+  "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+  "sha256": "e5acd596fde1873c6f4a5620db9c5417f11a59f3ad70cd96423614dd667b4690",
+  "bytes": 248558949,
+  "converted": {
+    "MatMul": 72,
+    "Gather": 3
+  },
+  "seconds": 8.891449563991046,
+  "onnx": "1.19.0",
+  "calibration": false,
+  "threshold_retuning": false,
+  "quality_status": "not evaluated; storage reduction is not runtime memory reduction"
+}

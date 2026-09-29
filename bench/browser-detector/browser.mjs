@@ -10,9 +10,12 @@ const root = dirname(fileURLToPath(import.meta.url));
 const assets = process.env.DMZ_MODEL_ASSETS;
 const reportPath = process.env.DMZ_BROWSER_REPORT;
 if (!assets || !reportPath) throw new Error('Set DMZ_MODEL_ASSETS and DMZ_BROWSER_REPORT');
-const fixtures = JSON.parse(await readFile(join(assets, 'fixtures.json'), 'utf8'));
+try { await stat(reportPath); throw new Error('Refusing to replace benchmark report'); }
+catch(error) { if(error.code!=='ENOENT')throw error; }
+const fixtureBytes = await readFile(process.env.DMZ_BROWSER_FIXTURES || join(assets, 'fixtures.json'));
+const fixtures = JSON.parse(fixtureBytes.toString('utf8'));
 for (const [model, expected] of Object.entries(fixtures.models)) {
-  assert.ok(['fp32', 'int8'].includes(model));
+  assert.ok(['fp32', 'int8', 'int4', 'mixed', 'int4b16', 'int4a32', 'hqq4', 'repair1', 'repair2', 'fp16storage', 'repairhalf', 'int8fp16'].includes(model));
   const hash = createHash('sha256');
   for await (const chunk of createReadStream(join(assets, model + '.onnx'))) hash.update(chunk);
   assert.equal(hash.digest('hex'), expected, 'Model differs from native fixture reference');
@@ -25,11 +28,13 @@ let browser;
 let peakRss = 0;
 const cases = process.env.DMZ_BENCH_CASES
   ? process.env.DMZ_BENCH_CASES.split(',').map(value => { const [model, threads] = value.split(':'); return [model, Number(threads)]; })
-  : [['fp32',1],['fp32',3],['int8',1],['int8',3]];
-for (const [model, threads] of cases) assert.ok(['fp32','int8'].includes(model) && [1,3].includes(threads));
+  : Object.keys(fixtures.models).flatMap(model=>[[model,1],[model,3]]);
+for (const [model, threads] of cases) assert.ok(Object.hasOwn(fixtures.models,model) && [1,3].includes(threads));
+const multiModel=process.env.DMZ_MULTI_MODEL || (Object.hasOwn(fixtures.models,'int8')?'int8':Object.keys(fixtures.models).at(-1));
+assert.ok(Object.hasOwn(fixtures.models,multiModel));
 const traffic = [];
 const failures = [];
-const result = { schema: 1, scope: 'Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration', models: fixtures.models, sessions: [], failures, memory: 'Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory', externalRequests: [] };
+const result = { schema: 1, fixtures_sha256: createHash('sha256').update(fixtureBytes).digest('hex'), scope: 'Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration', models: fixtures.models, sessions: [], failures, memory: 'Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory', externalRequests: [] };
 function treeRss(rootPid) {
   const rows = [];
   for (const pid of readdirSync('/proc').filter(n => /^\d+$/.test(n))) {
@@ -90,7 +95,7 @@ try {
     if (path === '/corrupt.onnx') { response.writeHead(200, headers).end('invalid model'); return; }
     let file;
     if (['/worker.mjs','/client.mjs'].includes(path)) file = join(root, path.slice(1));
-    else if (['/fp32.onnx','/int8.onnx'].includes(path)) file = join(assets, path.slice(1));
+    else if (['/fp32.onnx','/int8.onnx','/int4.onnx','/mixed.onnx','/int4b16.onnx','/int4a32.onnx','/hqq4.onnx','/repair1.onnx','/repair2.onnx','/fp16storage.onnx','/repairhalf.onnx','/int8fp16.onnx'].includes(path)) file = join(assets, path.slice(1));
     else if (/^\/runtime\/[a-z0-9.-]+$/.test(path)) file = join(runtime, path.slice('/runtime/'.length));
     if (!file) { response.writeHead(404, headers).end(); return; }
     try {
@@ -153,15 +158,15 @@ try {
     const pages=[];
     for(let i=0;i<3;i++)pages.push(await pageFor(context,origin));
     peakRss=treeRss(browserServer.process().pid);
-    result.multiTab={tabs:3,model:'int8',threadsPerTab:1,baselineTreeRssKiB:peakRss};
+    result.multiTab={tabs:3,model:multiModel,threadsPerTab:1,baselineTreeRssKiB:peakRss};
     try {
       const started=Date.now();
-      await Promise.all(pages.map(page=>page.evaluate(()=>window.client.request('load',{url:'/int8.onnx',threads:1},120000))));
+      await Promise.all(pages.map(page=>page.evaluate(model=>window.client.request('load',{url:'/'+model+'.onnx',threads:1},120000),multiModel)));
       result.multiTab.loadWallMs=Date.now()-started;
       result.multiTab.loadedTreeRssKiB=treeRss(browserServer.process().pid);
       const runs=await Promise.all(pages.map(page=>infer(page,fixtures.cases.at(-1))));
       result.multiTab.inferenceWallMs=runs.map(r=>r.wallMs);
-      result.multiTab.parity=runs.map(r=>parity(r.outputs,fixtures.cases.at(-1),'int8'));
+      result.multiTab.parity=runs.map(r=>parity(r.outputs,fixtures.cases.at(-1),multiModel));
       const killed=await pages[0].evaluate(async chunks=>{const pending=window.client.request('infer',{chunks});window.client.close();try{await pending;return false;}catch{return window.client.pending.size===0;}},fixtures.cases.at(-1).chunks);
       assert.ok(killed);failures.push({test:'worker-termination-rejects-pending',passed:killed});
     } catch(error){result.multiTab.error=String(error.message).slice(0,1200);}
@@ -189,6 +194,8 @@ finally {
   if(browser)await browser.close();if(browserServer)await browserServer.close();if(server)await new Promise(r=>server.close(r));
   result.requests=traffic.length;
   result.loadScope='Fresh worker/context with no-store HTTP, same browser process; not a fresh OS or browser cache cold start';
-  await writeFile(reportPath,JSON.stringify(result,null,2)+'\n');
+  result.allRunCasesSucceeded=!result.fatal && !result.sessions.some(session=>session.error) && !result.multiTab?.error;
+  if(!result.allRunCasesSucceeded)process.exitCode=1;
+  await writeFile(reportPath,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
   console.log(JSON.stringify({report:reportPath,fatal:result.fatal,sessions:result.sessions.length}));
 }

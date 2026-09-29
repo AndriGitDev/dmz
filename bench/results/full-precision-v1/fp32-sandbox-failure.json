@@ -1,0 +1,10 @@
+{
+  "stage": "browser-replay",
+  "model": "fp32",
+  "kind": "execution_sandbox",
+  "error": "listen EPERM 127.0.0.1",
+  "inference_started": false,
+  "model_failure": false,
+  "log": "fp32-browser-replay.log",
+  "recovery": "Rerun browser stage only with localhost permission; native reports and vectors preserved"
+}

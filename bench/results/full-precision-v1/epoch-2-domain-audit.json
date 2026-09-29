@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "split": "dev",
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "training_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+  "neural_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  },
+  "counts": {
+    "rows": 256,
+    "tp": 474,
+    "fp": 3,
+    "fn": 6,
+    "negative_rows": 64,
+    "negative_rows_with_findings": 0
+  },
+  "false_negatives": {
+    "no_name_prediction": 3,
+    "boundary_or_merged_name": 3
+  },
+  "false_positives": {
+    "boundary_or_merged_name": 3
+  },
+  "gold_characteristics": {
+    "multiple_tokens": {
+      "gold": 360,
+      "correct": 355,
+      "missed": 5
+    },
+    "full_name_unseen_in_training": {
+      "gold": 366,
+      "correct": 361,
+      "missed": 5
+    },
+    "unseen_person_component": {
+      "gold": 360,
+      "correct": 355,
+      "missed": 5
+    },
+    "unseen_word": {
+      "gold": 360,
+      "correct": 355,
+      "missed": 5
+    },
+    "oblique_patronymic_shape": {
+      "gold": 54,
+      "correct": 54
+    },
+    "single_token": {
+      "gold": 120,
+      "correct": 119,
+      "missed": 1
+    },
+    "full_name_seen_in_training": {
+      "gold": 114,
+      "correct": 113,
+      "missed": 1
+    },
+    "all_components_seen_as_person": {
+      "gold": 120,
+      "correct": 119,
+      "missed": 1
+    },
+    "all_uppercase": {
+      "gold": 120,
+      "correct": 118,
+      "missed": 2
+    },
+    "initial": {
+      "gold": 120,
+      "correct": 118,
+      "missed": 2
+    },
+    "ambiguous_component": {
+      "gold": 129,
+      "correct": 127,
+      "missed": 2
+    }
+  },
+  "synthetic_variants": {
+    "full": {
+      "rows": 48,
+      "tp": 119,
+      "fp": 0,
+      "fn": 1
+    },
+    "single": {
+      "rows": 48,
+      "tp": 119,
+      "fp": 0,
+      "fn": 1
+    },
+    "upper": {
+      "rows": 48,
+      "tp": 118,
+      "fp": 1,
+      "fn": 2
+    },
+    "initial": {
+      "rows": 48,
+      "tp": 118,
+      "fp": 2,
+      "fn": 2
+    },
+    "negative": {
+      "rows": 64,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    }
+  },
+  "independent_final_evaluation": false,
+  "caveat": "Reused development; automated error/coverage categories, not human adjudication; characteristic groups overlap"
+}

@@ -1,0 +1,75 @@
+{
+  "schema": 2,
+  "frozen": true,
+  "frozen_at": "2026-09-29T05:01:33.379690+00:00",
+  "status": "Research reference; reused-development targets met; independent validation pending; not integrated into Shield",
+  "candidate": {
+    "candidate": "epoch-2-combined",
+    "model_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+    "scores": {
+      "general": {
+        "tp": 1461,
+        "fp": 68,
+        "fn": 45,
+        "precision": 0.9555264879005886,
+        "recall": 0.9701195219123506,
+        "target_met": true
+      },
+      "domain": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875,
+        "target_met": true
+      }
+    },
+    "precision_qualified": true,
+    "lower_recall": 0.9701195219123506,
+    "target_met": true
+  },
+  "composition": {
+    "mode": "combined",
+    "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+    "neural_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+    "overlap_policy": "CRF priority; add only non-overlapping neural spans"
+  },
+  "encoder": {
+    "model": "mideind/IceBERT",
+    "revision": "24c145af7b7d092ecb082897db2e16107301d657",
+    "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+    "tokenizer_files": {
+      "config.json": "bb2aab75de313a000361546746865e7ecbfc1699b013e2bd19730b29a5d183c7",
+      "merges.txt": "471f0071ad08185f525016d1dd224ea5b3b9932ff7ae5a833303037439fe8dfa",
+      "special_tokens_map.json": "c611b1f7d416eb001ee4f293d903ea8c88e703463f1d403f1866a0352743fd00",
+      "tokenizer_config.json": "d1b20de886b976382c12deceb6444477064b3f19aea42be01362eb7dfbc18cc7",
+      "vocab.json": "a0805beb6192f40e2fe03917339a5b77da7ebbbf27e357e3cabc49f9369e2ffe"
+    }
+  },
+  "checkpoint": {
+    "artifact": "full-ft/epoch-2.safetensors",
+    "bytes": 495831740,
+    "parameters": 123951875,
+    "precision": "FP32 all 203 tensors"
+  },
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  },
+  "provenance": {
+    "training_sha256": "e7d56edc7f3edcce0e0e67c7896edd7d37405fb0f8ab7798b737b6cccfcfc1ed",
+    "comparison_sha256": "e734e13d6341a84381ed0bc13c8b021c2f4537769585616aa4ba9193c61bfb81",
+    "stability_sha256": "12938cc58099fb29115f81648c6f25161c4c9ab2be48d0b16519c1246383bfd3",
+    "training_source_sha256": "89f95a0f9693b103f57031c25cbd064017cee1e96a61c7043c72ddf8c545a750"
+  },
+  "evaluation_inputs": {
+    "general": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+    "domain": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87"
+  },
+  "independent_final_evaluation": false,
+  "limitations": [
+    "Development-selected; MIM test split exposed; no independent human labels",
+    "Domain set synthetic; original typography check is not real-document validation",
+    "Chromium accuracy, compression loss, latency, memory and failures pending"
+  ]
+}

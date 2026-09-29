@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "model_sha256": "fef255073d87e0c23ba127fecc9aeab9c6464d1bed46a80e8991b09fc48f89f7",
+  "vectors_sha256": "e512f065ae5843edbb92375bf3b39614f0cce66696e1eec35bb281f3f66e4fb2",
+  "runtime": "onnxruntime-web 1.23.2",
+  "threads": 3,
+  "batch_size": 1,
+  "externalRequests": [],
+  "browser": "153.0.8010.12",
+  "load": {
+    "loadMs": 1889.7450000047684,
+    "isolated": true
+  },
+  "text_mode": "canonical",
+  "scope": "Selected fixed development sets replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end Shield",
+  "independent_validation": false,
+  "sets": [
+    {
+      "name": "general",
+      "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+      "rows": 5582,
+      "browser_replay_seconds": 2051.638,
+      "neural": {
+        "tp": 1397,
+        "fp": 39,
+        "fn": 109,
+        "precision": 0.9728412256267409,
+        "recall": 0.9276228419654714
+      },
+      "combined": {
+        "tp": 1440,
+        "fp": 58,
+        "fn": 66,
+        "precision": 0.9612817089452603,
+        "recall": 0.9561752988047809
+      },
+      "changed_combined_from_frozen": 40,
+      "changed_combined_from_native_batch1": 0,
+      "versus_frozen": {
+        "added_missed_spans": 23,
+        "recovered_spans": 2,
+        "added_false_positives": 6,
+        "removed_false_positives": 16
+      },
+      "versus_fp32_browser": {
+        "changed_records": 40,
+        "added_missed_spans": 23,
+        "recovered_spans": 2,
+        "added_false_positives": 6,
+        "removed_false_positives": 16
+      },
+      "fp32_browser_combined": {
+        "tp": 1461,
+        "fp": 68,
+        "fn": 45,
+        "precision": 0.9555264879005886,
+        "recall": 0.9701195219123506
+      },
+      "versus_fp32_browser_neural": {
+        "changed_records": 65,
+        "added_missed_spans": 51,
+        "recovered_spans": 4,
+        "added_false_positives": 11,
+        "removed_false_positives": 21
+      },
+      "fp32_browser_neural": {
+        "tp": 1444,
+        "fp": 49,
+        "fn": 62,
+        "precision": 0.9671801741460148,
+        "recall": 0.9588313413014609
+      }
+    },
+    {
+      "name": "domain",
+      "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+      "rows": 256,
+      "browser_replay_seconds": 137.066,
+      "neural": {
+        "tp": 453,
+        "fp": 11,
+        "fn": 27,
+        "precision": 0.9762931034482759,
+        "recall": 0.94375
+      },
+      "combined": {
+        "tp": 466,
+        "fp": 3,
+        "fn": 14,
+        "precision": 0.9936034115138592,
+        "recall": 0.9708333333333333
+      },
+      "changed_combined_from_frozen": 10,
+      "changed_combined_from_native_batch1": 0,
+      "versus_frozen": {
+        "added_missed_spans": 8,
+        "recovered_spans": 0,
+        "added_false_positives": 2,
+        "removed_false_positives": 2
+      },
+      "versus_fp32_browser": {
+        "changed_records": 10,
+        "added_missed_spans": 8,
+        "recovered_spans": 0,
+        "added_false_positives": 2,
+        "removed_false_positives": 2
+      },
+      "fp32_browser_combined": {
+        "tp": 474,
+        "fp": 3,
+        "fn": 6,
+        "precision": 0.9937106918238994,
+        "recall": 0.9875
+      },
+      "versus_fp32_browser_neural": {
+        "changed_records": 21,
+        "added_missed_spans": 19,
+        "recovered_spans": 0,
+        "added_false_positives": 10,
+        "removed_false_positives": 3
+      },
+      "fp32_browser_neural": {
+        "tp": 472,
+        "fp": 4,
+        "fn": 8,
+        "precision": 0.9915966386554622,
+        "recall": 0.9833333333333333
+      }
+    }
+  ],
+  "fp32_browser_reference_sha256": "503879a3135a060a8a02e2b259750ee3a0af220f07ac5e6a5c076c8e54987a52"
+}

@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "method": "Frozen int4 backbone with trainable FP32 rank-16 additive corrections and BIO head",
+  "identity": {
+    "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+    "frozen_checkpoint_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+    "quantized_sha256": "e89ca5f05a181928ff0cc9da4f5b6774e2cfb3c3a472ab5dafaff6fb3c7b9779",
+    "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+    "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a"
+  },
+  "parity_probe": {
+    "training_chunks": 8,
+    "max_absolute_logit_error": 4.00543212890625e-05,
+    "changed_word_labels": 0
+  },
+  "split": "train",
+  "rows": 46196,
+  "chunks": 46236,
+  "settings": {
+    "rank": 16,
+    "epochs": 2,
+    "adapter_lr": 0.0001,
+    "head_lr": 5e-05,
+    "batch_size": 8,
+    "accumulation": 4,
+    "threads": 3,
+    "seed": 44,
+    "max_seconds": 12717.0,
+    "probe": false
+  },
+  "source_sha256": "03936f247a7c84a0a714f3f1a3e684de0039bf612820f244de7fb4176bc39d19",
+  "torch": "2.8.0+cpu",
+  "checkpoints": [
+    {
+      "epoch": 1,
+      "complete_epoch": true,
+      "file": "epoch-1.safetensors",
+      "sha256": "3f8bd631c7baf95099785051f791a260b6837a0f2f2c092fde45644ceba39e4c",
+      "bytes": 11037252,
+      "steps": 1445,
+      "tokens_seen": 824869,
+      "loss": 0.0030076731598401474,
+      "seconds": 4709.058899925003
+    },
+    {
+      "epoch": 2,
+      "complete_epoch": true,
+      "file": "epoch-2.safetensors",
+      "sha256": "c1a34c919c7043b84f02e3802f44d8237ebbe59c4d8cfc9be5f8ff090b0f136c",
+      "bytes": 11037252,
+      "steps": 2890,
+      "tokens_seen": 824869,
+      "loss": 0.002624200822827924,
+      "seconds": 9448.032037405996
+    }
+  ],
+  "independent_validation": false,
+  "training_manifest_sha256": "cc4bca48f037ec2f9204b30e2ade005bcb67aa615b1c96f3c75c6f0e891e059d",
+  "trainable_parameters": 2754563,
+  "quality_status": "Training complete; training losses and implementation parity do not establish development accuracy."
+}
