@@ -1,4 +1,5 @@
 import '../public/wasm_exec.js';
+import { trainedScanner, scanNames } from '../utils/scanner';
 import { restoredTags, restoredStyles, type RestoredNode } from '../utils/restored-model';
 
 type Finding = { kind: string; confidence: 'high' | 'uncertain'; action: string; reason: string };
@@ -6,6 +7,7 @@ type Result = { allowed: boolean; transformed?: string; findings: Finding[]; err
 type Core = {
   Go: new () => { importObject: WebAssembly.Imports; run(instance: WebAssembly.Instance): Promise<void> };
   dmzProcess?: (input: string) => string;
+  dmzProcessWithNames?: (input: string, spans: string) => string;
   dmzRestore?: (input: string) => string;
   dmzReset?: () => boolean;
 };
@@ -393,7 +395,20 @@ export default defineContentScript({
         const epoch = sessionEpoch;
         const input = read(field);
         const core = globalThis as unknown as Core;
-        const result = JSON.parse(core.dmzProcess!(input)) as Result;
+        let result = JSON.parse(core.dmzProcess!(input)) as Result;
+        if (result.error) throw new Error('Core processing failed');
+        if (!result.allowed) { inform(reviewSummary(result.findings ?? []), true); return; }
+        if (trainedScanner) {
+          inform('Shield yfirfer nöfn á tækinu… Fyrsta keyrsla getur tekið lengri tíma.');
+          const names = await scanNames(input);
+          // Async inference must not overwrite edits, a new route or a reset session.
+          if (sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
+            || !action.isConnected || composer() !== field || read(field) !== input) {
+            inform('Textareitur breyttist við yfirferð. Sending stöðvuð.'); return;
+          }
+          if (!core.dmzProcessWithNames) throw new Error('Trained scanner bridge unavailable');
+          result = JSON.parse(core.dmzProcessWithNames(input, JSON.stringify(names))) as Result;
+        }
         if (result.error) throw new Error('Core processing failed');
         if (!result.allowed) {
           inform(reviewSummary(result.findings ?? []), true);

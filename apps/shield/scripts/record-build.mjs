@@ -33,8 +33,11 @@ const record = {
   format: 1,
   sourceCommit,
   extensionVersion: manifest.version,
+  extensionName: manifest.name,
+  scannerProfile: manifest.permissions?.includes('offscreen') ? 'trained-fp16storage' : 'rules',
   browser: 'Chrome (Manifest V3)',
   sha256: files,
 };
+if (record.scannerProfile === 'trained-fp16storage' && !files['scanner/model.onnx']) throw new Error('Trained build is missing its model');
 await writeFile(path.join(output, 'BUILD.json'), `${JSON.stringify(record, null, 2)}\n`);
 console.log(`Recorded Chrome build from ${record.sourceCommit} with ${Object.keys(files).length} file checksums`);
