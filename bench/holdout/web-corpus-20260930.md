@@ -11,25 +11,30 @@ up to three contiguous excerpts per document, were selected by a fixed hash.
 The pool is an availability sample of institutional prose, not population-random
 Icelandic or representative private legal/financial customer documents.
 
-Final private packet: `/root/.local/share/dmz/datasets/web-testset-20260930`.
+Final private packet: `/root/.local/share/dmz/datasets/web-testset-20260930-v2`.
 
-- 76 documents, seven publishers, 126 excerpts, 23,147 whitespace-delimited words.
-- General prose: 39 excerpts; public administration: 27; financial: 36; legal: 24.
-- Publishers: Háskóli Íslands, Akureyrarbær, Stjórnarráðið, Landsbankinn, Hagstofa,
+- 88 documents, eight publishers, 142 excerpts, 26,036 whitespace-delimited words.
+- General prose: 55 excerpts; public administration: 27; financial: 36; legal: 24.
+- Publishers: Háskóli Íslands, Akureyrarbær, Reykjavíkurborg, Stjórnarráðið, Landsbankinn, Hagstofa,
   Persónuvernd and Umboðsmaður Alþingis. Legal material includes eight published
   Ombudsman case summaries; it is not a collection of private contracts.
 - Every label remains null/unreviewed. The annotation packet includes numbered
   UTF-8 text files, a source/stratum catalog, reviewer instructions and hashes.
-- Review JSONL SHA-256: `0963980264b37fa233f19c7529bf6d596ce22a4a8ef4f8530304e53c13a9e9b6`.
+- Review JSONL SHA-256: `18e32974981aed65237247926fca5a3a9a7ef3b06287ac1e8cf03e7f1d6919b6`.
 
 The raw first pass is preserved at `web-eval-20260930-v1`; extraction cleanup is
 in `web-eval-20260930-v2`. The same eight preselected legal URLs were retried with
 an explicit `section.case` extractor in `web-eval-legal-20260930-v1`. No models
 were run between extraction revisions. The combined packet uses v2 plus that
-legal collection. Earlier blind-review-v1/v2 packets remain unchanged.
+legal collection and the recovered Reykjavík collection described below. Earlier blind-review-v1/v2 packets remain unchanged.
 
-Reykjavík's 12 article requests did not return HTML to this collector and were
-excluded. One municipal category page and one short/unusable statistics page
+The first collector mishandled lowercase HTTP Content-Type headers and excluded
+Reykjavík. After fixing case-insensitive header handling and adding a regression
+test, the same 12 preselected URLs all succeeded; those snapshots are preserved
+in `web-eval-reykjavik-20260930-v1`. The initial 76-document combined packet is
+preserved separately; the final v2 packet includes all 88 documents.
+
+One municipal category page and one short/unusable statistics page
 were excluded. Seðlabanki and Arion indexes did not expose usable article links
 to discovery; Samkeppniseftirlitið returned an HTTP error. No workaround for
 access controls was used. These source gaps bias the available sample.

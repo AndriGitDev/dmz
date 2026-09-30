@@ -44,7 +44,7 @@ class Fetcher:
                 data.extend(chunk)
                 if len(data) > LIMIT:
                     raise ValueError('response exceeds size bound')
-            return r.status_code, dict(r.headers), bytes(data)
+            return r.status_code, {key.lower(): value for key, value in r.headers.items()}, bytes(data)
 
     def rules(self, url):
         p = urlsplit(url); origin = p.scheme + '://' + p.netloc
@@ -79,13 +79,13 @@ class Fetcher:
             delay = self.rules(url)
             status, headers, body = self.request(url, delay)
             if status in (301, 302, 303, 307, 308):
-                url = canonical(urljoin(url, headers.get('Location', '')))
+                url = canonical(urljoin(url, headers.get('location', '')))
                 if urlsplit(url).hostname.removeprefix('www.') != initial:
                     raise ValueError('cross-publisher redirect; needs explicit source entry')
                 continue
             if status != 200:
                 raise ValueError('HTTP ' + str(status))
-            if 'text/html' not in headers.get('Content-Type', ''):
+            if 'text/html' not in headers.get('content-type', ''):
                 raise ValueError('not HTML')
             return url, headers, body
         raise ValueError('redirect limit')

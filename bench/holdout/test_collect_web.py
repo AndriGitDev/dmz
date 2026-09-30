@@ -42,11 +42,19 @@ class WebCollectionTests(unittest.TestCase):
                 fetcher.get('https://example.com/private/article')
             self.assertEqual(calls, ['https://example.com/robots.txt'])
 
+    def test_lowercase_content_type_is_accepted(self):
+        with TemporaryDirectory() as d:
+            fetcher = Fetcher(Path(d))
+            fetcher.request = lambda url, delay=1: ((404, {}, b'') if url.endswith('robots.txt') else
+                (200, {'content-type': 'text/html; charset=utf-8'}, b'<html>synthetic</html>'))
+            url, headers, body = fetcher.get('https://example.com/article')
+            self.assertEqual(body, b'<html>synthetic</html>')
+
     def test_cross_publisher_redirect_rejected(self):
         with TemporaryDirectory() as d:
             fetcher = Fetcher(Path(d))
             fetcher.request = lambda url, delay=1: ((404, {}, b'') if url.endswith('robots.txt') else
-                (302, {'Location': 'https://elsewhere.example/article'}, b''))
+                (302, {'location': 'https://elsewhere.example/article'}, b''))
             with self.assertRaisesRegex(ValueError, 'cross-publisher'):
                 fetcher.get('https://example.com/article')
 
