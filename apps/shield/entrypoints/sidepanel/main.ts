@@ -2,7 +2,7 @@ import './style.css';
 import { trainedScanner } from '../../utils/scanner';
 if (trainedScanner) {
   const note = document.createElement('p'); note.className = 'hint';
-  note.textContent = 'Þjálfaður nafnagreinir er virkur í þessari tilraunaútgáfu. Vinnsla fer fram á tækinu og getur tekið nokkrar sekúndur. Sending stöðvast ef greining tekst ekki. Óháð gæðaprófun er ólokin.';
+  note.textContent = 'Þjálfaður nafnagreinir er virkur í þessari tilraunaútgáfu. Vinnsla fer fram á tækinu og getur tekið nokkrar sekúndur. Ef nafnagreinir bregst er sent með grunnmöskun og viðvörun; nöfn geta farið ómöskuð. Óháð gæðaprófun er ólokin.';
   document.querySelector('#protection-heading')!.parentElement!.append(note);
 }
 

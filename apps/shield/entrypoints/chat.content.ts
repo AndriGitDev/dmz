@@ -6,6 +6,7 @@ type Finding = { kind: string; confidence: 'high' | 'uncertain'; action: string;
 type Result = { allowed: boolean; transformed?: string; findings: Finding[]; error?: string };
 type Core = {
   Go: new () => { importObject: WebAssembly.Imports; run(instance: WebAssembly.Instance): Promise<void> };
+  dmzProcessBestEffort?: (input: string, spans: string) => string;
   dmzProcess?: (input: string) => string;
   dmzProcessWithNames?: (input: string, spans: string) => string;
   dmzRestore?: (input: string) => string;
@@ -305,7 +306,7 @@ export default defineContentScript({
       // Show categories and counts only; never echo values or arbitrary reason text
       // into the host page, including the closed status shadow root.
       const labels: Record<string, string> = {
-        secret: 'leyndarmál', name_demo: 'nafn', address: 'heimilisfang',
+        secret: 'leyndarmál', name_demo: 'nafn', name_review: 'ósamræmi í nafngreiningu', address: 'heimilisfang',
         phone: 'símanúmer', email: 'netfang', unicode_review: 'Unicode-tákn',
         marker_review: 'óþekktur eða breyttur Shield-merkimiði; byrjaðu með upprunalegan prófunartexta',
       };
@@ -395,19 +396,27 @@ export default defineContentScript({
         const epoch = sessionEpoch;
         const input = read(field);
         const core = globalThis as unknown as Core;
-        let result = JSON.parse(core.dmzProcess!(input)) as Result;
+        let result = JSON.parse(core.dmzProcessBestEffort!(input, '[]')) as Result;
+        let basicOnly = false;
         if (result.error) throw new Error('Core processing failed');
         if (!result.allowed) { inform(reviewSummary(result.findings ?? []), true); return; }
         if (trainedScanner) {
           inform('Shield yfirfer nöfn á tækinu… Fyrsta keyrsla getur tekið lengri tíma.');
-          const names = await scanNames(input);
+          try {
+            const names = await scanNames(input);
+            if (sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
+              || !action.isConnected || composer() !== field || read(field) !== input) throw new Error('Draft changed');
+            const enhanced = JSON.parse(core.dmzProcessBestEffort!(input, JSON.stringify(names))) as Result;
+            if (enhanced.error || !enhanced.allowed || enhanced.transformed === undefined) throw new Error('Invalid trained result');
+            result = enhanced;
+          } catch {
+            basicOnly = true;
+          }
           // Async inference must not overwrite edits, a new route or a reset session.
           if (sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
             || !action.isConnected || composer() !== field || read(field) !== input) {
             inform('Textareitur breyttist við yfirferð. Sending stöðvuð.'); return;
           }
-          if (!core.dmzProcessWithNames) throw new Error('Trained scanner bridge unavailable');
-          result = JSON.parse(core.dmzProcessWithNames(input, JSON.stringify(names))) as Result;
         }
         if (result.error) throw new Error('Core processing failed');
         if (!result.allowed) {
@@ -433,7 +442,7 @@ export default defineContentScript({
         replayPermit = permit;
         replay();
         if (permit.cancelled) return;
-        inform(result.findings.length ? 'Shield maskaði auðkenni áður en sent var.' : 'Shield yfirfór textann áður en sent var.');
+        inform(basicOnly ? 'Viðvörun: Þjálfaður nafnagreinir var ekki tiltækur. Sent með grunnmöskun; nöfn geta hafa farið ómöskuð.' : result.findings.some((finding) => finding.reason === 'whole-text-coverage') ? 'Shield maskaði allan textann þar sem ekki var hægt að afmarka auðkenni örugglega.' : result.findings.length ? 'Shield maskaði auðkenni áður en sent var.' : 'Shield yfirfór textann áður en sent var.');
       } catch {
         inform('Shield gat ekki yfirfarið textann. Sending stöðvuð.');
       } finally {
@@ -523,7 +532,7 @@ export default defineContentScript({
       for (let i = 0; i < 100 && typeof core.dmzProcess !== 'function'; i++) {
         await new Promise((resolve) => setTimeout(resolve, 10));
       }
-      if (typeof core.dmzProcess !== 'function') throw new Error('WASM did not start');
+      if (typeof core.dmzProcess !== 'function' || typeof core.dmzProcessBestEffort !== 'function') throw new Error('WASM did not start');
       ready = true;
       message = 'Shield tilbúinn á þessari síðu.';
       new MutationObserver(queueResponseScan).observe(document.documentElement, {

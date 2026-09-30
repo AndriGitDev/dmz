@@ -56,3 +56,43 @@ func TestTrainedNamesCannotRewriteIssuedMarker(t *testing.T) {
 		t.Fatal("blocked scan changed mapping")
 	}
 }
+
+func TestTrainedNameInsideEmailUsesCompleteEmailMask(t *testing.T) {
+	input := "anna@example.com"
+	for _, spans := range [][]NameSpan{{{0, 4}}, {{5, 12}}, {{0, len(input)}}, {{0, 4}, {5, 12}}} {
+		s := NewSession()
+		result := s.ProcessBestEffort(input, spans)
+		if !result.Allowed || strings.Contains(result.Transformed, "anna") || strings.Contains(result.Transformed, "example.com") || !strings.Contains(result.Transformed, "⟦EMAIL-") || strings.Contains(result.Transformed, "⟦NAME-") {
+			t.Fatalf("email not fully protected: %+v", result)
+		}
+		if s.Restore(result.Transformed) != input {
+			t.Fatal("email restoration changed")
+		}
+	}
+}
+
+func TestBestEffortMasksUncertainAndSecrets(t *testing.T) {
+	for _, input := range []string{"-----BEGIN PRIVATE KEY-----\nSYNTHETIC_KEY_BODY\n-----END PRIVATE KEY-----", "sk-test_key_000000000000", "Ólafur Sigurðsson", "jón@example.com", "Laugavegur 10, 101 Reykjavík", "a\u200bb anna@example.com", "⟦NAME-fake⟧ anna@example.com"} {
+		s := NewSession()
+		r := s.ProcessBestEffort(input, nil)
+		if !r.Allowed || r.Transformed == input || r.Transformed == "" {
+			t.Fatalf("best effort did not mask: %+v", r)
+		}
+		if s.Restore(r.Transformed) != input {
+			t.Fatal("restoration mismatch")
+		}
+		for _, finding := range r.Findings {
+			if finding.Action != "mask" {
+				t.Fatal("content blocker in best effort")
+			}
+		}
+	}
+}
+func TestBestEffortPartialOverlapCoversUnion(t *testing.T) {
+	input := "Anna anna@example.com"
+	s := NewSession()
+	r := s.ProcessBestEffort(input, []NameSpan{{0, 9}})
+	if !r.Allowed || strings.Contains(r.Transformed, "Anna") || strings.Contains(r.Transformed, "example") || s.Restore(r.Transformed) != input {
+		t.Fatalf("union not covered: %+v", r)
+	}
+}
