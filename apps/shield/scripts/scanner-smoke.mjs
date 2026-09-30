@@ -77,9 +77,7 @@ try {
     firstScanMs: Date.now() - start,
   });
   await p.locator('iframe[data-dmz-restored]').waitFor();
-  const frames = p.frames().filter((f) => f.url().includes('restored.html'));
-  assert.equal(frames.length, 1);
-  await frames[0].waitForFunction(() => document.body.textContent.includes('Anna'));
+  await p.frameLocator('iframe[data-dmz-restored]').getByText('Anna ræddi við Peter í gær.', { exact: true }).waitFor();
   assert.ok(!(await p.locator('main').textContent()).includes('Anna'));
   metrics.cases.push({ case: 'isolated-restoration', passed: true });
   // Names embedded in an email must keep the full email mask, not block or
@@ -93,8 +91,7 @@ try {
   assert.equal((emailSent.match(/⟦EMAIL-/g) || []).length, 2);
   assert.match(emailSent, /⟦KT-/);
   await emailPage.locator('iframe[data-dmz-restored]').waitFor();
-  const emailFrame = emailPage.frames().find((f) => f.url().includes('restored.html'));
-  await emailFrame.waitForFunction((original) => document.body.textContent.includes(original), emailInput);
+  await emailPage.frameLocator('iframe[data-dmz-restored]').getByText(emailInput, { exact: true }).waitFor();
   await emailPage.close();
   metrics.cases.push({ case: 'names-inside-emails-mask-and-restore', passed: true });
   // Editing the draft during asynchronous inference cannot be overwritten or sent.
