@@ -99,6 +99,29 @@ type NameSpan struct {
 }
 
 func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
+	return s.process(input, names, false)
+}
+
+// ProcessBestEffort masks uncertain identifiers and secrets for Shield. The
+// default policy remains available to other callers and baseline evaluations.
+func (s *Session) ProcessBestEffort(input string, names []NameSpan) Result {
+	return s.process(input, names, true)
+}
+
+// When individual spans cannot safely represent an input, cover the whole
+// input instead of releasing it or treating the content as a reason to block.
+func (s *Session) maskWhole(input string) Result {
+	key := "whole:" + input
+	marker, exists := s.forward[key]
+	if !exists {
+		marker = s.makeSurrogate(detect.Kind("text"), input)
+		s.forward[key] = marker
+		s.reverse[marker] = input
+	}
+	return Result{Allowed: true, Transformed: marker, Findings: []Finding{{detect.Kind("text"), detect.Uncertain, "mask", "whole-text-coverage"}}}
+}
+
+func (s *Session) process(input string, names []NameSpan, bestEffort bool) Result {
 	// Only exact markers issued by this live session may bypass detection.
 	// Blank their bytes in the scan copy so match offsets still address input.
 	// Unknown, edited and nested markers need review; accepting arbitrary marker
@@ -113,10 +136,16 @@ func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
 		start := offset + relative
 		end := strings.Index(input[start:], "⟧")
 		if end < 0 || !strings.HasPrefix(input[start:], "⟦") {
+			if bestEffort {
+				return s.maskWhole(input)
+			}
 			return markerReview()
 		}
 		end += start + len("⟧")
 		if _, known := s.reverse[input[start:end]]; !known {
+			if bestEffort {
+				return s.maskWhole(input)
+			}
 			return markerReview()
 		}
 		issuedMarkers = append(issuedMarkers, NameSpan{start, end})
@@ -126,13 +155,20 @@ func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
 		offset = end
 	}
 	matches := detect.DetectWithTerms(string(scan), s.tenantTerms)
+	if bestEffort {
+		for _, m := range matches {
+			if m.Kind == detect.UnicodeReview || (m.Kind == detect.Secret && strings.HasPrefix(input[m.Start:m.End], "-----BEGIN")) {
+				return s.maskWhole(input)
+			}
+		}
+	}
 	result := Result{Allowed: true, Findings: make([]Finding, 0, len(matches))}
 	for _, m := range matches {
 		action := "mask"
-		if m.Confidence == detect.Uncertain && m.Kind != detect.Kennitala {
+		if !bestEffort && m.Confidence == detect.Uncertain && m.Kind != detect.Kennitala {
 			action = "review"
 		}
-		if m.Kind == detect.Secret {
+		if !bestEffort && m.Kind == detect.Secret {
 			action = "block"
 		}
 		if action != "mask" {
@@ -161,11 +197,23 @@ func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
 			}
 		}
 		previousEnd = name.End
+		// Keep the full existing mask when it already contains this name.
+		// In particular, names inside emails must not replace the email mask.
+		alreadyCovered := false
+		for _, m := range matches {
+			if bestEffort && m.Start <= name.Start && name.End <= m.End {
+				alreadyCovered = true
+				break
+			}
+		}
+		if alreadyCovered {
+			continue
+		}
 		start, end := name.Start, name.End
 		kept := make([]detect.Match, 0, len(matches)+1)
 		for _, m := range matches {
 			if start < m.End && m.Start < end {
-				if m.Kind != detect.Name {
+				if !bestEffort && m.Kind != detect.Name {
 					return nameReview()
 				}
 				if m.Start < start {
@@ -184,6 +232,9 @@ func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
 	sort.Slice(matches, func(i, j int) bool { return matches[i].Start < matches[j].Start })
 	for i := 1; i < len(matches); i++ {
 		if matches[i].Start < matches[i-1].End {
+			if bestEffort {
+				return s.maskWhole(input)
+			}
 			return nameReview()
 		}
 	}

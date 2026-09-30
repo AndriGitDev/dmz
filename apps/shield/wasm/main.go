@@ -43,6 +43,20 @@ func main() {
 		}
 		return string(encoded)
 	})
+	expose("dmzProcessBestEffort", func(args []js.Value) any {
+		if len(args) != 2 || args[0].Type() != js.TypeString || args[1].Type() != js.TypeString {
+			return `{"error":"invalid best effort request"}`
+		}
+		var names []surrogates.NameSpan
+		if err := json.Unmarshal([]byte(args[1].String()), &names); err != nil {
+			return `{"error":"invalid model spans"}`
+		}
+		encoded, err := json.Marshal(session.ProcessBestEffort(args[0].String(), names))
+		if err != nil {
+			return `{"error":"encoding failed"}`
+		}
+		return string(encoded)
+	})
 	expose("dmzRestore", func(args []js.Value) any {
 		if len(args) != 1 || args[0].Type() != js.TypeString {
 			return ""

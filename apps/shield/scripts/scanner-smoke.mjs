@@ -82,6 +82,21 @@ try {
   await frames[0].waitForFunction(() => document.body.textContent.includes('Anna'));
   assert.ok(!(await p.locator('main').textContent()).includes('Anna'));
   metrics.cases.push({ case: 'isolated-restoration', passed: true });
+  // Names embedded in an email must keep the full email mask, not block or
+  // replace only the local part. Use a separate page to keep race counts stable.
+  const emailPage = await page();
+  const emailInput = 'Skrifaðu 10 setningar sem innihalda eftirfarandi: anna@example.com, peter@example.org and 1401828858';
+  await fill(emailPage, emailInput);
+  await emailPage.waitForFunction(() => window.sent.length === 1, null, { timeout: 130000 });
+  const emailSent = await emailPage.evaluate(() => window.sent[0]);
+  for (const value of ['anna', 'peter', 'example.com', 'example.org', '1401828858']) assert.ok(!emailSent.includes(value));
+  assert.equal((emailSent.match(/⟦EMAIL-/g) || []).length, 2);
+  assert.match(emailSent, /⟦KT-/);
+  await emailPage.locator('iframe[data-dmz-restored]').waitFor();
+  const emailFrame = emailPage.frames().find((f) => f.url().includes('restored.html'));
+  await emailFrame.waitForFunction((original) => document.body.textContent.includes(original), emailInput);
+  await emailPage.close();
+  metrics.cases.push({ case: 'names-inside-emails-mask-and-restore', passed: true });
   // Editing the draft during asynchronous inference cannot be overwritten or sent.
   await fill(p, 'Peter kom á fundinn.');
   await p.locator('textarea').fill('Ný útgáfa textans.');
@@ -101,13 +116,13 @@ try {
     sent.match(/NAME-([A-F0-9]+)/)[1],
   );
   metrics.cases.push({ case: 'one-model-separate-tab-mappings', passed: true });
-  // A second tab cannot queue or bypass a busy model.
+  // A competing tab uses basic masking with a warning instead of queueing.
   await fill(p, 'Peter kom á fundinn. '.repeat(100));
   await fill(second, 'Anna mætti aftur.');
-  await status(second, 'Sending stöðvuð');
-  assert.equal(await second.evaluate(() => window.sent.length), 1);
+  await status(second, 'Sent með grunnmöskun');
+  assert.equal(await second.evaluate(() => window.sent.length), 2);
   await p.waitForFunction(() => window.sent.length === 2, null, { timeout: 130000 });
-  metrics.cases.push({ case: 'busy-model-blocks-competing-tab', passed: true });
+  metrics.cases.push({ case: 'busy-model-warns-and-uses-basic-masking', passed: true });
   // A reset during inference invalidates the pending result.
   const settings = await browser.newPage();
   await settings.goto(new URL('sidepanel.html', sw.url()).href);
@@ -126,24 +141,27 @@ try {
   assert.equal(await p.evaluate(() => window.sent.length), 2);
   await settings.close();
   metrics.cases.push({ case: 'reset-during-inference', passed: true });
-  // Killing the offscreen scanner during work must not pass original text.
-  await fill(p, 'Peter kom á fundinn. '.repeat(200));
+  // Scanner termination still applies the basic detector before sending.
+  await fill(p, 'Peter kom á fundinn. '.repeat(200) + 'fallback@example.com');
   await sw.evaluate(() => chrome.offscreen.closeDocument());
-  await status(p, 'Sending stöðvuð');
-  assert.equal(await p.evaluate(() => window.sent.length), 2);
-  metrics.cases.push({ case: 'scanner-termination-blocks-send', passed: true });
+  await status(p, 'Sent með grunnmöskun');
+  assert.equal(await p.evaluate(() => window.sent.length), 3);
+  assert.ok(!(await p.evaluate(() => window.sent[2])).includes('fallback@example.com'));
+  metrics.cases.push({ case: 'scanner-termination-warns-and-masks-email', passed: true });
   await close();
-  // A corrupt packaged model is an error, never a fallback to the old detector.
+  // A corrupt model falls back to basic masking with a visible warning.
   const model = join(extension, 'scanner/model.onnx'),
     original = await readFile(model);
   try {
     await writeFile(model, 'corrupt');
     await launch();
     const q = await page();
-    await fill(q, 'Anna mætti.');
-    await status(q, 'Sending stöðvuð');
-    assert.equal(await q.evaluate(() => window.sent.length), 0);
-    metrics.cases.push({ case: 'corrupt-model-blocks-send', passed: true });
+    await fill(q, 'Anna mætti. fallback@example.com sk-test_key_000000000000');
+    await status(q, 'Sent með grunnmöskun');
+    assert.equal(await q.evaluate(() => window.sent.length), 1);
+    assert.ok(!(await q.evaluate(() => window.sent[0])).includes('fallback@example.com'));
+    assert.ok(!(await q.evaluate(() => window.sent[0])).includes('sk-test'));
+    metrics.cases.push({ case: 'corrupt-model-warns-and-masks-identifiers', passed: true });
   } finally {
     await close();
     await writeFile(model, original);
@@ -156,13 +174,14 @@ try {
       await launch();
       const q = await page();
       const start = Date.now();
-      await fill(q, 'Anna mætti.');
-      await status(q, 'Sending stöðvuð', 135000);
-      assert.equal(await q.evaluate(() => window.sent.length), 0);
+      await fill(q, 'Anna mætti. fallback@example.com sk-test_key_000000000000');
+      await status(q, 'Sent með grunnmöskun', 135000);
+      assert.equal(await q.evaluate(() => window.sent.length), 1);
+      assert.ok(!(await q.evaluate(() => window.sent[0])).includes('fallback@example.com'));
       const elapsed = Date.now() - start;
       assert.ok(elapsed >= 119000 && elapsed < 135000);
       metrics.cases.push({
-        case: 'unresponsive-worker-deadline-blocks-send',
+        case: 'unresponsive-worker-deadline-falls-back',
         passed: true,
         elapsedMs: elapsed,
       });

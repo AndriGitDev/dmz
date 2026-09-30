@@ -116,18 +116,16 @@ try {
   await page.locator('[data-message-author-role="assistant"]').first().evaluate(element => element.remove());
   await page.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
 
-  await page.locator('#prompt-textarea').fill('sk-test_key_000000000000');
-  await page.locator('[data-testid="send-button"]').click();
-  assert.equal(await page.evaluate(() => window.sent.length), 1, 'blocked secret reached page submit handler');
-  const reviewCdp = await browser.newCDPSession(page);
-  const reviewTree = await reviewCdp.send('Accessibility.getFullAXTree');
-  await reviewCdp.detach();
-  const reviewText = reviewTree.nodes.map(node => node.name?.value ?? '').find(text => text.startsWith('Sending stöðvuð:'));
-  assert.match(reviewText ?? '', /leyndarmál \(1\)/, 'review did not identify the blocking category');
-  assert.ok(!reviewText.includes('sk-test'), 'review status echoed a secret');
-  await clickShieldControl(page, 'data-dmz-review');
-  assert.equal(await page.evaluate(() => document.activeElement?.id), 'prompt-textarea', 'review did not return focus to composer');
-  assert.equal(await page.locator('#prompt-textarea').inputValue(), 'sk-test_key_000000000000', 'blocked draft was changed');
+  const secretPage = await browser.newPage();
+  await secretPage.route('https://chatgpt.com/**', route => route.fulfill({ contentType: 'text/html', body: html }));
+  await secretPage.goto('https://chatgpt.com/');
+  await secretPage.locator('#dmz-shield-status').waitFor();
+  await secretPage.locator('#prompt-textarea').fill('sk-test_key_000000000000');
+  await secretPage.locator('[data-testid="send-button"]').click();
+  await secretPage.waitForFunction(() => window.sent.length === 1);
+  assert.ok(!(await secretPage.evaluate(() => window.sent[0])).includes('sk-test'));
+  assert.match(await secretPage.evaluate(() => window.sent[0]), /⟦VALUE-/);
+  await secretPage.close();
   await page.locator('#prompt-textarea').fill('demo@example.com');
   await page.locator('#prompt-textarea').press('Enter');
   await page.waitForFunction(() => window.sent.length === 2, null, { timeout: 10000 });
@@ -324,14 +322,15 @@ try {
     assert.equal(await inline.locator('#restored-text').locator('a,script,img,iframe').count(), 0, 'host resources copied into restored frame');
     await field.fill('sk-test_key_000000000000');
     await modern.locator('button').click();
-    assert.equal(await modern.evaluate(() => window.sent.length), 2, 'new editor allowed secret');
+    await modern.waitForFunction(() => window.sent.length === 3);
+    assert.ok(!(await modern.evaluate(() => window.sent[2])).includes('sk-test'));
     await field.evaluate(element => element.after(element.cloneNode(true)));
     await modern.locator('button').click();
-    assert.equal(await modern.evaluate(() => window.sent.length), 2, 'ambiguous editor submitted');
+    assert.equal(await modern.evaluate(() => window.sent.length), 3, 'ambiguous editor submitted');
     await modern.locator('[contenteditable]').last().evaluate(element => { element.hidden = true; });
     await modern.locator('[contenteditable]').first().fill('demo@example.com');
     await modern.locator('button').click();
-    await modern.waitForFunction(() => window.sent.length === 3);
+    await modern.waitForFunction(() => window.sent.length === 4);
     await modern.close();
   }
   assert.deepEqual(errors, []);

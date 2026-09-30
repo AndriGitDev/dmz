@@ -117,4 +117,17 @@ globalThis.dmzReset();
 assert.equal(globalThis.dmzRestore(first.transformed), first.transformed);
 assert.equal(JSON.parse(globalThis.dmzProcess(email.transformed)).allowed, false, 'stale marker accepted after reset');
 process.stdout.write('TinyGo WASM mask/restore smoke test passed\n');
+
+for (const input of ['sk-test_key_000000000000', 'jón@example.com', 'Ólafur Sigurðsson']) {
+  const masked = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(masked.allowed, true);
+  assert.ok(!masked.transformed.includes(input));
+  assert.equal(globalThis.dmzRestore(masked.transformed), input);
+}
+const emailName = JSON.parse(globalThis.dmzProcessBestEffort('anna@example.com', '[{"start":0,"end":4}]'));
+assert.equal(emailName.allowed, true);
+assert.match(emailName.transformed, /⟦EMAIL-/);
+assert.equal(globalThis.dmzRestore(emailName.transformed), 'anna@example.com');
+console.log('Shield best-effort secret, uncertain PII and email/name overlap checks passed');
+
 process.exit(0);
