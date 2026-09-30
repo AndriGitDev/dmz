@@ -9,7 +9,7 @@ export default defineConfig({
     name: process.env.VITE_DMZ_TRAINED_SCANNER === '1' ? 'dmz Shield · trained preview' : 'dmz Shield',
     permissions: process.env.VITE_DMZ_TRAINED_SCANNER === '1' ? ['offscreen'] : [],
     minimum_chrome_version: '116',
-    description: 'Local masking for supported ChatGPT and Claude chats, with device-local settings.',
+    description: 'Shield by Kastro. Local masking for supported ChatGPT and Claude chats, with device-local settings.',
     version: '0.1.0',
     version_name: `0.1.0 preview ${sourceCommit}${dirty ? '-dirty' : ''}`,
     action: { default_title: 'dmz Shield · Stillingar' },
