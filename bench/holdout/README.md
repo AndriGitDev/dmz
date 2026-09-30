@@ -120,3 +120,32 @@ independence. All annotations remain null. The combined private review packet
 `/root/.local/share/dmz/datasets/blind-review-v2` includes the earlier 36 PDF pages
 and these six articles: 42 review records across nine source documents. Version 1
 is preserved. Neither packet has been run through the detector or used in training.
+
+## Fresh web collection — 30 September 2026
+
+The owner explicitly requested scraping fresh Icelandic text for a new test set.
+`web-sources-20260930.json` freezes 90 candidate URLs from eight publishers before
+inference. See [collection report](web-corpus-20260930.md) for actual coverage.
+
+`collect_web.py` uses the existing research Python environment (`requests` and
+`pypdf`, the latter inherited from the shared collection helpers). It checks
+robots rules, spaces requests by at least one second per host, limits response
+size/time/redirects, and records failures without bypassing access controls.
+Only bounded article/main containers are extracted. `--cached` re-extracts a
+checksummed prior download without networking; missing/unchecked snapshots are
+excluded. Raw files and all derived text must remain outside the checkout.
+
+```sh
+python bench/holdout/collect_web.py --sources bench/holdout/web-sources-20260930.json \
+  --references /outside/prior-text-inventory.json --output /outside/new-collection
+python bench/holdout/prepare_web_review.py --collection /outside/new-collection \
+  --output /outside/new-review-packet
+python -m unittest discover -s bench/holdout -p 'test_*.py'
+```
+
+The reference inventory is a JSON array of prior JSONL paths. Each is hashed;
+`text`/`original_text` fields contribute normalized 12-grams. The packet builder
+rechecks document hashes and UTF-8 excerpt offsets, rejects model-exposed sources,
+and quarantines whole documents with prior overlap or >=50% 12-gram containment
+against another accepted document. These checks do not prove semantic or
+pretraining independence. Annotation is human work; collectors never infer labels.
