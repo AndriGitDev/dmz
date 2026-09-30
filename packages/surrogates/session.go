@@ -88,11 +88,23 @@ func newNamespace() string {
 // Process blocks the entire prompt if any match is uncertain or unsupported.
 // No partially transformed text is returned in that case.
 func (s *Session) Process(input string) Result {
+	return s.ProcessWithNames(input, nil)
+}
+
+// NameSpan is a local model finding in UTF-8 byte offsets. Model findings may
+// add masking, but must never override an existing review/block decision.
+type NameSpan struct {
+	Start int `json:"start"`
+	End   int `json:"end"`
+}
+
+func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
 	// Only exact markers issued by this live session may bypass detection.
 	// Blank their bytes in the scan copy so match offsets still address input.
 	// Unknown, edited and nested markers need review; accepting arbitrary marker
 	// contents would let a caller hide real identifiers inside a fake marker.
 	scan := []byte(input)
+	var issuedMarkers []NameSpan
 	for offset := 0; offset < len(input); {
 		relative := strings.IndexAny(input[offset:], "⟦⟧")
 		if relative < 0 {
@@ -107,6 +119,7 @@ func (s *Session) Process(input string) Result {
 		if _, known := s.reverse[input[start:end]]; !known {
 			return markerReview()
 		}
+		issuedMarkers = append(issuedMarkers, NameSpan{start, end})
 		for i := start; i < end; i++ {
 			scan[i] = ' '
 		}
@@ -129,6 +142,50 @@ func (s *Session) Process(input string) Result {
 	}
 	if !result.Allowed {
 		return result
+	}
+	// Only after the original protection rules allow the input, combine names.
+	// Reject malformed/conflicting spans rather than silently losing coverage.
+	previousEnd := 0
+	if len(names) > 512 {
+		return nameReview()
+	}
+	for _, name := range names {
+		if name.Start < previousEnd || name.Start < 0 || name.End <= name.Start || name.End > len(input) ||
+			!utf8.ValidString(input[:name.Start]) || !utf8.ValidString(input[:name.End]) ||
+			strings.TrimSpace(input[name.Start:name.End]) == "" || strings.ContainsAny(input[name.Start:name.End], "⟦⟧") {
+			return nameReview()
+		}
+		for _, marker := range issuedMarkers {
+			if name.Start < marker.End && marker.Start < name.End {
+				return nameReview()
+			}
+		}
+		previousEnd = name.End
+		start, end := name.Start, name.End
+		kept := make([]detect.Match, 0, len(matches)+1)
+		for _, m := range matches {
+			if start < m.End && m.Start < end {
+				if m.Kind != detect.Name {
+					return nameReview()
+				}
+				if m.Start < start {
+					start = m.Start
+				}
+				if m.End > end {
+					end = m.End
+				}
+			} else {
+				kept = append(kept, m)
+			}
+		}
+		matches = append(kept, detect.Match{Start: start, End: end, Kind: detect.Name, Confidence: detect.High, Reason: "local-trained-name"})
+		result.Findings = append(result.Findings, Finding{detect.Name, detect.High, "mask", "local-trained-name"})
+	}
+	sort.Slice(matches, func(i, j int) bool { return matches[i].Start < matches[j].Start })
+	for i := 1; i < len(matches); i++ {
+		if matches[i].Start < matches[i-1].End {
+			return nameReview()
+		}
 	}
 	var out strings.Builder
 	previous := 0
@@ -153,6 +210,10 @@ func (s *Session) Process(input string) Result {
 	out.WriteString(input[previous:])
 	result.Transformed = out.String()
 	return result
+}
+
+func nameReview() Result {
+	return Result{Allowed: false, Findings: []Finding{{detect.Kind("name_review"), detect.Uncertain, "review", "invalid or conflicting model spans"}}}
 }
 
 func markerReview() Result {

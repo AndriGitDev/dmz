@@ -112,3 +112,9 @@ CI should include detector conformance tests (Go and WASM), benchmark no-regress
 ## Open technical decisions
 
 TinyGo feasibility and WASM size/performance; source and redistribution rights for BÍN and Mannanafnaskrá; postcode/street data licence; exact model routing matrix; OpenBao tenancy and key rotation; durable audit schema; direct vs proxied API credentials; browser interface interception reliability; retention evidence for each provider/model; reproducible extension signing.
+
+## Trained Shield preview — 30 September 2026
+
+The explicit trained-scanner build now adds the frozen contextual Person detector to supported text submissions. Original text is tokenized in a private extension offscreen worker shared across tabs, with no remote inference. Returned UTF-8 spans enter the existing per-tab Go masking session only after the original protection rules allow the prompt. Existing secret, uncertainty, Unicode and marker checks cannot be overridden by model output. Draft/route/composer/session changes invalidate an asynchronous scan. Failure, corruption, excessive input and a busy scanner block sending.
+
+This extends the prototype's detection architecture for a separate test build; the ordinary build and CI artifact remain rule-based because private weights are not checked into Git or fetched by CI. See [scanner instructions and measured scope](../apps/shield/scanner/README.md). Synthetic extension workflow checks and exact domain replay establish integration evidence, not independent real-world quality or general-release readiness. A Chrome Web Store developer account has been reported by the owner; store submission and publication have not been performed.

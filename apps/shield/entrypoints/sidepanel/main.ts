@@ -1,4 +1,10 @@
 import './style.css';
+import { trainedScanner } from '../../utils/scanner';
+if (trainedScanner) {
+  const note = document.createElement('p'); note.className = 'hint';
+  note.textContent = 'Þjálfaður nafnagreinir er virkur í þessari tilraunaútgáfu. Vinnsla fer fram á tækinu og getur tekið nokkrar sekúndur. Sending stöðvast ef greining tekst ekki. Óháð gæðaprófun er ólokin.';
+  document.querySelector('#protection-heading')!.parentElement!.append(note);
+}
 
 type TabState = { ready: boolean; composer: boolean; site: 'chatgpt' | 'claude' };
 const theme = document.querySelector<HTMLSelectElement>('#theme')!;

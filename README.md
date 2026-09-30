@@ -25,6 +25,10 @@ dmz is an Icelandic data-minimisation layer for AI. The product is in validation
 
 Empty directories contain `.gitkeep` until the corresponding work starts. Do not add real personal data or licensed BÍN/Mannanafnaskrá datasets to the repository. Synthetic kennitölur must use century digit 8.
 
+## Trained scanner preview
+
+A separate local build now integrates the trained Icelandic name detector into Shield's text-submission and masking flow. See [build, installation and evidence](apps/shield/scanner/README.md). It keeps existing blockers, processes text on device, shares one model across tabs, and blocks sending if scanning fails. The quality-first model is large; weights remain outside Git and are packaged explicitly from verified local assets. The ordinary CI artifact below still contains the small rule-based scanner. Independent quality and owner-browser validation remain pending.
+
 ## Try the prototype
 
 Go 1.27 and TinyGo 0.42 are needed for the WASM build. From the repository root:
