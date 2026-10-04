@@ -1,0 +1,60 @@
+{
+  "scope": "Synthetic extension workflow checks; not independent detector accuracy",
+  "cases": [
+    {
+      "case": "actual-name-masking",
+      "passed": true,
+      "firstScanMs": 8633
+    },
+    {
+      "case": "isolated-restoration",
+      "passed": true
+    },
+    {
+      "case": "unsupported-input-preserves-warm-model",
+      "passed": true
+    },
+    {
+      "case": "canonical-decomposed-trained-names-and-exact-restoration",
+      "passed": true
+    },
+    {
+      "case": "names-inside-emails-mask-and-restore",
+      "passed": true
+    },
+    {
+      "case": "address-without-postcode-and-unicode-hyphens-mask-and-restore",
+      "passed": true
+    },
+    {
+      "case": "edit-during-inference",
+      "passed": true
+    },
+    {
+      "case": "one-model-separate-tab-mappings",
+      "passed": true
+    },
+    {
+      "case": "busy-model-warns-and-uses-basic-masking",
+      "passed": true
+    },
+    {
+      "case": "reset-during-inference",
+      "passed": true
+    },
+    {
+      "case": "scanner-termination-warns-and-masks-email",
+      "passed": true
+    },
+    {
+      "case": "corrupt-model-warns-and-masks-identifiers",
+      "passed": true
+    },
+    {
+      "case": "unresponsive-worker-deadline-falls-back",
+      "passed": true,
+      "elapsedMs": 120326
+    }
+  ],
+  "externalScannerRequests": 0
+}

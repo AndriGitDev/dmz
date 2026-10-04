@@ -11,7 +11,7 @@
     "record:build": "node scripts/record-build.mjs",
     "test:browser": "node scripts/browser-smoke.mjs && node scripts/chat-smoke.mjs && node scripts/chat-races.mjs",
     "build:scanner": "node scripts/build-scanner.mjs",
-    "test:scanner": "node scripts/scanner-unit.mjs && node scripts/scanner-smoke.mjs",
+    "test:scanner": "node scripts/scanner-unit.mjs && node scripts/scanner-lifecycle-unit.mjs && node scripts/scanner-smoke.mjs",
     "test:coverage": "node scripts/coverage-unit.mjs && node scripts/typed-quality-unit.mjs"
   },
   "devDependencies": {

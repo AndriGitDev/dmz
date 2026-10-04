@@ -80,6 +80,29 @@ try {
   await p.frameLocator('iframe[data-dmz-restored]').getByText('Anna ræddi við Peter í gær.', { exact: true }).waitFor();
   assert.ok(!(await p.locator('main').textContent()).includes('Anna'));
   metrics.cases.push({ case: 'isolated-restoration', passed: true });
+  // An input-only rejection must preserve the healthy shared model worker.
+  const inspector = await browser.newCDPSession(p);
+  // This synthetic host creates no workers; Chromium exposes the extension
+  // worker with an empty URL, so identify its sole dedicated-worker target.
+  const workerIDs = async () => (await inspector.send('Target.getTargets')).targetInfos
+    .filter(target => target.type === 'worker')
+    .map(target => target.targetId).sort();
+  const beforeRejectedInput = await workerIDs();
+  assert.equal(beforeRejectedInput.length, 1, 'expected one warmed scanner worker');
+  const rejected = await sw.evaluate(() => chrome.runtime.sendMessage({
+    type: 'dmz:scanner-run', text: 'Gervi\u034ftexti',
+  }));
+  assert.equal(rejected.code, 'unsupported_input');
+  assert.ok(rejected.error);
+  assert.deepEqual(await workerIDs(), beforeRejectedInput, 'input rejection discarded the healthy model');
+  const recovered = await sw.evaluate(() => chrome.runtime.sendMessage({
+    type: 'dmz:scanner-run', text: 'Anna ræddi við Peter í gær.',
+  }));
+  assert.equal(recovered.error, undefined);
+  assert.equal(recovered.spans.length, 2);
+  assert.deepEqual(await workerIDs(), beforeRejectedInput, 'next scan reloaded the healthy model');
+  await inspector.detach();
+  metrics.cases.push({ case: 'unsupported-input-preserves-warm-model', passed: true });
   const decomposedPage = await page();
   const decomposed = 'Anna ræddi við Peter í gær.'.normalize('NFD');
   await fill(decomposedPage, decomposed);

@@ -63,7 +63,7 @@ const manifestBytes = await readFile(join(extension, 'manifest.json'));
 const manifest = JSON.parse(manifestBytes);
 if (!manifest.permissions?.includes('offscreen')) throw Error('Requires trained preview');
 const report = {
-  schema: 3,
+  schema: 4,
   scope: 'Selected/reused synthetic corpora through packaged Chromium scanner and Go WASM best-effort masking; no live-site submission UI',
   independent_validation: false,
   metric: 'Full UTF-8 identifier interval covered by issued restorable markers; partial masking is not success',
@@ -82,7 +82,7 @@ let browser;
 function blank() {
   return { excerpts: 0, allowed: 0, blocked: 0, negative_excerpts: 0, altered_negative_excerpts: 0,
     fully_masked: 0, partially_masked: 0, unmasked: 0, positive_excerpts_completely_masked: 0,
-    positive_excerpts: 0, exact_restorations: 0, scanner_fallbacks: 0, blocked_identifiers: 0, per_type: {} };
+    positive_excerpts: 0, exact_restorations: 0, scanner_fallbacks: 0, scanner_fallback_reasons: {}, blocked_identifiers: 0, per_type: {} };
 }
 try {
   browser = await chromium.launchPersistentContext(profile, { headless: true, channel: 'chromium',
@@ -129,6 +129,11 @@ try {
         }, { text: row.text, names });
         typed[mode].push(typedRecord(row.text, gold, processed.result));
         totals.excerpts++; totals.scanner_fallbacks += Number(fallback);
+        if (fallback) {
+          const code = ['unsupported_input', 'asset_failure', 'inference_failure', 'busy',
+            'worker_unavailable', 'worker_message_error', 'timeout'].includes(scanned.code) ? scanned.code : 'unknown';
+          totals.scanner_fallback_reasons[code] = (totals.scanner_fallback_reasons[code] || 0) + 1;
+        }
         totals.negative_excerpts += Number(!gold.length); totals.positive_excerpts += Number(!!gold.length);
         if (!processed.result.allowed) { totals.blocked++; totals.blocked_identifiers += gold.length; continue; }
         totals.allowed++;

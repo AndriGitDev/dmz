@@ -4,12 +4,12 @@ let sequence = 0;
 let pending:
   | { id: number; respond: (result: unknown) => void; timer: ReturnType<typeof setTimeout> }
   | undefined;
-function close() {
+function close(code = 'worker_unavailable') {
   worker?.terminate();
   worker = undefined;
   if (pending) {
     clearTimeout(pending.timer);
-    pending.respond({ error: 'Scanner unavailable; sending blocked' });
+    pending.respond({ error: 'Scanner unavailable', code });
     pending = undefined;
   }
 }
@@ -21,8 +21,12 @@ chrome.runtime.onMessage.addListener((request, sender, respond) => {
     (sender.url && sender.url !== chrome.runtime.getURL('background.js'))
   )
     return;
-  if (pending || typeof request.text !== 'string' || request.text.length > 16000) {
-    respond({ error: 'Scanner busy or input unsupported' });
+  if (pending) {
+    respond({ error: 'Scanner busy', code: 'busy' });
+    return;
+  }
+  if (typeof request.text !== 'string' || request.text.length > 16000) {
+    respond({ error: 'Scanner input unsupported', code: 'unsupported_input' });
     return;
   }
   if (!worker) {
@@ -31,20 +35,22 @@ chrome.runtime.onMessage.addListener((request, sender, respond) => {
       event.preventDefault();
       close();
     };
-    worker.onmessageerror = close;
+    worker.onmessageerror = () => close('worker_message_error');
     worker.onmessage = ({ data }) => {
       if (!pending || data.id !== pending.id) return;
       const current = pending;
       pending = undefined;
       clearTimeout(current.timer);
       if (data.error) {
-        close();
-        current.respond({ error: 'Local scanner failed' });
+        const code = ['unsupported_input', 'asset_failure', 'inference_failure', 'busy'].includes(data.code)
+          ? data.code : 'worker_unavailable';
+        if (code !== 'unsupported_input') close(code);
+        current.respond({ error: 'Local scanner failed', code });
       } else current.respond({ spans: data.spans });
     };
   }
   const id = ++sequence;
-  pending = { id, respond, timer: setTimeout(close, 120000) };
+  pending = { id, respond, timer: setTimeout(() => close('timeout'), 120000) };
   try {
     worker.postMessage({ id, text: request.text });
   } catch {

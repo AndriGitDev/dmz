@@ -41,17 +41,22 @@ async function load() {
 self.onmessage = async ({ data }) => {
   const { id, text } = data;
   if (busy) {
-    self.postMessage({ id, error: 'Scanner busy' });
+    self.postMessage({ id, error: 'Scanner busy', code: 'busy' });
     return;
   }
   busy = true;
+  let stage = 'unsupported_input';
   try {
     const { words, offsets } = wordsFromText(text);
+    stage = 'asset_failure';
     await load();
+    stage = 'unsupported_input';
+    const chunks = tokenizer.chunks(words);
+    stage = 'inference_failure';
     const primary = crfPredict(words, crf),
       labels = [];
     if (words.length)
-      for (const chunk of tokenizer.chunks(words)) {
+      for (const chunk of chunks) {
         const feeds = {
           input_ids: new ort.Tensor('int64', BigInt64Array.from(chunk.ids, BigInt), [
             1,
@@ -85,7 +90,7 @@ self.onmessage = async ({ data }) => {
       spans: mergeNames(spans(primary.labels, offsets, primary.confidence), spans(labels, offsets)),
     });
   } catch {
-    self.postMessage({ id, error: 'Local scanner failed' });
+    self.postMessage({ id, error: 'Local scanner failed', code: stage });
   } finally {
     busy = false;
   }

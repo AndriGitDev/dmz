@@ -63,6 +63,8 @@ jobs:
         working-directory: apps/shield
       - run: node scripts/scanner-unit.mjs
         working-directory: apps/shield
+      - run: node scripts/scanner-lifecycle-unit.mjs
+        working-directory: apps/shield
       - run: npm run test:coverage
         working-directory: apps/shield
       - name: Install verified TinyGo 0.42.0

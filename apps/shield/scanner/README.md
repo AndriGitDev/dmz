@@ -82,3 +82,5 @@ with fabricated cases, including a partial mask the older literal check misses.
 ## Best-effort policy update — 30 September 2026
 
 Owner explicitly requested masking without content-based blocking, including secrets, and authorized basic masking with a warning when trained inference fails. This supersedes the earlier scanner-failure blocking behavior described in the historical measurements above. Regression checks now cover name/email containment, secret masking, uncertain PII restoration, basic fallback on worker loss/corruption/busy/deadline, and unchanged edit/reset protection. These are integration checks, not new detector accuracy measurements.
+
+Unsupported input now returns an `unsupported_input` reason without terminating a healthy model worker. The next supported scan reuses that worker. Asset or inference failures, worker errors and the 120-second deadline still discard it so a later scan can initialize a fresh worker. Error responses contain fixed reason codes, never exception text, prompts or predictions. The packaged corpus report counts these reasons separately from typed accuracy and masking coverage.
