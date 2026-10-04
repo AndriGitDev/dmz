@@ -28,7 +28,7 @@ any quality claim. Existing per-entity synthetic recall floors remain unchanged.
 
 ## Scope and sampling
 
-The complete Shield target covers names, numbered street addresses, kennitölur,
+The complete Shield target covers names, postal/street addresses, kennitölur,
 email, Icelandic phone, IBAN, payment cards, supported secret patterns and explicitly
 configured tenant terms. Unicode review is a protective policy signal rather than
 a gold entity type. Each dataset must state exactly which types are fully labelled;
@@ -36,6 +36,13 @@ Person-only corpora can establish only Person-scoped metrics. Place mentions are
 not automatically street addresses, and organization mentions are not automatically
 personal names. Write annotation examples and resolve ambiguous boundaries before
 freezing an all-entity sample.
+
+The [proposed multi-entity rubric](../bench/holdout/entity-annotation-rubric.md)
+includes contextual rural addresses and other currently unsupported forms. It
+must not use present detector limitations to define those identifiers away.
+Separate blind reviews and explicit adjudication are prepared by
+`bench/holdout/entity_review.py`; these structural tools do not prove reviewer
+independence or approve a final sample.
 
 Evaluate general Icelandic, legal/financial text and mixed chat separately; do not
 pool them into a headline claim to hide a weak stratum. Sampling must be frozen

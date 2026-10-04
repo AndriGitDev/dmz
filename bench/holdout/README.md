@@ -149,3 +149,39 @@ rechecks document hashes and UTF-8 excerpt offsets, rejects model-exposed source
 and quarantines whole documents with prior overlap or >=50% 12-gram containment
 against another accepted document. These checks do not prove semantic or
 pretraining independence. Annotation is human work; collectors never infer labels.
+
+## Full-entity review for the 99% target
+
+The earlier packets annotate Person only. The proposed
+[full-entity rubric](entity-annotation-rubric.md) covers all nine product entity
+types and exact UTF-8 boundaries. `entity_review.py` creates separate blank forms
+for two reviewers, compares completed submissions, and requires explicit
+third-person adjudication before freezing a private gold file. Every included
+excerpt needs a complete review; null labels cannot become negatives. Excluded
+excerpts retain explicit reasons and do not count as reviewed negatives.
+
+```sh
+python bench/holdout/entity_review.py prepare \
+  --source /outside/collection/review.jsonl --output /outside/entity-packet
+python bench/holdout/entity_review.py package \
+  --packet /outside/entity-packet --slot a --output /outside/reviewer-a.zip
+python bench/holdout/entity_review.py package \
+  --packet /outside/entity-packet --slot b --output /outside/reviewer-b.zip
+# After the separate reviews and adjudication have been completed:
+python bench/holdout/entity_review.py compare --packet /outside/entity-packet
+python bench/holdout/entity_review.py freeze \
+  --packet /outside/entity-packet --output /outside/adjudicated-gold
+```
+
+The private `all-entity-review-20261004-v1` packet contains the existing 88-document,
+142-excerpt web sample, with both reviewer forms and adjudication still blank.
+The original Person packet is preserved byte for byte. Separate ZIP files include
+only the selected blank review form, texts, source index, rubric, and empty tenant
+dictionary. They have been prepared locally and have not been sent to reviewers.
+Saved source HTML remains with the collection for extraction checks.
+
+Passing these checks establishes structure and text identity, not human identity,
+annotation correctness, sampling independence, or permission to redistribute source
+text. The frozen output therefore remains `eligible_for_final: false` until those
+requirements are established separately. It must not be used to claim the 99% target
+has been met.
