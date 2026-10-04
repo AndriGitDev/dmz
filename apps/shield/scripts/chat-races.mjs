@@ -62,9 +62,14 @@ try {
     await page.locator('#dmz-shield-status').waitFor();
     await page.evaluate(value => { window.mode = value; }, mode);
     await page.locator('textarea').fill('source@example.com');
+    // Register before clicking: the previous network-idle state can still be
+    // true after the submit handler runs but before its fetch reaches routing.
+    const sentResponse = mode === 'normal' ? page.waitForResponse(response =>
+      response.url() === 'https://chatgpt.com/__shield_test_send' && response.request().method() === 'POST') : null;
     await page.locator('button').click();
     if (mode === 'normal') {
       await page.waitForFunction(() => window.sent.length === 1);
+      await sentResponse;
       await page.waitForLoadState('networkidle');
       assert.equal(bodies.length, 1);
       assert.match(bodies[0], /^⟦EMAIL-[A-F0-9]{16}-\d+: XXXXX@XXXXX\.XXX⟧$/);
