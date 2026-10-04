@@ -21,7 +21,11 @@ type lexiconNode struct {
 var bundledLexicon *Lexicon
 var lexicalTokenRE = regexp.MustCompile(`[\p{L}]+(?:[-’'][\p{L}]+)*|\.`)
 var patronymicEndRE = regexp.MustCompile(`(?:sonar|syni|son|dóttir|dóttur|burs|bur)$`)
-var addressTailRE = regexp.MustCompile(`^[ \t]+[0-9]{1,3}[A-Za-z]?(?:/[0-9]{1,3}[A-Za-z]?)?(?:,[ \t]*|[ \t]+)[0-9]{3}(?:[ \t]+\p{Lu}\p{L}{1,40})?`)
+
+// A known address form plus a house number is sufficient; a postcode is
+// optional. Keep the longer span when supplied, including existing unit forms.
+var addressTailRE = regexp.MustCompile(`^[ \t\x{00A0}\x{202F}]+[0-9]{1,3}[A-Za-z]?(?:[/–-][0-9]{1,3}[A-Za-z]?)?((?:,[ \t\x{00A0}\x{202F}]*|[ \t\x{00A0}\x{202F}]+)[0-9]{3}(?:[ \t]+\p{Lu}\p{L}{1,40})?)?`)
+var addressNumericContinuationRE = regexp.MustCompile(`^[,./–-][ \t]*[0-9]`)
 
 // LoadLexicon accepts a bounded data pack. Errors never include source entries.
 func LoadLexicon(data []byte) (*Lexicon, error) {
@@ -125,10 +129,14 @@ func (l *Lexicon) matches(input string) []Match {
 					result = append(result, Match{loc[0], part[1], Name, Uncertain, "corpus-name-seed"})
 				} else if mode == 0 {
 					result = append(result, Match{loc[0], part[1], Name, Uncertain, "corpus-name-lexicon"})
-				} else if tail := addressTailRE.FindStringIndex(input[part[1]:]); tail != nil {
+				} else if tail := addressTailRE.FindStringSubmatchIndex(input[part[1]:]); tail != nil {
 					end := part[1] + tail[1]
-					if bounded(input, loc[0], end) && !currencyAfter(input, end) {
-						result = append(result, Match{loc[0], end, Address, Uncertain, "gazetteer-number-postcode"})
+					if bounded(input, loc[0], end) && !currencyAfter(input, end) && !addressNumericContinuationRE.MatchString(input[end:]) {
+						reason := "gazetteer-number"
+						if tail[2] >= 0 {
+							reason = "gazetteer-number-postcode"
+						}
+						result = append(result, Match{loc[0], end, Address, Uncertain, reason})
 					}
 				}
 			}

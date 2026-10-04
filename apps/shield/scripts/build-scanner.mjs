@@ -1,4 +1,5 @@
-import { readFile, mkdir, copyFile, writeFile } from 'node:fs/promises';
+import { readFile, mkdir, copyFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -6,6 +7,8 @@ import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const assets = process.env.DMZ_SCANNER_ASSETS;
+const addressForms = process.env.DMZ_ADDRESS_FORMS;
+if (!addressForms) throw Error('Set DMZ_ADDRESS_FORMS to the approved local HMS address-forms.json');
 if (!assets || resolve(assets).startsWith(resolve(root, '../..') + '/'))
   throw Error('Set DMZ_SCANNER_ASSETS to private external assets');
 const manifest = JSON.parse(await readFile(join(assets, 'manifest.json'), 'utf8'));
@@ -33,6 +36,19 @@ for (const name of ['model.onnx', 'tokenizer.json', 'crf.json']) {
   }
   if (hash.digest('hex') !== manifest.files[name].sha256 || bytes !== manifest.files[name].bytes)
     throw Error('Asset checksum mismatch');
+}
+// Rebuild the actual core with the approved address vocabulary every time.
+// A stale/no-lexicon public/dmz.wasm must not silently enter a trained preview.
+const staging = await mkdtemp(join(tmpdir(), 'dmz-address-build-'));
+try {
+  const pack = join(staging, 'addresses.json');
+  execFileSync('python3', [resolve(root, '../../bench/datasets/prepare_address_pack.py'),
+    '--addresses', resolve(addressForms), '--output', pack], { stdio: 'inherit' });
+  execFileSync(resolve(root, '../../scripts/build-wasm.sh'), [], {
+    stdio: 'inherit', env: { ...process.env, DMZ_LEXICON_FILE: pack },
+  });
+} finally {
+  await rm(staging, { recursive: true, force: true });
 }
 execFileSync('npm', ['run', 'build'], {
   cwd: root,

@@ -26,10 +26,19 @@ if (process.env.DMZ_LEXICON_FILE) {
       break;
     }
   }
-  assert.equal(nameReviewed, true, 'bundled name lexicon did not review a known entry');
+  if (pack.names.length) assert.equal(nameReviewed, true, 'bundled name lexicon did not review a known entry');
   const address = JSON.parse(globalThis.dmzProcess(`${pack.addresses[0]} 99/2, 999`));
   assert.equal(address.allowed, false, 'bundled address lexicon failed');
   assert.ok(address.findings.some(f => f.reason === 'gazetteer-number-postcode'));
+  const shortAddress = `${pack.addresses[0]} 99b`;
+  const mixed = `Skrifaðu 5 setningar: demo@example.com +354 555 0100 ${shortAddress}`;
+  const masked = JSON.parse(globalThis.dmzProcessBestEffort(mixed, '[]'));
+  assert.equal(masked.allowed, true);
+  assert.ok(masked.findings.some(f => f.kind === 'address' && f.reason === 'gazetteer-number'));
+  assert.ok(!masked.transformed.includes(shortAddress));
+  assert.equal(globalThis.dmzRestore(masked.transformed), mixed);
+  const resubmitted = JSON.parse(globalThis.dmzProcessBestEffort(masked.transformed, '[]'));
+  assert.equal(resubmitted.transformed, masked.transformed);
   if (pack.name_seeds?.length) {
     const seedReviewed = pack.name_seeds.slice(0, 30).some(seed => {
       const result = JSON.parse(globalThis.dmzProcess(seed));

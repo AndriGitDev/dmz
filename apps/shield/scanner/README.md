@@ -16,16 +16,27 @@ Run from the repository root, with the already installed local toolchains. `prep
 python3 apps/shield/scripts/prepare-scanner.py \
   --experiment /private/full-precision-v1 --base /private/icebert-base \
   --crf /private/initials.crfsuite --output /private/shield-scanner
-./scripts/build-wasm.sh
 cd apps/shield
 npm ci
 npm run check
-DMZ_SCANNER_ASSETS=/private/shield-scanner npm run build:scanner
+DMZ_SCANNER_ASSETS=/private/shield-scanner \
+DMZ_ADDRESS_FORMS=/private/prepared/address-forms.json npm run build:scanner
 npm run test:browser
 npm run test:scanner
 ```
 
 The pinned ONNX Runtime 1.23.2 package must already be installed under `bench/browser-detector/node_modules` from that directory's lockfile. The builder does not download models or runtimes. Generated assets exist only in ignored `.output/`. `npm run build` without the trained build command produces the original small preview, not this model package. Do not use `npm run zip` for the trained build: it rebuilds the ordinary profile. After committing and rebuilding the trained profile, `npm run record:build` records every asset hash; zip the already-built directory into an external private output path.
+
+The trained builder now requires the approved local HMS `address-forms.json`
+and rebuilds WASM with an address-only vocabulary before packaging. Set `GO_BIN`
+and `TINYGO_BIN` when the toolchains are outside PATH. The vocabulary contains
+address forms, not household records; no name lexicon is added to the frozen
+Person scanner. `detector-data.json` records counts and the bundled pack hash.
+Known address forms plus house numbers are detected without a postcode, including
+letter suffixes, slash units and compact number ranges. The postcode/city suffix
+is retained when recognized. Unknown street forms, unnumbered addresses and
+ambiguous place-name/number mentions remain limitations; synthetic regression
+checks do not establish field precision or recall.
 
 Load `apps/shield/.output/chrome-mv3` using **Load unpacked** on `chrome://extensions` (or Brave's extensions page), then reload supported ChatGPT/Claude tabs. The extension name includes “trained preview” and Settings identifies the active trained scanner. First use loads the model and can take several seconds. A trained-scan failure uses basic masking with a warning. A changed draft remains for retry. Uninstall or reload the extension to discard its worker/model; reset in Settings clears a tab's mappings.
 

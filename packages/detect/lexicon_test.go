@@ -7,7 +7,7 @@ import (
 
 func fixtureLexicon(t *testing.T) *Lexicon {
 	t.Helper()
-	l, err := LoadLexicon([]byte(`{"schema":1,"names":["Mira Demo","Mira","Prófrún Gervi","Demo A . Gervi"],"addresses":["Gervislóð","Gervislóðinni","Gervi Slóð"]}`))
+	l, err := LoadLexicon([]byte(`{"schema":1,"names":["Mira Demo","Mira","Prófrún Gervi","Demo A . Gervi"],"addresses":["Gervislóð","Gervislóðinni","Gervi Slóð","Gerviborg"]}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,14 +37,14 @@ func TestLexiconNamesUseOriginalByteSpans(t *testing.T) {
 
 func TestGazetteerRequiresAddressShapeAndRejectsPrices(t *testing.T) {
 	l := fixtureLexicon(t)
-	for _, value := range []string{"Gervislóð 99/2, 999 Sýnibær", "gervislóð 99b, 999", "Gervislóðinni 99, 999", "Gervi Slóð 99 999 Sýnibær"} {
+	for _, value := range []string{"Gervislóð 99/2, 999 Sýnibær", "gervislóð 99b, 999", "Gervislóðinni 99, 999", "Gervi Slóð 99 999 Sýnibær", "Gervislóð 99", "gervislóð 99b", "Gervislóðinni 99", "Gervi Slóð 99", "Gervislóð 99/2", "Gervislóð 97-99", "Gervislóð 97–99", "Gervislóð\u00a099", "Gervislóð\u202f99"} {
 		input := "Tilbúið: " + value + "."
 		got := l.Detect(input, nil)
 		if len(got) != 1 || got[0].Kind != Address || got[0].Confidence != Uncertain || input[got[0].Start:got[0].End] != value {
 			t.Fatalf("bad address %q: %#v", value, got)
 		}
 	}
-	for _, input := range []string{"Prófgata 99, 999 krónur", "Prófgata 99, 999 ISK", "Gervislóð er staður.", "Gervislóð 99", "Gervislóð 99, 999 krónur", "Gervislóð 99, 999 ISK", "Gervislóð 99, 999 kr.", "Gervislóð 99, 9999", "Gervislóð\n99, 999"} {
+	for _, input := range []string{"Prófgata 99, 999 krónur", "Prófgata 99, 999 ISK", "Gervislóð er staður.", "Óþekkt 99", "Gervislóð 99 krónur", "Gervislóð 99 ISK", "Gervislóð 99,50 kr.", "Gervislóð 99.50", "Gervislóð 9999", "Gervislóð 99abc", "Gervislóð 99/9999", "Gervislóð 99, 999 krónur", "Gervislóð 99, 999 ISK", "Gervislóð 99, 999 kr.", "Gervislóð 99, 9999", "Gervislóð\n99, 999"} {
 		if got := l.Detect(input, nil); len(got) != 0 {
 			t.Fatalf("false positive %q: %#v", input, got)
 		}
@@ -56,6 +56,14 @@ func TestLexiconDoesNotSuppressSecretsOrTenantTerms(t *testing.T) {
 	got := l.Detect("sk-test_key_000000000000 og Verkefni Gervi", []string{"Verkefni Gervi"})
 	if len(got) != 2 || got[0].Kind != Secret || got[1].Kind != TenantDictionary {
 		t.Fatalf("lost baseline rules: %#v", got)
+	}
+}
+
+func TestAddressWithoutPostcodeInMixedPrompt(t *testing.T) {
+	input := "Skrifaðu 5 setningar með eftirfarandi: demo@example.com +354 555 0100 Gerviborg 99"
+	got := fixtureLexicon(t).Detect(input, nil)
+	if len(got) != 3 || got[0].Kind != Email || got[1].Kind != Phone || got[2].Kind != Address || input[got[2].Start:got[2].End] != "Gerviborg 99" {
+		t.Fatalf("mixed prompt lost an identifier: %#v", got)
 	}
 }
 
