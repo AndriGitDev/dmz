@@ -54,6 +54,9 @@ def score(records, kinds, minimum=.99):
     total, by_kind, by_stratum = Counter(), defaultdict(Counter), defaultdict(list)
     for row in records:
         gold, predicted = _spans(row.get('gold')), _spans(row.get('predicted'))
+        abstained = row.get('abstained', False)
+        if type(abstained) is not bool or (abstained and predicted):
+            raise ValueError('an unavailable typed result must have no predicted spans')
         if {s[2] for s in gold | predicted} - kinds:
             raise ValueError('entity outside declared annotation scope')
         stratum = row.get('stratum', 'unspecified')
@@ -61,11 +64,13 @@ def score(records, kinds, minimum=.99):
             raise ValueError('invalid stratum')
         counts = Counter(tp=len(gold & predicted), fp=len(predicted - gold),
                          fn=len(gold - predicted), excerpts=1,
-                         exact_excerpts=int(gold == predicted),
+                         exact_excerpts=int(not abstained and gold == predicted),
                          positive_excerpts=int(bool(gold)),
-                         exact_positive_excerpts=int(bool(gold) and gold == predicted),
+                         exact_positive_excerpts=int(not abstained and bool(gold) and gold == predicted),
                          negative_excerpts=int(not gold),
-                         false_positive_negative_excerpts=int(not gold and bool(predicted)))
+                         false_positive_negative_excerpts=int(not gold and bool(predicted)),
+                         abstained_excerpts=int(abstained),
+                         abstained_negative_excerpts=int(abstained and not gold))
         total.update(counts)
         by_stratum[stratum].append(counts)
         for kind in kinds:
@@ -94,3 +99,10 @@ def score(records, kinds, minimum=.99):
                 overall=summarize(total), per_type={k: _metrics(by_kind[k]) for k in sorted(kinds)},
                 strata=strata, independent_validation=False,
                 limitation='Point estimates only; annotation independence, sampling, and system masking require separate evidence.')
+
+
+if __name__ == '__main__':
+    import json
+    import sys
+    payload = json.load(sys.stdin)
+    print(json.dumps(score(payload['records'], payload['kinds'], payload.get('minimum', .99)), indent=2))

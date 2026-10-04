@@ -13,6 +13,13 @@ Accuracy is correct excerpts divided by all fully reviewed excerpts. A reviewed
 negative excerpt is correct only when there are no predictions. Null annotations
 are incomplete review and must never be counted as negatives.
 
+A whole-text masking fallback has no individual typed detection set. Count it as
+an abstention and an incorrect excerpt, including on reviewed negatives; do not
+discard it from the accuracy denominator. Every gold entity in that excerpt is
+a false negative for typed detection. Report abstentions separately from extra
+typed detections and from the amount of text protected by masking. Successful
+whole-text masking can therefore coexist with failed typed detection.
+
 Recall is TP/(TP+FN), pooled over exact entity matches within the declared scope.
 Precision TP/(TP+FP), F1, confusion counts, per-type recall, positive-excerpt
 accuracy and the rate of false detections on negative excerpts are required
@@ -92,6 +99,38 @@ false masking, restoration correctness, session isolation, races and fallback.
 Run the packaged browser artifact with the approved address vocabulary enabled;
 record its hashes. Keep the quality-first full-precision model frozen during rule
 experiments, and compare each candidate against that same starting artifact.
+
+The core's local result includes `spans_available` and `detected_spans`: final
+non-overlapping UTF-8 spans and types after model/rule overlap resolution. No raw
+value or reverse mapping is included. Availability says that an individual span
+set exists, not that detection is complete or correct. Whole-text fallbacks and
+invalid model spans leave it false. Findings remain an explanation of processing;
+they may include pre-merge findings and must not substitute for final typed spans.
+
+`apps/shield/scripts/system-corpus.mjs` evaluates both the basic and trained
+packaged Chromium paths on committed synthetic corpora. It uses the shared
+`quality.py` scorer for exact final span/type sets, alongside independent
+restoration-based masking coverage. Reports include the package/core hashes and
+the full nine-type scope, keep corpora separate, and contain no text or individual
+predictions. Those reused synthetic labels remain development diagnostics.
+
+The first packaged exact-set replay on 4 October used the frozen trained scanner
+and the updated address/numeric rules. It produced the following trained-path
+results; all requests stayed local and every allowed output restored exactly.
+
+| Reused synthetic corpus | Exact excerpts | Accuracy | Typed recall | Fully masked identifiers | Typed abstentions |
+| --- | --- | --- | --- | --- | --- |
+| Selected v0 | 42/42 | 100% | 37/37 | 37/37 | 0 |
+| Challenge v0 | 17/18 | 94.44% | 15/16 | 15/16 | 0 |
+| Exploratory v1 | 23/29 | 79.31% | 20/25 | 22/25 | 3 |
+| Formatting v2 | 41/41 | 100% | 23/23 | 23/23 | 0 |
+| Later probe v2 | 23/30 | 76.67% | 15/20 | 17/20 | 3 |
+
+The later probe also has one extra typed detection; its typed precision is 15/16.
+Full masking and typed detection differ because whole-text fallbacks can cover
+identifiers without assigning individual types or spans. These small selected
+sets are not independent acceptance strata. The full aggregate record is
+[system-typed-v1.json](../bench/results/quality-99-v1/system-typed-v1.json).
 
 Independent quality evidence, model redistribution review and owner-browser
 verification remain distinct release requirements. A passing development score

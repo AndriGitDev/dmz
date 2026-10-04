@@ -7,6 +7,7 @@ import { join, resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { annotationSpans, restoredMaskSpans, coverage, markers } from './coverage.mjs';
+import { aggregateQuality, typedRecord } from './typed-quality.mjs';
 
 const [outputArg, ...sourceArgs] = process.argv.slice(2);
 if (!outputArg || !sourceArgs.length) throw Error('Usage: system-corpus.mjs PRIVATE_OUTPUT SYNTHETIC_CORPUS...');
@@ -38,11 +39,12 @@ const manifestBytes = await readFile(join(extension, 'manifest.json'));
 const manifest = JSON.parse(manifestBytes);
 if (!manifest.permissions?.includes('offscreen')) throw Error('Requires trained preview');
 const report = {
-  schema: 1,
+  schema: 2,
   scope: 'Selected/reused synthetic corpora through packaged Chromium scanner and Go WASM best-effort masking; no live-site submission UI',
   independent_validation: false,
   metric: 'Full UTF-8 identifier interval covered by issued restorable markers; partial masking is not success',
-  not_measured: 'Exact typed detector accuracy, representative field performance, real-site interception, scanner warning UI',
+  typed_metric: 'Exact final entity span/type set per excerpt; unavailable typed results count as abstentions and incorrect excerpts',
+  not_measured: 'Representative field performance, real-site interception, scanner warning UI',
   build: { manifest_sha256: digest(manifestBytes), version_name: manifest.version_name,
     wasm_sha256: digest(await readFile(join(extension, 'dmz.wasm'))),
     detector_data: JSON.parse(await readFile(join(extension, 'detector-data.json'))),
@@ -81,6 +83,7 @@ try {
   const started = Date.now();
   for (const source of corpus) {
     const result = { source: source.source, sha256: source.sha256, basic: blank(), trained: blank() };
+    const typed = { basic: [], trained: [] };
     for (const row of source.rows) {
       const gold = annotationSpans(row);
       const scanned = await worker.evaluate(text => chrome.runtime.sendMessage({ type: 'dmz:scanner-run', text }), row.text);
@@ -94,6 +97,7 @@ try {
           const result = JSON.parse(globalThis.dmzProcessBestEffort(text, JSON.stringify(names)));
           return { result, restored: result.allowed ? globalThis.dmzRestore(result.transformed) : null };
         }, { text: row.text, names });
+        typed[mode].push(typedRecord(row.text, gold, processed.result));
         totals.excerpts++; totals.scanner_fallbacks += Number(fallback);
         totals.negative_excerpts += Number(!gold.length); totals.positive_excerpts += Number(!!gold.length);
         if (!processed.result.allowed) { totals.blocked++; totals.blocked_identifiers += gold.length; continue; }
@@ -116,6 +120,7 @@ try {
     for (const mode of ['basic', 'trained']) {
       const totals = result[mode], n = totals.fully_masked + totals.partially_masked + totals.unmasked;
       totals.complete_identifier_coverage_in_allowed_text = n ? totals.fully_masked / n : null;
+      totals.typed_quality = aggregateQuality(typed[mode]);
     }
     report.sets.push(result);
     console.log(JSON.stringify({ completed_corpus: source.source, excerpts: source.rows.length }));

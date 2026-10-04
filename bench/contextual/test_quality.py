@@ -44,6 +44,21 @@ class QualityTests(unittest.TestCase):
         rows[1]['predicted'] = []
         self.assertFalse(score(rows, ['Person'])['overall']['point_targets_met'])
 
+    def test_unavailable_typed_result_cannot_count_as_correct_negative(self):
+        report = score([
+            dict(gold=[], predicted=[], abstained=True),
+            dict(gold=[(0, 1, 'Person')], predicted=[], abstained=True),
+            dict(gold=[], predicted=[]),
+        ], ['Person'])['overall']
+        self.assertEqual(report['accuracy'], 1/3)
+        self.assertEqual(report['recall'], 0)
+        self.assertEqual(report['fn'], 1)
+        self.assertEqual(report['abstained_excerpts'], 2)
+        self.assertEqual(report['abstained_negative_excerpts'], 1)
+        for row in [dict(gold=[], predicted=[], abstained='yes'),
+                    dict(gold=[], predicted=[(0,1,'Person')], abstained=True)]:
+            with self.assertRaises(ValueError): score([row], ['Person'])
+
     def test_reject_incomplete_invalid_duplicate_and_wrong_scope(self):
         for gold in (None, 'missing', [(0, 1, 'Person')] * 2,
                      [(True, 1, 'Person')], [(1, 1, 'Person')], [(0, 1, 'Address')]):

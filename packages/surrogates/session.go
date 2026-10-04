@@ -22,9 +22,35 @@ type Finding struct {
 }
 
 type Result struct {
-	Allowed     bool      `json:"allowed"`
-	Transformed string    `json:"transformed,omitempty"`
-	Findings    []Finding `json:"findings"`
+	Allowed        bool         `json:"allowed"`
+	Transformed    string       `json:"transformed,omitempty"`
+	Findings       []Finding    `json:"findings"`
+	SpansAvailable bool         `json:"spans_available"`
+	DetectedSpans  []EntitySpan `json:"detected_spans"`
+}
+
+// EntitySpan describes the final non-overlapping detection set in original
+// UTF-8 byte offsets. It contains no original value or reversible mapping.
+type EntitySpan struct {
+	Start int         `json:"start"`
+	End   int         `json:"end"`
+	Kind  detect.Kind `json:"kind"`
+}
+
+// Availability means that individual typed spans exist, not that detection is
+// complete or correct. Whole-text masking and invalid-span guards leave it false.
+func withDetectedSpans(result Result, matches []detect.Match) Result {
+	for _, match := range matches {
+		if match.Kind == detect.UnicodeReview {
+			return result
+		}
+	}
+	result.SpansAvailable = true
+	result.DetectedSpans = make([]EntitySpan, 0, len(matches))
+	for _, match := range matches {
+		result.DetectedSpans = append(result.DetectedSpans, EntitySpan{match.Start, match.End, match.Kind})
+	}
+	return result
 }
 
 type Session struct {
@@ -177,7 +203,7 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 		result.Findings = append(result.Findings, Finding{m.Kind, m.Confidence, action, m.Reason})
 	}
 	if !result.Allowed {
-		return result
+		return withDetectedSpans(result, matches)
 	}
 	// Only after the original protection rules allow the input, combine names.
 	// Reject malformed/conflicting spans rather than silently losing coverage.
@@ -263,7 +289,7 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 	}
 	out.WriteString(input[previous:])
 	result.Transformed = out.String()
-	return result
+	return withDetectedSpans(result, matches)
 }
 
 func nameReview() Result {

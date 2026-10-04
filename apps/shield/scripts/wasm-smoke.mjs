@@ -14,6 +14,24 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
+const typedInput = 'Ása demo@example.invalid';
+const typed = JSON.parse(globalThis.dmzProcessBestEffort(typedInput, JSON.stringify([
+  { start: 0, end: 4 }, { start: 5, end: 9 },
+])));
+assert.equal(typed.spans_available, true);
+assert.deepEqual(typed.detected_spans, [
+  { start: 0, end: 4, kind: 'name_demo' },
+  { start: 5, end: Buffer.byteLength(typedInput), kind: 'email' },
+]);
+assert.equal(globalThis.dmzRestore(typed.transformed), typedInput);
+const wholeTyped = JSON.parse(globalThis.dmzProcessBestEffort('pro\u0301fun', '[]'));
+assert.equal(wholeTyped.spans_available, false);
+assert.equal(wholeTyped.detected_spans, null);
+const emptyTyped = JSON.parse(globalThis.dmzProcessBestEffort('Ordinary prose.', '[]'));
+assert.equal(emptyTyped.spans_available, true);
+assert.deepEqual(emptyTyped.detected_spans, []);
+globalThis.dmzReset();
+
 for (const separator of ['\t', '\u00a0', '\u202f', '\u2011', '\u2013']) {
   for (const value of [
     `140182${separator}8858`, `+354${separator}000${separator}0002`,
