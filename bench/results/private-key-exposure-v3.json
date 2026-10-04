@@ -1,0 +1,22 @@
+{
+  "corpus": "bench/corpus/private-key-v3.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 15,
+  "allowed_prompts": 3,
+  "blocked_prompts": 12,
+  "benign_prompts": 3,
+  "blocked_benign_ids": [],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [],
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "secret": {
+      "masked": 0,
+      "blocked": 13,
+      "exposed": 0
+    }
+  }
+}

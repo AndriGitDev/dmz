@@ -183,7 +183,7 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 	matches := detect.DetectWithTerms(string(scan), s.tenantTerms)
 	if bestEffort {
 		for _, m := range matches {
-			if m.Kind == detect.UnicodeReview || (m.Kind == detect.Secret && strings.HasPrefix(input[m.Start:m.End], "-----BEGIN")) {
+			if m.Kind == detect.UnicodeReview || (m.Kind == detect.Secret && m.Reason != "private-key-block" && strings.HasPrefix(input[m.Start:m.End], "-----BEGIN")) {
 				return s.maskWhole(input)
 			}
 		}

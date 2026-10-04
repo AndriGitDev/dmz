@@ -118,6 +118,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 		}
 	}
 	add(secretRE, Secret, simple("secret-pattern"))
+	candidates = append(candidates, privateKeyBlocks(input)...)
 	add(jwtRE, Secret, simple("jwt-shape"))
 	for _, loc := range bearerRE.FindAllStringSubmatchIndex(input, -1) {
 		start, end := loc[2], loc[3]

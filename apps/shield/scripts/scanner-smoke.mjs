@@ -129,6 +129,18 @@ try {
   await emailPage.frameLocator('iframe[data-dmz-restored]').getByText(emailInput, { exact: true }).waitFor();
   await emailPage.close();
   metrics.cases.push({ case: 'names-inside-emails-mask-and-restore', passed: true });
+  const keyPage = await page();
+  const keyInput = 'Prófun: -----BEGIN PRIVATE KEY-----\nSYNTHETIC_NOT_A_KEY\n-----END PRIVATE KEY----- lokið.';
+  await fill(keyPage, keyInput);
+  await keyPage.waitForFunction(() => window.sent.length === 1, null, { timeout: 130000 });
+  const keySent = await keyPage.evaluate(() => window.sent[0]);
+  assert.ok(keySent.startsWith('Prófun: ') && keySent.endsWith(' lokið.'));
+  assert.ok(!keySent.includes('SYNTHETIC') && !keySent.includes('PRIVATE KEY'));
+  assert.equal((keySent.match(/⟦/g) || []).length, 1);
+  await keyPage.frameLocator('iframe[data-dmz-restored]').getByText(keyInput, { exact: true }).waitFor();
+  assert.equal(await keyPage.frameLocator('iframe[data-dmz-restored]').locator('#restored-text').textContent(), keyInput);
+  await keyPage.close();
+  metrics.cases.push({ case: 'complete-private-key-preserves-prose-and-restores', passed: true });
   if (process.env.DMZ_LEXICON_FILE) {
     // Local vocabulary plus a fabricated number; never persist source forms.
     const pack = JSON.parse(await readFile(process.env.DMZ_LEXICON_FILE, 'utf8'));

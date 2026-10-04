@@ -21,6 +21,7 @@ jobs:
       - run: sha256sum --check bench/gates/legal-financial-v1.sha256
       - run: sha256sum --check bench/gates/corpus.sha256
       - run: ./scripts/check-detector-v2.sh
+      - run: ./scripts/check-private-key.sh
       - run: go run ./bench/scorers -baseline bench/results/v0.json -floor bench/gates/selected-v0-recall.json > /tmp/dmz-benchmark-current.json
       - run: diff -u bench/results/v0.json /tmp/dmz-benchmark-current.json
       - run: go run ./bench/scorers -detector regex > /tmp/dmz-regex-current.json

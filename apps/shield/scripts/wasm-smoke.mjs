@@ -14,6 +14,25 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
+for (const label of ['PRIVATE KEY', 'RSA PRIVATE KEY', 'ENCRYPTED PRIVATE KEY', 'OPENSSH PRIVATE KEY']) {
+  const block = `-----BEGIN ${label}-----\r\nSYNTHETIC_NOT_A_KEY\r\n-----END ${label}-----`;
+  const prefix = 'Prófun 🙂: ', suffix = ' lokið.', input = prefix + block + suffix;
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, [{ start: Buffer.byteLength(prefix),
+    end: Buffer.byteLength(prefix + block), kind: 'secret' }]);
+  assert.ok(result.transformed.startsWith(prefix) && result.transformed.endsWith(suffix));
+  assert.ok(!result.transformed.includes('SYNTHETIC'));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+}
+const incompleteKey = 'Prófun: -----BEGIN PRIVATE KEY-----\nSYNTHETIC_TRUNCATED_BODY';
+const incompleteResult = JSON.parse(globalThis.dmzProcessBestEffort(incompleteKey, '[]'));
+assert.equal(incompleteResult.spans_available, false);
+assert.ok(!incompleteResult.transformed.includes('SYNTHETIC'));
+assert.equal(globalThis.dmzRestore(incompleteResult.transformed), incompleteKey);
+globalThis.dmzReset();
+
 for (const form of ['NFC', 'NFD']) {
   const typedInput = 'Ása demo@example.invalid'.normalize(form);
   const nameLength = Buffer.byteLength('Ása'.normalize(form));
