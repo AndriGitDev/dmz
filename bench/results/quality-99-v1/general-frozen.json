@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "metric": "exact entity-set accuracy per excerpt",
+  "annotation_scope": [
+    "Person"
+  ],
+  "minimum": 0.99,
+  "overall": {
+    "tp": 1461,
+    "fp": 68,
+    "fn": 45,
+    "excerpts": 5582,
+    "exact_excerpts": 5502,
+    "positive_excerpts": 1094,
+    "exact_positive_excerpts": 1046,
+    "negative_excerpts": 4488,
+    "false_positive_negative_excerpts": 32,
+    "precision": 0.9555264879005886,
+    "recall": 0.9701195219123506,
+    "f1": 0.9627677100494234,
+    "accuracy": 0.985668219276245,
+    "positive_excerpt_accuracy": 0.9561243144424132,
+    "negative_excerpt_false_positive_rate": 0.0071301247771836,
+    "point_targets_met": false
+  },
+  "per_type": {
+    "Person": {
+      "tp": 1461,
+      "fp": 68,
+      "fn": 45,
+      "precision": 0.9555264879005886,
+      "recall": 0.9701195219123506,
+      "f1": 0.9627677100494234
+    }
+  },
+  "strata": {
+    "general": {
+      "tp": 1461,
+      "fp": 68,
+      "fn": 45,
+      "excerpts": 5582,
+      "exact_excerpts": 5502,
+      "positive_excerpts": 1094,
+      "exact_positive_excerpts": 1046,
+      "negative_excerpts": 4488,
+      "false_positive_negative_excerpts": 32,
+      "precision": 0.9555264879005886,
+      "recall": 0.9701195219123506,
+      "f1": 0.9627677100494234,
+      "accuracy": 0.985668219276245,
+      "positive_excerpt_accuracy": 0.9561243144424132,
+      "negative_excerpt_false_positive_rate": 0.0071301247771836,
+      "point_targets_met": false
+    }
+  },
+  "independent_validation": false,
+  "limitation": "Point estimates only; annotation independence, sampling, and system masking require separate evidence.",
+  "scope": "Reused development; Person only, not all-entity or Shield accuracy",
+  "text_mode": "canonical",
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "crf_cache_sha256": "4f9d3f7dd56357a1be384eb73c0ee1cde5816628de0dafc6d9f78ed2e99d85ad",
+  "neural_cache_sha256": "2b2b96b77373169efb60d33a45a6dcbd6fcd6c0c36b73093e225771717af7b13",
+  "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  }
+}
