@@ -46,11 +46,11 @@ type Match struct {
 
 var (
 	// Horizontal separators only: never join identifiers across document lines.
-	kennitalaRE  = regexp.MustCompile(`[0-9]{6}[ .\-\x{00A0}\x{202F}]?[0-9]{4}`)
+	kennitalaRE  = regexp.MustCompile(`[0-9]{6}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
 	emailRE      = regexp.MustCompile(`[\p{L}0-9._%+\-]+@[\p{L}0-9.\-]+\.[\p{L}]{2,}`)
-	ibanRE       = regexp.MustCompile(`(?i)IS(?:[ -]?[0-9]){24}`)
-	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 .\-\x{00A0}\x{202F}]{11,25})[0-9]`)
-	phoneRE      = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ .\-\x{00A0}\x{202F}]?)?[0-9]{3}[ .\-\x{00A0}\x{202F}]?[0-9]{4}`)
+	ibanRE       = regexp.MustCompile(`(?i)IS(?:[ \t\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]){24}`)
+	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]{11,25})[0-9]`)
+	phoneRE      = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?)?[0-9]{3}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
 	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
 	jwtRE        = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
 	bearerRE     = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
@@ -184,7 +184,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 }
 
 func adjacentDigitAfterSeparator(s string, start, end int) bool {
-	separator := func(r rune) bool { return r == '-' || r == '.' || r == ' ' || r == '\u00a0' || r == '\u202f' }
+	separator := numericSeparator
 	if start > 0 {
 		r, size := utf8.DecodeLastRuneInString(s[:start])
 		if separator(r) && start > size && s[start-size-1] >= '0' && s[start-size-1] <= '9' {
@@ -257,6 +257,21 @@ func digits(s string) string {
 	return b.String()
 }
 
+func numericSeparator(r rune) bool {
+	return strings.ContainsRune(" \t.-\u00a0\u202f\u2011\u2013", r)
+}
+
+func compactIBAN(raw string) string {
+	return strings.ToUpper(strings.Map(func(r rune) rune {
+		// The IBAN recognizer permits the horizontal separators above, but
+		// not decimal points. Preserve everything else for validation.
+		if r != '.' && numericSeparator(r) {
+			return -1
+		}
+		return r
+	}, raw))
+}
+
 func validateKennitala(raw string) (Confidence, string, bool) {
 	d := digits(raw)
 	if len(d) != 10 {
@@ -295,7 +310,7 @@ func validateKennitala(raw string) (Confidence, string, bool) {
 }
 
 func validateIBAN(raw string) (Confidence, string, bool) {
-	s := strings.ToUpper(strings.NewReplacer(" ", "", "-", "").Replace(raw))
+	s := compactIBAN(raw)
 	if len(s) != 26 || !strings.HasPrefix(s, "IS") {
 		return "", "", false
 	}
@@ -375,7 +390,7 @@ func Canonical(kind Kind, raw string) string {
 	case Kennitala, Card, Phone:
 		return digits(raw)
 	case IBAN:
-		return strings.ToUpper(strings.NewReplacer(" ", "", "-", "").Replace(raw))
+		return compactIBAN(raw)
 	case Email:
 		at := strings.LastIndexByte(raw, '@')
 		if at < 0 {

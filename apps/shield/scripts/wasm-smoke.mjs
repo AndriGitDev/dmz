@@ -14,6 +14,21 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
+for (const separator of ['\t', '\u00a0', '\u202f', '\u2011', '\u2013']) {
+  for (const value of [
+    `140182${separator}8858`, `+354${separator}000${separator}0002`,
+    ['5555', '5555', '5555', '4444'].join(separator),
+    ['IS46', '0000', '0000', '0000', '0000', '0000', '00'].join(separator),
+  ]) {
+    globalThis.dmzReset();
+    const result = JSON.parse(globalThis.dmzProcessBestEffort(value, '[]'));
+    assert.ok(result.allowed && /^⟦(?:KT|PHONE|CARD|IBAN)-[A-F0-9]{16}-\d+: [^⟦⟧]+⟧$/.test(result.transformed),
+      'horizontal numeric typography was not completely masked');
+    assert.ok(globalThis.dmzRestore(result.transformed) === value, 'numeric typography did not restore');
+  }
+}
+globalThis.dmzReset();
+
 // Optional local-only integration check: source entries never leave this process
 // or appear in test output. CI can use a fabricated pack through the same path.
 if (process.env.DMZ_LEXICON_FILE) {

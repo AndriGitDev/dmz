@@ -58,6 +58,16 @@ An unannotated row must explicitly mean benign, not incomplete annotation.
 go test ./...
 ```
 
+On 4 October, the horizontal numeric-format follow-up recovered the two remaining
+kennitala formatting misses and the tab-separated phone in `holdout-v2` without
+new false detections in the five synthetic corpora. That set is now explicitly
+**reused development**, not an untuned probe. Its previous detection/exposure
+reports are preserved under `results/quality-99-v1/*before-numeric.json`; corpus
+content and pins are unchanged. Five identifiers remain exposed under strict-core
+policy, and the existing benign Unicode review remains. This does not establish
+field accuracy. Packaged best-effort coverage is measured separately by the new
+Shield system harness, including partial-mask accounting.
+
 CI checks the new corpus pins separately in `gates/corpus-v2.sha256`. Existing
 pins and floors are unchanged. Updating the new pins or weakening the format
 regression assertions requires review, as do existing gates.

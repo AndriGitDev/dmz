@@ -26,11 +26,11 @@
       "recall": 0.5
     },
     "kennitala": {
-      "tp": 2,
+      "tp": 4,
       "fp": 0,
-      "fn": 2,
+      "fn": 0,
       "precision": 1,
-      "recall": 0.5
+      "recall": 1
     },
     "name_demo": {
       "tp": 0,
@@ -40,11 +40,11 @@
       "recall": 0
     },
     "phone": {
-      "tp": 3,
+      "tp": 4,
       "fp": 0,
-      "fn": 1,
+      "fn": 0,
       "precision": 1,
-      "recall": 0.75
+      "recall": 1
     },
     "secret": {
       "tp": 0,
