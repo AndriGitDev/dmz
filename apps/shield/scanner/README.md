@@ -61,6 +61,23 @@ Chrome offscreen worker API: https://developer.chrome.com/docs/extensions/refere
 
 The exact input fixtures, model files and individual predictions remain private outside Git. A final build manifest records source commit, scanner profile and every packaged file hash.
 
+## Complete identifier coverage
+
+`node scripts/system-corpus.mjs PRIVATE_OUTPUT SYNTHETIC_CORPUS...` replays the
+committed synthetic JSONL corpora through the packaged Chromium worker and the
+same package's Go WASM core. It compares basic fallback with trained masking,
+counts complete/partial/absent identifier coverage by type, and separately
+reports changed negative examples, blocked inputs and scanner fallbacks. Output
+must be outside the checkout. Only aggregate reports may be copied into Git.
+
+Each marker is restored locally to reconstruct exact UTF-8 input intervals.
+Removing a literal alone is insufficient: masking the street and first number
+can leave the end of a range visible. An integrity failure stops the run instead
+of guessing coverage. The harness checks exact restoration and records model,
+WASM, vocabulary and corpus identities. It does not measure exact typed detector
+accuracy or real-site interception. `npm run test:coverage` verifies its accounting
+with fabricated cases, including a partial mask the older literal check misses.
+
 
 ## Best-effort policy update — 30 September 2026
 
