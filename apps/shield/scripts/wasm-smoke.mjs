@@ -39,6 +39,26 @@ if (process.env.DMZ_LEXICON_FILE) {
   assert.equal(globalThis.dmzRestore(masked.transformed), mixed);
   const resubmitted = JSON.parse(globalThis.dmzProcessBestEffort(masked.transformed, '[]'));
   assert.equal(resubmitted.transformed, masked.transformed);
+  // Literal disappearance alone would accept a partially masked range. Require
+  // the complete input to be replaced by exactly one issued marker instead.
+  const spacingAddresses = [
+    `${pack.addresses[0]} 97 - 99`, `${pack.addresses[0]} 97\u00a0–\u00a099`,
+    `${pack.addresses[0]} 99 / 2`,
+  ];
+  const multiword = pack.addresses.find(value => value.includes(' '));
+  if (multiword) spacingAddresses.push(`${multiword.replaceAll(' ', '\u00a0')} 99`);
+  for (const value of spacingAddresses) {
+    globalThis.dmzReset();
+    const result = JSON.parse(globalThis.dmzProcessBestEffort(value, '[]'));
+    assert.ok(result.allowed && /^⟦VALUE-[A-F0-9]{16}-\d+: XXXXX⟧$/.test(result.transformed),
+      'address spacing left an unmasked suffix');
+    assert.ok(globalThis.dmzRestore(result.transformed) === value, 'address spacing did not restore');
+  }
+  for (const suffix of ['99\u00a0kr.', '99\u202fISK', '99,\u00a050 kr.']) {
+    const value = `${pack.addresses[0]} ${suffix}`;
+    const result = JSON.parse(globalThis.dmzProcessBestEffort(value, '[]'));
+    assert.ok(result.allowed && result.transformed === value, 'currency spacing caused a false mask');
+  }
   if (pack.name_seeds?.length) {
     const seedReviewed = pack.name_seeds.slice(0, 30).some(seed => {
       const result = JSON.parse(globalThis.dmzProcess(seed));

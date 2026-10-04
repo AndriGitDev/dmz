@@ -24,8 +24,11 @@ var patronymicEndRE = regexp.MustCompile(`(?:sonar|syni|son|dóttir|dóttur|burs
 
 // A known address form plus a house number is sufficient; a postcode is
 // optional. Keep the longer span when supplied, including existing unit forms.
-var addressTailRE = regexp.MustCompile(`^[ \t\x{00A0}\x{202F}]+[0-9]{1,3}[A-Za-z]?(?:[/–-][0-9]{1,3}[A-Za-z]?)?((?:,[ \t\x{00A0}\x{202F}]*|[ \t\x{00A0}\x{202F}]+)[0-9]{3}(?:[ \t]+\p{Lu}\p{L}{1,40})?)?`)
-var addressNumericContinuationRE = regexp.MustCompile(`^[,./–-][ \t]*[0-9]`)
+const addressHorizontalSpace = " \t\u00a0\u202f"
+const addressSpaceRE = `[ \t\x{00A0}\x{202F}]`
+
+var addressTailRE = regexp.MustCompile(`^` + addressSpaceRE + `+[0-9]{1,3}[A-Za-z]?(?:` + addressSpaceRE + `*[/–-]` + addressSpaceRE + `*[0-9]{1,3}[A-Za-z]?)?((?:,` + addressSpaceRE + `*|` + addressSpaceRE + `+)[0-9]{3}(?:` + addressSpaceRE + `+\p{Lu}\p{L}{1,40})?)?`)
+var addressNumericContinuationRE = regexp.MustCompile(`^` + addressSpaceRE + `*[,./–-]` + addressSpaceRE + `*[0-9]`)
 
 // LoadLexicon accepts a bounded data pack. Errors never include source entries.
 func LoadLexicon(data []byte) (*Lexicon, error) {
@@ -111,7 +114,11 @@ func (l *Lexicon) matches(input string) []Match {
 			node := root
 			for j := i; j < len(tokens) && j < i+8; j++ {
 				part := tokens[j]
-				if j > i && strings.Trim(input[tokens[j-1][1]:part[0]], " \t") != "" {
+				spaces := " \t"
+				if mode == 1 {
+					spaces = addressHorizontalSpace
+				}
+				if j > i && strings.Trim(input[tokens[j-1][1]:part[0]], spaces) != "" {
 					break
 				}
 				token := input[part[0]:part[1]]
@@ -146,7 +153,7 @@ func (l *Lexicon) matches(input string) []Match {
 }
 
 func currencyAfter(input string, end int) bool {
-	rest := strings.TrimLeft(input[end:], " \t")
+	rest := strings.TrimLeft(input[end:], addressHorizontalSpace)
 	for _, word := range []string{"kr", "krónur", "króna", "ISK"} {
 		if end >= len(word) && strings.EqualFold(input[end-len(word):end], word) && bounded(input, end-len(word), end) {
 			return true

@@ -33,7 +33,9 @@ and `TINYGO_BIN` when the toolchains are outside PATH. The vocabulary contains
 address forms, not household records; no name lexicon is added to the frozen
 Person scanner. `detector-data.json` records counts and the bundled pack hash.
 Known address forms plus house numbers are detected without a postcode, including
-letter suffixes, slash units and compact number ranges. The postcode/city suffix
+letter suffixes, slash units and compact or spaced number ranges. Nonbreaking
+spaces work inside multiword forms and around number separators; currency
+suffixes with those spaces remain negative cases. The postcode/city suffix
 is retained when recognized. Unknown street forms, unnumbered addresses and
 ambiguous place-name/number mentions remain limitations; synthetic regression
 checks do not establish field precision or recall.
