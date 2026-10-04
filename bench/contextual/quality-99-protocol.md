@@ -44,6 +44,23 @@ text tokenization parity, actual browser comparison and all existing per-type
 release gates. Nine-label checkpoints are research artifacts; the current
 three-label package must remain unchanged until that work passes.
 
+`compare_quality.py` applies this gate to the saved aggregate evaluations. It
+checks complete checkpoint identities, fixed input/CRF hashes, text modes,
+thresholds, annotation population, and ratios against integer counts. All
+complete epochs in the supplied training manifest must be compared. A passing
+result qualifies only for further research checks; it never approves browser
+promotion or independent performance claims.
+
+```sh
+python bench/contextual/compare_quality.py \
+  --training /outside/entity-training/training.json \
+  --candidate /outside/epoch-1-general.json /outside/epoch-1-domain.json \
+  --candidate /outside/epoch-2-general.json /outside/epoch-2-domain.json \
+  --reference bench/results/full-precision-v1/selected-candidate.json \
+  --baseline bench/results/quality-99-v1/general-frozen.json \
+             bench/results/quality-99-v1/domain-frozen.json
+```
+
 ## Independent evidence
 
 The existing general corpus is sentence-split, not document-disjoint, and the
