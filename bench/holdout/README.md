@@ -24,7 +24,9 @@ reports are administrative material, not case files or contracts.
   --output /root/.local/share/dmz/datasets/holdout-new
 ```
 
-Requires `pypdf==6.1.1`. Use `--only source-id ...` for a subset. The collector
+Install the pinned collection dependencies with
+`python -m pip install -r bench/holdout/requirements.txt`. Use `--only source-id ...`
+for a subset. The collector
 fetches sequentially, caps each PDF at 20 MB, and never follows a link graph.
 Failed requests are recorded; do not work around access controls. Output must
 be a new directory outside the repository. All PDFs, extracted pages and review

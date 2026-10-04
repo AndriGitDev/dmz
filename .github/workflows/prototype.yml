@@ -16,6 +16,8 @@ jobs:
       - run: python3 -m unittest discover -s bench/datasets -p 'test_*.py'
       - run: python3 -m pip install -r bench/contextual/requirements.txt
       - run: python3 -m unittest discover -s bench/contextual -p 'test_*.py'
+      - run: python3 -m pip install -r bench/holdout/requirements.txt
+      - run: python3 -m unittest discover -s bench/holdout -p 'test_*.py'
       - run: sha256sum --check bench/gates/legal-financial-v1.sha256
       - run: sha256sum --check bench/gates/corpus.sha256
       - run: ./scripts/check-detector-v2.sh
