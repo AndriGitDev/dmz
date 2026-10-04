@@ -5,11 +5,11 @@
   "scoring": "exact span and entity type",
   "per_kind": {
     "address": {
-      "tp": 1,
+      "tp": 4,
       "fp": 0,
-      "fn": 3,
+      "fn": 0,
       "precision": 1,
-      "recall": 0.25
+      "recall": 1
     },
     "card": {
       "tp": 2,

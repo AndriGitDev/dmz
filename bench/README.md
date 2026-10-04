@@ -37,8 +37,8 @@ Committed kennitölur use century digit `8` and cannot belong to living people. 
 ## Formatting tuning v2
 
 See [the tuning report](../docs/detector-tuning-2026-09-28.md) for changes, data
-sources and live Shield checks. Current exploratory exposure is **8** (previously
-13); name/address/generic-secret/case-variant-term gaps remain. Its original
+sources and live Shield checks. Current exploratory exposure is **5** (originally
+13, then 8 before the 4 October address update); name/generic-secret/case-variant-term gaps remain. Its original
 snapshots are retained as `exploratory-untuned-*`.
 
 `format-v2.jsonl` has 41 examples authored before this change (23 identifier
