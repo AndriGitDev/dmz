@@ -53,7 +53,7 @@ var (
 	ibanRE       = regexp.MustCompile(`(?i)IS(?:[ \t\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]){24}`)
 	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]{11,25})[0-9]`)
 	phoneRE      = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?)?[0-9]{3}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
-	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres|mysql)://[^\s]*[A-Za-z0-9/])`)
+	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----)`)
 	jwtRE        = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
 	bearerRE     = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
 	patronymicRE = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|burs|bur)`)
@@ -105,6 +105,9 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 			if !bounded(input, loc[0], loc[1]) {
 				continue
 			}
+			if kind == Email && databaseAuthorityEmail(input, loc[0], loc[1]) {
+				continue
+			}
 			if kind == Address && (currencyAfter(input, loc[1]) || addressNumericContinuationRE.MatchString(input[loc[1]:])) {
 				continue
 			}
@@ -119,6 +122,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 	}
 	add(secretRE, Secret, simple("secret-pattern"))
 	candidates = append(candidates, privateKeyBlocks(input)...)
+	candidates = append(candidates, databaseURLs(input)...)
 	add(jwtRE, Secret, simple("jwt-shape"))
 	for _, loc := range bearerRE.FindAllStringSubmatchIndex(input, -1) {
 		start, end := loc[2], loc[3]

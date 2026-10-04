@@ -1,0 +1,25 @@
+{"id": "db-secret-00", "text": "Prófun: \"postgres://demo:placeholder@invalid.invalid/db\" lokið.", "entities": [{"kind": "secret", "value": "postgres://demo:placeholder@invalid.invalid/db"}]}
+{"id": "db-secret-01", "text": "Prófun: \"postgresql://demo:placeholder@invalid.invalid/db\" lokið.", "entities": [{"kind": "secret", "value": "postgresql://demo:placeholder@invalid.invalid/db"}]}
+{"id": "db-secret-02", "text": "Prófun: \"POSTGRESQL://demo:placeholder@invalid.invalid/db\" lokið.", "entities": [{"kind": "secret", "value": "POSTGRESQL://demo:placeholder@invalid.invalid/db"}]}
+{"id": "db-secret-03", "text": "Prófun: \"mysql://demo:placeholder@invalid.invalid:3306/db\" lokið.", "entities": [{"kind": "secret", "value": "mysql://demo:placeholder@invalid.invalid:3306/db"}]}
+{"id": "db-secret-04", "text": "Prófun: \"postgresql://demo:p%40ss%3Aword@invalid.invalid/db\" lokið.", "entities": [{"kind": "secret", "value": "postgresql://demo:p%40ss%3Aword@invalid.invalid/db"}]}
+{"id": "db-secret-05", "text": "Prófun: \"postgresql://demo:p%ZZ@invalid.invalid/db\" lokið.", "entities": [{"kind": "secret", "value": "postgresql://demo:p%ZZ@invalid.invalid/db"}]}
+{"id": "db-secret-06", "text": "Prófun: \"postgresql://demo:placeholder@[2001:db8::1]:5432/db\" lokið.", "entities": [{"kind": "secret", "value": "postgresql://demo:placeholder@[2001:db8::1]:5432/db"}]}
+{"id": "db-secret-07", "text": "Prófun: \"postgresql://demo:placeholder@host.invalid:5432,other.invalid:5432/db\" lokið.", "entities": [{"kind": "secret", "value": "postgresql://demo:placeholder@host.invalid:5432,other.invalid:5432/db"}]}
+{"id": "db-secret-08", "text": "Prófun: \"postgresql:///db?password=synthetic_value\" lokið.", "entities": [{"kind": "secret", "value": "postgresql:///db?password=synthetic_value"}]}
+{"id": "db-secret-09", "text": "Prófun: \"postgresql:///db?sslpassword=synthetic_value&sslmode=require\" lokið.", "entities": [{"kind": "secret", "value": "postgresql:///db?sslpassword=synthetic_value&sslmode=require"}]}
+{"id": "db-secret-10", "text": "Prófun: \"mysql://invalid.invalid/db?pass%77ord=synthetic_value\" lokið.", "entities": [{"kind": "secret", "value": "mysql://invalid.invalid/db?pass%77ord=synthetic_value"}]}
+{"id": "db-secret-11", "text": "Prófun: \"postgres://invalid.invalid/db?access_token=synthetic_value==\" lokið.", "entities": [{"kind": "secret", "value": "postgres://invalid.invalid/db?access_token=synthetic_value=="}]}
+{"id": "db-secret-12", "text": "Prófun: \"postgres://invalid.invalid/db?password=synthetic!\" lokið.", "entities": [{"kind": "secret", "value": "postgres://invalid.invalid/db?password=synthetic!"}]}
+{"id": "db-secret-13", "text": "Prófun: \"postgres://invalid.invalid/db?password=synthetic)\" lokið.", "entities": [{"kind": "secret", "value": "postgres://invalid.invalid/db?password=synthetic)"}]}
+{"id": "db-public-00", "text": "postgres://invalid.invalid/db", "entities": []}
+{"id": "db-public-01", "text": "mysql://invalid.invalid:3306/db", "entities": []}
+{"id": "db-public-02", "text": "postgres://demo@invalid.invalid/db", "entities": []}
+{"id": "db-public-03", "text": "POSTGRESQL://demo@invalid.invalid", "entities": []}
+{"id": "db-public-04", "text": "postgres://invalid.invalid/db?sslmode=require", "entities": []}
+{"id": "db-public-05", "text": "postgres://invalid.invalid/db?password=", "entities": []}
+{"id": "db-public-06", "text": "postgresql:///db?sslkey=public-path", "entities": []}
+{"id": "db-public-07", "text": "postgresql:///db?notpassword=synthetic", "entities": []}
+{"id": "db-public-08", "text": "postgresql:///db#fragment?password=not-credential", "entities": []}
+{"id": "db-public-09", "text": "postgresql://demo:@invalid.invalid/db", "entities": []}
+{"id": "db-email-query", "text": "postgresql:///db?user=demo@example.invalid", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}

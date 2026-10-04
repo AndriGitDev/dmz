@@ -14,6 +14,31 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
+for (const value of [
+  'postgresql://demo:placeholder@invalid.invalid/db',
+  'mysql://invalid.invalid/db?password=synthetic)==',
+  'postgres:///db?sslpassword=synthetic_value&sslmode=require',
+]) {
+  globalThis.dmzReset();
+  const input = `Prófun: "${value}" lokið.`;
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, [{ start: Buffer.byteLength('Prófun: "'),
+    end: Buffer.byteLength('Prófun: "' + value), kind: 'secret' }]);
+  assert.ok(!result.transformed.includes('synthetic') && !result.transformed.includes('placeholder'));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+}
+const wrappedCredential = '(postgresql:///db?password=synthetic))';
+const wrappedResult = JSON.parse(globalThis.dmzProcessBestEffort(wrappedCredential, '[]'));
+assert.deepEqual(wrappedResult.detected_spans, [{ start: 1, end: Buffer.byteLength(wrappedCredential) - 1, kind: 'secret' }]);
+assert.equal(globalThis.dmzRestore(wrappedResult.transformed), wrappedCredential);
+for (const input of ['postgres://invalid.invalid/db', 'mysql://demo@invalid.invalid/db', 'postgresql:///db?password=']) {
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(result.transformed, input);
+  assert.deepEqual(result.detected_spans, []);
+}
+globalThis.dmzReset();
+
 for (const label of ['PRIVATE KEY', 'RSA PRIVATE KEY', 'ENCRYPTED PRIVATE KEY', 'OPENSSH PRIVATE KEY']) {
   const block = `-----BEGIN ${label}-----\r\nSYNTHETIC_NOT_A_KEY\r\n-----END ${label}-----`;
   const prefix = 'Prófun 🙂: ', suffix = ' lokið.', input = prefix + block + suffix;
