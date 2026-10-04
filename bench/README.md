@@ -102,3 +102,5 @@ See [the private browser harness](browser-detector/README.md) for frozen ONNX
 export, compression accuracy checks and local Chromium runtime measurements.
 [Results and the deployment decision](results/browser-v1/README.md) distinguish
 native development parity from browser feasibility.
+
+The [address vocabulary format audit](address-audit/README.md) checks complete spans across approved forms and synthetic formatting variants, with aggregate before/after reports and private source/failure files. It is a development regression check, not independent quality evidence.

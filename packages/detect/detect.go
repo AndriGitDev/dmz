@@ -59,7 +59,7 @@ var (
 	patronymicRE = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|burs|bur)`)
 	// Unknown street forms still need a postcode. Case-insensitivity applies
 	// only to the street; a locality without a comma must retain its shape.
-	addressRE = regexp.MustCompile(`(?i:\p{L}{2,41}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás|slóð))` + addressSpaceRE + `+[0-9]{1,3}[A-Za-z]?(?:` + addressSpaceRE + `*[/–-]` + addressSpaceRE + `*[0-9]{1,3}[A-Za-z]?)?(?:,` + addressSpaceRE + `*[0-9]{3}(?:` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})?|` + addressSpaceRE + `+[0-9]{3}` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})`)
+	addressRE = regexp.MustCompile(`(?i:\p{L}{2,41}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás|slóð))` + addressSpaceRE + `+[0-9]{1,3}[A-Za-z]?(?:` + addressSpaceRE + `*[/‐‑–-]` + addressSpaceRE + `*[0-9]{1,3}[A-Za-z]?)?(?:,` + addressSpaceRE + `*[0-9]{3}(?:` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})?|` + addressSpaceRE + `+[0-9]{3}` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})`)
 )
 
 // Hand-authored demonstration forms; not a licensed lexicon or a general name detector.

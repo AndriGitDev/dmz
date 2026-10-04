@@ -109,20 +109,25 @@ try {
   if (process.env.DMZ_LEXICON_FILE) {
     // Local vocabulary plus a fabricated number; never persist source forms.
     const pack = JSON.parse(await readFile(process.env.DMZ_LEXICON_FILE, 'utf8'));
-    const address = `${pack.addresses[0]} 99b`;
-    const addressInput = `Skrifaðu 5 setningar: demo@example.com +354 555 0100 ${address}`;
-    const addressPage = await page();
-    await fill(addressPage, addressInput);
-    await addressPage.waitForFunction(() => window.sent.length === 1, null, { timeout: 130000 });
-    const outbound = await addressPage.evaluate(() => window.sent[0]);
-    assert.ok(!outbound.includes(address), 'address remained in outbound text');
-    for (const kind of ['EMAIL', 'PHONE', 'VALUE']) assert.ok(outbound.includes(`⟦${kind}-`), `missing ${kind} mask`);
-    await addressPage.locator('iframe[data-dmz-restored]').waitFor();
-    const restored = await addressPage.frameLocator('iframe[data-dmz-restored]').locator('body').textContent();
-    assert.ok(restored.includes(addressInput), 'mixed prompt did not restore');
-    assert.ok(!(await addressPage.locator('main').textContent()).includes(address), 'address leaked into host DOM');
-    await addressPage.close();
-    metrics.cases.push({ case: 'address-without-postcode-mask-and-restore', passed: true });
+    const addresses = [`${pack.addresses[0]} 99b`, `${pack.addresses[0]} 97‑99`];
+    const hyphenated = pack.addresses.find(value => value.includes('-'));
+    if (hyphenated) addresses.push(`${hyphenated.replaceAll('-', '‐')} 97‐99`);
+    for (const address of addresses) {
+      const addressInput = `Skrifaðu 5 setningar: demo@example.com +354 555 0100 ${address}`;
+      const addressPage = await page();
+      await fill(addressPage, addressInput);
+      await addressPage.waitForFunction(() => window.sent.length === 1, null, { timeout: 130000 });
+      const outbound = await addressPage.evaluate(() => window.sent[0]);
+      assert.ok(!outbound.includes(address), 'address remained in outbound text');
+      assert.match(outbound, /^Skrifaðu 5 setningar: ⟦EMAIL-[^⟧]+⟧ ⟦PHONE-[^⟧]+⟧ ⟦VALUE-[^⟧]+⟧$/, 'partial address remained in outbound text');
+      for (const kind of ['EMAIL', 'PHONE', 'VALUE']) assert.ok(outbound.includes(`⟦${kind}-`), `missing ${kind} mask`);
+      await addressPage.locator('iframe[data-dmz-restored]').waitFor();
+      const restored = await addressPage.frameLocator('iframe[data-dmz-restored]').locator('body').textContent();
+      assert.ok(restored.includes(addressInput), 'mixed prompt did not restore');
+      assert.ok(!(await addressPage.locator('main').textContent()).includes(address), 'address leaked into host DOM');
+      await addressPage.close();
+    }
+    metrics.cases.push({ case: 'address-without-postcode-and-unicode-hyphens-mask-and-restore', passed: true });
   }
   // Editing the draft during asynchronous inference cannot be overwritten or sent.
   await fill(p, 'Peter kom á fundinn.');

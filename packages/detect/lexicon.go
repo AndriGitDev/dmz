@@ -20,6 +20,13 @@ type lexiconNode struct {
 
 var bundledLexicon *Lexicon
 var lexicalTokenRE = regexp.MustCompile(`[\p{L}]+(?:[-’'][\p{L}]+)*|\.`)
+var addressTokenRE = regexp.MustCompile(`[\p{L}]+(?:[-‐‑’'][\p{L}]+)*|\.`)
+
+// Normalize typographic hyphens only for address lookup; offsets stay original.
+var addressHyphens = strings.NewReplacer("‐", "-", "‑", "-")
+
+func addressToken(token string) string { return strings.ToLower(addressHyphens.Replace(token)) }
+
 var patronymicEndRE = regexp.MustCompile(`(?:sonar|syni|son|dóttir|dóttur|burs|bur)$`)
 
 // A known address form plus a house number is sufficient; a postcode is
@@ -27,8 +34,8 @@ var patronymicEndRE = regexp.MustCompile(`(?:sonar|syni|son|dóttir|dóttur|burs
 const addressHorizontalSpace = " \t\u00a0\u202f"
 const addressSpaceRE = `[ \t\x{00A0}\x{202F}]`
 
-var addressTailRE = regexp.MustCompile(`^` + addressSpaceRE + `+[0-9]{1,3}[A-Za-z]?(?:` + addressSpaceRE + `*[/–-]` + addressSpaceRE + `*[0-9]{1,3}[A-Za-z]?)?((?:,` + addressSpaceRE + `*|` + addressSpaceRE + `+)[0-9]{3}(?:` + addressSpaceRE + `+\p{Lu}\p{L}{1,40})?)?`)
-var addressNumericContinuationRE = regexp.MustCompile(`^` + addressSpaceRE + `*[,./–-]` + addressSpaceRE + `*[0-9]`)
+var addressTailRE = regexp.MustCompile(`^` + addressSpaceRE + `+[0-9]{1,3}[A-Za-z]?(?:` + addressSpaceRE + `*[/‐‑–-]` + addressSpaceRE + `*[0-9]{1,3}[A-Za-z]?)?((?:,` + addressSpaceRE + `*|` + addressSpaceRE + `+)[0-9]{3}(?:` + addressSpaceRE + `+\p{Lu}\p{L}{1,40})?)?`)
+var addressNumericContinuationRE = regexp.MustCompile(`^` + addressSpaceRE + `*[,./‐‑–-]` + addressSpaceRE + `*[0-9]`)
 
 // LoadLexicon accepts a bounded data pack. Errors never include source entries.
 func LoadLexicon(data []byte) (*Lexicon, error) {
@@ -79,7 +86,7 @@ func LoadLexicon(data []byte) (*Lexicon, error) {
 			node := root
 			for _, token := range tokens {
 				if i == 1 {
-					token = strings.ToLower(token)
+					token = addressToken(token)
 				}
 				if node.next == nil {
 					node.next = map[string]*lexiconNode{}
@@ -104,13 +111,17 @@ func (l *Lexicon) matches(input string) []Match {
 	if l == nil {
 		return nil
 	}
-	tokens := lexicalTokenRE.FindAllStringIndex(input, -1)
 	var result []Match
-	for i, loc := range tokens {
-		if !bounded(input, loc[0], loc[1]) {
-			continue
+	for mode, root := range []*lexiconNode{l.names, l.addresses, l.nameSeeds} {
+		pattern := lexicalTokenRE
+		if mode == 1 {
+			pattern = addressTokenRE
 		}
-		for mode, root := range []*lexiconNode{l.names, l.addresses, l.nameSeeds} {
+		tokens := pattern.FindAllStringIndex(input, -1)
+		for i, loc := range tokens {
+			if !bounded(input, loc[0], loc[1]) {
+				continue
+			}
 			node := root
 			for j := i; j < len(tokens) && j < i+8; j++ {
 				part := tokens[j]
@@ -123,7 +134,7 @@ func (l *Lexicon) matches(input string) []Match {
 				}
 				token := input[part[0]:part[1]]
 				if mode == 1 {
-					token = strings.ToLower(token)
+					token = addressToken(token)
 				}
 				node = node.next[token]
 				if node == nil {

@@ -112,6 +112,11 @@ if (process.env.DMZ_LEXICON_FILE) {
     `${pack.addresses[0]} 97 - 99`, `${pack.addresses[0]} 97\u00a0–\u00a099`,
     `${pack.addresses[0]} 99 / 2`,
   ];
+  for (const hyphen of ['‐', '‑']) {
+    spacingAddresses.push(`${pack.addresses[0]} 97${hyphen}99`);
+    const hyphenated = pack.addresses.find(value => value.includes('-'));
+    if (hyphenated) spacingAddresses.push(`${hyphenated.replaceAll('-', hyphen)} 97${hyphen}99`);
+  }
   const multiword = pack.addresses.find(value => value.includes(' '));
   if (multiword) spacingAddresses.push(`${multiword.replaceAll(' ', '\u00a0')} 99`);
   for (const value of spacingAddresses) {
