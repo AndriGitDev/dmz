@@ -333,6 +333,34 @@ try {
     await modern.waitForFunction(() => window.sent.length === 4);
     await modern.close();
   }
+  // Canonically equal identifiers with different original spellings must not
+  // corrupt each other's restoration within one tab or across repeated turns.
+  for (const [origin, fixture, editor, send] of [
+    ['https://chatgpt.com', html, '#prompt-textarea', '[data-testid="send-button"]'],
+    ['https://claude.ai', claudeHtml, '[contenteditable]', 'button[aria-label="Send message"]'],
+  ]) {
+    const variants = await browser.newPage();
+    variants.on('pageerror', error => errors.push(error.message));
+    await variants.route(`${origin}/**`, route => route.fulfill({ contentType: 'text/html', body: fixture }));
+    await variants.goto(`${origin}/new`);
+    const forms = ['140182-8858 demo@example.invalid', '140182\u00a08858 demo@EXAMPLE.INVALID'];
+    for (const [index, input] of [forms[0], forms[1], forms[0]].entries()) {
+      await variants.locator(editor).fill(input);
+      await variants.locator(send).click();
+      await variants.waitForFunction(count => window.sent.length === count, index + 1);
+      await variants.frameLocator('[data-dmz-restored="true"]').nth(index)
+        .getByText(input, { exact: true }).waitFor();
+      assert.equal(await variants.frameLocator('[data-dmz-restored="true"]').nth(index)
+        .locator('#restored-text').textContent(), input, 'original formatting changed during restoration');
+    }
+    const sent = await variants.evaluate(() => window.sent);
+    assert.notEqual(sent[0], sent[1], 'different original forms shared their markers');
+    assert.equal(sent[0], sent[2], 'same exact form lost its stable markers');
+    assert.ok(sent.every(text => !text.includes('140182') && !text.includes('demo@')));
+    assert.ok(!(await variants.locator('#responses').textContent()).includes('140182'), 'restored identifier reached host DOM');
+    assert.equal(await variants.locator('[data-dmz-restored="true"]').last().evaluate(frame => frame.contentDocument), null);
+    await variants.close();
+  }
   assert.deepEqual(errors, []);
   console.log('ChatGPT and Claude synthetic interception, block and restore smoke tests passed');
 } finally {

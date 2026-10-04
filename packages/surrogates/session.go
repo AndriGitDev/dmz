@@ -243,7 +243,10 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 	for _, m := range matches {
 		out.WriteString(input[previous:m.Start])
 		raw := input[m.Start:m.End]
-		key := string(m.Kind) + ":" + detect.Canonical(m.Kind, raw)
+		// A marker has one exact inverse. Canonical identifiers can have several
+		// spellings in the same prompt, so sharing their marker would restore all
+		// occurrences to whichever spelling was encountered first.
+		key := string(m.Kind) + ":" + raw
 		replacement, exists := s.forward[key]
 		if !exists {
 			replacement = s.makeSurrogate(m.Kind, raw)

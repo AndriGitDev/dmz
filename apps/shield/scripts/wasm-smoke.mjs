@@ -29,6 +29,25 @@ for (const separator of ['\t', '\u00a0', '\u202f', '\u2011', '\u2013']) {
 }
 globalThis.dmzReset();
 
+for (const forms of [
+  ['140182-8858', '140182\u00a08858', '1401828858'],
+  ['5555 5555 5555 4444', '5555-5555-5555-4444'],
+  ['IS46 0000 0000 0000 0000 0000 00', 'is46' + '0'.repeat(22)],
+  ['demo@example.invalid', 'demo@EXAMPLE.INVALID'],
+  ['+354 000 0002', '+354\u202f000\u202f0002'],
+]) {
+  globalThis.dmzReset();
+  const text = forms.join(' og ');
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
+  assert.ok(result.allowed);
+  assert.equal(globalThis.dmzRestore(result.transformed), text,
+    'same-session formatting variants did not restore exactly');
+  const issued = forms.map(form => JSON.parse(globalThis.dmzProcessBestEffort(form, '[]')).transformed);
+  assert.equal(new Set(issued).size, forms.length, 'different original forms shared a marker');
+  for (const marker of issued) assert.ok(result.transformed.includes(marker), 'exact form changed marker');
+}
+globalThis.dmzReset();
+
 for (const value of [
   'tilraunagata 12, 999 Sýnibær', 'Tilraunaslóð 12 / 2, 999 Sýnibær',
   'Tilraunavegi 12 – 14, 999 Sýnibær', 'Tilraunabraut 12-14,999',
