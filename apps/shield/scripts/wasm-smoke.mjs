@@ -29,6 +29,18 @@ for (const separator of ['\t', '\u00a0', '\u202f', '\u2011', '\u2013']) {
 }
 globalThis.dmzReset();
 
+for (const value of [
+  'tilraunagata 12, 999 Sýnibær', 'Tilraunaslóð 12 / 2, 999 Sýnibær',
+  'Tilraunavegi 12 – 14, 999 Sýnibær', 'Tilraunabraut 12-14,999',
+]) {
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(value, '[]'));
+  assert.ok(result.allowed && /^⟦VALUE-[A-F0-9]{16}-\d+: XXXXX⟧$/.test(result.transformed),
+    'unknown address shape was not completely masked');
+  assert.equal(globalThis.dmzRestore(result.transformed), value);
+}
+globalThis.dmzReset();
+
 // Optional local-only integration check: source entries never leave this process
 // or appear in test output. CI can use a fabricated pack through the same path.
 if (process.env.DMZ_LEXICON_FILE) {

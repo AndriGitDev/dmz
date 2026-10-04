@@ -55,7 +55,9 @@ var (
 	jwtRE        = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
 	bearerRE     = regexp.MustCompile(`(?i)Bearer[ \t]+([A-Za-z0-9_\-]{16,})`)
 	patronymicRE = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|burs|bur)`)
-	addressRE    = regexp.MustCompile(`\p{Lu}\p{L}{1,40}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás)[ \t]+[0-9]{1,3}[A-Za-z]?(?:,[ \t]+[0-9]{3}(?:[ \t]+\p{Lu}\p{L}{2,40})?|[ \t]+[0-9]{3}[ \t]+\p{Lu}\p{L}{2,40})`)
+	// Unknown street forms still need a postcode. Case-insensitivity applies
+	// only to the street; a locality without a comma must retain its shape.
+	addressRE = regexp.MustCompile(`(?i:\p{L}{2,41}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás|slóð))` + addressSpaceRE + `+[0-9]{1,3}[A-Za-z]?(?:` + addressSpaceRE + `*[/–-]` + addressSpaceRE + `*[0-9]{1,3}[A-Za-z]?)?(?:,` + addressSpaceRE + `*[0-9]{3}(?:` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})?|` + addressSpaceRE + `+[0-9]{3}` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})`)
 )
 
 // Hand-authored demonstration forms; not a licensed lexicon or a general name detector.
@@ -91,7 +93,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 			if !bounded(input, loc[0], loc[1]) {
 				continue
 			}
-			if kind == Address && currencyAfter(input, loc[1]) {
+			if kind == Address && (currencyAfter(input, loc[1]) || addressNumericContinuationRE.MatchString(input[loc[1]:])) {
 				continue
 			}
 			if kind == Phone && adjacentDigitAfterSeparator(input, loc[0], loc[1]) {

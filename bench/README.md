@@ -68,6 +68,16 @@ policy, and the existing benign Unicode review remains. This does not establish
 field accuracy. Packaged best-effort coverage is measured separately by the new
 Shield system harness, including partial-mask accounting.
 
+The subsequent unknown-street shape update accepts lowercase street forms,
+horizontal spacing, and range/apartment notation when a postcode is present.
+These remain uncertain detections. It recovers the remaining `holdout-v2` address
+and the three exploratory address misses with no new address false detections in
+those reused synthetic sets. Four literals remain exposed under strict-core
+policy in `holdout-v2`; its pre-change reports are preserved as
+`results/quality-99-v1/*before-address-shape.json`. Fabricated regression cases
+also check currency amounts, overlong numbers, word boundaries, missing postcodes,
+and line breaks. None of these results establishes representative address recall.
+
 CI checks the new corpus pins separately in `gates/corpus-v2.sha256`. Existing
 pins and floors are unchanged. Updating the new pins or weakening the format
 regression assertions requires review, as do existing gates.

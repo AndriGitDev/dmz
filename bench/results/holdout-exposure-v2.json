@@ -2,8 +2,8 @@
   "corpus": "bench/corpus/holdout-v2.jsonl",
   "mode": "outbound-exposure",
   "samples": 30,
-  "allowed_prompts": 24,
-  "blocked_prompts": 6,
+  "allowed_prompts": 23,
+  "blocked_prompts": 7,
   "benign_prompts": 10,
   "blocked_benign_ids": [
     "holdout-unicode"
@@ -12,7 +12,6 @@
   "exposed_case_ids": [
     "holdout-card-newline",
     "holdout-name",
-    "holdout-address",
     "holdout-secret",
     "holdout-term"
   ],
@@ -23,8 +22,8 @@
   "per_kind": {
     "address": {
       "masked": 0,
-      "blocked": 0,
-      "exposed": 1
+      "blocked": 1,
+      "exposed": 0
     },
     "card": {
       "masked": 3,
