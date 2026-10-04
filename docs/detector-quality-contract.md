@@ -132,6 +132,13 @@ identifiers without assigning individual types or spans. These small selected
 sets are not independent acceptance strata. The full aggregate record is
 [system-typed-v1.json](../bench/results/quality-99-v1/system-typed-v1.json).
 
+The subsequent [canonical Unicode change](detector-unicode-normalization.md)
+raises the trained exploratory set to 25/29 exact excerpts (86.21%) with 21/25
+typed recall, and the later probe to 25/30 (83.33%) with 16/20 typed recall.
+Each retains one typed abstention. Masking coverage is unchanged, and benign
+masking decreases by one excerpt in each set. The original replay above remains
+preserved; see [the updated aggregate](../bench/results/quality-99-v1/system-typed-after-nfc.json).
+
 Independent quality evidence, model redistribution review and owner-browser
 verification remain distinct release requirements. A passing development score
 alone does not authorize a general release or a public 99% claim.

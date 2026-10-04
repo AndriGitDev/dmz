@@ -7,8 +7,22 @@ assert.deepEqual(wordsFromText('Örn, Anna!').offsets, [
   [10, 11],
 ]);
 assert.deepEqual(wordsFromText('Jean-Luc O’Neil').words, ['Jean-Luc', 'O’Neil']);
-for (const input of ['x\u200by', 'a\u0301', '\ud800', 'a'.repeat(16001)])
+for (const input of ['x\u200by', 'x\u0301', '\u0301a', '\ud800', 'a'.repeat(16001)])
   assert.throws(() => wordsFromText(input));
+assert.deepEqual(wordsFromText('A\u0301sa, O\u0308rn!'), {
+  words: ['Ása', ',', 'Örn', '!'], offsets: [[0, 5], [5, 6], [7, 12], [12, 13]],
+});
+for (const letter of 'ÁÉÍÓÚÝÖáéíóúýöÅǺậḗ각') {
+  const word = letter.normalize('NFD') + 'sa';
+  const text = '😀 ' + word + ', demo.';
+  const actual = wordsFromText(text);
+  assert.deepEqual(actual.words, ['😀', letter + 'sa', ',', 'demo', '.']);
+  assert.deepEqual(actual.offsets[1], [5, 5 + Buffer.byteLength(word)]);
+  for (const [i, [start, end]] of actual.offsets.entries())
+    assert.equal(Buffer.from(text).subarray(start, end).toString().normalize('NFC'), actual.words[i]);
+}
+assert.deepEqual(wordsFromText('Ångström').words, ['Ångström']);
+assert.deepEqual(wordsFromText('ﬃ １２').words, ['ﬃ', '１２'], 'NFC must not become compatibility folding');
 const offsets = [
   [0, 4],
   [5, 9],

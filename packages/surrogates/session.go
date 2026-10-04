@@ -214,6 +214,7 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 	for _, name := range names {
 		if name.Start < previousEnd || name.Start < 0 || name.End <= name.Start || name.End > len(input) ||
 			!utf8.ValidString(input[:name.Start]) || !utf8.ValidString(input[:name.End]) ||
+			splitsCombiningSequence(input, name.Start) || splitsCombiningSequence(input, name.End) ||
 			strings.TrimSpace(input[name.Start:name.End]) == "" || strings.ContainsAny(input[name.Start:name.End], "⟦⟧") {
 			return nameReview()
 		}
@@ -294,6 +295,14 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 
 func nameReview() Result {
 	return Result{Allowed: false, Findings: []Finding{{detect.Kind("name_review"), detect.Uncertain, "review", "invalid or conflicting model spans"}}}
+}
+
+func splitsCombiningSequence(input string, offset int) bool {
+	if offset == len(input) {
+		return false
+	}
+	r, _ := utf8.DecodeRuneInString(input[offset:])
+	return unicode.IsMark(r)
 }
 
 func markerReview() Result {

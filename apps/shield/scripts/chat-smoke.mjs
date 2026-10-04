@@ -343,7 +343,7 @@ try {
     variants.on('pageerror', error => errors.push(error.message));
     await variants.route(`${origin}/**`, route => route.fulfill({ contentType: 'text/html', body: fixture }));
     await variants.goto(`${origin}/new`);
-    const forms = ['140182-8858 demo@example.invalid', '140182\u00a08858 demo@EXAMPLE.INVALID'];
+    const forms = ['140182-8858 próf@example.invalid', '140182\u00a08858 próf@EXAMPLE.INVALID'.normalize('NFD')];
     for (const [index, input] of [forms[0], forms[1], forms[0]].entries()) {
       await variants.locator(editor).fill(input);
       await variants.locator(send).click();
@@ -356,7 +356,7 @@ try {
     const sent = await variants.evaluate(() => window.sent);
     assert.notEqual(sent[0], sent[1], 'different original forms shared their markers');
     assert.equal(sent[0], sent[2], 'same exact form lost its stable markers');
-    assert.ok(sent.every(text => !text.includes('140182') && !text.includes('demo@')));
+    assert.ok(sent.every(text => !text.includes('140182') && !text.includes('próf') && !text.includes('pro\u0301f')));
     assert.ok(!(await variants.locator('#responses').textContent()).includes('140182'), 'restored identifier reached host DOM');
     assert.equal(await variants.locator('[data-dmz-restored="true"]').last().evaluate(frame => frame.contentDocument), null);
     await variants.close();

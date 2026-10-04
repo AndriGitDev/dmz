@@ -10,6 +10,8 @@ import (
 	"time"
 	"unicode"
 	"unicode/utf8"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 type Kind string
@@ -74,6 +76,8 @@ func DetectWithTerms(input string, terms []string) []Match {
 }
 
 func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
+	original := input
+	var originalOffsets []int
 	var review []Match
 	for start := 0; start < len(input); {
 		r, size := utf8.DecodeRuneInString(input[start:])
@@ -82,10 +86,18 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 		}
 		start += size
 	}
-	// Noncanonical or invisible characters require review before applying any
-	// masking rule, even if a configured exact term spans the character.
-	if len(review) > 0 {
-		return review
+	// Compose canonical accents for detection only. Original bytes remain the
+	// masking/restoration source. Unresolved marks and invisible/invalid text
+	// retain the review guard, even inside a configured exact term.
+	if len(review) > 0 || !norm.NFC.IsNormalString(input) {
+		var ok bool
+		input, originalOffsets, ok = normalizedDetectionText(original)
+		if !ok {
+			if len(review) == 0 {
+				return []Match{{0, len(original), UnicodeReview, Uncertain, "unicode-normalization-boundary"}}
+			}
+			return review
+		}
 	}
 	candidates := lexicon.matches(input)
 	add := func(re *regexp.Regexp, kind Kind, validate func(string) (Confidence, string, bool)) {
@@ -147,21 +159,39 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 		if term == "" {
 			continue
 		}
+		lookup := term
+		if originalOffsets != nil {
+			lookup = norm.NFC.String(term)
+		}
 		for start := 0; start < len(input); {
-			i := strings.Index(input[start:], term)
+			i := strings.Index(input[start:], lookup)
 			if i < 0 {
 				break
 			}
 			i += start
-			end := i + len(term)
+			end := i + len(lookup)
 			if bounded(input, i, end) {
-				candidates = append(candidates, Match{i, end, TenantDictionary, High, "tenant-exact-term"})
+				// The tenant dictionary remains byte-exact and case-sensitive;
+				// normalization must not silently widen its matching contract.
+				if originalOffsets == nil || (originalOffsets[i] >= 0 && originalOffsets[end] >= 0 &&
+					original[originalOffsets[i]:originalOffsets[end]] == term) {
+					candidates = append(candidates, Match{i, end, TenantDictionary, High, "tenant-exact-term"})
+				}
 			}
 			start = end
 		}
 	}
 	lexicon.extendNames(input, candidates)
 	candidates = lexicon.filterSeedBoundaries(input, candidates)
+	if originalOffsets != nil {
+		for i := range candidates {
+			start, end := originalOffsets[candidates[i].Start], originalOffsets[candidates[i].End]
+			if start < 0 || end <= start {
+				return review
+			}
+			candidates[i].Start, candidates[i].End = start, end
+		}
+	}
 	// Choose longest/highest-confidence span first; then return stable text order.
 	sort.Slice(candidates, func(i, j int) bool {
 		a, b := candidates[i], candidates[j]

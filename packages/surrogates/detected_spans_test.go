@@ -40,7 +40,7 @@ func TestFinalDetectedSpansReflectMergedMaskRatherThanEarlierFindings(t *testing
 }
 
 func TestWholeTextFallbackIsNotAnEmptyTypedDetection(t *testing.T) {
-	for _, input := range []string{"pro\u0301fun", "⟦unknown marker⟧", "-----BEGIN PRIVATE KEY-----\nfabricated"} {
+	for _, input := range []string{"x\u0301", "⟦unknown marker⟧", "-----BEGIN PRIVATE KEY-----\nfabricated"} {
 		got := NewSession().ProcessBestEffort(input, nil)
 		if !got.Allowed || got.SpansAvailable || got.DetectedSpans != nil {
 			t.Fatalf("fallback claimed typed detections: %#v", got)

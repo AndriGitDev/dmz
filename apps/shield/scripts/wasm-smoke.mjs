@@ -14,17 +14,20 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
-const typedInput = 'Ása demo@example.invalid';
-const typed = JSON.parse(globalThis.dmzProcessBestEffort(typedInput, JSON.stringify([
-  { start: 0, end: 4 }, { start: 5, end: 9 },
-])));
-assert.equal(typed.spans_available, true);
-assert.deepEqual(typed.detected_spans, [
-  { start: 0, end: 4, kind: 'name_demo' },
-  { start: 5, end: Buffer.byteLength(typedInput), kind: 'email' },
-]);
-assert.equal(globalThis.dmzRestore(typed.transformed), typedInput);
-const wholeTyped = JSON.parse(globalThis.dmzProcessBestEffort('pro\u0301fun', '[]'));
+for (const form of ['NFC', 'NFD']) {
+  const typedInput = 'Ása demo@example.invalid'.normalize(form);
+  const nameLength = Buffer.byteLength('Ása'.normalize(form));
+  const typed = JSON.parse(globalThis.dmzProcessBestEffort(typedInput, JSON.stringify([
+    { start: 0, end: nameLength }, { start: nameLength + 1, end: nameLength + 5 },
+  ])));
+  assert.equal(typed.spans_available, true);
+  assert.deepEqual(typed.detected_spans, [
+    { start: 0, end: nameLength, kind: 'name_demo' },
+    { start: nameLength + 1, end: Buffer.byteLength(typedInput), kind: 'email' },
+  ]);
+  assert.equal(globalThis.dmzRestore(typed.transformed), typedInput);
+}
+const wholeTyped = JSON.parse(globalThis.dmzProcessBestEffort('x\u0301', '[]'));
 assert.equal(wholeTyped.spans_available, false);
 assert.equal(wholeTyped.detected_spans, null);
 const emptyTyped = JSON.parse(globalThis.dmzProcessBestEffort('Ordinary prose.', '[]'));
@@ -191,7 +194,7 @@ for (const [input, kind] of [
   ['Prófrún Gerviburs', 'name_demo'],
   ['ghp_000000000000000000000000000000000000', 'secret'],
   ['demo@exa\u200bmple.invalid', 'unicode_review'],
-  ['Pro\u0301fru\u0301n Gervido\u0301ttir', 'unicode_review'],
+  ['Pro\u0301fru\u0301n Gervido\u0301ttir', 'name_demo'],
 ]) {
   const result = JSON.parse(globalThis.dmzProcess(input));
   assert.equal(result.allowed, false, `${kind} should block outbound text`);

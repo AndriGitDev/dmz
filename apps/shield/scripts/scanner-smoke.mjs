@@ -80,6 +80,18 @@ try {
   await p.frameLocator('iframe[data-dmz-restored]').getByText('Anna ræddi við Peter í gær.', { exact: true }).waitFor();
   assert.ok(!(await p.locator('main').textContent()).includes('Anna'));
   metrics.cases.push({ case: 'isolated-restoration', passed: true });
+  const decomposedPage = await page();
+  const decomposed = 'Anna ræddi við Peter í gær.'.normalize('NFD');
+  await fill(decomposedPage, decomposed);
+  await decomposedPage.waitForFunction(() => window.sent.length === 1, null, { timeout: 130000 });
+  const decomposedSent = await decomposedPage.evaluate(() => window.sent[0]);
+  assert.ok(!decomposedSent.includes('Anna') && !decomposedSent.includes('Peter'));
+  assert.equal((decomposedSent.match(/⟦NAME-/g) || []).length, 2, 'decomposed prose fell back or lost trained names');
+  await decomposedPage.frameLocator('iframe[data-dmz-restored]').getByText(decomposed, { exact: true }).waitFor();
+  assert.equal(await decomposedPage.frameLocator('iframe[data-dmz-restored]').locator('#restored-text').textContent(), decomposed);
+  assert.ok(!(await decomposedPage.locator('main').textContent()).includes('Anna'));
+  await decomposedPage.close();
+  metrics.cases.push({ case: 'canonical-decomposed-trained-names-and-exact-restoration', passed: true });
   // Names embedded in an email must keep the full email mask, not block or
   // replace only the local part. Use a separate page to keep race counts stable.
   const emailPage = await page();

@@ -78,6 +78,14 @@ policy in `holdout-v2`; its pre-change reports are preserved as
 also check currency amounts, overlong numbers, word boundaries, missing postcodes,
 and line breaks. None of these results establishes representative address recall.
 
+The [canonical Unicode follow-up](../docs/detector-unicode-normalization.md) recovers
+one exact email detection in each of the exploratory and later-probe sets and
+removes their benign decomposed-text guard. Unsupported format characters remain
+guarded. Pre-change snapshots are preserved as `*before-nfc.json`; source corpora,
+pins and recall floors are unchanged. Packaged exact-set accuracy, full masking
+coverage and restoration are reported separately in
+`results/quality-99-v1/system-typed-after-nfc.json`.
+
 CI checks the new corpus pins separately in `gates/corpus-v2.sha256`. Existing
 pins and floors are unchanged. Updating the new pins or weakening the format
 regression assertions requires review, as do existing gates.

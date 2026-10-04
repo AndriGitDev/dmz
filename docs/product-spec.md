@@ -49,15 +49,38 @@ Shield never sends real prompt contents or its map to dmz servers. Portal and Ga
 
 The planned policy schema lives in [`packages/policy/default.json`](../packages/policy/default.json); it has not been wired into the Shield prototype yet. The prototype uses the fixed behaviour in ADR 0002 and 0003. A tenant policy UI and enforcement still need to be built before a pilot.
 
-Current implementation includes a device-local, exact, case-sensitive dictionary of up to 32 user-entered terms. It is cleared on reset and does not provide the planned tenant-admin workflow, inflection or per-tenant distribution. Selected API-key, JWT, bearer-token, PEM-header and database-URL patterns block the entire prompt. General high-entropy-token and log-line detection remain unimplemented.
-Four hand-authored full-name forms are masked. Other two-token names with an Icelandic patronymic shape and diacritics are marked uncertain and block the prompt; this heuristic is not a general Icelandic-name recognizer and can block benign text.
-A narrow street-suffix/house-number/postcode pattern, with optional comma or city in selected forms, is marked uncertain and blocks. It has no licensed street gazetteer, misses other address formats and can block benign text. It must not be marketed as broad address coverage. Internationalized email local parts and `00354` phone shapes now block for review; a `ghp_` token shape blocks as a secret. These rules cover selected forms only.
+Current implementation includes a device-local, exact, case-sensitive dictionary
+of up to 32 user-entered terms. It is cleared on reset and does not provide the
+planned tenant-admin workflow, inflection or per-tenant distribution. Selected
+API-key, JWT, bearer-token, PEM-header and database-URL patterns are detected.
+General high-entropy-token and log-line detection remain unimplemented. Strict
+core callers block secrets and most uncertain findings; Shield's owner-approved
+best-effort policy masks them locally instead.
 
-Combining marks, Unicode format characters (including invisible separators), and invalid UTF-8 bytes cause an uncertain review finding and block the whole prompt. This is a conservative prototype guard for obfuscated text, not Unicode normalization or complete evasion protection. Legitimate text using combining marks may also be blocked.
+The basic core recognizes four hand-authored name forms and an uncertain
+patronymic heuristic. The private trained preview adds a local CRF/neural name
+scanner, whose [measured limits](detector-quality-contract.md) remain below the
+current research target. Scanner failure warns and falls back to basic masking.
+
+The trained preview also bundles 23,636 approved HMS address forms. A recognized
+form plus a house number can be detected without a postcode, with optional unit,
+range and postcode notation. An uncertain street-suffix/number/postcode heuristic
+covers selected unknown forms. This is not representative address validation:
+rural forms, ambiguity and contextual precision still need independent evidence.
+Internationalized email local parts and `00354` phone shapes remain uncertain
+findings; the applicable policy decides whether to mask or block them.
+
+Canonical Unicode composition is now supported through an NFC detection copy with
+original-byte offset mapping. Masking and restoration preserve the original text.
+Unresolved combining marks, Unicode format characters (including invisible
+separators), invalid UTF-8 and ambiguous boundaries retain the review guard:
+strict-core callers block, while Shield masks the whole text under its best-effort
+policy. This is not complete evasion protection. See the
+[normalization implementation and evidence](detector-unicode-normalization.md).
 
 ## Surrogate and vault requirements
 
-- In masking mode, each value selected for masking becomes a visible, typed marker, consistently within a session. Approved untransformed PII needs no restoration. Name case forms need complete coverage and mapping before launch; the prototype recognizes only four hand-authored full-name forms.
+- In masking mode, each exact original form selected for masking becomes a visible, typed marker, consistently within a session. Approved untransformed PII needs no restoration. Name case forms need complete coverage and mapping before launch; the basic core's four hand-authored forms and the trained preview do not establish that coverage.
 - Each tenant/session map links real value and visible marker. Envelope encryption uses a tenant key via OpenBao Transit. Customer-managed keys are a later option.
 - Entries expire at session end or within 24 hours; the exact rule must be policy-controlled and documented. No prompt or response body persistence.
 - A prototype streaming restorer now buffers partial visible markers across arbitrary chunk boundaries in the Go core. It has no Gateway integration yet. The production path still needs bounded-memory review, adversarial output tests and stream cancellation handling.

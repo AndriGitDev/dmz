@@ -1,8 +1,38 @@
 // Device-local preprocessing. UTF-8 offsets are the Go/WASM boundary contract.
 const encoder = new TextEncoder();
+function normalizedText(text) {
+  const nfc = text.normalize('NFC');
+  if (nfc === text) {
+    if (/\p{M}/u.test(text)) throw Error('Unsupported combining sequence');
+    return { text, originalOffsets: null };
+  }
+  const originalOffsets = new Map([[0, 0]]), segments = [];
+  let originalBytes = 0, normalizedBytes = 0;
+  for (const { segment } of new Intl.Segmenter('und', { granularity: 'grapheme' }).segment(text)) {
+    const normalized = segment.normalize('NFC');
+    if (/[\p{M}\p{Cf}]/u.test(normalized)) throw Error('Unsupported combining sequence');
+    originalOffsets.set(normalizedBytes, originalBytes);
+    if (normalized === segment) {
+      let offset = 0;
+      for (const rune of segment) {
+        originalOffsets.set(normalizedBytes + offset, originalBytes + offset);
+        offset += encoder.encode(rune).length;
+      }
+    }
+    originalBytes += encoder.encode(segment).length;
+    normalizedBytes += encoder.encode(normalized).length;
+    originalOffsets.set(normalizedBytes, originalBytes);
+    segments.push(normalized);
+  }
+  const normalized = segments.join('');
+  if (normalized !== nfc) throw Error('Ambiguous normalization boundary');
+  return { text: normalized, originalOffsets };
+}
 export function wordsFromText(text) {
-  if (typeof text !== 'string' || text.length > 16000 || /[\p{M}\p{Cf}\uD800-\uDFFF]/u.test(text))
+  if (typeof text !== 'string' || text.length > 16000 || /[\p{Cf}\uD800-\uDFFF]/u.test(text))
     throw Error('Unsupported text');
+  const normalized = normalizedText(text);
+  text = normalized.text;
   const words = [],
     offsets = [];
   let cursor = 0,
@@ -12,7 +42,11 @@ export function wordsFromText(text) {
     bytes += encoder.encode(text.slice(cursor, match.index)).length;
     const end = bytes + encoder.encode(match[0]).length;
     words.push(match[0]);
-    offsets.push([bytes, end]);
+    const startOriginal = normalized.originalOffsets?.get(bytes) ?? (normalized.originalOffsets ? undefined : bytes);
+    const endOriginal = normalized.originalOffsets?.get(end) ?? (normalized.originalOffsets ? undefined : end);
+    if (startOriginal === undefined || endOriginal === undefined || endOriginal <= startOriginal)
+      throw Error('Ambiguous token normalization boundary');
+    offsets.push([startOriginal, endOriginal]);
     cursor = match.index + match[0].length;
     bytes = end;
   }

@@ -1,0 +1,65 @@
+{
+  "corpus": "bench/corpus/exploratory-v1.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 29,
+  "allowed_prompts": 19,
+  "blocked_prompts": 10,
+  "benign_prompts": 4,
+  "blocked_benign_ids": [
+    "v1-negative-combining"
+  ],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [
+    "v1-name-foreign-demo",
+    "v1-name-ascii-patronymic",
+    "v1-secret-generic",
+    "v1-secret-other-prefix",
+    "v1-dictionary-case-variant"
+  ],
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "address": {
+      "masked": 0,
+      "blocked": 4,
+      "exposed": 0
+    },
+    "card": {
+      "masked": 2,
+      "blocked": 0,
+      "exposed": 0
+    },
+    "email": {
+      "masked": 1,
+      "blocked": 3,
+      "exposed": 0
+    },
+    "kennitala": {
+      "masked": 3,
+      "blocked": 0,
+      "exposed": 0
+    },
+    "name_demo": {
+      "masked": 1,
+      "blocked": 1,
+      "exposed": 2
+    },
+    "phone": {
+      "masked": 3,
+      "blocked": 0,
+      "exposed": 0
+    },
+    "secret": {
+      "masked": 0,
+      "blocked": 1,
+      "exposed": 2
+    },
+    "tenant_dictionary": {
+      "masked": 1,
+      "blocked": 0,
+      "exposed": 1
+    }
+  }
+}

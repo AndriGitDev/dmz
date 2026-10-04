@@ -62,7 +62,7 @@ func TestEmailCanonicalPreservesLocalPartCase(t *testing.T) {
 
 func TestUnicodeObfuscationRequiresReview(t *testing.T) {
 	for _, input := range []string{
-		"Pro\u0301fru\u0301n Gervido\u0301ttir",
+		"x\u0301", // no composed character; unresolved mark remains guarded
 		"demo@exa\u200bmple.invalid",
 		"demo@exam\u202eple.invalid",
 		"bad\xffbytes",
