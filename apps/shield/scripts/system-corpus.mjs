@@ -1,7 +1,8 @@
 // Synthetic corpus replay through packaged Chromium scanner AND masking core.
 // Reports aggregate complete-identifier coverage, never text or predictions.
-import { readFile, writeFile, mkdtemp, rm, realpath, stat } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, rm, realpath, stat, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { createReadStream } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -21,6 +22,29 @@ if (parentRelative !== '..' && !parentRelative.startsWith('../')) throw Error('O
 try { await stat(output); throw Error('Refusing to overwrite an existing evaluation'); }
 catch (error) { if (error.code !== 'ENOENT') throw error; }
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
+async function fileDigest(path) {
+  const hash = createHash('sha256');
+  for await (const bytes of createReadStream(path)) hash.update(bytes);
+  return hash.digest('hex');
+}
+async function artifactFiles(relativePath = '', files = {}) {
+  const entries = await readdir(join(extension, relativePath), { withFileTypes: true });
+  entries.sort((a, b) => a.name.localeCompare(b.name, 'en'));
+  for (const entry of entries) {
+    const name = relativePath ? `${relativePath}/${entry.name}` : entry.name;
+    if (name === 'BUILD.json') continue;
+    if (entry.isDirectory()) await artifactFiles(name, files);
+    else if (entry.isFile()) files[name] = await fileDigest(join(extension, name));
+    else throw Error('Packaged artifact contains an unsupported file entry');
+  }
+  return files;
+}
+const packagedFiles = await artifactFiles();
+const measurementFiles = {};
+for (const name of ['apps/shield/scripts/system-corpus.mjs', 'apps/shield/scripts/coverage.mjs',
+  'apps/shield/scripts/typed-quality.mjs', 'bench/contextual/quality.py']) {
+  measurementFiles[name] = await fileDigest(join(repo, name));
+}
 const corpus = [];
 for (const path of sourceArgs) {
   const source = await realpath(path), rel = relative(corpusRoot, source);
@@ -39,7 +63,7 @@ const manifestBytes = await readFile(join(extension, 'manifest.json'));
 const manifest = JSON.parse(manifestBytes);
 if (!manifest.permissions?.includes('offscreen')) throw Error('Requires trained preview');
 const report = {
-  schema: 2,
+  schema: 3,
   scope: 'Selected/reused synthetic corpora through packaged Chromium scanner and Go WASM best-effort masking; no live-site submission UI',
   independent_validation: false,
   metric: 'Full UTF-8 identifier interval covered by issued restorable markers; partial masking is not success',
@@ -49,6 +73,8 @@ const report = {
     wasm_sha256: digest(await readFile(join(extension, 'dmz.wasm'))),
     detector_data: JSON.parse(await readFile(join(extension, 'detector-data.json'))),
     scanner_manifest_sha256: digest(await readFile(join(extension, 'scanner/manifest.json'))) },
+  packaged_files_sha256: packagedFiles, measurement_files_sha256: measurementFiles,
+  runtime: { node: process.version },
   external_requests: 0, sets: [], status: 'running',
 };
 const profile = await mkdtemp(join(tmpdir(), 'dmz-system-corpus-'));
@@ -70,6 +96,10 @@ try {
   const extensionOrigin = worker.url().slice(0, worker.url().lastIndexOf('/'));
   const core = await browser.newPage();
   await core.goto(extensionOrigin + '/sidepanel.html');
+  report.runtime.user_agent = await core.evaluate(() => navigator.userAgent);
+  const devtools = await browser.newCDPSession(core);
+  report.runtime.chromium = await devtools.send('Browser.getVersion');
+  await devtools.detach();
   await core.addScriptTag({ url: extensionOrigin + '/wasm_exec.js' });
   await core.evaluate(async () => {
     const go = new globalThis.Go();
@@ -127,6 +157,11 @@ try {
   }
   report.seconds = (Date.now() - started) / 1000;
   if (report.external_requests) throw Error('Unexpected network requests');
+  if (JSON.stringify(await artifactFiles()) !== JSON.stringify(packagedFiles))
+    throw Error('Packaged artifact changed during evaluation');
+  for (const [name, hash] of Object.entries(measurementFiles)) {
+    if (await fileDigest(join(repo, name)) !== hash) throw Error('Measurement code changed during evaluation');
+  }
   report.status = 'complete';
 } finally {
   if (browser) await browser.close();

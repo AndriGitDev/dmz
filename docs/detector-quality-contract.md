@@ -142,3 +142,7 @@ preserved; see [the updated aggregate](../bench/results/quality-99-v1/system-typ
 Independent quality evidence, model redistribution review and owner-browser
 verification remain distinct release requirements. A passing development score
 alone does not authorize a general release or a public 99% claim.
+
+Packaged synthetic report schema 3 records SHA-256 for every packaged file except the generated `BUILD.json`, the measurement scripts and shared Python scorer, plus Node and Chromium runtime versions. The harness rechecks artifact and measurement hashes before marking a report complete and rejects a build changed during evaluation. Older reports retain their original schema and narrower provenance. These identities support reproducibility; they do not establish sample independence.
+
+The schema-3 address-hyphen replay preserves all five corpora’s typed quality, masking and restoration counts from the post-NFC replay. Exploratory trained-path scanner fallbacks changed from four to one; this operational count is retained separately and is not attributed to the detector fix. All requests remained local.
