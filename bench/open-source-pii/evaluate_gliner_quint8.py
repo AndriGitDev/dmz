@@ -16,9 +16,20 @@ def main():
     p.add_argument('--quantized', type=Path, required=True)
     p.add_argument('--corpus', type=Path, required=True)
     p.add_argument('--output', required=True)
+    p.add_argument('--public-validation', action='store_true')
     a = p.parse_args()
     out = private_output(a.output)
-    rows, manifest = load_corpus(a.corpus)
+    if a.public_validation:
+        manifest = json.loads((a.corpus / 'manifest.json').read_text())
+        if manifest['source']['revision'] != 'e06eb1499ca8d54470f085021cd8e54f9efac7fd' or digest(a.corpus / 'validation.jsonl') != '0363cb20728c0fc53b3c27cae5ecf9d03d04388ce4147907d01e9260bf5fb1de':
+            raise ValueError('wrong validation projection')
+        rows = [json.loads(line) for line in (a.corpus / 'validation.jsonl').read_text().splitlines()]
+        if len(rows) != 4995 or len({row['id'] for row in rows}) != len(rows):
+            raise ValueError('incomplete validation split')
+        if any(hashlib.sha256(row['text'].encode()).hexdigest() != row['text_sha256'] for row in rows):
+            raise ValueError('changed validation text')
+    else:
+        rows, manifest = load_corpus(a.corpus)
     config = json.loads((ROOT / 'bench/open-source-pii/candidates.json').read_text())['candidates']['gliner']
     identity = json.loads((a.model / 'download-manifest.json').read_text())
     if identity['revision'] != '61726e0ad791dcab3e29339bbec3ad42ded65641':
@@ -59,6 +70,8 @@ def main():
                     if not 0 <= start < end <= len(row['text']):
                         raise ValueError('invalid candidate offsets')
                     kind = config['mapping'][entity['label']]
+                    if kind not in manifest['scope']:
+                        continue
                     span = [len(row['text'][:start].encode()), len(row['text'][:end].encode()), kind]
                     if span not in predicted:
                         predicted.append(span)
@@ -71,6 +84,8 @@ def main():
                             'text_sha256': hashlib.sha256(row['text'].encode()).hexdigest(),
                             'predicted': predicted, 'scored': scored, 'abstained': failure is not None,
                             'candidate_failure': failure, 'seconds': time.monotonic() - began})
+            if len(records) % 100 == 0:
+                print(json.dumps({'completed': len(records), 'total': len(rows), 'seconds': time.monotonic() - started}), flush=True)
     if any(digest(x) != hashes[str(x.relative_to(ROOT))] for x in watched):
         raise ValueError('measurement changed')
     result = {'schema': 1, 'status': 'complete', 'candidate': 'gliner-published-quint8',
@@ -80,6 +95,7 @@ def main():
               'independent_validation': False, 'load_seconds': load_seconds,
               'seconds': time.monotonic() - started, 'peak_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
               'candidate_failures': failures, 'records': records, 'quality': score(records, manifest['scope'])}
+    result['split'] = 'validation' if a.public_validation else 'authored-synthetic'
     with out.open('x') as stream:
         json.dump(result, stream, indent=2)
     print(json.dumps({k: result[k] for k in ['candidate', 'seconds', 'peak_rss_kib', 'candidate_failures']}))
