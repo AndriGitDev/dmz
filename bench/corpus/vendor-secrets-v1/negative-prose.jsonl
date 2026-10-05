@@ -1,0 +1,12 @@
+{"id": "benign-00", "stratum": "negative-prose", "family": "benign", "text": "Run npm install after reviewing the package manifest.", "entities": []}
+{"id": "benign-01", "stratum": "negative-prose", "family": "benign", "text": "The documented prefixes are npm_, hf_, glpat-, SG., xoxb- and shpat_.", "entities": []}
+{"id": "benign-02", "stratum": "negative-prose", "family": "benign", "text": "Use a publishable browser key: pk_live_7T4APNpq50hBtjqbTlNvWCjdbxZafa", "entities": []}
+{"id": "benign-03", "stratum": "negative-prose", "family": "benign", "text": "Public test key: pk_test_punHUVVsGv9MSRo6UT99pwAcCCPjBY", "entities": []}
+{"id": "benign-04", "stratum": "negative-prose", "family": "benign", "text": "The SHA-256 digest is 38b4e8981ab9adf45e10c9d20daa3c2cd2600b46379b0662d6414c65c73b4cbd", "entities": []}
+{"id": "benign-05", "stratum": "negative-prose", "family": "benign", "text": "The build identifier is 342b5a9556204d8c6995314ddc8f251262a41d28", "entities": []}
+{"id": "benign-06", "stratum": "negative-prose", "family": "benign", "text": "secret_count = 37", "entities": []}
+{"id": "benign-07", "stratum": "negative-prose", "family": "benign", "text": "token_budget = 32000", "entities": []}
+{"id": "benign-08", "stratum": "negative-prose", "family": "benign", "text": "service_token = \"${TOKEN}\"", "entities": []}
+{"id": "benign-09", "stratum": "negative-prose", "family": "benign", "text": "service_token = \"REPLACE_ME\"", "entities": []}
+{"id": "benign-10", "stratum": "negative-prose", "family": "benign", "text": "client_id = \"public-browser-app\"", "entities": []}
+{"id": "benign-11", "stratum": "negative-prose", "family": "benign", "text": "No credentials are included in this maintenance note.", "entities": []}

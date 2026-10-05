@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "description": "Deterministically fabricated, never-issued token-shaped values; no service verification.",
+  "independent_validation": false,
+  "scope": [
+    "name_demo",
+    "address",
+    "phone",
+    "email",
+    "iban",
+    "card",
+    "kennitala",
+    "secret",
+    "tenant_dictionary"
+  ],
+  "sets": {
+    "assignment.jsonl": {
+      "sha256": "2326750bac13259dde2b301dfa3b3cb860c950c9f3997a58291e3d201186b548",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "bare.jsonl": {
+      "sha256": "d7bef30052dacc205505e00da2620bb47ddace0e1226c15eef4df0bbc5550b5f",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "english.jsonl": {
+      "sha256": "0fc82a720dd6718d8296c99222be7fb712b5614dc5eced020461861805ad92ee",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "mixed.jsonl": {
+      "sha256": "4a685521664b93e5c9a3fa7ee0aa98f668d1a420ba83f3f97769bd6297ffff88",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "negative-boundary.jsonl": {
+      "sha256": "49d590d557d51ed0b85444f7ae4aeaab13cc45df3a3dda7535ae38a3948f9efb",
+      "excerpts": 18,
+      "entities": 0
+    },
+    "negative-prose.jsonl": {
+      "sha256": "342aafa285fe34df3742cd6fe97145615c2d58b68e766a7e3623fbba97999d92",
+      "excerpts": 12,
+      "entities": 0
+    }
+  }
+}
