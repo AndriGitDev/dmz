@@ -200,6 +200,16 @@ def evaluate(a):
     if label_mode not in ('person', 'entities'):
         raise ValueError('unsupported checkpoint label mode')
     decode = ENTITY_DECODE if label_mode == 'entities' else DECODE
+    typed_path = getattr(a, 'typed_predictions', None)
+    if typed_path:
+        typed_path = external(typed_path)
+        if label_mode != 'entities' or typed_path.exists():
+            raise ValueError('typed output requires a new path and nine-label checkpoint')
+    destinations = [output] + ([typed_path] if typed_path else [])
+    if a.predictions:
+        destinations.append(external(a.predictions))
+    if len(set(destinations)) != len(destinations) or any(path.exists() for path in destinations):
+        raise ValueError('evaluation outputs must be distinct new paths')
     if not any(c.get('sha256') == digest(checkpoint) for c in training['checkpoints']):
         raise ValueError('checkpoint manifest mismatch')
     if training['base_weights_sha256'] != digest(base/'model.safetensors'):
@@ -218,12 +228,21 @@ def evaluate(a):
                 r,s,n=j['record'],j['start'],j['words']
                 labels[r][s:s+n]=[decode[v] for v in predicted[i,:n].tolist()]
                 confidence[r][s:s+n]=values[i,:n].tolist()
-    predictions=[]
+    predictions=[]; typed_records=[]
     for r,l,c in zip(records,labels,confidence):
         if any(v is None for v in l+c): raise ValueError('incomplete prediction coverage')
         predictions.append(dict(gold=[[s,e] for s,e,_,_ in spans(r['labels'],r['offsets'])],
             predictions=[[s,e,min(c[i:j])] for s,e,i,j in spans(l,r['offsets'])]))
+        if typed_path:
+            from entity_veto import typed_spans
+            typed_records.append(dict(gold=predictions[-1]['gold'], predictions=typed_spans(l,r['offsets'],c)))
     result=dict(split='dev', input_sha256=digest(source), model_sha256=digest(checkpoint), text_mode=a.text_mode, label_mode=label_mode, records=predictions)
+    if typed_path:
+        typed_result={k:v for k,v in result.items() if k!='records'}
+        typed_result.update(schema=1, records=typed_records, labels=decode,
+            training_manifest_sha256=digest(checkpoint.parent/'training.json'))
+        with typed_path.open('x') as stream: json.dump(typed_result,stream)
+        typed_path.chmod(0o600)
     if a.predictions:
         with external(a.predictions).open('x') as f: json.dump(result,f)
     crf=json.loads(external(a.crf).read_text())
@@ -268,6 +287,7 @@ def main():
     t.add_argument('--max-steps',type=int,default=0);t.add_argument('--probe',action='store_true')
     e=sub.add_parser('evaluate');e.add_argument('--checkpoint',type=Path,required=True);e.add_argument('--crf',type=Path,required=True)
     e.add_argument('--text-mode',choices=['canonical','original'],default='canonical')
+    e.add_argument('--typed-predictions',type=Path,help='Private complete BIO entity cache for a separate declared composition experiment')
     e.add_argument('--predictions',type=Path);e.add_argument('--crf-threshold',type=float,default=.75);e.add_argument('--neural-threshold',type=float,default=0.)
     for q in (t,e):
         q.add_argument('--base',type=Path,required=True);q.add_argument('--input',type=Path,required=True);q.add_argument('--output',type=Path,required=True)
