@@ -34,3 +34,13 @@ Evaluate the current native core, original candidate configurations and the
 already selected GLiNER2 address-only composition. Keep projected exact sets,
 per-type recall/precision, false positives and runtime separate. Do not use this
 public diagnostic to tune a variant and present the same run as validation.
+
+Runtime exception, recorded after a short full-test Privacy Filter prefix:
+CPU inference averaged roughly 16 seconds per excerpt, projecting well beyond
+the requested eight-hour work slice. Preserve the stopped prefix as incomplete.
+Freeze a 512-excerpt sample by SHA-256 ordering of a fixed seed and source IDs,
+excluding all prefix IDs already inferred. Selection never examines outcomes.
+Evaluate Privacy Filter on that sample and rescore every comparator on exactly
+the same IDs. Keep this sample report separate from the complete 4,996-excerpt
+reports; do not present the stopped prefix as a full evaluation. The source's
+synthetic-data and unknown-training-overlap limitations still apply.
