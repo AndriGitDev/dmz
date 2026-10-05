@@ -60,6 +60,26 @@ Gitleaks is a specialist secret comparator. Its initial comparison uses the
 separate from the original-baseline model table. The aggregate exporter rejects
 mixed baseline hashes rather than merging incompatible comparisons.
 
+The dedicated vendor-token calibration set improves from 46/102 to 102/102
+exact. This set was used during implementation and is not held-out evidence.
+The separate 134-excerpt follow-up improves from 60 to 98 exact: 38 added true
+spans and no added false spans. All 44 negatives remain exact; all 18 low-entropy
+and 18 path-embedded token cases remain missed. The follow-up was retained
+without using those misses to change the rule policy. The final trained WASM
+matches native typed spans and restores exactly on all 236 fixtures. See
+`vendor-specialist-calibration.json` and `vendor-specialist-followup.json` for
+strata, paired changes and source/runtime hashes. These fabricated token-shaped
+values are never issued or verified against a service.
+
+On the separate 36-excerpt phone probe, exact excerpts increase from 18 to 33
+and true spans from eight to 24, with false spans falling from two to one. All
+18 explicit international-number excerpts become exact. Domestic-number
+inference remains outside the new adapter: that stratum stays at one of four
+exact, with three misses and one false span. The 14 boundary/control excerpts
+are unchanged. `phone-specialist.json` includes final trained native/WASM parity
+and exact restoration; these small synthetic probes do not establish field
+accuracy or actual number assignment.
+
 ## Icelandic regression guard
 
 The final trained WASM core was replayed with the same cached contextual-name
