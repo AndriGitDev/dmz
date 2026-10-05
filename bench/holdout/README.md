@@ -187,3 +187,5 @@ annotation correctness, sampling independence, or permission to redistribute sou
 text. The frozen output therefore remains `eligible_for_final: false` until those
 requirements are established separately. It must not be used to claim the 99% target
 has been met.
+
+Reviewer archives now include a [self-contained offline annotation editor](editor/README.md). It supports text selection, explicit review/exclusion, private progress downloads and the existing JSONL submission format without model predictions or network access. The original blank packets and frozen rubric remain unchanged.

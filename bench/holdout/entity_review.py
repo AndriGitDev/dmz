@@ -7,10 +7,12 @@ sample independence. Null labels never become negatives automatically.
 import argparse
 from collections import Counter
 import json
+import os
 from pathlib import Path
 import zipfile
 
 from review import external, sha
+from review_editor import render_editor
 
 KINDS = ['Person', 'Address', 'Kennitala', 'Email', 'Phone', 'IBAN', 'Card', 'Secret', 'TenantTerm']
 RUBRIC = Path(__file__).with_name('entity-annotation-rubric.md')
@@ -198,22 +200,28 @@ def package_reviewer(packet, slot, output):
                         exclusion_reason=None, reviewer=None, issues=[])
         if row != expected:
             raise ValueError('blind export requires a blank review form')
-    with zipfile.ZipFile(output, 'x', compression=zipfile.ZIP_DEFLATED) as archive:
-        for filename in ('rubric.md', 'index.jsonl', 'tenant-terms.json', name):
-            archive.write(packet/filename, filename)
-        for source, _ in index.values():
-            archive.write(packet/source['text_file'], source['text_file'])
-        archive.writestr('packet.json', json.dumps(dict(scope=KINDS, reviewer_slot=slot,
-            packet_manifest_sha256=sha((packet/'manifest.json').read_bytes()),
-            rubric_sha256=manifest['rubric_sha256'], excerpts=len(index)), indent=2)+'\n')
-        archive.writestr('README.txt',
-            'Private blind human review packet. Read rubric.md first.\n'
-            'Complete only the reviewer form included here; do not seek model predictions or the other reviewer\'s labels.\n'
-            'index.jsonl contains source URLs and text identities. Ask the packet owner for saved source HTML when needed for extraction review.\n'
-            'Keep text unchanged. Null means unreviewed; [] is a fully reviewed negative.\n'
-            'Return the completed reviewer form privately to the packet owner for separate adjudication.\n')
+    editor = render_editor(packet, slot, manifest, index)
+    with os.fdopen(os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), 'wb') as output_stream:
+        with zipfile.ZipFile(output_stream, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+            for filename in ('rubric.md', 'index.jsonl', 'tenant-terms.json', name):
+                archive.write(packet/filename, filename)
+            for source, _ in index.values():
+                archive.write(packet/source['text_file'], source['text_file'])
+            archive.writestr('review.html', editor)
+            archive.writestr('packet.json', json.dumps(dict(scope=KINDS, reviewer_slot=slot, editor_sha256=sha(editor),
+                packet_manifest_sha256=sha((packet/'manifest.json').read_bytes()),
+                rubric_sha256=manifest['rubric_sha256'], excerpts=len(index)), indent=2)+'\n')
+            archive.writestr('README.txt',
+                'Private blind human review packet. Read rubric.md first.\n'
+                'Open review.html in a local Chromium/Brave browser for offline text-selection annotation.\n'
+                'Download progress explicitly to preserve unfinished work; no automatic browser storage is used.\n'
+                'Export the completed reviewer JSONL form only after every excerpt is reviewed or explicitly excluded.\n'
+                'Complete only the reviewer form included here; do not seek model predictions or the other reviewer\'s labels.\n'
+                'index.jsonl contains source URLs and text identities. Ask the packet owner for saved source HTML when needed for extraction review.\n'
+                'Keep text unchanged. Null means unreviewed; [] is a fully reviewed negative.\n'
+                'Return the completed reviewer form privately to the packet owner for separate adjudication.\n')
     return dict(excerpts=len(index), reviewer_slot=slot, archive_sha256=sha(output.read_bytes()),
-                model_predictions_included=False, other_reviewer_submission_included=False)
+                model_predictions_included=False, other_reviewer_submission_included=False, editor_sha256=sha(editor))
 
 
 def freeze(packet, output):

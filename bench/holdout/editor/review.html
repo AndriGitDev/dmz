@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="__CSP__">
+<title>DMZ · Blind entity review</title>
+<style>
+[hidden]{display:none!important}:root{font:16px/1.5 system-ui,sans-serif;color:#17232b;background:#f3f5f6}*{box-sizing:border-box}body{margin:0}header{padding:1.25rem 2rem;background:#17232b;color:white}h1{font-size:1.45rem;margin:0}p{margin:.5rem 0}main{display:grid;grid-template-columns:20rem minmax(0,1fr);gap:1.25rem;padding:1.25rem;max-width:1500px;margin:auto}aside,section{background:white;border:1px solid #ccd5da;border-radius:8px;padding:1.25rem}label{display:block;font-weight:600;margin:.7rem 0 .25rem}input,select,textarea,button{font:inherit;border:1px solid #81949f;border-radius:4px;padding:.45rem .65rem}input,select,textarea{width:100%;background:white;color:inherit}button{cursor:pointer;background:#e8eff3;color:#17232b;margin:.3rem .2rem .3rem 0}button.primary{background:#125d70;color:white}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #e1a522;outline-offset:2px}.actions{display:flex;flex-wrap:wrap;gap:.25rem}input[type=checkbox]{width:auto;margin-right:.5rem}.check{font-weight:400}.muted{font-size:.88rem;color:#4d626e}.status{font-weight:600}#message{padding:.65rem;min-height:2.7rem;border-left:4px solid #125d70;background:#edf5f7}#excerpt{font:18px/1.8 system-ui,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;padding:1.25rem;border:1px solid #9aacb5;background:#fcfdfd;min-height:12rem;user-select:text}mark{background:#ffeb99;color:inherit;border-bottom:2px solid #986a00}#annotations{padding-left:1.3rem}#annotations li{margin:.5rem 0;overflow-wrap:anywhere}#annotations button{font-size:.85rem}#source{overflow-wrap:anywhere}details{margin:1rem 0}#rubric{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.6 system-ui,sans-serif;max-height:30rem;overflow:auto}h2{font-size:1.15rem;margin-top:0}.small{font-size:.88rem}.toolbar{display:flex;align-items:end;gap:.5rem}.toolbar label{flex:1}footer{padding:1rem 2rem;color:#4d626e}@media(max-width:850px){main{grid-template-columns:1fr}header{padding:1rem}#excerpt{font-size:17px}}
+</style></head><body>
+<header><h1>DMZ · Blind entity review</h1><p id="packet-title">Checking packet integrity…</p></header>
+<main hidden id="workspace"><aside>
+<label for="reviewer">Your reviewer code</label><input id="reviewer" autocomplete="off" placeholder="Use the code agreed with the packet owner">
+<p class="muted">Work independently. This packet contains no model predictions or other reviewer’s labels.</p>
+<label for="excerpt-select">Excerpt</label><select id="excerpt-select"></select>
+<div class="actions"><button id="previous">Previous</button><button id="next">Next</button></div>
+<p id="progress" class="status"></p>
+<button id="save-progress">Download progress</button><label for="load-progress">Resume saved progress</label><p class="muted">Loading replaces the current annotations. Download your current progress first.</p><input id="load-progress" type="file" accept="application/json,.json">
+<button id="export" class="primary" disabled>Export completed reviewer form</button>
+<p class="muted">Progress stays in this tab until you download it. No automatic browser storage or network requests. Return the completed JSONL file privately to the packet owner.</p>
+<details><summary>Configured tenant terms</summary><ul id="terms"></ul></details>
+</aside><section>
+<h2 id="excerpt-title"></h2><p id="source" class="muted"></p><p id="review-state" class="status"></p>
+<p>Select an entire entity in the text, choose its type, then add it. Preserve the source spelling and include every supported entity.</p>
+<div id="excerpt" tabindex="0" aria-label="Original excerpt text"></div>
+<div class="toolbar"><label for="kind">Entity type<select id="kind"></select></label><button id="add" class="primary">Add selected entity</button></div>
+<ol id="annotations"></ol>
+<label class="check"><input id="extraction" type="checkbox">I checked the extraction against the source.</label>
+<label class="check"><input id="all-types" type="checkbox">I reviewed all nine entity types, including confirming any negative excerpt.</label>
+<label for="issues">Review notes (optional)</label><textarea id="issues" rows="2"></textarea>
+<div class="actions"><button id="reviewed" class="primary">Mark reviewed</button><button id="reopen">Reopen for editing</button></div>
+<details><summary>Exclude unusable excerpt</summary><p class="small">An exclusion is not a negative label. Explain why this excerpt cannot be reviewed.</p><label for="exclusion">Exclusion reason</label><textarea id="exclusion" rows="2"></textarea><button id="exclude">Exclude excerpt</button></details>
+<p id="message" role="status" aria-live="polite"></p>
+<details><summary>Annotation rubric</summary><pre id="rubric"></pre></details>
+</section></main>
+<footer>This tool checks annotation structure. Human review, adjudication and independent acceptance remain separate requirements.</footer>
+<script id="packet" type="application/json">__PACKET_JSON__</script>
+<script>__EDITOR_JS__</script>
+</body></html>
