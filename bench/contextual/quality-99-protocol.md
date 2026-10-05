@@ -105,6 +105,17 @@ candidate was exported or substituted into the extension. These results test
 this specific training recipe on reused Person-scoped data; they do not rule
 out other multi-entity training approaches or establish all-entity quality.
 
+The [aggregate epoch-two error audit](../results/quality-99-v1/epoch-2-general-audit.json)
+reuses the saved predictions without new inference. Of 46 general false negatives,
+25 have no proposed name span, 13 have a boundary/merge error, six have an exact
+neural span displaced by CRF overlap priority, and two have an exact CRF span below
+the fixed threshold. Twenty-six misses contain a component not seen as Person in
+training, unchanged from the reference. These characteristic groups overlap.
+Exact other-entity false positives in the final combination increase from 29 to
+32, so this recipe does not achieve its intended reduction in that category.
+These automated categories are not human adjudication, and they do not justify
+changing the declared thresholds or the rejected trial's selection decision.
+
 ## Independent evidence
 
 The existing general corpus is sentence-split, not document-disjoint, and the
