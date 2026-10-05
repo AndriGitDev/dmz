@@ -84,3 +84,8 @@ regex, despite passing native tests. Replacing that repetition with a whole-key
 length check removed the observed startup failure without changing the native
 snapshot. Tests cover the 64-character boundary and longer rejected keys, and
 the rebuilt WASM passes the full smoke suite and packaged replay.
+
+The later [expression probe](credential-expression-v3.md) exposes false positives
+on variable references and adds explicit programming-language fence context.
+Quoted literals and configuration values remain covered; four unfenced reference
+errors remain visible. The original corpus and six known misses are unchanged.

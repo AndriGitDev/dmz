@@ -291,6 +291,24 @@ for (const input of [
   assert.equal(globalThis.dmzRestore(result.transformed), input);
   assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
 }
+for (const [language, quoted, expected] of [
+  ['python', false, 0], ['javascript', false, 0],
+  ['python', true, 1], ['dotenv', false, 1],
+]) {
+  globalThis.dmzReset();
+  const value = 'process.env.SERVICE_API_TOKEN_12345';
+  const input = '```' + language + '\napi_key=' + (quoted ? '"' + value + '"' : value) + '\n```';
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(result.allowed, true);
+  assert.equal(result.spans_available, true);
+  assert.equal(result.detected_spans.length, expected);
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  if (expected) {
+    const span = result.detected_spans[0];
+    assert.equal(span.kind, 'secret');
+    assert.equal(Buffer.from(input).subarray(span.start, span.end).toString(), value);
+  } else assert.equal(result.transformed, input);
+}
 const jwtBlocked = JSON.parse(globalThis.dmzProcess('eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl'));
 assert.equal(jwtBlocked.allowed, false);
 assert.equal(jwtBlocked.transformed, undefined);

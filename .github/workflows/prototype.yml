@@ -26,6 +26,7 @@ jobs:
       - run: ./scripts/check-bearer.sh
       - run: ./scripts/check-github-token.sh
       - run: ./scripts/check-credential-context.sh
+      - run: ./scripts/check-credential-expression.sh
       - run: go run ./bench/scorers -baseline bench/results/v0.json -floor bench/gates/selected-v0-recall.json > /tmp/dmz-benchmark-current.json
       - run: diff -u bench/results/v0.json /tmp/dmz-benchmark-current.json
       - run: go run ./bench/scorers -detector regex > /tmp/dmz-regex-current.json

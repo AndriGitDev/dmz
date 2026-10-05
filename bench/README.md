@@ -119,3 +119,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [GitHub token regression cases](github-token-v3.md) cover documented provider prefixes and longer stateless installation-token shapes, with complete masking and restoration checks.
 
 [Credential assignment cases](credential-context-v3.md) test a bounded context/entropy heuristic against benign configuration and code. Unsupported credential values remain labelled positives and visible misses.
+
+[The expression follow-up](credential-expression-v3.md) measures code-reference false positives separately from literal credential values, including four remaining ambiguous errors.

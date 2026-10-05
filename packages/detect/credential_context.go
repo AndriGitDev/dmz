@@ -73,7 +73,13 @@ func contextualCredentialShape(value string) bool {
 
 func credentialAssignments(input string) []Match {
 	var result []Match
-	for _, loc := range credentialAssignmentRE.FindAllStringSubmatchIndex(input, -1) {
+	assignments := credentialAssignmentRE.FindAllStringSubmatchIndex(input, -1)
+	if len(assignments) == 0 {
+		return nil
+	}
+	codeRanges := credentialCodeRanges(input)
+	codeIndex := 0
+	for _, loc := range assignments {
 		if input[loc[4]:loc[5]] != input[loc[8]:loc[9]] || !credentialField(input[loc[6]:loc[7]]) {
 			continue
 		}
@@ -100,6 +106,12 @@ func credentialAssignments(input string) []Match {
 				continue // Do not call one literal part a complete computed value.
 			}
 		} else {
+			for codeIndex < len(codeRanges) && codeRanges[codeIndex][1] <= start {
+				codeIndex++
+			}
+			if codeIndex < len(codeRanges) && codeRanges[codeIndex][0] <= start {
+				continue // In explicitly labelled program code, require a literal.
+			}
 			if loc[2] >= 0 && input[loc[2]:loc[3]] != "export" {
 				continue // A JS binding needs a literal, not an identifier/expression.
 			}
