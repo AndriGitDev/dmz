@@ -1,0 +1,17 @@
+DMZ international phone numbering rules
+
+The generated phone-plans.json data derives from Google libphonenumber
+v9.0.40 metadata (Apache License 2.0), read through
+github.com/nyaruka/phonenumbers/v2 v2.0.14 (MIT).
+Sources:
+https://github.com/google/libphonenumber/tree/v9.0.40
+https://github.com/nyaruka/phonenumbers/tree/v2.0.14
+
+DMZ transforms the general and subscriber-type national-number patterns into
+an embedded JSON table. This table contains numbering rules, not subscriber
+records. The browser does not load the upstream protobuf runtime. The DMZ
+adapter supports explicit +country-code numbers; it does not implement all
+of libphonenumber's parsing, regional inference, or formatting behavior.
+Metadata validation does not establish that a phone number is assigned.
+
+The accompanying Apache-2.0 and MIT licence files apply to the upstream work.
