@@ -98,6 +98,12 @@ as such; the fresh-run confirmation specifically requires zero resumed excerpts.
 Neither runtime equality nor reproducibility makes these synthetic/development
 scores independent validation.
 
+`verify_checkpoint_resume.py --private PRIVATE_DIRECTORY --output AGGREGATE_PATH`
+exercises recovery on a private copy of a completed fresh result, adding an
+uncommitted tail and checking that the original records and prefix hash survive.
+It also binds the recorded tampered/truncated-prefix rejection checks. It does
+not alter the original run or count resumed records as fresh inference.
+
 ## Aggregate figure
 
 `plot_public_comparisons.py` reads only the four published model aggregates and

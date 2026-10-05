@@ -241,6 +241,17 @@ See the [survey](../../open-source-pii/survey.md),
 pinned sources, licensing distinctions and evaluation limits.
 
 The full public candidate comparisons and identical-sample Privacy Filter
-evaluation are complete. A fresh 4,996-excerpt browser run of the final product
-build is in progress; the updated-core quality tables currently use cached-name
-replays and must not be described as that fresh browser result.
+evaluation are complete. A fresh browser run of the final product build also
+completed all 4,996 excerpts in about 116 minutes on the shared host. Every name
+prediction, typed basic/trained span, abstention and restoration result matches
+the scored final core replay. It observed zero external requests and reused zero
+checkpoint excerpts. `fresh-browser-validation.json` binds that fresh result to
+the build, replay and published score hashes. The comparison tables retain their
+cached-name method; the separate fresh run confirms the same product predictions.
+
+Recovery was then exercised on a private copy of the completed checkpoint with
+an extra uncommitted line. All 4,996 committed records were preserved and the
+tail was discarded, with no new inference or external requests. Previously
+tested tampered and truncated prefixes were rejected before browser launch.
+`browser-checkpoint-validation.json` records those integrity checks separately;
+the resumed run is not counted as a second fresh quality evaluation.
