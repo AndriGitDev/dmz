@@ -23,7 +23,7 @@ for (const n of [49, 50, 1000, 1001]) {
   globalThis.dmzReset();
   const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
   assert.ok(result.allowed && result.spans_available);
-  const spans = result.detected_spans.filter(s => s.kind === 'secret');
+  const spans = (result.detected_spans || []).filter(s => s.kind === 'secret');
   assert.equal(spans.length, n >= 50 && n <= 1000 ? 1 : 0);
   if (spans.length) assert.deepEqual(spans[0], { start: Buffer.byteLength('🙂 ['), end: Buffer.byteLength('🙂 [' + value), kind: 'secret' });
   assert.equal(globalThis.dmzRestore(result.transformed), text);
