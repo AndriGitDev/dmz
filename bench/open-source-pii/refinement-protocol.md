@@ -41,3 +41,11 @@ For the restarted guard, invalid offsets abstain for the entire candidate
 excerpt; additive composition keeps the frozen pipeline. Do not clip offsets or
 keep a partially valid model response. Report the failure count and measurement
 revision. This is error handling, not a correction to corpus labels.
+
+Fresh follow-up selection (before predictions on its 90 excerpts): the contextual
+integration candidate is GLiNER2's original seven-label schema at 0.5, accepting
+only address additions after frozen core/name matches. On calibration it added
+eight true positives without adding false positives; its deployment size remains
+a concern. All full-model outputs can be retained diagnostically, but do not
+select a different threshold or type subset on the fresh set and call that
+validation. The portable phone adapter is evaluated separately and combined.

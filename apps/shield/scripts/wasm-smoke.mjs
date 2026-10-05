@@ -45,6 +45,17 @@ assert.equal(typeof globalThis.dmzProcessBestEffortWithEntities, 'function');
 }
 
 
+// The portable numbering metadata must execute in TinyGo, not just compile.
+for (const phone of ['+1 202-555-0107', '(+44) 20 7946 0123', '+1 (202) 555-0162 ext. 45']) {
+  globalThis.dmzReset();
+  const prefix = 'Þú: ';
+  const text = `${prefix}${phone}.`;
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
+  assert.deepEqual(result.detected_spans, [{start: Buffer.byteLength(prefix), end: Buffer.byteLength(prefix + phone), kind: 'phone'}]);
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+}
+globalThis.dmzReset();
+
 // JavaScript can contain unpaired UTF-16 surrogates. The Go string bridge would
 // replace them before detection, so reject processing instead of silently
 // changing the draft; restoration must pass such a response through unchanged.
