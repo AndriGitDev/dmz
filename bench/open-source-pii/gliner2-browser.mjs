@@ -1,6 +1,7 @@
 // Research-only local GLiNER2 NER adapter. No product import, downloads or word cache.
 // Graph interface reviewed against lmoe/gliner2-onnx at 35655a6b18fa24e81584645415a1733e9d47e321
 // and Fastino GLiNER2 2.0.0. See runtime-feasibility.md for differences and limits.
+// Reference implementation notices: licenses/README.md.
 export const labels = ['person', 'address', 'phone_number', 'email', 'iban', 'payment_card', 'secret'];
 const kinds = ['name_demo', 'address', 'phone', 'email', 'iban', 'card', 'secret'];
 const wordPattern = /(?:https?:\/\/[^\s]+|www\.[^\s]+)|[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|@[a-z0-9_]+|[\p{L}\p{N}_]+(?:[-_][\p{L}\p{N}_]+)*|\S/giu;

@@ -1,4 +1,5 @@
 // Research-only local adapter for the pinned GLiNER PII graph. No input-word cache.
+// Reviewed reference implementations and notices: licenses/README.md.
 export const labels = ['name', 'location address', 'phone number', 'email address', 'iban', 'credit card', 'password', 'api key'];
 const kinds = ['name_demo', 'address', 'phone', 'email', 'iban', 'card', 'secret', 'secret'];
 const encoder = new TextEncoder();

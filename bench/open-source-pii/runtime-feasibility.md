@@ -14,6 +14,7 @@ Node implementation was also reviewed at
 `lmoe/gliner-onnx.js@c1f2937da282ab38dd61c889d1b0d54cb03c23c7` (MIT), but
 its filesystem/download dependencies and persistent cache of input words are
 unsuitable for direct reuse in Shield.
+Pinned reference implementation notices are retained in [licenses/](licenses/README.md).
 
 The browser prototype uses ORT Web 1.23.2 and local assets only. It does not cache
 input words, log prompts, download models from a hub or call an inference API.
