@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "status": "complete",
+  "started": "2026-10-05T03:48:33.535883+00:00",
+  "runner_sha256": "cd2680a3fbbccf975ea8a01b12f1a89b784fa2eaf196287ef3c85410ccd0aa06",
+  "code_sha256": {
+    "auxiliary_person.py": "1fec8e6fbf7fc12e750dd91d57476430089d860815aa83cf319349745eee1d28",
+    "auxiliary-person-protocol.md": "52b03c38ddcd9712f1a1f219540d4f76f69785074e661c7138f8c9607e2e44cd",
+    "compare_auxiliary.py": "e9bdbb4477c3fa8d37b2a951b92690d7e5a099f886aa25b71d975144672a1111",
+    "finetune.py": "bf78982bcdafd853d0adbd087eb5ef81ed82ae658a2a988dac2e5968f272e9d2",
+    "encoder.py": "f5c18222647c78f24d1c97af6557b2e44cdad68482b2b0e34855f407ed6c34fe",
+    "ner.py": "9838796e31106789b9716d188e6b40418411eabfa14a2473f0db14ccd794c699",
+    "quality.py": "149f60bf4edaaf306df2edbcba4ad79ba55925296941420640faa107b919abb0",
+    "ensemble.py": "8ff9738944eed7f2ebf8fe286d8de4fb47f00c8b11c271d05d914ae1619d02b3",
+    "compare_quality.py": "446cfe8463c1ad9d0c3f7a636adba150d55387af534965140068c9550bf4ef82"
+  },
+  "probe_sha256": "880ba3f7b00d5ad9af5d94dc897128580cec516bb53d3075e12be0dc98a7b3c5",
+  "outputs": [
+    {
+      "file": "auxiliary-general.json",
+      "sha256": "10687b37c9ee8ddafb2b0e233fced509da4600d9fbf281a3de9ccc0385d782f1",
+      "predictions_sha256": "039106a9a248726b29277fa14651279d0abb242e190fc631ea7a77c170166f99"
+    },
+    {
+      "file": "auxiliary-domain.json",
+      "sha256": "40ae4b2225c26e9f655d914fbb9548f2443217a8d4537f93211b2af41ec21464",
+      "predictions_sha256": "cee37e8c863abba4225eff4b098da8ce98f8002e29bb3bd390e266e77690847e"
+    }
+  ],
+  "finished": "2026-10-05T05:51:49.737879+00:00",
+  "training_manifest_sha256": "639487241f128030d8891595384929ad0ddfafee48e3f22a95026bf490691b48",
+  "comparison_sha256": "963f55b056352eaa378a5db89d141f344e90e92605c795f1192fc8178aff0937",
+  "recovery_runner_sha256": "e2148b9fbacdef19d539e8159a90f129f0574fa21ccbbb95ba1ba700d2d0aa98",
+  "orchestration_note": "Original runner requested a manifest field not present in Person evaluation reports and stopped after general evaluation. Preserved training and general evaluation; verified artifacts directly before the one domain evaluation. No inference rerun."
+}

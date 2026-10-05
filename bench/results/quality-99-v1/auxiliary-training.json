@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "method": "Separate three-label Person head and nine-label auxiliary entity supervision",
+  "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "split": "train",
+  "rows": 46196,
+  "chunks": 46236,
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "warm_start": {
+    "checkpoint_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+    "training_sha256": "e7d56edc7f3edcce0e0e67c7896edd7d37405fb0f8ab7798b737b6cccfcfc1ed",
+    "source_epoch": 2,
+    "optimizer": "fresh AdamW; not optimizer-state resumption"
+  },
+  "label_mode": "person",
+  "labels": [
+    "O",
+    "B",
+    "I"
+  ],
+  "auxiliary_labels": [
+    "O",
+    "B-Person",
+    "I-Person",
+    "B-Organization",
+    "I-Organization",
+    "B-Location",
+    "I-Location",
+    "B-Miscellaneous",
+    "I-Miscellaneous"
+  ],
+  "primary_initialization_exact": true,
+  "settings": {
+    "epochs": 1,
+    "seed": 45,
+    "encoder_lr": 5e-06,
+    "head_lr": 5e-05,
+    "auxiliary_weight": 0.25,
+    "batch_size": 8,
+    "accumulation": 4,
+    "weight_decay": 0.01,
+    "gradient_clip": 1.0,
+    "warmup_fraction": 0.1,
+    "threads": 3,
+    "max_seconds": 9000.0
+  },
+  "probe": false,
+  "torch": "2.8.0+cpu",
+  "independent_final_evaluation": false,
+  "checkpoints": [
+    {
+      "epoch": 1,
+      "complete_epoch": true,
+      "optimizer_steps": 1445,
+      "tokens_seen": 824869,
+      "primary_loss": 0.003570522896459487,
+      "auxiliary_loss": 0.0804690006243119,
+      "seconds": 7074.756107923924,
+      "file": "epoch-1.safetensors",
+      "sha256": "d15385f11674b2c0fd8008bae6db359fe807dc9f406c03350e5ed4f62f5b379c",
+      "bytes": 495831740,
+      "auxiliary_file": "auxiliary-epoch-1.safetensors",
+      "auxiliary_sha256": "20a36cef33c8a2f4def5ff2ea720239a727e344ee641cf1a7c2b33ff107de29f",
+      "auxiliary_bytes": 404940
+    }
+  ],
+  "code_sha256": {
+    "auxiliary_person.py": "1fec8e6fbf7fc12e750dd91d57476430089d860815aa83cf319349745eee1d28",
+    "auxiliary-person-protocol.md": "52b03c38ddcd9712f1a1f219540d4f76f69785074e661c7138f8c9607e2e44cd",
+    "finetune.py": "bf78982bcdafd853d0adbd087eb5ef81ed82ae658a2a988dac2e5968f272e9d2",
+    "encoder.py": "f5c18222647c78f24d1c97af6557b2e44cdad68482b2b0e34855f407ed6c34fe",
+    "ner.py": "9838796e31106789b9716d188e6b40418411eabfa14a2473f0db14ccd794c699"
+  }
+}

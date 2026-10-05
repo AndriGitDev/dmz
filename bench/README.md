@@ -139,3 +139,7 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [Verified private preview](private-preview-20261005.md) ties the clean `a8a6704` archive to exact package hashes, 16 browser scanner workflows and 20 separate synthetic corpus results.
 
 [Quoted credential alphabet results](quoted-credential-result.md) cover printable punctuation and Unicode in complete literals, with retained misses and exact restoration evidence.
+
+[Auxiliary Person supervision](contextual/auxiliary-person-result.md) records the completed fixed single-epoch trial, its recall regression and the decision to retain the frozen reference.
+
+The [5 October handoff](../docs/detector-handoff-2026-10-05.md) summarizes the verified preview, remaining errors and independent acceptance work.

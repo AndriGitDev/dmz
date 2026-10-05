@@ -1,0 +1,158 @@
+{
+  "split": "dev",
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "model_sha256": "d15385f11674b2c0fd8008bae6db359fe807dc9f406c03350e5ed4f62f5b379c",
+  "text_mode": "canonical",
+  "label_mode": "person",
+  "scores": {
+    "neural": {
+      "tp": 1439,
+      "fp": 48,
+      "fn": 67,
+      "precision": 0.9677202420981843,
+      "recall": 0.9555112881806109,
+      "target_met": true
+    },
+    "combined": {
+      "tp": 1460,
+      "fp": 66,
+      "fn": 46,
+      "precision": 0.9567496723460026,
+      "recall": 0.9694555112881806,
+      "target_met": true
+    }
+  },
+  "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+  "crf_threshold": 0.75,
+  "neural_threshold": 0.0,
+  "seconds": 185.52998597489204,
+  "rows": 5582,
+  "quality": {
+    "neural": {
+      "schema": 1,
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "Person"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 1439,
+        "fp": 48,
+        "fn": 67,
+        "excerpts": 5582,
+        "exact_excerpts": 5503,
+        "positive_excerpts": 1094,
+        "exact_positive_excerpts": 1029,
+        "negative_excerpts": 4488,
+        "false_positive_negative_excerpts": 14,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.9677202420981843,
+        "recall": 0.9555112881806109,
+        "f1": 0.9615770130304043,
+        "accuracy": 0.985847366535292,
+        "positive_excerpt_accuracy": 0.9405850091407678,
+        "negative_excerpt_false_positive_rate": 0.0031194295900178253,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "Person": {
+          "tp": 1439,
+          "fp": 48,
+          "fn": 67,
+          "precision": 0.9677202420981843,
+          "recall": 0.9555112881806109,
+          "f1": 0.9615770130304043
+        }
+      },
+      "strata": {
+        "unspecified": {
+          "tp": 1439,
+          "fp": 48,
+          "fn": 67,
+          "excerpts": 5582,
+          "exact_excerpts": 5503,
+          "positive_excerpts": 1094,
+          "exact_positive_excerpts": 1029,
+          "negative_excerpts": 4488,
+          "false_positive_negative_excerpts": 14,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9677202420981843,
+          "recall": 0.9555112881806109,
+          "f1": 0.9615770130304043,
+          "accuracy": 0.985847366535292,
+          "positive_excerpt_accuracy": 0.9405850091407678,
+          "negative_excerpt_false_positive_rate": 0.0031194295900178253,
+          "point_targets_met": false
+        }
+      },
+      "independent_validation": false,
+      "limitation": "Point estimates only; annotation independence, sampling, and system masking require separate evidence."
+    },
+    "combined": {
+      "schema": 1,
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "Person"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 1460,
+        "fp": 66,
+        "fn": 46,
+        "excerpts": 5582,
+        "exact_excerpts": 5503,
+        "positive_excerpts": 1094,
+        "exact_positive_excerpts": 1044,
+        "negative_excerpts": 4488,
+        "false_positive_negative_excerpts": 29,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.9567496723460026,
+        "recall": 0.9694555112881806,
+        "f1": 0.9630606860158312,
+        "accuracy": 0.985847366535292,
+        "positive_excerpt_accuracy": 0.9542961608775137,
+        "negative_excerpt_false_positive_rate": 0.0064616755793226385,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "Person": {
+          "tp": 1460,
+          "fp": 66,
+          "fn": 46,
+          "precision": 0.9567496723460026,
+          "recall": 0.9694555112881806,
+          "f1": 0.9630606860158312
+        }
+      },
+      "strata": {
+        "unspecified": {
+          "tp": 1460,
+          "fp": 66,
+          "fn": 46,
+          "excerpts": 5582,
+          "exact_excerpts": 5503,
+          "positive_excerpts": 1094,
+          "exact_positive_excerpts": 1044,
+          "negative_excerpts": 4488,
+          "false_positive_negative_excerpts": 29,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9567496723460026,
+          "recall": 0.9694555112881806,
+          "f1": 0.9630606860158312,
+          "accuracy": 0.985847366535292,
+          "positive_excerpt_accuracy": 0.9542961608775137,
+          "negative_excerpt_false_positive_rate": 0.0064616755793226385,
+          "point_targets_met": false
+        }
+      },
+      "independent_validation": false,
+      "limitation": "Point estimates only; annotation independence, sampling, and system masking require separate evidence."
+    }
+  },
+  "independent_final_evaluation": false,
+  "method": "Reused development; exact Person spans; FP32 fine-tuned encoder"
+}
