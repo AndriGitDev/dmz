@@ -121,3 +121,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [Credential assignment cases](credential-context-v3.md) test a bounded context/entropy heuristic against benign configuration and code. Unsupported credential values remain labelled positives and visible misses.
 
 [The expression follow-up](credential-expression-v3.md) measures code-reference false positives separately from literal credential values, including four remaining ambiguous errors.
+
+[Complete email shapes](email-shape-v3.md) tracks exact mailbox spans, quoted/internationalized forms, literals and explicit assignment boundaries on two pinned synthetic probes. This is development evidence, not field accuracy or deliverability validation.

@@ -49,7 +49,6 @@ type Match struct {
 var (
 	// Horizontal separators only: never join identifiers across document lines.
 	kennitalaRE = regexp.MustCompile(`[0-9]{6}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
-	emailRE     = regexp.MustCompile(`[\p{L}0-9._%+\-]+@[\p{L}0-9.\-]+\.[\p{L}]{2,}`)
 	ibanRE      = regexp.MustCompile(`(?i)IS(?:[ \t\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]){24}`)
 	cardRE      = regexp.MustCompile(`[0-9](?:[0-9 \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]{11,25})[0-9]`)
 	phoneRE     = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?)?[0-9]{3}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
@@ -108,9 +107,6 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 			if !bounded(input, loc[0], loc[1]) {
 				continue
 			}
-			if kind == Email && databaseAuthorityEmail(input, loc[0], loc[1]) {
-				continue
-			}
 			if kind == Address && (currencyAfter(input, loc[1]) || addressNumericContinuationRE.MatchString(input[loc[1]:])) {
 				continue
 			}
@@ -131,7 +127,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 	candidates = append(candidates, bearerTokens(input)...)
 	candidates = append(candidates, credentialAssignments(input)...)
 	add(ibanRE, IBAN, validateIBAN)
-	add(emailRE, Email, validateEmail)
+	candidates = append(candidates, emailMatches(input)...)
 	add(kennitalaRE, Kennitala, validateKennitala)
 	add(cardRE, Card, validateCard)
 	add(phoneRE, Phone, validatePhone)
@@ -400,25 +396,6 @@ func validatePhone(raw string) (Confidence, string, bool) {
 		return Uncertain, "local-number-shape", true
 	}
 	return "", "", false
-}
-
-func validateEmail(raw string) (Confidence, string, bool) {
-	at := strings.LastIndexByte(raw, '@')
-	local := raw[:at]
-	if strings.HasPrefix(local, ".") || strings.HasSuffix(local, ".") || strings.Contains(local, "..") {
-		return "", "", false
-	}
-	for _, label := range strings.Split(raw[at+1:], ".") {
-		if label == "" || strings.HasPrefix(label, "-") || strings.HasSuffix(label, "-") {
-			return "", "", false
-		}
-	}
-	for _, r := range raw {
-		if r > unicode.MaxASCII {
-			return Uncertain, "internationalized-email-shape", true
-		}
-	}
-	return High, "email-shape", true
 }
 
 // Canonical returns the per-session identity key for a match.

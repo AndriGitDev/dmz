@@ -1,0 +1,22 @@
+{
+  "corpus": "bench/corpus/email-shape-v3.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 56,
+  "allowed_prompts": 52,
+  "blocked_prompts": 4,
+  "benign_prompts": 17,
+  "blocked_benign_ids": [],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [],
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "email": {
+      "masked": 35,
+      "blocked": 4,
+      "exposed": 0
+    }
+  }
+}

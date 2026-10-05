@@ -4,8 +4,6 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
-	"unicode"
-	"unicode/utf8"
 )
 
 // This identifies credential-shaped values without connecting to or validating
@@ -96,21 +94,4 @@ func databaseURLs(input string) []Match {
 		}
 	}
 	return result
-}
-
-// A username@host authority is not an email address. An email inside a query
-// value or inside a more complex username is not suppressed by this rule.
-func databaseAuthorityEmail(input string, start, end int) bool {
-	if end < len(input) {
-		next, _ := utf8.DecodeRuneInString(input[end:])
-		if !unicode.IsSpace(next) && !strings.ContainsRune("/?#:.,;!)]}\"'`", next) {
-			return false
-		}
-	}
-	for _, prefix := range []string{"postgres://", "postgresql://", "mysql://"} {
-		if start >= len(prefix) && strings.EqualFold(input[start-len(prefix):start], prefix) && bounded(input, start-len(prefix), end) {
-			return true
-		}
-	}
-	return false
 }

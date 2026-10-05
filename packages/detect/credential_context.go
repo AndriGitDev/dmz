@@ -10,7 +10,7 @@ import (
 
 // Delimiters establish a config/property assignment rather than a keyword in
 // prose. Optional key quotes are checked for equality outside the regexp.
-var credentialAssignmentRE = regexp.MustCompile(`(?m)(?:^|[{},;])[ \t]*(?:(export|const|let|var)[ \t]+)?(["']?)([A-Za-z][A-Za-z0-9_\-]*)(["']?)[ \t]*[:=][ \t]*`)
+var fieldAssignmentRE = regexp.MustCompile(`(?m)(?:^|[{},;])[ \t]*(?:(export|const|let|var)[ \t]+)?(["']?)([A-Za-z][A-Za-z0-9_\-]*)(["']?)[ \t]*[:=][ \t]*`)
 
 func credentialField(key string) bool {
 	// Enforce this here instead of expanding a counted regexp repetition in
@@ -73,7 +73,7 @@ func contextualCredentialShape(value string) bool {
 
 func credentialAssignments(input string) []Match {
 	var result []Match
-	assignments := credentialAssignmentRE.FindAllStringSubmatchIndex(input, -1)
+	assignments := fieldAssignmentRE.FindAllStringSubmatchIndex(input, -1)
 	if len(assignments) == 0 {
 		return nil
 	}

@@ -160,3 +160,5 @@ Packaged synthetic report schema 3 records SHA-256 for every packaged file excep
 The schema-3 address-hyphen replay preserves all five corpora’s typed quality, masking and restoration counts from the post-NFC replay. Exploratory trained-path scanner fallbacks changed from four to one; this operational count is retained separately and is not attributed to the detector fix. All requests remained local.
 
 Schema 4 adds aggregate `scanner_fallback_reasons` for each path and corpus. The counter uses only fixed reason codes; it never saves exception messages or input text. Input rejection, asset/inference failures, worker failures, busy responses and deadlines remain operational diagnostics rather than alternate detection metrics.
+
+The [email shape and context probes](../bench/email-shape-v3.md) measure complete mailbox spans rather than suffix-only matches. Their selected synthetic improvements preserve preceding corpus results but do not establish representative email accuracy, deliverability, or full RFC/IDNA validation.

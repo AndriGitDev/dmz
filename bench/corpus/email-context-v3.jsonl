@@ -1,0 +1,17 @@
+{"id": "email-context-env", "text": "EMAIL=demo@example.invalid", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-env-suffix", "text": "SUPPORT_EMAIL=demo@example.invalid", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-export", "text": "export CONTACT_EMAIL=demo@example.invalid", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-quoted-env", "text": "EMAIL='demo@example.invalid'", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-js-single", "text": "const email='demo@example.invalid';", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-js-unknown-single", "text": "const recipient='demo@example.invalid';", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-js-double", "text": "const recipient=\"demo@example.invalid\";", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-python-single", "text": "email_address='demo@example.invalid'", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-json", "text": "{\"email\":\"demo@example.invalid\"}", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-query", "text": "https://example.invalid/?email=demo@example.invalid", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-path", "text": "https://example.invalid/contacts/demo@example.invalid", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-complex-user", "text": "https://demo@example.invalid@host.invalid/", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-context-equals-local", "text": "Contact team=one@example.invalid today.", "entities": [{"kind": "email", "value": "team=one@example.invalid"}]}
+{"id": "email-context-punct-local", "text": "Contact team!#$%&'*+-/=?^_`{|}~.one@example.invalid today.", "entities": [{"kind": "email", "value": "team!#$%&'*+-/=?^_`{|}~.one@example.invalid"}]}
+{"id": "email-context-known-key-local-prose", "text": "Contact email=demo@example.invalid today.", "entities": [{"kind": "email", "value": "email=demo@example.invalid"}]}
+{"id": "email-context-computed", "text": "const email = getContactAddress();", "entities": []}
+{"id": "email-context-host-authority", "text": "https://demo@example.invalid/path", "entities": []}

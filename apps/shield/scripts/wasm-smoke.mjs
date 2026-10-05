@@ -309,6 +309,31 @@ for (const [language, quoted, expected] of [
     assert.equal(Buffer.from(input).subarray(span.start, span.end).toString(), value);
   } else assert.equal(result.transformed, input);
 }
+for (const value of ["o'connor@example.invalid", 'team!desk@example.invalid',
+  '"team one"@example.invalid', '"team\\\"one"@example.invalid',
+  '📮@example.invalid', 'team@[IPv6:2001:db8::1]', 'team@example.xn--p1ai']) {
+  globalThis.dmzReset();
+  const input = 'Contact ' + value + ' today.';
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(result.allowed, true);
+  assert.equal(result.spans_available, true);
+  const spans = result.detected_spans.filter(span => span.kind === 'email');
+  assert.equal(spans.length, 1);
+  assert.equal(Buffer.from(input).subarray(spans[0].start, spans[0].end).toString(), value);
+  assert.ok(!result.transformed.includes(value));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+}
+for (const input of ["EMAIL=demo@example.invalid", "const recipient='demo@example.invalid';",
+  'Contact team=one@example.invalid today.']) {
+  globalThis.dmzReset();
+  const value = input.startsWith('Contact') ? 'team=one@example.invalid' : 'demo@example.invalid';
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(result.allowed, true);
+  const span = result.detected_spans.find(span => span.kind === 'email');
+  assert.ok(span);
+  assert.equal(Buffer.from(input).subarray(span.start, span.end).toString(), value);
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+}
 const jwtBlocked = JSON.parse(globalThis.dmzProcess('eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl'));
 assert.equal(jwtBlocked.allowed, false);
 assert.equal(jwtBlocked.transformed, undefined);
