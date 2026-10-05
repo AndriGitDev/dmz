@@ -52,7 +52,7 @@ The planned policy schema lives in [`packages/policy/default.json`](../packages/
 Current implementation includes a device-local, exact, case-sensitive dictionary
 of up to 32 user-entered terms. It is cleared on reset and does not provide the
 planned tenant-admin workflow, inflection or per-tenant distribution. Selected
-API-key, JWT, bearer-token, complete private-key-block and database-URL patterns are detected. Incomplete or mismatched private-key fences keep Shield’s whole-prompt masking fallback; complete blocks preserve surrounding prose.
+API-key, documented GitHub-prefix, JWT, bearer-token, complete private-key-block and database-URL patterns are detected. GitHub token shapes include longer stateless installation values; detection does not validate issuer credentials. Incomplete or mismatched private-key fences keep Shield’s whole-prompt masking fallback; complete blocks preserve surrounding prose.
 Database URI detection requires embedded password or credential-query material; plain connection references are not Secret signals. General high-entropy-token and log-line detection remain unimplemented. Strict
 core callers block secrets and most uncertain findings; Shield's owner-approved
 best-effort policy masks them locally instead.
@@ -75,7 +75,7 @@ original-byte offset mapping. Masking and restoration preserve the original text
 Unresolved combining marks, Unicode format characters (including invisible
 separators), invalid UTF-8 and ambiguous boundaries retain the review guard:
 strict-core callers block, while Shield masks the whole text under its best-effort
-policy. This is not complete evasion protection. See the
+policy. The JavaScript/WASM boundary separately rejects lone UTF-16 surrogates before lossy conversion; Shield leaves those drafts unsent. This is not complete evasion protection. See the
 [normalization implementation and evidence](detector-unicode-normalization.md).
 
 ## Surrogate and vault requirements
@@ -136,13 +136,13 @@ CI should include detector conformance tests (Go and WASM), benchmark no-regress
 
 TinyGo feasibility and WASM size/performance; source and redistribution rights for BÍN and Mannanafnaskrá; postcode/street data licence; exact model routing matrix; OpenBao tenancy and key rotation; durable audit schema; direct vs proxied API credentials; browser interface interception reliability; retention evidence for each provider/model; reproducible extension signing.
 
-## Trained Shield preview — 30 September 2026
+## Trained Shield preview — updated 5 October 2026
 
-The explicit trained-scanner build now adds the frozen contextual Person detector to supported text submissions. Original text is tokenized in a private extension offscreen worker shared across tabs, with no remote inference. Returned UTF-8 spans enter the existing per-tab Go masking session only after the original protection rules allow the prompt. Existing secret, uncertainty, Unicode and marker checks cannot be overridden by model output. Draft/route/composer/session changes invalidate an asynchronous scan. Failure, corruption, excessive input and a busy scanner block sending.
+The explicit trained-scanner build now adds the frozen contextual Person detector to supported text submissions. Original text is tokenized in a private extension offscreen worker shared across tabs, with no remote inference. Returned UTF-8 spans augment the per-tab Go best-effort masking session without weakening existing rule coverage. Draft/route/composer/session changes invalidate an asynchronous scan. Scanner failure, corruption, excessive input or a busy scanner fall back to basic local masking with a visible warning; an unavailable masking core or unsafe draft/session transition still prevents sending.
 
 This extends the prototype's detection architecture for a separate test build; the ordinary build and CI artifact remain rule-based because private weights are not checked into Git or fetched by CI. See [scanner instructions and measured scope](../apps/shield/scanner/README.md). Synthetic extension workflow checks and exact domain replay establish integration evidence, not independent real-world quality or general-release readiness. A Chrome Web Store developer account has been reported by the owner; store submission and publication have not been performed.
 
 
 ## Shield policy revision — 30 September 2026
 
-Owner-directed best-effort behavior supersedes the earlier Shield content-blocking policy: detected PII, uncertain identifiers and secrets are masked and restored locally. Names within recognized emails preserve the full email mask. Trained-scanner failure falls back to basic local masking with an explicit warning; name coverage can decrease. This does not change detector weights, thresholds, strict-core callers or baseline evaluation. Unsafe draft/session transitions, an unavailable masking core and unsupported attachment paths still cannot be sent by Shield. Unrepresentable Unicode/marker inputs are masked as a whole rather than released. No encryption claim is made for placeholders or the in-memory map.
+Owner-directed best-effort behavior supersedes the earlier Shield content-blocking policy: detected PII, uncertain identifiers and secrets are masked and restored locally. Names within recognized emails preserve the full email mask. Trained-scanner failure falls back to basic local masking with an explicit warning; name coverage can decrease. This does not change detector weights, thresholds, strict-core callers or baseline evaluation. Unsafe draft/session transitions, an unavailable masking core and unsupported attachment paths still cannot be sent by Shield. Unresolved Unicode-review and unknown-marker inputs are masked as a whole when the original text can be preserved; malformed JavaScript UTF-16 is rejected before conversion. No encryption claim is made for placeholders or the in-memory map.
