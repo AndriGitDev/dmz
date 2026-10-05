@@ -11,7 +11,7 @@ The updated trained composition on 4,996 public English excerpts has 2,701
 false spans and 3,108 missed spans. Person predictions account for 2,503 false
 spans (92.7% of all false spans). Address and phone misses account for 2,179
 missed spans (70.1% of all misses). This identifies two different problems:
-existing English name over-detection and incomplete contextual address/phone
+existing English name typing/boundary errors and incomplete contextual address/phone
 coverage. Adding a new detector while retaining every existing finding cannot
 remove the name errors.
 
@@ -29,6 +29,17 @@ build also contains a local Icelandic address vocabulary. This table does not
 measure that vocabulary's Icelandic coverage. The new phone adapter accepts
 explicit international country codes, so many national-format phone cases
 remain outside its declared behavior.
+
+The post-evaluation relation analysis records 736 false-name-to-gold-address
+overlap pairs. Of the 1,429 missed address spans, 633 partly overlap another core
+mask, one is covered under the wrong span/type, and 795 have no entity-span
+overlap. A false name may therefore be part of a real address rather than a
+benign word. The 1,444 false name spans without projected gold overlap also
+cannot be declared benign from these incomplete annotations alone. This supports
+testing name/address arbitration together rather than simply removing uncertain
+names. Whole-text abstentions are counted separately from absent masks.
+See [`current-core-error-relations.json`](../results/open-source-pii-v1/current-core-error-relations.json);
+its counts reconcile with every published per-type false/missed count.
 
 ## Next experiment
 

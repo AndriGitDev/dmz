@@ -120,6 +120,10 @@ default. GLiNER alone reaches 3,098 exact excerpts and 91.82% recall, but its
 additive composition inherits existing errors and introduces others. This does
 not validate replacing the current detector or selecting a language router.
 The separate composition attribution report explains this overlap limitation.
+`current-core-error-relations.json` further distinguishes typed boundary errors
+from absent entity-span coverage. It records 736 false-name/address overlap pairs
+and 633 partly covered address misses. These post-evaluation diagnostics do not
+change labels, qualify a policy or prove that unlabelled text is benign.
 
 OpenAI Privacy Filter was evaluated on a deterministic, outcome-independent
 512-excerpt selection. All candidates below are rescored on those same IDs;
