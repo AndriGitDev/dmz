@@ -148,7 +148,6 @@ func TestGitHubStyleSecretShape(t *testing.T) {
 	}
 	for _, value := range []string{
 		"ghp_00000000000000000000000000000000000",
-		"ghp_0000000000000000000000000000000000000",
 	} {
 		if matches := Detect(value); len(matches) != 0 {
 			t.Errorf("invalid token length %q: %#v", value, matches)

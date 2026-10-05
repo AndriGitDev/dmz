@@ -48,14 +48,18 @@ type Match struct {
 
 var (
 	// Horizontal separators only: never join identifiers across document lines.
-	kennitalaRE  = regexp.MustCompile(`[0-9]{6}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
-	emailRE      = regexp.MustCompile(`[\p{L}0-9._%+\-]+@[\p{L}0-9.\-]+\.[\p{L}]{2,}`)
-	ibanRE       = regexp.MustCompile(`(?i)IS(?:[ \t\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]){24}`)
-	cardRE       = regexp.MustCompile(`[0-9](?:[0-9 \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]{11,25})[0-9]`)
-	phoneRE      = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?)?[0-9]{3}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
-	secretRE     = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----)`)
-	jwtRE        = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
-	patronymicRE = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|burs|bur)`)
+	kennitalaRE = regexp.MustCompile(`[0-9]{6}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
+	emailRE     = regexp.MustCompile(`[\p{L}0-9._%+\-]+@[\p{L}0-9.\-]+\.[\p{L}]{2,}`)
+	ibanRE      = regexp.MustCompile(`(?i)IS(?:[ \t\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]){24}`)
+	cardRE      = regexp.MustCompile(`[0-9](?:[0-9 \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]{11,25})[0-9]`)
+	phoneRE     = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?)?[0-9]{3}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
+	secretRE    = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----)`)
+	// Provider-prefixed values are opaque, not fixed-length credentials. The
+	// 36-byte body minimum is a shape heuristic; dots include stateless ghs JWTs.
+	// Final prose periods are excluded, while internal token separators remain.
+	githubTokenRE = regexp.MustCompile(`(?:gh[pousr]_|github_pat_)[A-Za-z0-9_\-][A-Za-z0-9_.\-]{34,}[A-Za-z0-9_\-]`)
+	jwtRE         = regexp.MustCompile(`eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}`)
+	patronymicRE  = regexp.MustCompile(`\p{Lu}\p{L}{1,30}[ \t]+\p{Lu}\p{L}{1,40}(?:sonar|syni|son|dóttir|dóttur|burs|bur)`)
 	// Unknown street forms still need a postcode. Case-insensitivity applies
 	// only to the street; a locality without a comma must retain its shape.
 	addressRE = regexp.MustCompile(`(?i:\p{L}{2,41}(?:gata|götu|vegur|vegi|stræti|braut|stígur|tún|ás|slóð))` + addressSpaceRE + `+[0-9]{1,3}[A-Za-z]?(?:` + addressSpaceRE + `*[/‐‑–-]` + addressSpaceRE + `*[0-9]{1,3}[A-Za-z]?)?(?:,` + addressSpaceRE + `*[0-9]{3}(?:` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})?|` + addressSpaceRE + `+[0-9]{3}` + addressSpaceRE + `+\p{Lu}\p{L}{2,40})`)
@@ -120,6 +124,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 		}
 	}
 	add(secretRE, Secret, simple("secret-pattern"))
+	add(githubTokenRE, Secret, simple("github-token-shape"))
 	candidates = append(candidates, privateKeyBlocks(input)...)
 	candidates = append(candidates, databaseURLs(input)...)
 	add(jwtRE, Secret, simple("jwt-shape"))

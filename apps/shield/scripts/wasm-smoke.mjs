@@ -258,6 +258,23 @@ for (const input of ['140182.8858', '140182\u202f8868', '4111.1111.1111.1111',
 const blocked = JSON.parse(globalThis.dmzProcess('sk-test_key_000000000000'));
 assert.equal(blocked.allowed, false);
 assert.equal(blocked.transformed, undefined);
+for (const value of [
+  ...['ghp_', 'gho_', 'ghu_', 'ghs_', 'ghr_', 'github_pat_'].map(prefix => prefix + 'aB_'.repeat(40)),
+  'ghs_12345_eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.' + 'aB'.repeat(80) + '.' + 'cD'.repeat(420),
+]) {
+  globalThis.dmzReset();
+  const input = `Prófun 🙂: ${value}.`;
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(result.allowed, true);
+  assert.equal(result.spans_available, true);
+  assert.equal(result.detected_spans.length, 1);
+  const span = result.detected_spans[0];
+  assert.equal(span.kind, 'secret');
+  assert.equal(Buffer.from(input).subarray(span.start, span.end).toString(), value);
+  assert.ok(!result.transformed.includes(value));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
+}
 const jwtBlocked = JSON.parse(globalThis.dmzProcess('eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl'));
 assert.equal(jwtBlocked.allowed, false);
 assert.equal(jwtBlocked.transformed, undefined);

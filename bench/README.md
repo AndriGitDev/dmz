@@ -115,3 +115,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [Database URI regression cases](database-url-v3.md) separate embedded credentials from non-secret connection references and verify full-span masking and restoration on synthetic examples.
 
 [Bearer credential regression cases](bearer-v3.md) check complete opaque-token characters, explicit header context, response challenges and exact restoration while documenting the remaining prose heuristics.
+
+[GitHub token regression cases](github-token-v3.md) cover documented provider prefixes and longer stateless installation-token shapes, with complete masking and restoration checks.
