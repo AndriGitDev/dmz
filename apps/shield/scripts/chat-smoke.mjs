@@ -76,6 +76,24 @@ async function clickShieldControl(page, attribute) {
   } finally { await cdp.detach(); }
 }
 
+async function shieldStatusHTML(page) {
+  const cdp = await browser.newCDPSession(page);
+  try {
+    const { root: dom } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    function find(node) {
+      const at = node.attributes?.indexOf('role') ?? -1;
+      if (at >= 0 && node.attributes[at + 1] === 'status') return node;
+      for (const child of [...(node.children ?? []), ...(node.shadowRoots ?? [])]) {
+        const found = find(child);
+        if (found) return found;
+      }
+    }
+    const node = find(dom);
+    assert.ok(node, 'Shield status missing');
+    return (await cdp.send('DOM.getOuterHTML', { backendNodeId: node.backendNodeId })).outerHTML;
+  } finally { await cdp.detach(); }
+}
+
 try {
   browser = await chromium.launchPersistentContext(profile, {
     headless: true,
@@ -359,6 +377,25 @@ try {
     assert.ok(sent.every(text => !text.includes('140182') && !text.includes('próf') && !text.includes('pro\u0301f')));
     assert.ok(!(await variants.locator('#responses').textContent()).includes('140182'), 'restored identifier reached host DOM');
     assert.equal(await variants.locator('[data-dmz-restored="true"]').last().evaluate(frame => frame.contentDocument), null);
+    for (const code of [0xd800, 0xdfff]) {
+      await variants.locator(editor).evaluate((element, code) => {
+        window.invalidDraft = 'demo ' + String.fromCharCode(code) + ' demo@example.invalid';
+        if (element instanceof HTMLTextAreaElement) element.value = window.invalidDraft;
+        else element.textContent = window.invalidDraft;
+        element.dispatchEvent(new InputEvent('input', { bubbles: true, data: window.invalidDraft }));
+      }, code);
+      await variants.locator(send).click();
+      assert.ok((await shieldStatusHTML(variants)).includes('Sending stöðvuð.'), 'lossy input was not rejected');
+      assert.equal(await variants.evaluate(() => window.sent.length), 3, 'malformed UTF-16 draft was submitted');
+      assert.equal(await variants.locator(editor).evaluate(element =>
+        (element instanceof HTMLTextAreaElement ? element.value : element.innerText) === window.invalidDraft), true,
+      'rejection changed the original draft');
+    }
+    const recovered = '🙂 demo@example.invalid';
+    await variants.locator(editor).fill(recovered);
+    await variants.locator(send).click();
+    await variants.waitForFunction(() => window.sent.length === 4);
+    await variants.frameLocator('[data-dmz-restored="true"]').last().getByText(recovered, { exact: true }).waitFor();
     await variants.close();
   }
   assert.deepEqual(errors, []);

@@ -64,3 +64,20 @@ complete masking coverage, and every allowed result restores exactly.
 [Aggregate replay](../bench/results/quality-99-v1/system-typed-after-nfc.json) and
 the preserved pre-change reports record these results. They do not establish the
 99% acceptance target or representative performance on real documents.
+
+At the JavaScript/WASM boundary, a lone UTF-16 surrogate cannot be represented
+losslessly as a Go UTF-8 string. The bridge now checks the original JavaScript
+value before conversion and returns a fixed error for processing requests with
+such input. Shield leaves that malformed draft unchanged and unsent. Valid
+surrogate pairs, including emoji, remain supported. A malformed response is
+returned unchanged, retaining any markers rather than guessing a restoration.
+Tenant-term validation also checks decoded JavaScript JSON values so escaped lone
+surrogates cannot silently become replacement characters or reset existing maps.
+This transport-integrity guard is separate from the whole-text masking policy for
+valid Unicode that the detector cannot safely segment.
+
+WASM tests cover all three processing entry points, raw and JSON-escaped malformed
+terms, unchanged malformed-response pass-through and preservation of existing maps.
+Actual Chromium fixtures for both chat sites confirm that malformed drafts remain
+unchanged and unsent, then valid emoji text sends and restores successfully. The
+existing settings, restoration isolation and network/race workflows also pass.

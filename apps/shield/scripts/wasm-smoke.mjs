@@ -14,6 +14,27 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
+// JavaScript can contain unpaired UTF-16 surrogates. The Go string bridge would
+// replace them before detection, so reject processing instead of silently
+// changing the draft; restoration must pass such a response through unchanged.
+assert.equal(JSON.parse(globalThis.dmzSetTenantTerms('["Gervi term"]')).ok, true);
+const preservedMarker = JSON.parse(globalThis.dmzProcess('demo@example.invalid')).transformed;
+for (const value of ['\ud800', '\udfff', 'before\ud800after']) {
+  for (const result of [globalThis.dmzProcess(value), globalThis.dmzProcessWithNames(value, '[]'),
+    globalThis.dmzProcessBestEffort(value, '[]')]) {
+    assert.equal(JSON.parse(result).error, 'invalid Unicode input');
+  }
+  assert.equal(globalThis.dmzRestore(value), value);
+  assert.equal(globalThis.dmzRestore(value + preservedMarker), value + preservedMarker);
+  assert.ok(JSON.parse(globalThis.dmzSetTenantTerms(JSON.stringify(['demo' + value]))).error);
+  assert.ok(JSON.parse(globalThis.dmzSetTenantTerms('["demo' + value + '"]')).error);
+  assert.equal(globalThis.dmzRestore(preservedMarker), 'demo@example.invalid', 'rejection reset existing mappings');
+}
+assert.ok(JSON.parse(globalThis.dmzProcess('Gervi term')).transformed.startsWith('⟦TERM-'));
+assert.equal(JSON.parse(globalThis.dmzProcessBestEffort('🙂', '[]')).transformed, '🙂');
+assert.equal(JSON.parse(globalThis.dmzSetTenantTerms(JSON.stringify(['demo🙂', 'demo\ufffd']))).ok, true);
+globalThis.dmzReset();
+
 for (const value of ['synthetic_token/with+padding==', 'a/b+c~d==', 'synthetic.token.', 'Q']) {
   globalThis.dmzReset();
   const prefix = 'Prófun 🙂\r\nAuthorization: Bearer ', input = prefix + value + '\r\n';
