@@ -66,6 +66,23 @@ for (const value of [
   assert.ok(!result.transformed.includes('synthetic') && !result.transformed.includes('placeholder'));
   assert.equal(globalThis.dmzRestore(result.transformed), input);
 }
+for (const suffix of ['!#@%&*?:,;()[]{}<>', 'é', 'e\u0301', 'þ🙂']) {
+  globalThis.dmzReset();
+  const value = 'X7a9Q2b8N4c6R3d5T1e0V' + suffix;
+  const prefix = 'Prófun 🙂\napi_key="', input = prefix + value + '"';
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, [{start: Buffer.byteLength(prefix),
+    end: Buffer.byteLength(prefix + value), kind: 'secret'}]);
+  assert.ok(!result.transformed.includes(value));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
+  const again = JSON.parse(globalThis.dmzProcessBestEffort(result.transformed, '[]'));
+  assert.equal(again.transformed, result.transformed);
+  assert.equal(globalThis.dmzRestore(again.transformed), input);
+}
+globalThis.dmzReset();
+
 // Issued markers must not act like whitespace that moves a credential field
 // onto its next prose token during a later scan.
 for (const input of ['AuthoriZAtion:BeArer 0 0',

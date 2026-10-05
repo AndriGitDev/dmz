@@ -89,3 +89,12 @@ The later [expression probe](credential-expression-v3.md) exposes false positive
 on variable references and adds explicit programming-language fence context.
 Quoted literals and configuration values remain covered; four unfenced reference
 errors remain visible. The original corpus and six known misses are unchanged.
+
+The later [quoted-literal extension](quoted-credential-protocol.md) broadens only
+complete quoted values to printable non-whitespace punctuation and Unicode,
+retaining the length, ASCII letter/digit and entropy guards and excluding escape
+and interpolation syntax. Its native result on this unchanged corpus is now
+TP 21, FP 0, FN 4: punctuation and non-ASCII suffixes are covered. Short,
+low-entropy, letters-only and unsupported prose cases remain misses. The
+current native snapshots and exposure gate reflect those four retained misses;
+earlier packaged reports above remain historical evidence.

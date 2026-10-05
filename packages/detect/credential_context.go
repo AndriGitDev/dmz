@@ -51,19 +51,21 @@ func credentialEntropy(value string) float64 {
 	return entropy
 }
 
-func contextualCredentialShape(value string) bool {
-	if len(value) < 20 {
+func contextualCredentialShape(value string, quoted bool) bool {
+	if len(value) < 20 || !utf8.ValidString(value) || strings.Contains(value, "{{") || strings.Contains(value, "}}") {
 		return false
 	}
 	letter, digit := false, false
-	for i := 0; i < len(value); i++ {
-		c := value[i]
+	for _, c := range value {
 		switch {
 		case c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z':
 			letter = true
 		case c >= '0' && c <= '9':
 			digit = true
-		case strings.ContainsRune("_./+=~-", rune(c)):
+		case strings.ContainsRune("_./+=~-", c):
+		case quoted && unicode.IsPrint(c) && !unicode.IsSpace(c) && !strings.ContainsRune("\"'\\$`", c):
+			// A complete quoted literal supplies its own boundary. Keep escapes,
+			// interpolation syntax and nonprinting characters outside this rule.
 		default:
 			return false // Never accept only the supported prefix of a value.
 		}
@@ -87,6 +89,7 @@ func credentialAssignments(input string) []Match {
 			continue
 		}
 		start, end := loc[1], loc[1]
+		quoted := false
 		if start == len(input) {
 			continue
 		}
@@ -94,6 +97,7 @@ func credentialAssignments(input string) []Match {
 			continue // Equality and compound operators are not assignments here.
 		}
 		if quote := input[start]; quote == '\'' || quote == '"' {
+			quoted = true
 			start++
 			end = start
 			for end < len(input) && input[end] != quote && input[end] != '\r' && input[end] != '\n' {
@@ -128,7 +132,7 @@ func credentialAssignments(input string) []Match {
 		}
 		if awsID && contextualAWSAccessKey(input[start:end]) {
 			result = append(result, Match{start, end, Secret, Uncertain, "aws-access-key-field-shape"})
-		} else if generic && contextualCredentialShape(input[start:end]) {
+		} else if generic && contextualCredentialShape(input[start:end], quoted) {
 			result = append(result, Match{start, end, Secret, Uncertain, "credential-assignment-entropy"})
 		}
 	}

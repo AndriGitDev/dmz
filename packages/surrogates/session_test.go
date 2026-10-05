@@ -229,6 +229,25 @@ func TestFormattingVariantsRoundTripAndResubmit(t *testing.T) {
 	}
 }
 
+func TestQuotedCredentialSymbolsRestoreAndResubmit(t *testing.T) {
+	for _, suffix := range []string{"!#@%&*?:,;()[]{}<>", "é", "e\u0301", "þ🙂"} {
+		value := "X7a9Q2b8N4c6R3d5T1e0V" + suffix
+		input := "Prófun 🙂\napi_key=\"" + value + "\""
+		s := NewSession()
+		if s.Process(input).Allowed {
+			t.Fatal("strict processing accepted uncertain credential")
+		}
+		out := s.ProcessBestEffort(input, nil)
+		if !out.Allowed || strings.Contains(out.Transformed, value) || s.Restore(out.Transformed) != input {
+			t.Fatalf("quoted credential did not mask and restore: %#v", out)
+		}
+		again := s.ProcessBestEffort(out.Transformed, nil)
+		if !again.Allowed || again.Transformed != out.Transformed || s.Restore(again.Transformed) != input {
+			t.Fatalf("quoted credential marker changed on resubmission: %#v", again)
+		}
+	}
+}
+
 func TestIssuedMarkersDoNotBecomeCredentialWhitespace(t *testing.T) {
 	for _, input := range []string{
 		"AuthoriZAtion:BeArer 0 0",

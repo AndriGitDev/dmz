@@ -53,12 +53,31 @@ func TestCredentialEntropyKnownDistributions(t *testing.T) {
 }
 
 func TestCredentialUnsupportedSuffixDoesNotEmitPartialSecret(t *testing.T) {
-	for _, suffix := range []string{"!suffix", "#suffix", "é", "\\\"suffix"} {
+	for _, suffix := range []string{"$suffix", "`suffix", "{{suffix}}", " with space", "\x00", "\u200b", "\\\"suffix"} {
 		input := "api_key=\"X7a9Q2b8N4c6R3d5T1e0V" + suffix + "\""
 		for _, m := range Detect(input) {
 			if m.Kind == Secret {
 				t.Fatalf("unsupported full value became a partial credential: %#v", m)
 			}
+		}
+	}
+}
+
+func TestQuotedCredentialSymbolsKeepCompleteOriginalSpan(t *testing.T) {
+	for _, suffix := range []string{"!#@%&*?:,;()[]{}<>", "é", "e\u0301", "þ🙂"} {
+		value := "X7a9Q2b8N4c6R3d5T1e0V" + suffix
+		for _, quote := range []string{"\"", "'"} {
+			prefix := "Prófun 🙂\napi_key=" + quote
+			input := prefix + value + quote
+			got := Detect(input)
+			if len(got) != 1 || got[0].Kind != Secret || got[0].Start != len(prefix) || got[0].End != len(prefix)+len(value) {
+				t.Fatalf("quoted literal lost its complete original span: %#v", got)
+			}
+		}
+	}
+	for _, suffix := range []string{"!", "é", "🙂"} {
+		if got := credentialAssignments("api_key=X7a9Q2b8N4c6R3d5T1e0V" + suffix); len(got) != 0 {
+			t.Fatalf("quoted-only extension changed unquoted grammar: %#v", got)
 		}
 	}
 }
