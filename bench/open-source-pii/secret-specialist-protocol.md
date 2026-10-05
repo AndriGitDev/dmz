@@ -24,3 +24,26 @@ diagnostic/model-selection evidence for this new candidate, not newly blind
 validation. Report Secret-only standalone quality and full-scope additive
 composition, retaining all existing DMZ matches on overlaps. If useful, design a
 separate specialist probe before changing product rules.
+
+The 102-excerpt vendor-token probe is now calibration data: Gitleaks finds all
+72 positive spans but also flags 11/30 negatives; the existing core finds 16/72
+and has no false positives. These repeated fabricated values cover 18 token
+families, not 72 independent secrets or a field distribution.
+
+Next bounded adapter, fixed before implementation: extract the 17 context-free
+rules covering those families (Stripe's one rule covers two fixture families).
+Keep their original token bodies, entropy thresholds and applicable global
+secret allowlists. Remove only the trailing source-code delimiter expression;
+DMZ will check whole-token Unicode boundaries and reject continuations through
+identifier characters, hyphens, plus/slash/equal signs or dotted identifiers.
+This permits ordinary English sentence punctuation without accepting partial
+tokens embedded in longer identifiers. No generic keyword rule, client-ID rule,
+path filter, archive/encoding handling, source-code suppression comment, network
+verification or upstream runtime is included.
+
+Preserve existing non-secret detections on overlap. Existing broader Secret
+matches keep their normal precedence. Runtime uses generated public rule data
+and standard Go regexp/entropy code, with upstream MIT notice included. Verify
+native/WASM spans, exact restoration, the existing synthetic recall gates and
+a new seeded specialist follow-up after the rule/boundary choice is fixed.
+Do not retune thresholds or add rules based on that follow-up and call it blind.

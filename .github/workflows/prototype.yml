@@ -14,6 +14,7 @@ jobs:
       - run: go test ./...
       - run: ./scripts/check-lexicon.sh
       - run: ./scripts/check-phone-metadata.sh
+      - run: python3 tools/vendor-secrets/generate.py --check
       - run: python3 -m unittest discover -s bench/datasets -p 'test_*.py'
       - run: python3 -m pip install -r bench/contextual/requirements.txt
       - run: python3 -m unittest discover -s bench/contextual -p 'test_*.py'
