@@ -142,6 +142,8 @@ try {
     'sk-test_key_000000000000',
     'npm_aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL3oR6',
     'pypi-AgEIcHlwaS5vcmc' + 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(2).slice(0, 50),
+    'pypi-AgEIcHlwaS5vcmc' + 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(3) + '-555-0148-',
+    'pypi-AgEIcHlwaS5vcmc' + 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(3) + '-4111111111111111-',
     '+44 20 7946 0958',
   ];
   const structuredPrompt = structuredValues.join('; ');

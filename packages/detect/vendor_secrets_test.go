@@ -104,3 +104,25 @@ func TestVendorSecretPreservesExistingEntities(t *testing.T) {
 		t.Fatalf("vendor supplement displaced tenant term: %#v", got)
 	}
 }
+
+func TestVendorSecretCoversContainedNumericFragments(t *testing.T) {
+	body := strings.Repeat("aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL", 3)
+	for _, fragment := range []string{"555-0148", "4111111111111111", "140182-8858", "IS460000000000000000000000"} {
+		value := "pypi-AgEIcHlwaS5vcmc" + body + "-" + fragment + "-"
+		input := "Rotate [" + value + "]."
+		got := Detect(input)
+		if len(got) != 1 || got[0].Kind != Secret || input[got[0].Start:got[0].End] != value {
+			t.Fatalf("numeric fragment suppressed complete token: %#v", got)
+		}
+		// A substring configured as a term must not expose the rest of a token.
+		got = DetectWithTerms(value, []string{fragment})
+		if len(got) != 1 || got[0].Kind != Secret || got[0].Start != 0 || got[0].End != len(value) {
+			t.Fatal("contained tenant term left token body exposed")
+		}
+	}
+	value := "pypi-AgEIcHlwaS5vcmc" + body
+	got := Detect("555-0148; " + value)
+	if len(got) != 2 || got[0].Kind != Phone || got[1].Kind != Secret {
+		t.Fatalf("separate numeric entity was displaced: %#v", got)
+	}
+}

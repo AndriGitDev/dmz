@@ -47,3 +47,13 @@ and standard Go regexp/entropy code, with upstream MIT notice included. Verify
 native/WASM spans, exact restoration, the existing synthetic recall gates and
 a new seeded specialist follow-up after the rule/boundary choice is fixed.
 Do not retune thresholds or add rules based on that follow-up and call it blind.
+
+Post-evaluation correctness fix, 5 October: code review prompted a separate
+fabricated PyPI-token probe containing phone/card-shaped substrings. The original
+overlap rule masked only those fragments and exposed the token remainder. A
+complete validated vendor token now outranks strictly contained findings,
+including substring tenant terms. Surrounding/equal-span entities and explicit
+review signals retain precedence. This is a derived regression fix, not a new
+blind accuracy result; keep the earlier calibration/follow-up unchanged and
+repeat their checks plus native/WASM/browser and core replay guards. No rule,
+entropy threshold or label was tuned from the follow-up.

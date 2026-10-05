@@ -15,7 +15,13 @@ Notion, npm, PyPI, SendGrid, Shopify, Slack, Stripe and Twilio token families.
 It preserves token-body regexes, entropy thresholds, keyword prefilters and
 applicable global secret allowlists. The original trailing code delimiter is
 replaced with DMZ's whole-token boundary checks so sentence punctuation is
-supported. Original non-secret matches retain precedence. The runtime does not
+supported. Original non-secret matches retain precedence except findings
+strictly contained inside a complete validated vendor token: masking
+only a phone/card/IBAN/kennitala-shaped fragment would expose the remainder of
+that credential. The same applies to a configured term that matches only a
+substring of the token. Surrounding or equal-span entities, including an
+explicitly configured whole-token tenant term, retain precedence. Explicit
+review signals are never displaced. The runtime does not
 import Gitleaks or any new Go module dependency.
 
 The PyPI rule's `{50,1000}` repetition overflows the TinyGo WASM regexp

@@ -227,6 +227,15 @@ func vendorSecrets(input string, existing []Match) []Match {
 			protected := false
 			for _, old := range existing {
 				if old.Kind != Secret && start < old.End && old.Start < end {
+					// An opaque vendor token can contain a phone/card/ID-shaped
+					// substring. Keeping only that fragment would expose the rest
+					// of the credential. Prefer the complete validated token over
+					// strictly contained findings, while preserving surrounding or
+					// equal-span entities and explicit review signals.
+					contained := start <= old.Start && old.End <= end && (start < old.Start || old.End < end)
+					if contained && old.Kind != UnicodeReview {
+						continue
+					}
 					protected = true
 					break
 				}

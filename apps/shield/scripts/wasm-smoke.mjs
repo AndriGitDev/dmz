@@ -28,6 +28,16 @@ for (const n of [49, 50, 1000, 1001]) {
   if (spans.length) assert.deepEqual(spans[0], { start: Buffer.byteLength('🙂 ['), end: Buffer.byteLength('🙂 [' + value), kind: 'secret' });
   assert.equal(globalThis.dmzRestore(result.transformed), text);
 }
+// Numeric substrings inside a recognized opaque token must not leave its body exposed.
+for (const fragment of ['555-0148', '4111111111111111', '140182-8858', 'IS460000000000000000000000']) {
+  const value = 'pypi-AgEIcHlwaS5vcmc' + 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(3) + '-' + fragment + '-';
+  const text = `🙂 [${value}].`;
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, [{start: Buffer.byteLength('🙂 ['), end: Buffer.byteLength('🙂 [' + value), kind: 'secret'}]);
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+}
 globalThis.dmzReset();
 // The optional typed adapter retains byte offsets, exact inverses and existing
 // structured matches. It does not enable a supplemental model by itself.
