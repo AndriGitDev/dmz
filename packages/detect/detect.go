@@ -123,6 +123,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 	add(githubTokenRE, Secret, simple("github-token-shape"))
 	candidates = append(candidates, privateKeyBlocks(input)...)
 	candidates = append(candidates, databaseURLs(input)...)
+	candidates = append(candidates, presignedURLs(input)...)
 	add(jwtRE, Secret, simple("jwt-shape"))
 	candidates = append(candidates, bearerTokens(input)...)
 	candidates = append(candidates, credentialAssignments(input)...)

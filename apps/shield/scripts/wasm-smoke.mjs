@@ -62,6 +62,23 @@ for (const value of [
   assert.ok(!result.transformed.includes('synthetic') && !result.transformed.includes('placeholder'));
   assert.equal(globalThis.dmzRestore(result.transformed), input);
 }
+// A presigned URL is one credential, including path, query and inner identifiers.
+for (const tail of ['', '&opaque=a(b).,!']) {
+  const value = 'https://objects.example/audit@example.test?X-Amz-Algorithm=AWS4-HMAC-SHA256' +
+    '&X-Amz-Credential=ASIAA1B2C3D4E5F6G7H8%2F20261005%2Feu-west-1%2Fs3%2Faws4_request' +
+    '&X-Amz-Signature=' + 'a1'.repeat(32) + tail;
+  const prefix = 'Prófun 🙂: (', input = prefix + value + ')';
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, [{ start: Buffer.byteLength(prefix),
+    end: Buffer.byteLength(prefix + value), kind: 'secret' }]);
+  assert.ok(!result.transformed.includes('objects.example') && !result.transformed.includes('X-Amz'));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
+}
+globalThis.dmzReset();
+
 const wrappedCredential = '(postgresql:///db?password=synthetic))';
 const wrappedResult = JSON.parse(globalThis.dmzProcessBestEffort(wrappedCredential, '[]'));
 assert.deepEqual(wrappedResult.detected_spans, [{ start: 1, end: Buffer.byteLength(wrappedCredential) - 1, kind: 'secret' }]);

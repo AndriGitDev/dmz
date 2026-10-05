@@ -1,0 +1,18 @@
+{
+  "corpus": "bench/corpus/presigned-url-v3.jsonl",
+  "detector": "dmz",
+  "samples": 40,
+  "scoring": "exact span and entity type",
+  "per_kind": {
+    "secret": {
+      "tp": 30,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1
+    }
+  },
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ]
+}
