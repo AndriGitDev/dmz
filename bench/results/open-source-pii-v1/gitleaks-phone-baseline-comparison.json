@@ -1,0 +1,902 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "limitation": "Authored synthetic diagnostics; reused comparisons and cached composition, not field acceptance.",
+  "source_sha256": {
+    "gitleaks-initial-comparison.json": "71f58a0576c66442702a3eb3e6d6967fe0f33cb3f79da83c9db423cf6087405a"
+  },
+  "runs": {
+    "frozen-basic": {
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "address",
+        "card",
+        "email",
+        "iban",
+        "kennitala",
+        "name_demo",
+        "phone",
+        "secret",
+        "tenant_dictionary"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 36,
+        "fp": 2,
+        "fn": 48,
+        "excerpts": 100,
+        "exact_excerpts": 56,
+        "positive_excerpts": 71,
+        "exact_positive_excerpts": 27,
+        "negative_excerpts": 29,
+        "false_positive_negative_excerpts": 0,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.9473684210526315,
+        "recall": 0.42857142857142855,
+        "f1": 0.5901639344262295,
+        "accuracy": 0.56,
+        "positive_excerpt_accuracy": 0.38028169014084506,
+        "negative_excerpt_false_positive_rate": 0.0,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "address": {
+          "tp": 2,
+          "fp": 1,
+          "fn": 10,
+          "precision": 0.6666666666666666,
+          "recall": 0.16666666666666666,
+          "f1": 0.26666666666666666
+        },
+        "card": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "email": {
+          "tp": 11,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "iban": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "kennitala": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "name_demo": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 36,
+          "precision": 1.0,
+          "recall": 0.12195121951219512,
+          "f1": 0.21739130434782608
+        },
+        "phone": {
+          "tp": 7,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.875,
+          "recall": 0.7777777777777778,
+          "f1": 0.8235294117647058
+        },
+        "secret": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "tenant_dictionary": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "strata": {
+        "english-general": {
+          "tp": 6,
+          "fp": 1,
+          "fn": 27,
+          "excerpts": 40,
+          "exact_excerpts": 15,
+          "positive_excerpts": 30,
+          "exact_positive_excerpts": 5,
+          "negative_excerpts": 10,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.8571428571428571,
+          "recall": 0.18181818181818182,
+          "f1": 0.3,
+          "accuracy": 0.375,
+          "positive_excerpt_accuracy": 0.16666666666666666,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "english-work": {
+          "tp": 17,
+          "fp": 0,
+          "fn": 14,
+          "excerpts": 36,
+          "exact_excerpts": 24,
+          "positive_excerpts": 24,
+          "exact_positive_excerpts": 12,
+          "negative_excerpts": 12,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 1.0,
+          "recall": 0.5483870967741935,
+          "f1": 0.7083333333333334,
+          "accuracy": 0.6666666666666666,
+          "positive_excerpt_accuracy": 0.5,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "mixed-is-en": {
+          "tp": 13,
+          "fp": 1,
+          "fn": 7,
+          "excerpts": 24,
+          "exact_excerpts": 17,
+          "positive_excerpts": 17,
+          "exact_positive_excerpts": 10,
+          "negative_excerpts": 7,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9285714285714286,
+          "recall": 0.65,
+          "f1": 0.7647058823529411,
+          "accuracy": 0.7083333333333334,
+          "positive_excerpt_accuracy": 0.5882352941176471,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        }
+      }
+    },
+    "frozen-trained": {
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "address",
+        "card",
+        "email",
+        "iban",
+        "kennitala",
+        "name_demo",
+        "phone",
+        "secret",
+        "tenant_dictionary"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 67,
+        "fp": 10,
+        "fn": 17,
+        "excerpts": 100,
+        "exact_excerpts": 80,
+        "positive_excerpts": 71,
+        "exact_positive_excerpts": 53,
+        "negative_excerpts": 29,
+        "false_positive_negative_excerpts": 2,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.8701298701298701,
+        "recall": 0.7976190476190477,
+        "f1": 0.8322981366459627,
+        "accuracy": 0.8,
+        "positive_excerpt_accuracy": 0.7464788732394366,
+        "negative_excerpt_false_positive_rate": 0.06896551724137931,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "address": {
+          "tp": 2,
+          "fp": 1,
+          "fn": 10,
+          "precision": 0.6666666666666666,
+          "recall": 0.16666666666666666,
+          "f1": 0.26666666666666666
+        },
+        "card": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "email": {
+          "tp": 11,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "iban": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "kennitala": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "name_demo": {
+          "tp": 36,
+          "fp": 8,
+          "fn": 5,
+          "precision": 0.8181818181818182,
+          "recall": 0.8780487804878049,
+          "f1": 0.8470588235294118
+        },
+        "phone": {
+          "tp": 7,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.875,
+          "recall": 0.7777777777777778,
+          "f1": 0.8235294117647058
+        },
+        "secret": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "tenant_dictionary": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "strata": {
+        "english-general": {
+          "tp": 21,
+          "fp": 7,
+          "fn": 12,
+          "excerpts": 40,
+          "exact_excerpts": 26,
+          "positive_excerpts": 30,
+          "exact_positive_excerpts": 17,
+          "negative_excerpts": 10,
+          "false_positive_negative_excerpts": 1,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.75,
+          "recall": 0.6363636363636364,
+          "f1": 0.6885245901639344,
+          "accuracy": 0.65,
+          "positive_excerpt_accuracy": 0.5666666666666667,
+          "negative_excerpt_false_positive_rate": 0.1,
+          "point_targets_met": false
+        },
+        "english-work": {
+          "tp": 27,
+          "fp": 2,
+          "fn": 4,
+          "excerpts": 36,
+          "exact_excerpts": 31,
+          "positive_excerpts": 24,
+          "exact_positive_excerpts": 20,
+          "negative_excerpts": 12,
+          "false_positive_negative_excerpts": 1,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9310344827586207,
+          "recall": 0.8709677419354839,
+          "f1": 0.9,
+          "accuracy": 0.8611111111111112,
+          "positive_excerpt_accuracy": 0.8333333333333334,
+          "negative_excerpt_false_positive_rate": 0.08333333333333333,
+          "point_targets_met": false
+        },
+        "mixed-is-en": {
+          "tp": 19,
+          "fp": 1,
+          "fn": 1,
+          "excerpts": 24,
+          "exact_excerpts": 23,
+          "positive_excerpts": 17,
+          "exact_positive_excerpts": 16,
+          "negative_excerpts": 7,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.95,
+          "recall": 0.95,
+          "f1": 0.95,
+          "accuracy": 0.9583333333333334,
+          "positive_excerpt_accuracy": 0.9411764705882353,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        }
+      }
+    },
+    "gitleaks-alone": {
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "address",
+        "card",
+        "email",
+        "iban",
+        "kennitala",
+        "name_demo",
+        "phone",
+        "secret",
+        "tenant_dictionary"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 82,
+        "excerpts": 100,
+        "exact_excerpts": 31,
+        "positive_excerpts": 71,
+        "exact_positive_excerpts": 2,
+        "negative_excerpts": 29,
+        "false_positive_negative_excerpts": 0,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 1.0,
+        "recall": 0.023809523809523808,
+        "f1": 0.046511627906976744,
+        "accuracy": 0.31,
+        "positive_excerpt_accuracy": 0.028169014084507043,
+        "negative_excerpt_false_positive_rate": 0.0,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "address": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 12,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "card": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 3,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "email": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 11,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "iban": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "kennitala": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "name_demo": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 41,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "phone": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 9,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "secret": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.3333333333333333,
+          "f1": 0.5
+        },
+        "tenant_dictionary": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "strata": {
+        "english-general": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 33,
+          "excerpts": 40,
+          "exact_excerpts": 10,
+          "positive_excerpts": 30,
+          "exact_positive_excerpts": 0,
+          "negative_excerpts": 10,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.25,
+          "positive_excerpt_accuracy": 0.0,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "english-work": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 29,
+          "excerpts": 36,
+          "exact_excerpts": 14,
+          "positive_excerpts": 24,
+          "exact_positive_excerpts": 2,
+          "negative_excerpts": 12,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 1.0,
+          "recall": 0.06451612903225806,
+          "f1": 0.12121212121212122,
+          "accuracy": 0.3888888888888889,
+          "positive_excerpt_accuracy": 0.08333333333333333,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "mixed-is-en": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 20,
+          "excerpts": 24,
+          "exact_excerpts": 7,
+          "positive_excerpts": 17,
+          "exact_positive_excerpts": 0,
+          "negative_excerpts": 7,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.2916666666666667,
+          "positive_excerpt_accuracy": 0.0,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        }
+      }
+    },
+    "gitleaks-plus-basic": {
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "address",
+        "card",
+        "email",
+        "iban",
+        "kennitala",
+        "name_demo",
+        "phone",
+        "secret",
+        "tenant_dictionary"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 36,
+        "fp": 2,
+        "fn": 48,
+        "excerpts": 100,
+        "exact_excerpts": 56,
+        "positive_excerpts": 71,
+        "exact_positive_excerpts": 27,
+        "negative_excerpts": 29,
+        "false_positive_negative_excerpts": 0,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.9473684210526315,
+        "recall": 0.42857142857142855,
+        "f1": 0.5901639344262295,
+        "accuracy": 0.56,
+        "positive_excerpt_accuracy": 0.38028169014084506,
+        "negative_excerpt_false_positive_rate": 0.0,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "address": {
+          "tp": 2,
+          "fp": 1,
+          "fn": 10,
+          "precision": 0.6666666666666666,
+          "recall": 0.16666666666666666,
+          "f1": 0.26666666666666666
+        },
+        "card": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "email": {
+          "tp": 11,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "iban": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "kennitala": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "name_demo": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 36,
+          "precision": 1.0,
+          "recall": 0.12195121951219512,
+          "f1": 0.21739130434782608
+        },
+        "phone": {
+          "tp": 7,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.875,
+          "recall": 0.7777777777777778,
+          "f1": 0.8235294117647058
+        },
+        "secret": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "tenant_dictionary": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "strata": {
+        "english-general": {
+          "tp": 6,
+          "fp": 1,
+          "fn": 27,
+          "excerpts": 40,
+          "exact_excerpts": 15,
+          "positive_excerpts": 30,
+          "exact_positive_excerpts": 5,
+          "negative_excerpts": 10,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.8571428571428571,
+          "recall": 0.18181818181818182,
+          "f1": 0.3,
+          "accuracy": 0.375,
+          "positive_excerpt_accuracy": 0.16666666666666666,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "english-work": {
+          "tp": 17,
+          "fp": 0,
+          "fn": 14,
+          "excerpts": 36,
+          "exact_excerpts": 24,
+          "positive_excerpts": 24,
+          "exact_positive_excerpts": 12,
+          "negative_excerpts": 12,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 1.0,
+          "recall": 0.5483870967741935,
+          "f1": 0.7083333333333334,
+          "accuracy": 0.6666666666666666,
+          "positive_excerpt_accuracy": 0.5,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "mixed-is-en": {
+          "tp": 13,
+          "fp": 1,
+          "fn": 7,
+          "excerpts": 24,
+          "exact_excerpts": 17,
+          "positive_excerpts": 17,
+          "exact_positive_excerpts": 10,
+          "negative_excerpts": 7,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9285714285714286,
+          "recall": 0.65,
+          "f1": 0.7647058823529411,
+          "accuracy": 0.7083333333333334,
+          "positive_excerpt_accuracy": 0.5882352941176471,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        }
+      }
+    },
+    "gitleaks-plus-trained": {
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "address",
+        "card",
+        "email",
+        "iban",
+        "kennitala",
+        "name_demo",
+        "phone",
+        "secret",
+        "tenant_dictionary"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 67,
+        "fp": 10,
+        "fn": 17,
+        "excerpts": 100,
+        "exact_excerpts": 80,
+        "positive_excerpts": 71,
+        "exact_positive_excerpts": 53,
+        "negative_excerpts": 29,
+        "false_positive_negative_excerpts": 2,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.8701298701298701,
+        "recall": 0.7976190476190477,
+        "f1": 0.8322981366459627,
+        "accuracy": 0.8,
+        "positive_excerpt_accuracy": 0.7464788732394366,
+        "negative_excerpt_false_positive_rate": 0.06896551724137931,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "address": {
+          "tp": 2,
+          "fp": 1,
+          "fn": 10,
+          "precision": 0.6666666666666666,
+          "recall": 0.16666666666666666,
+          "f1": 0.26666666666666666
+        },
+        "card": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "email": {
+          "tp": 11,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "iban": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "kennitala": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "name_demo": {
+          "tp": 36,
+          "fp": 8,
+          "fn": 5,
+          "precision": 0.8181818181818182,
+          "recall": 0.8780487804878049,
+          "f1": 0.8470588235294118
+        },
+        "phone": {
+          "tp": 7,
+          "fp": 1,
+          "fn": 2,
+          "precision": 0.875,
+          "recall": 0.7777777777777778,
+          "f1": 0.8235294117647058
+        },
+        "secret": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "tenant_dictionary": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "strata": {
+        "english-general": {
+          "tp": 21,
+          "fp": 7,
+          "fn": 12,
+          "excerpts": 40,
+          "exact_excerpts": 26,
+          "positive_excerpts": 30,
+          "exact_positive_excerpts": 17,
+          "negative_excerpts": 10,
+          "false_positive_negative_excerpts": 1,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.75,
+          "recall": 0.6363636363636364,
+          "f1": 0.6885245901639344,
+          "accuracy": 0.65,
+          "positive_excerpt_accuracy": 0.5666666666666667,
+          "negative_excerpt_false_positive_rate": 0.1,
+          "point_targets_met": false
+        },
+        "english-work": {
+          "tp": 27,
+          "fp": 2,
+          "fn": 4,
+          "excerpts": 36,
+          "exact_excerpts": 31,
+          "positive_excerpts": 24,
+          "exact_positive_excerpts": 20,
+          "negative_excerpts": 12,
+          "false_positive_negative_excerpts": 1,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9310344827586207,
+          "recall": 0.8709677419354839,
+          "f1": 0.9,
+          "accuracy": 0.8611111111111112,
+          "positive_excerpt_accuracy": 0.8333333333333334,
+          "negative_excerpt_false_positive_rate": 0.08333333333333333,
+          "point_targets_met": false
+        },
+        "mixed-is-en": {
+          "tp": 19,
+          "fp": 1,
+          "fn": 1,
+          "excerpts": 24,
+          "exact_excerpts": 23,
+          "positive_excerpts": 17,
+          "exact_positive_excerpts": 16,
+          "negative_excerpts": 7,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.95,
+          "recall": 0.95,
+          "f1": 0.95,
+          "accuracy": 0.9583333333333334,
+          "positive_excerpt_accuracy": 0.9411764705882353,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        }
+      }
+    }
+  },
+  "corpus": {
+    "schema": 1,
+    "independent_validation": false,
+    "authorship": "manually authored synthetic diagnostic, before candidate predictions",
+    "scope": [
+      "name_demo",
+      "address",
+      "phone",
+      "email",
+      "iban",
+      "card",
+      "kennitala",
+      "secret",
+      "tenant_dictionary"
+    ],
+    "sets": {
+      "english-general.jsonl": {
+        "sha256": "d1250755de8ac1ddff4bdd85182d19124e5ca18c7a9f6d9ac191099dfcc4b587",
+        "excerpts": 40,
+        "positive_excerpts": 30,
+        "entities": 33
+      },
+      "english-work.jsonl": {
+        "sha256": "5fa6cfdc8272466f543bf65fd4f28ddae0b8acfae782be04b53e9bb436f8e5ab",
+        "excerpts": 36,
+        "positive_excerpts": 24,
+        "entities": 31
+      },
+      "mixed-is-en.jsonl": {
+        "sha256": "c89987b74af925c876f8129851627bfe794c70dce0cdd619625373f0fef31fc4",
+        "excerpts": 24,
+        "positive_excerpts": 17,
+        "entities": 20
+      }
+    }
+  },
+  "reference_sha256": "958d7fe072b52760f36ac2b7770d3909f7eac0ac45d2511af0266551b3009c72"
+}
