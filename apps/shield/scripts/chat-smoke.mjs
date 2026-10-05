@@ -138,11 +138,21 @@ try {
   await secretPage.route('https://chatgpt.com/**', route => route.fulfill({ contentType: 'text/html', body: html }));
   await secretPage.goto('https://chatgpt.com/');
   await secretPage.locator('#dmz-shield-status').waitFor();
-  await secretPage.locator('#prompt-textarea').fill('sk-test_key_000000000000');
+  const structuredValues = [
+    'sk-test_key_000000000000',
+    'npm_aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL3oR6',
+    'pypi-AgEIcHlwaS5vcmc' + 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(2).slice(0, 50),
+    '+44 20 7946 0958',
+  ];
+  const structuredPrompt = structuredValues.join('; ');
+  await secretPage.locator('#prompt-textarea').fill(structuredPrompt);
   await secretPage.locator('[data-testid="send-button"]').click();
   await secretPage.waitForFunction(() => window.sent.length === 1);
-  assert.ok(!(await secretPage.evaluate(() => window.sent[0])).includes('sk-test'));
-  assert.match(await secretPage.evaluate(() => window.sent[0]), /⟦VALUE-/);
+  const structuredOutbound = await secretPage.evaluate(() => window.sent[0]);
+  for (const value of structuredValues) assert.ok(!structuredOutbound.includes(value));
+  assert.match(structuredOutbound, /⟦VALUE-/);
+  assert.match(structuredOutbound, /⟦PHONE-/);
+  await secretPage.frameLocator('[data-dmz-restored="true"]').getByText(structuredPrompt, { exact: true }).waitFor();
   await secretPage.close();
   await page.locator('#prompt-textarea').fill('demo@example.com');
   await page.locator('#prompt-textarea').press('Enter');
