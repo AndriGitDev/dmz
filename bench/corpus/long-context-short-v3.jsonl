@@ -1,0 +1,9 @@
+{"id":"long-context-short-1","text":"Umsækjandi er Hildur Sýnisteinsdóttir. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Hildur Sýnisteinsdóttir"}]}
+{"id":"long-context-short-2","text":"Umsækjandi er Rósa Prófvaldsdóttir. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Rósa Prófvaldsdóttir"}]}
+{"id":"long-context-short-3","text":"Umsækjandi er Björn Gervivaldsson. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Björn Gervivaldsson"}]}
+{"id":"long-context-short-4","text":"Umsækjandi er Valur Prófvaldsson. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Valur Prófvaldsson"}]}
+{"id":"long-context-short-5","text":"Umsækjandi er Þórdís Sýnivaldsdóttir. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Þórdís Sýnivaldsdóttir"}]}
+{"id":"long-context-short-6","text":"Umsækjandi er Margrét Gervimarsdóttir. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Margrét Gervimarsdóttir"}]}
+{"id":"long-context-short-7","text":"Umsækjandi er Jamie Testford. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Jamie Testford"}]}
+{"id":"long-context-short-8","text":"Umsækjandi er Robin Exampleton. Beiðni bíður yfirferðar.","entities":[{"kind":"name_demo","value":"Robin Exampleton"}]}
+{"id":"long-context-short-negative","text":"Þetta er tilbúinn texti um almenna skráningu og afgreiðslu.","entities":[]}
