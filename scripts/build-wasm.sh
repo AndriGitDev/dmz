@@ -30,7 +30,7 @@ PYDATA
 fi
 # Public regex compilation can exceed wasm's default 64 KiB goroutine stack.
 # Keep both rules-only and trained builds on the same bounded stack setting.
-"$tinygo_bin" build -target wasm -no-debug -stack-size=256kb "${build_tags[@]}" -o "$build_temp/dmz.wasm" "$root_dir/apps/shield/wasm"
+"$tinygo_bin" build -target wasm -no-debug -stack-size=128kb "${build_tags[@]}" -o "$build_temp/dmz.wasm" "$root_dir/apps/shield/wasm"
 mv -- "$build_temp/dmz.wasm" "$output_dir/dmz.wasm"
 if [[ -f "$build_temp/detector-data.json" ]]; then
   mv -- "$build_temp/detector-data.json" "$output_dir/detector-data.json"

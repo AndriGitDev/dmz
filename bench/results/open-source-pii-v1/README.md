@@ -80,6 +80,22 @@ are unchanged. `phone-specialist.json` includes final trained native/WASM parity
 and exact restoration; these small synthetic probes do not establish field
 accuracy or actual number assignment.
 
+## Broader public English core replay
+
+The pinned public synthetic test projection contains 4,996 excerpts and 6,421
+in-scope gold spans. With unchanged cached contextual-name predictions, the
+updated core changes trained exact excerpts from 2,414 to 2,443, true spans from
+3,152 to 3,313, false spans from 2,714 to 2,701, and missed spans from 3,269 to
+3,108. Recall rises from 49.09% to 51.60%; exact accuracy rises from 48.32% to
+48.90%. Twenty-nine previously incorrect excerpts become exact and no previously
+exact excerpt breaks. No previously correct projected gold span is lost.
+
+These are broad synthetic diagnostic gains, not independent acceptance. Public
+annotation completeness and overlap with model training are unknown. Negative
+excerpts mean no projected in-scope labels, not an absence of all PII. See
+`public-core-replay.json` and the
+[conversion protocol](../../open-source-pii/external-english-protocol.md).
+
 ## Icelandic regression guard
 
 The final trained WASM core was replayed with the same cached contextual-name
@@ -94,8 +110,18 @@ fresh browser neural-inference run. The model-only reference has a different
 general score because the existing core already adds one correct name. See
 `icelandic-core-replay.json` for the paired aggregate and private-source hashes.
 Blind Icelandic evaluation files were not opened for this comparison.
+The selected runtime uses a 128 KiB stack; the earlier matching 256 KiB replay
+is retained separately in `icelandic-core-stack256k-replay.json`.
 
 ## Runtime constraints
+
+The structured core's selected 128 KiB stack passes both build profiles, all
+49,245 geographic/random phone-rule cases, nine separate global-network
+examples, 272 specialist fixtures, full cached-name English/Icelandic replays,
+and trained browser workflows. This avoids the rules-only hang at 64 KiB with
+less observed overhead than the initial 256 KiB fix. See
+[the structured runtime record](../../open-source-pii/structured-runtime.md)
+and `structured-runtime.json` for counts, hashes and timing limitations.
 
 GLiNER2's FP32 ONNX export reproduces all original predictions on the reused
 90-excerpt probe, but its NER graphs total about 1.219 GB. Two declared QUInt8

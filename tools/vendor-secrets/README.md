@@ -36,8 +36,14 @@ public rules only, never submitted values.
 
 Those reductions alone did not make the rules-only callback stack reliable:
 the first accepted PyPI fixture still hung with TinyGo 0.42.0's 64 KiB WASM
-default. The build now sets `-stack-size=256kb`; the identical fixture and full
-WASM smoke suite pass with that setting. TinyGo uses fixed-size goroutine stacks
+default. A 256 KiB stack first restored the full smoke suite. The final build
+sets `-stack-size=128kb`: both build profiles pass cold smoke, and the smaller
+candidate preserves every checked native/WASM phone case, specialist fixture,
+English replay and Icelandic Person replay, plus browser workflows. It also
+reduces observed latency spikes relative to the 256 KiB trial on the contended
+test host; these measurements are not field latency guarantees. See the
+[runtime record](../../bench/open-source-pii/structured-runtime.md).
+TinyGo uses fixed-size goroutine stacks
 when it cannot infer a size; see its [datatype/runtime documentation](https://tinygo.org/docs/concepts/compiler-internals/datatypes/).
 Keep tests for both rules-only and trained builds, since success in one binary
 layout did not establish safety in the other.

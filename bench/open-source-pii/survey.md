@@ -47,8 +47,10 @@ archive decoding and repository scanning are not part of Shield.
 
 The current TinyGo regex implementation needs a larger reserved stack for these
 rules: the rules-only smoke test hung with the default 64 KiB stack. Equivalent
-bounded PyPI matching, lazy allowlist checks and a tested 256 KiB stack fix that
-runtime path. This is why native accuracy checks alone were insufficient.
+bounded PyPI matching, lazy allowlist checks and a larger stack fix that runtime
+path. A 256 KiB trial passed; a subsequently tested 128 KiB setting preserves
+the checked results with lower observed latency spikes and is selected for the
+build. This is why native accuracy checks alone were insufficient.
 
 On 4,996 public synthetic English excerpts, the original trained composition
 scores 2,414 exact excerpts. GLiNER alone scores 3,098, but adding it while keeping
