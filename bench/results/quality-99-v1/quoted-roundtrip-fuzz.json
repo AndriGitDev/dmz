@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "command": "go test ./packages/surrogates -run '^$' -fuzz '^FuzzBestEffortExactRoundTrip$' -fuzztime=90s -parallel=1",
+  "status": "passed",
+  "executions": 32333,
+  "seconds": 91.186,
+  "workers": 1,
+  "scope": "Fuzzed exact round-trip, valid spans, stable issued markers and repeated original input; accepted/skipped input counts are not an accuracy estimate.",
+  "source_sha256": {
+    "packages/detect/credential_context.go": "f9addb649c25fa0ab648b1ef79f692942ad4d7bc8ce62534605f73eee6e61c7b",
+    "packages/surrogates/session.go": "ada4a9f2b6a2b83aaee687dc3a74a04c6ae2e4272212a8e80d6b2840908f4669",
+    "packages/surrogates/roundtrip_fuzz_test.go": "71f20b8a6cd79cffb08b76be856259dc2a4a1ffb3537fa2e88da791102ea4162"
+  },
+  "log_sha256": "cb5614a1093883c92e0318ca184e312d29b0cd6a8bf4b9ab6d8180ba80214f8c"
+}

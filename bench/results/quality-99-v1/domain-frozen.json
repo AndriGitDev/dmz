@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "metric": "exact entity-set accuracy per excerpt",
+  "annotation_scope": [
+    "Person"
+  ],
+  "minimum": 0.99,
+  "overall": {
+    "tp": 474,
+    "fp": 3,
+    "fn": 6,
+    "excerpts": 256,
+    "exact_excerpts": 250,
+    "positive_excerpts": 192,
+    "exact_positive_excerpts": 186,
+    "negative_excerpts": 64,
+    "false_positive_negative_excerpts": 0,
+    "precision": 0.9937106918238994,
+    "recall": 0.9875,
+    "f1": 0.9905956112852664,
+    "accuracy": 0.9765625,
+    "positive_excerpt_accuracy": 0.96875,
+    "negative_excerpt_false_positive_rate": 0.0,
+    "point_targets_met": false
+  },
+  "per_type": {
+    "Person": {
+      "tp": 474,
+      "fp": 3,
+      "fn": 6,
+      "precision": 0.9937106918238994,
+      "recall": 0.9875,
+      "f1": 0.9905956112852664
+    }
+  },
+  "strata": {
+    "domain": {
+      "tp": 474,
+      "fp": 3,
+      "fn": 6,
+      "excerpts": 256,
+      "exact_excerpts": 250,
+      "positive_excerpts": 192,
+      "exact_positive_excerpts": 186,
+      "negative_excerpts": 64,
+      "false_positive_negative_excerpts": 0,
+      "precision": 0.9937106918238994,
+      "recall": 0.9875,
+      "f1": 0.9905956112852664,
+      "accuracy": 0.9765625,
+      "positive_excerpt_accuracy": 0.96875,
+      "negative_excerpt_false_positive_rate": 0.0,
+      "point_targets_met": false
+    }
+  },
+  "independent_validation": false,
+  "limitation": "Point estimates only; annotation independence, sampling, and system masking require separate evidence.",
+  "scope": "Reused development; Person only, not all-entity or Shield accuracy",
+  "text_mode": "original",
+  "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+  "crf_cache_sha256": "4f3809b75b4c1e56db0be86802664195e8464c219b68d4b637b54b8886a21036",
+  "neural_cache_sha256": "59a541848080954e19ab4467d60f757e4fd310023cb508e007a8b28728190c21",
+  "selection_sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b",
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  }
+}

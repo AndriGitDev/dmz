@@ -1,0 +1,214 @@
+{
+  "split": "dev",
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "model_sha256": "094e251619916e2dea8822fe0869ec33844e83480032ef306860b50147dfbd10",
+  "text_mode": "canonical",
+  "label_mode": "entities",
+  "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+  "crf_threshold": 0.75,
+  "neural_threshold": 0.0,
+  "seconds": 228.36985136196017,
+  "rows": 5582,
+  "quality": {
+    "neural": {
+      "schema": 1,
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "Person"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 1452,
+        "fp": 48,
+        "fn": 54,
+        "excerpts": 5582,
+        "exact_excerpts": 5510,
+        "positive_excerpts": 1094,
+        "exact_positive_excerpts": 1042,
+        "negative_excerpts": 4488,
+        "false_positive_negative_excerpts": 20,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.968,
+        "recall": 0.9641434262948207,
+        "f1": 0.9660678642714571,
+        "accuracy": 0.9871013973486206,
+        "positive_excerpt_accuracy": 0.9524680073126143,
+        "negative_excerpt_false_positive_rate": 0.004456327985739751,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "Person": {
+          "tp": 1452,
+          "fp": 48,
+          "fn": 54,
+          "precision": 0.968,
+          "recall": 0.9641434262948207,
+          "f1": 0.9660678642714571
+        }
+      },
+      "strata": {
+        "unspecified": {
+          "tp": 1452,
+          "fp": 48,
+          "fn": 54,
+          "excerpts": 5582,
+          "exact_excerpts": 5510,
+          "positive_excerpts": 1094,
+          "exact_positive_excerpts": 1042,
+          "negative_excerpts": 4488,
+          "false_positive_negative_excerpts": 20,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.968,
+          "recall": 0.9641434262948207,
+          "f1": 0.9660678642714571,
+          "accuracy": 0.9871013973486206,
+          "positive_excerpt_accuracy": 0.9524680073126143,
+          "negative_excerpt_false_positive_rate": 0.004456327985739751,
+          "point_targets_met": false
+        }
+      },
+      "independent_validation": false,
+      "limitation": "Point estimates only; annotation independence, sampling, and system masking require separate evidence."
+    },
+    "combined": {
+      "schema": 1,
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "Person"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 1454,
+        "fp": 56,
+        "fn": 52,
+        "excerpts": 5582,
+        "exact_excerpts": 5508,
+        "positive_excerpts": 1094,
+        "exact_positive_excerpts": 1044,
+        "negative_excerpts": 4488,
+        "false_positive_negative_excerpts": 24,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.9629139072847682,
+        "recall": 0.9654714475431607,
+        "f1": 0.9641909814323607,
+        "accuracy": 0.9867431028305267,
+        "positive_excerpt_accuracy": 0.9542961608775137,
+        "negative_excerpt_false_positive_rate": 0.0053475935828877,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "Person": {
+          "tp": 1454,
+          "fp": 56,
+          "fn": 52,
+          "precision": 0.9629139072847682,
+          "recall": 0.9654714475431607,
+          "f1": 0.9641909814323607
+        }
+      },
+      "strata": {
+        "unspecified": {
+          "tp": 1454,
+          "fp": 56,
+          "fn": 52,
+          "excerpts": 5582,
+          "exact_excerpts": 5508,
+          "positive_excerpts": 1094,
+          "exact_positive_excerpts": 1044,
+          "negative_excerpts": 4488,
+          "false_positive_negative_excerpts": 24,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9629139072847682,
+          "recall": 0.9654714475431607,
+          "f1": 0.9641909814323607,
+          "accuracy": 0.9867431028305267,
+          "positive_excerpt_accuracy": 0.9542961608775137,
+          "negative_excerpt_false_positive_rate": 0.0053475935828877,
+          "point_targets_met": false
+        }
+      },
+      "independent_validation": false,
+      "limitation": "Point estimates only; annotation independence, sampling, and system masking require separate evidence."
+    }
+  },
+  "independent_final_evaluation": false,
+  "method": "exact non-Person argmax span veto before CRF-priority merge; CRF=.75 neural=0",
+  "diagnostics": {
+    "vetoed_crf": 21,
+    "vetoed_gold_person": 6,
+    "vetoed_false_person": 15
+  },
+  "original_quality": {
+    "schema": 1,
+    "metric": "exact entity-set accuracy per excerpt",
+    "annotation_scope": [
+      "Person"
+    ],
+    "minimum": 0.99,
+    "overall": {
+      "tp": 1460,
+      "fp": 71,
+      "fn": 46,
+      "excerpts": 5582,
+      "exact_excerpts": 5500,
+      "positive_excerpts": 1094,
+      "exact_positive_excerpts": 1046,
+      "negative_excerpts": 4488,
+      "false_positive_negative_excerpts": 34,
+      "abstained_excerpts": 0,
+      "abstained_negative_excerpts": 0,
+      "precision": 0.953625081645983,
+      "recall": 0.9694555112881806,
+      "f1": 0.961475139940731,
+      "accuracy": 0.9853099247581512,
+      "positive_excerpt_accuracy": 0.9561243144424132,
+      "negative_excerpt_false_positive_rate": 0.007575757575757576,
+      "point_targets_met": false
+    },
+    "per_type": {
+      "Person": {
+        "tp": 1460,
+        "fp": 71,
+        "fn": 46,
+        "precision": 0.953625081645983,
+        "recall": 0.9694555112881806,
+        "f1": 0.961475139940731
+      }
+    },
+    "strata": {
+      "unspecified": {
+        "tp": 1460,
+        "fp": 71,
+        "fn": 46,
+        "excerpts": 5582,
+        "exact_excerpts": 5500,
+        "positive_excerpts": 1094,
+        "exact_positive_excerpts": 1046,
+        "negative_excerpts": 4488,
+        "false_positive_negative_excerpts": 34,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.953625081645983,
+        "recall": 0.9694555112881806,
+        "f1": 0.961475139940731,
+        "accuracy": 0.9853099247581512,
+        "positive_excerpt_accuracy": 0.9561243144424132,
+        "negative_excerpt_false_positive_rate": 0.007575757575757576,
+        "point_targets_met": false
+      }
+    },
+    "independent_validation": false,
+    "limitation": "Point estimates only; annotation independence, sampling, and system masking require separate evidence."
+  },
+  "person_replay_exact": true,
+  "cache_hashes": {
+    "original_person": "bef0f796c82fc6c6fb38c31f6c0617cd2cb07da0b12a4f20542b418bcdeb0583",
+    "replayed_person": "bef0f796c82fc6c6fb38c31f6c0617cd2cb07da0b12a4f20542b418bcdeb0583",
+    "typed": "df82f1b1ca41718e8ad9d6339fad51dea452c02f1a9e789c07db01b795a8aba3",
+    "crf": "4f9d3f7dd56357a1be384eb73c0ee1cde5816628de0dafc6d9f78ed2e99d85ad"
+  }
+}

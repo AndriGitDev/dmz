@@ -13,6 +13,8 @@ The plan targets ISO 27001 certification by end-2028 through an accredited body,
 
 ## Next implementation sequence
 
+The current detector work targets ≥99% exact entity-set accuracy per excerpt and ≥99% entity recall, as clarified by the owner on 4 October. The [quality contract](detector-quality-contract.md) separates reused development measurements from independent evidence. Current work covers detector and Shield correctness, a frozen model comparison, and model-blind annotation preparation; neither the targets nor independent acceptance have been achieved.
+
 Under [ADR 0004](adr/0004-portal-hosting-and-pii-policy.md), build a shared Go gateway with Portal as its first client: verify one Bedrock route, implement authenticated policy enforcement, add the SvelteKit chat, complete workflow/isolation checks, then integrate one external API client. See [acceptance gates and proposed credit allocation](portal-gateway-plan.md). Original milestone dates above remain hypotheses.
 
 ## Dated work

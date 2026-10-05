@@ -51,7 +51,7 @@ func TestExposureCapRejectsRegression(t *testing.T) {
 func TestExposureSeparatesBenignReviewAndExposedIdentifiers(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "corpus.jsonl")
 	data := `{"id":"plain","text":"Hello world.","entities":[]}
-{"id":"review","text":"Go\u0301ður dagur.","entities":[]}
+{"id":"review","text":"x\u0301 dagur.","entities":[]}
 {"id":"altered","text":"demo@example.invalid","entities":[]}
 {"id":"miss","text":"Mira Demo","entities":[{"kind":"name_demo","value":"Mira Demo"}]}
 `

@@ -22,7 +22,7 @@ These items are unresolved in the supplied plan or require time-sensitive verifi
 | Near-term | OpenAI/Anthropic written ZDR eligibility and multi-tenant service rights | ZDR roadmap, provider terms |
 | Near-term | BÍN commercial use and redistribution; Mannanafnaskrá bulk access | Names detector and extension packaging |
 | Near-term | Quarterly financial model source spreadsheet | Annual figures alone cannot reproduce cash peak or Q3 profitability |
-| Near-term | HMS address dataset use approved by owner on 28 Sep; implementation/packaging pending | See [external dataset preparation](../bench/datasets/README.md); separate postcode sources require their own evidence |
+| Near-term | HMS address dataset use approved by owner on 28 Sep; 23,636 forms bundled in the private trained preview; independent contextual validation pending | See [external dataset preparation](../bench/datasets/README.md); separate postcode sources require their own evidence |
 | Near-term | Security architecture and DPA counsel review | Live-data pilots |
 | Later | NIS2 Icelandic status and EEA AI Act status each quarter | Claims and procurement |
 | Later | Trademark advice on descriptive “DMZ” and figurative mark | Brand investment |

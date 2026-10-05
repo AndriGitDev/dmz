@@ -1,0 +1,165 @@
+{
+  "formats": {
+    "currency": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "currency_nbsp": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "decimal_currency": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "decomposed": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "letter": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "lowercase": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "narrow_nbsp": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "nbsp": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "no_number": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "number": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "overlong_number": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "overlong_unit": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "postcode": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "postcode_no_comma": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "range": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "range_nonbreaking_hyphen": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "range_unicode_hyphen": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "street_apostrophe": {
+      "cases": 0,
+      "passed": 0,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "street_nonbreaking_hyphen": {
+      "cases": 1724,
+      "passed": 1724,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "street_unicode_hyphen": {
+      "cases": 1724,
+      "passed": 1724,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "unit": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    },
+    "uppercase": {
+      "cases": 23636,
+      "passed": 23636,
+      "partial": 0,
+      "missed": 0,
+      "false_address": 0
+    }
+  },
+  "forms": 23636,
+  "independent_validation": false,
+  "metric": "One complete Address span for each positive generated value; no Address span for generated negatives",
+  "private_failures_saved": 0,
+  "schema": 1,
+  "scope": "Mechanical formats of approved vocabulary forms; Address only; not representative or independent validation",
+  "source_sha256": "ca8ec42b1dc6878498d00274194375d36d18a589bb5f4e5ab593a83afa63c2e2"
+}

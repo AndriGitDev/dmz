@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "seed": "dmz-document-review-splits-20261004-v1",
+  "status": "Frozen unlabelled review allocation; human extraction and entity review required",
+  "collection_manifest_sha256": "9630593448156497d3db0447eb1c0c8cb0a793b804294a35f0d613eb3306e550",
+  "review_sha256": "3e28f6d84267c1f2b84d51c7126d47868aa25ecc2a1d3c1a5836dd8680afc1e9",
+  "cluster_method": "Transitive components at >=20% normalized exact 12-gram containment; not semantic topic detection",
+  "excluded_documents": {
+    "overlaps_prior_text": 29,
+    "unavailable_or_collection_duplicate": 3
+  },
+  "source_use_review": "pending; private storage only",
+  "model_evaluated": false,
+  "training_use": false,
+  "independent_final_evaluation": false,
+  "splits": {
+    "dev-review": {
+      "documents": 1,
+      "excerpts": 1,
+      "words": 262,
+      "clusters": 1,
+      "strata": {
+        "financial": 1
+      },
+      "sha256": "9873d53c386d707a510126a97b6515b6559a8b88bedfbcc91c869310bdf969f8"
+    },
+    "reserved-review": {
+      "documents": 5,
+      "excerpts": 8,
+      "words": 1478,
+      "clusters": 5,
+      "strata": {
+        "legal": 3,
+        "financial": 5
+      },
+      "sha256": "3451fa03914ef02310498e055f68b400ae47e4fcc0adec81eb9131668da18523"
+    },
+    "train-review": {
+      "documents": 21,
+      "excerpts": 49,
+      "words": 9955,
+      "clusters": 20,
+      "strata": {
+        "legal": 27,
+        "financial": 22
+      },
+      "sha256": "6016eceeaa97105b40ab77aa42e1f9e690467fc0638a3e56e93b07371a95a614"
+    }
+  },
+  "document_splits_sha256": "82951211c8371dd0b2ad180b5042a1f1d445caab10c6f1bd0c22e9cec5afddbf"
+}

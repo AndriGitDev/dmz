@@ -10,18 +10,24 @@ import time
 from encoder import LABELS, DECODE, chunks, classifier, digest
 from ner import external, rows, spans, tokens_and_labels
 
+ENTITY_DECODE = ['O', 'B-Person', 'I-Person', 'B-Organization', 'I-Organization',
+                 'B-Location', 'I-Location', 'B-Miscellaneous', 'I-Miscellaneous']
 
-def prepare(source, split, tokenizer, text_mode='canonical'):
+
+def prepare(source, split, tokenizer, text_mode='canonical', label_mode='person'):
+    if label_mode not in ('person', 'entities'):
+        raise ValueError('unsupported label mode')
+    mapping = LABELS if label_mode == 'person' else {v: i for i, v in enumerate(ENTITY_DECODE)}
     records, jobs = [], []
     for row in rows(source, split):
-        words, offsets, labels = tokens_and_labels(row, text_mode=text_mode)
+        words, offsets, labels = tokens_and_labels(row, text_mode=text_mode, label_mode=label_mode)
         index = len(records)
         records.append(dict(offsets=offsets, labels=labels))
         for start, part in chunks(words, tokenizer):
             encoded = tokenizer(part, is_split_into_words=True)
             jobs.append(dict(record=index, start=start, words=len(part),
                              ids=encoded['input_ids'], word_ids=encoded.word_ids(),
-                             labels=[LABELS[v] for v in labels[start:start+len(part)]]))
+                             labels=[mapping[v] for v in labels[start:start+len(part)]]))
     if not jobs:
         raise ValueError('empty input')
     return records, jobs
@@ -46,7 +52,7 @@ def tensors(jobs, pad):
     return ids, mask, pooling, target
 
 
-def detector(base, head_path=None):
+def detector(base, head_path=None, label_count=3):
     import torch
     from transformers import AutoModel
     from safetensors.torch import load_file
@@ -56,6 +62,8 @@ def detector(base, head_path=None):
             self.encoder = AutoModel.from_pretrained(base, local_files_only=True, use_safetensors=True,
                 add_pooling_layer=False, trust_remote_code=False, attn_implementation='eager')
             self.head = classifier(self.encoder.config.hidden_size, 128)
+            if label_count != 3:
+                self.head[-1] = torch.nn.Linear(self.head[-1].in_features, label_count)
             if head_path:
                 self.head.load_state_dict(load_file(str(head_path)))
 
@@ -63,6 +71,23 @@ def detector(base, head_path=None):
             hidden = self.encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
             return self.head(torch.matmul(pooling, hidden))
     return Detector()
+
+
+def expand_entity_head(model):
+    """Keep the learned O/Person logits; initialize six other-type logits.
+
+    This is a new training candidate, not an equivalent conversion. Only a
+    three-label reference may initialize this experiment.
+    """
+    import torch
+    old = model.head[-1]
+    if old.out_features != 3:
+        raise ValueError('entity expansion requires a three-label reference')
+    expanded = torch.nn.Linear(old.in_features, len(ENTITY_DECODE))
+    with torch.no_grad():
+        expanded.weight[:3].copy_(old.weight)
+        expanded.bias[:3].copy_(old.bias)
+    model.head[-1] = expanded
 
 
 def warm_start_record(checkpoint, source, base):
@@ -92,13 +117,17 @@ def train(a):
     initial = warm_start_record(a.initial_checkpoint, source, base) if a.initial_checkpoint else None
     torch.set_num_threads(a.threads); torch.manual_seed(a.seed)
     tokenizer = AutoTokenizer.from_pretrained(base, local_files_only=True, add_prefix_space=True, trust_remote_code=False)
-    records, jobs = prepare(source, 'train', tokenizer)
+    label_mode = getattr(a, 'label_mode', 'person')
+    label_count = len(ENTITY_DECODE) if label_mode == 'entities' else 3
+    records, jobs = prepare(source, 'train', tokenizer, label_mode=label_mode)
     model = detector(base, head).train()
     if initial:
         state = load_file(str(external(a.initial_checkpoint)))
         if any(value.dtype != torch.float32 or not value.isfinite().all() for value in state.values()):
             raise ValueError('warm start requires finite FP32 parameters')
         model.load_state_dict(state); del state
+    if label_mode == 'entities':
+        expand_entity_head(model)
     optimizer = torch.optim.AdamW([
         {'params': model.encoder.parameters(), 'lr': a.encoder_lr},
         {'params': model.head.parameters(), 'lr': a.head_lr}], weight_decay=.01)
@@ -111,7 +140,8 @@ def train(a):
     report = dict(schema=1, method='FP32 full encoder and BIO head fine-tuning; mean subword pooling without float16 round-trip',
         input_sha256=digest(source), split='train', rows=len(records), chunks=len(jobs),
         base_weights_sha256=digest(base/'model.safetensors'), initial_head_sha256=digest(head) if head else None,
-        warm_start=initial,
+        warm_start=initial, label_mode=label_mode,
+        labels=ENTITY_DECODE if label_mode == 'entities' else ['O', 'B', 'I'],
         settings={k: v for k, v in vars(a).items() if isinstance(v, (str, int, float, bool))},
         torch=torch.__version__, checkpoints=[], independent_final_evaluation=False)
     (output/'protocol.json').write_text(json.dumps(report, indent=2)+'\n')
@@ -129,7 +159,7 @@ def train(a):
         for b, indices in enumerate(batches):
             batch = tensors([jobs[i] for i in indices], tokenizer.pad_token_id)
             logits = model(*batch[:3])
-            loss = torch.nn.functional.cross_entropy(logits.reshape(-1, 3), batch[3].reshape(-1))
+            loss = torch.nn.functional.cross_entropy(logits.reshape(-1, label_count), batch[3].reshape(-1))
             if not torch.isfinite(loss): raise ValueError('nonfinite training loss')
             n = int((batch[3] != -100).sum()); loss_sum += loss.item()*n; tokens += n
             group_size = min(a.accumulation, len(batches) - (b // a.accumulation)*a.accumulation)
@@ -166,6 +196,20 @@ def evaluate(a):
     output = external(a.output)
     if output.exists(): raise ValueError('refusing to replace evaluation')
     training = json.loads((checkpoint.parent/'training.json').read_text())
+    label_mode = training.get('label_mode', 'person')
+    if label_mode not in ('person', 'entities'):
+        raise ValueError('unsupported checkpoint label mode')
+    decode = ENTITY_DECODE if label_mode == 'entities' else DECODE
+    typed_path = getattr(a, 'typed_predictions', None)
+    if typed_path:
+        typed_path = external(typed_path)
+        if label_mode != 'entities' or typed_path.exists():
+            raise ValueError('typed output requires a new path and nine-label checkpoint')
+    destinations = [output] + ([typed_path] if typed_path else [])
+    if a.predictions:
+        destinations.append(external(a.predictions))
+    if len(set(destinations)) != len(destinations) or any(path.exists() for path in destinations):
+        raise ValueError('evaluation outputs must be distinct new paths')
     if not any(c.get('sha256') == digest(checkpoint) for c in training['checkpoints']):
         raise ValueError('checkpoint manifest mismatch')
     if training['base_weights_sha256'] != digest(base/'model.safetensors'):
@@ -173,7 +217,7 @@ def evaluate(a):
     torch.set_num_threads(a.threads)
     tokenizer = AutoTokenizer.from_pretrained(base, local_files_only=True, add_prefix_space=True, trust_remote_code=False)
     records, jobs = prepare(source, 'dev', tokenizer, text_mode=a.text_mode)
-    model = detector(base); model.load_state_dict(load_file(str(checkpoint))); model.eval()
+    model = detector(base, label_count=len(decode)); model.load_state_dict(load_file(str(checkpoint))); model.eval()
     labels = [[None]*len(r['labels']) for r in records]; confidence = [[None]*len(r['labels']) for r in records]
     jobs.sort(key=lambda j: len(j['ids'])); started=time.monotonic()
     with torch.inference_mode():
@@ -182,14 +226,23 @@ def evaluate(a):
             values, predicted = model(*batch[:3]).softmax(-1).max(-1)
             for i,j in enumerate(selected):
                 r,s,n=j['record'],j['start'],j['words']
-                labels[r][s:s+n]=[DECODE[v] for v in predicted[i,:n].tolist()]
+                labels[r][s:s+n]=[decode[v] for v in predicted[i,:n].tolist()]
                 confidence[r][s:s+n]=values[i,:n].tolist()
-    predictions=[]
+    predictions=[]; typed_records=[]
     for r,l,c in zip(records,labels,confidence):
         if any(v is None for v in l+c): raise ValueError('incomplete prediction coverage')
         predictions.append(dict(gold=[[s,e] for s,e,_,_ in spans(r['labels'],r['offsets'])],
             predictions=[[s,e,min(c[i:j])] for s,e,i,j in spans(l,r['offsets'])]))
-    result=dict(split='dev', input_sha256=digest(source), model_sha256=digest(checkpoint), text_mode=a.text_mode, records=predictions)
+        if typed_path:
+            from entity_veto import typed_spans
+            typed_records.append(dict(gold=predictions[-1]['gold'], predictions=typed_spans(l,r['offsets'],c)))
+    result=dict(split='dev', input_sha256=digest(source), model_sha256=digest(checkpoint), text_mode=a.text_mode, label_mode=label_mode, records=predictions)
+    if typed_path:
+        typed_result={k:v for k,v in result.items() if k!='records'}
+        typed_result.update(schema=1, records=typed_records, labels=decode,
+            training_manifest_sha256=digest(checkpoint.parent/'training.json'))
+        with typed_path.open('x') as stream: json.dump(typed_result,stream)
+        typed_path.chmod(0o600)
     if a.predictions:
         with external(a.predictions).open('x') as f: json.dump(result,f)
     crf=json.loads(external(a.crf).read_text())
@@ -197,6 +250,7 @@ def evaluate(a):
         if crf[key]!=result[key]:raise ValueError('CRF identity mismatch')
     if len(crf['records'])!=len(predictions):raise ValueError('CRF length mismatch')
     scores={name:dict(tp=0,fp=0,fn=0) for name in ('neural','combined')}
+    quality_records={name:[] for name in scores}
     for p,c in zip(predictions,crf['records']):
         if p['gold']!=c['gold']:raise ValueError('annotation mismatch')
         gold={tuple(x) for x in p['gold']}
@@ -204,12 +258,16 @@ def evaluate(a):
                      combined=merge(c['predictions'],p['predictions'],a.crf_threshold,a.neural_threshold))
         for name,chosen in choices.items():
             scores[name]['tp']+=len(chosen&gold); scores[name]['fp']+=len(chosen-gold); scores[name]['fn']+=len(gold-chosen)
+            quality_records[name].append(dict(gold=[(s,e,'Person') for s,e in gold],
+                                             predicted=[(s,e,'Person') for s,e in chosen]))
     for score in scores.values():
         score['precision']=score['tp']/max(1,score['tp']+score['fp']);score['recall']=score['tp']/max(1,score['tp']+score['fn'])
         score['target_met']=score['precision']>=.955 and score['recall']>=.955
     report={k:v for k,v in result.items() if k!='records'}
+    from quality import score as quality_score
     report.update(scores=scores, crf_sha256=crf['model_sha256'], crf_threshold=a.crf_threshold,
         neural_threshold=a.neural_threshold, seconds=time.monotonic()-started, rows=len(records),
+        quality={name:quality_score(values,['Person']) for name,values in quality_records.items()},
         independent_final_evaluation=False, method='Reused development; exact Person spans; FP32 fine-tuned encoder')
     with output.open('x') as f:json.dump(report,f,indent=2)
     return report
@@ -222,11 +280,14 @@ def main():
     initialization.add_argument('--head',type=Path)
     initialization.add_argument('--initial-checkpoint',type=Path)
     t.add_argument('--epochs',type=int,default=3);t.add_argument('--seed',type=int,default=42)
+    t.add_argument('--label-mode',choices=['person','entities'],default='person',
+                   help='entities is a new nine-label research candidate; does not replace the three-label reference')
     t.add_argument('--encoder-lr',type=float,default=1e-5);t.add_argument('--head-lr',type=float,default=1e-4)
     t.add_argument('--accumulation',type=int,default=4);t.add_argument('--max-seconds',type=float,default=18000)
     t.add_argument('--max-steps',type=int,default=0);t.add_argument('--probe',action='store_true')
     e=sub.add_parser('evaluate');e.add_argument('--checkpoint',type=Path,required=True);e.add_argument('--crf',type=Path,required=True)
     e.add_argument('--text-mode',choices=['canonical','original'],default='canonical')
+    e.add_argument('--typed-predictions',type=Path,help='Private complete BIO entity cache for a separate declared composition experiment')
     e.add_argument('--predictions',type=Path);e.add_argument('--crf-threshold',type=float,default=.75);e.add_argument('--neural-threshold',type=float,default=0.)
     for q in (t,e):
         q.add_argument('--base',type=Path,required=True);q.add_argument('--input',type=Path,required=True);q.add_argument('--output',type=Path,required=True)

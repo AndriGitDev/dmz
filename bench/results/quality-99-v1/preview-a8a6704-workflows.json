@@ -1,0 +1,72 @@
+{
+  "scope": "Synthetic extension workflow checks; not independent detector accuracy",
+  "cases": [
+    {
+      "case": "actual-name-masking",
+      "passed": true,
+      "firstScanMs": 7684
+    },
+    {
+      "case": "isolated-restoration",
+      "passed": true
+    },
+    {
+      "case": "unsupported-input-preserves-warm-model",
+      "passed": true
+    },
+    {
+      "case": "canonical-decomposed-trained-names-and-exact-restoration",
+      "passed": true
+    },
+    {
+      "case": "names-inside-emails-mask-and-restore",
+      "passed": true
+    },
+    {
+      "case": "complete-private-key-preserves-prose-and-restores",
+      "passed": true
+    },
+    {
+      "case": "issued-credential-marker-resubmission-is-stable",
+      "passed": true
+    },
+    {
+      "case": "address-without-postcode-and-unicode-hyphens-mask-and-restore",
+      "passed": true
+    },
+    {
+      "case": "edit-during-inference",
+      "passed": true
+    },
+    {
+      "case": "one-model-separate-tab-mappings",
+      "passed": true
+    },
+    {
+      "case": "competing-tab-queues-and-masks-name",
+      "passed": true
+    },
+    {
+      "case": "one-active-two-waiting-overflow-is-busy",
+      "passed": true
+    },
+    {
+      "case": "reset-during-inference",
+      "passed": true
+    },
+    {
+      "case": "scanner-termination-warns-and-masks-email",
+      "passed": true
+    },
+    {
+      "case": "corrupt-model-warns-and-masks-identifiers",
+      "passed": true
+    },
+    {
+      "case": "queued-worker-deadline-overflow-fallback-and-edited-draft-stop",
+      "passed": true,
+      "elapsedMs": 120355
+    }
+  ],
+  "externalScannerRequests": 0
+}

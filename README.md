@@ -27,7 +27,7 @@ Empty directories contain `.gitkeep` until the corresponding work starts. Do not
 
 ## Trained scanner preview
 
-A separate local build now integrates the trained Icelandic name detector into Shield's text-submission and masking flow. See [build, installation and evidence](apps/shield/scanner/README.md). It keeps existing blockers, processes text on device, shares one model across tabs, and blocks sending if scanning fails. The quality-first model is large; weights remain outside Git and are packaged explicitly from verified local assets. The ordinary CI artifact below still contains the small rule-based scanner. Independent quality and owner-browser validation remain pending.
+A separate local build now integrates the trained Icelandic name detector into Shield's text-submission and masking flow. See [build, installation and evidence](apps/shield/scanner/README.md). It processes text on device and shares one model across tabs. Under the owner-approved best-effort policy, scanner failure produces a visible warning and sends the basic detector’s masked result; unsupported send paths, changed drafts and lost sessions still stop sending. The quality-first model is large; weights remain outside Git and are packaged explicitly from verified local assets. The ordinary CI artifact below still contains the small rule-based scanner. Independent quality and owner-browser validation remain pending.
 
 ## Try the prototype
 
@@ -47,7 +47,7 @@ Load `apps/shield/.output/chrome-mv3` as an unpacked extension in Chromium. The 
 
 The draft PR's `shield-browser` GitHub Actions job uploads the tested `shield-chromium-prototype` build for review. Download and extract it, then use Chromium's **Load unpacked** on the extracted directory. It is an unsigned prototype, not a store release.
 
-**Do not use this prototype for sensitive data.** The original untuned 18-case synthetic challenge set exposed eight annotated identifiers in allowed outbound text. After targeted detector changes, the same set still exposes two; a separate 29-case exploratory probe exposes 13. None of these small synthetic sets estimates field quality. Initial owner testing in Brave confirms masking on both sites and restoration on Claude; full authenticated validation remains pending, and DOM changes or unsupported send paths can bypass it. Use fabricated examples when reviewing it.
+**Do not use this prototype for sensitive data.** The original untuned 18-case synthetic challenge set exposed eight annotated identifiers in allowed outbound text. After targeted detector changes, the same set still exposes two; the original untuned 29-case exploratory probe exposed 13. Its current reused regression result exposes five under strict core policy; see [current measurements and limitations](bench/README.md). None of these small synthetic sets estimates field quality. Initial owner testing in Brave confirms masking on both sites and restoration on Claude; full authenticated validation remains pending, and DOM changes or unsupported send paths can bypass it. Use fabricated examples when reviewing it.
 
 The [benchmark readme](bench/README.md), [detector follow-up](docs/detector-follow-up.md), [visible-mask decision](docs/adr/0002-visible-masks.md) and [kennitala update](docs/adr/0003-kennitala-2026.md) explain results, constraints and next steps.
 

@@ -1,0 +1,133 @@
+{
+  "method": "exact non-Person argmax span veto before CRF-priority merge; CRF=.75 neural=0",
+  "code_sha256": {
+    "bench/contextual/finetune.py": "bf78982bcdafd853d0adbd087eb5ef81ed82ae658a2a988dac2e5968f272e9d2",
+    "bench/contextual/entity_veto.py": "30404ead4e4d5199cc3c50942b04e8d9bf19b696265755ffa13afc553864387b",
+    "bench/contextual/ensemble.py": "8ff9738944eed7f2ebf8fe286d8de4fb47f00c8b11c271d05d914ae1619d02b3",
+    "bench/contextual/ner.py": "9838796e31106789b9716d188e6b40418411eabfa14a2473f0db14ccd794c699",
+    "bench/contextual/encoder.py": "f5c18222647c78f24d1c97af6557b2e44cdad68482b2b0e34855f407ed6c34fe",
+    "bench/contextual/quality.py": "149f60bf4edaaf306df2edbcba4ad79ba55925296941420640faa107b919abb0",
+    "bench/contextual/compare_quality.py": "446cfe8463c1ad9d0c3f7a636adba150d55387af534965140068c9550bf4ef82",
+    "bench/contextual/entity-veto-protocol.md": "8b4a21bf06bdc852b3f2272c680f0877464cee428695e8303d7a43a460ea6431"
+  },
+  "runner_sha256": "d883476fa495a973cb641d22b0b100c33cd586c81f44843f855edda014ac6136",
+  "training_manifest_sha256": "6becb1f40754fdf6e9a7ca105166cab97d56a82773fc9a45f203775c04beaddd",
+  "inputs": [
+    {
+      "epoch": 1,
+      "dataset": "general",
+      "file": "dev.jsonl",
+      "sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0"
+    },
+    {
+      "epoch": 1,
+      "dataset": "general",
+      "file": "crf-predictions-dev.json",
+      "sha256": "4f9d3f7dd56357a1be384eb73c0ee1cde5816628de0dafc6d9f78ed2e99d85ad"
+    },
+    {
+      "epoch": 1,
+      "dataset": "general",
+      "file": "epoch-1-general-predictions.json",
+      "sha256": "928e6a80299732c0b3571aecdb2153a1b54596fa35a23651d6981da981345b71"
+    },
+    {
+      "epoch": 1,
+      "dataset": "general",
+      "file": "epoch-1-general.json",
+      "sha256": "f4375b5db922cbc0ccb143adc7061a523e21afc4248027eaff0c616480e03ec5"
+    },
+    {
+      "epoch": 1,
+      "dataset": "domain",
+      "file": "domain-dev.jsonl",
+      "sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87"
+    },
+    {
+      "epoch": 1,
+      "dataset": "domain",
+      "file": "crf-predictions-domain-original.json",
+      "sha256": "4f3809b75b4c1e56db0be86802664195e8464c219b68d4b637b54b8886a21036"
+    },
+    {
+      "epoch": 1,
+      "dataset": "domain",
+      "file": "epoch-1-domain-predictions.json",
+      "sha256": "e6c7034248d95aa54b68d020cf82059bad13a3c262be98a981b4880381cb015a"
+    },
+    {
+      "epoch": 1,
+      "dataset": "domain",
+      "file": "epoch-1-domain.json",
+      "sha256": "a9303691a383da1ef7d40dcf02f32536c3d9f87bf06249b0d906f16aa390ccc0"
+    },
+    {
+      "epoch": 2,
+      "dataset": "general",
+      "file": "dev.jsonl",
+      "sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0"
+    },
+    {
+      "epoch": 2,
+      "dataset": "general",
+      "file": "crf-predictions-dev.json",
+      "sha256": "4f9d3f7dd56357a1be384eb73c0ee1cde5816628de0dafc6d9f78ed2e99d85ad"
+    },
+    {
+      "epoch": 2,
+      "dataset": "general",
+      "file": "epoch-2-general-predictions.json",
+      "sha256": "bef0f796c82fc6c6fb38c31f6c0617cd2cb07da0b12a4f20542b418bcdeb0583"
+    },
+    {
+      "epoch": 2,
+      "dataset": "general",
+      "file": "epoch-2-general.json",
+      "sha256": "81d9fe0c58fe5a8c4f725d70cbcefd980f2143c7b6b586df903acf1fa8878072"
+    },
+    {
+      "epoch": 2,
+      "dataset": "domain",
+      "file": "domain-dev.jsonl",
+      "sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87"
+    },
+    {
+      "epoch": 2,
+      "dataset": "domain",
+      "file": "crf-predictions-domain-original.json",
+      "sha256": "4f3809b75b4c1e56db0be86802664195e8464c219b68d4b637b54b8886a21036"
+    },
+    {
+      "epoch": 2,
+      "dataset": "domain",
+      "file": "epoch-2-domain-predictions.json",
+      "sha256": "71bdd8478c771ffe54257d7710f49188dc729dc109d88351a0819853b9835b89"
+    },
+    {
+      "epoch": 2,
+      "dataset": "domain",
+      "file": "epoch-2-domain.json",
+      "sha256": "c35e5730716e0a181fd417b7a145867c3efdf9448c4dbf3f3beef56232bb730a"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "epoch-1-general-veto.json",
+      "sha256": "d28fa9ad3220da504b026b2fbea6e2bf36d19418a79172d9f9afa8fd275d2300"
+    },
+    {
+      "file": "epoch-1-domain-veto.json",
+      "sha256": "4122d5e6497e52f9c8dd0b726a1c58619500ea61eeaec7dacbbb943547abd109"
+    },
+    {
+      "file": "epoch-2-general-veto.json",
+      "sha256": "929f73f57fac8cd1a4058a093424e33d5a02e8feaa13ce37038a6508a61b24f5"
+    },
+    {
+      "file": "epoch-2-domain-veto.json",
+      "sha256": "e312e18a59ee3b6b4f6f0d755ce0885903ef0ec8a80c612984018001a8e05551"
+    }
+  ],
+  "status": "complete",
+  "comparison_sha256": "8e8aa1df326a9060b0f027eeacb559db7edc9d82aea0a739a350e69d81e510f3"
+}

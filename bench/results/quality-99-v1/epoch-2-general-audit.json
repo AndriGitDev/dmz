@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "split": "dev",
+  "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+  "training_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "crf_sha256": "85b436a7f80c5b42f1a90ea6d5fbbc2e1e134c356fd2235adec1956f2ca6ca9c",
+  "neural_sha256": "094e251619916e2dea8822fe0869ec33844e83480032ef306860b50147dfbd10",
+  "thresholds": {
+    "crf": 0.75,
+    "neural": 0
+  },
+  "counts": {
+    "rows": 5582,
+    "tp": 1460,
+    "fp": 71,
+    "fn": 46,
+    "negative_rows": 4488,
+    "negative_rows_with_findings": 34
+  },
+  "false_negatives": {
+    "no_name_prediction": 25,
+    "correct_neural_span_blocked_by_crf_overlap": 6,
+    "boundary_or_merged_name": 13,
+    "exact_crf_span_below_threshold": 2
+  },
+  "false_positives": {
+    "unannotated_as_entity": 14,
+    "other_entity_Organization": 14,
+    "other_entity_Location": 6,
+    "other_entity_Miscellaneous": 12,
+    "boundary_or_merged_name": 22,
+    "overlaps_other_entity": 3
+  },
+  "gold_characteristics": {
+    "multiple_tokens": {
+      "gold": 622,
+      "correct": 603,
+      "missed": 19
+    },
+    "full_name_unseen_in_training": {
+      "gold": 526,
+      "correct": 497,
+      "missed": 29
+    },
+    "unseen_person_component": {
+      "gold": 300,
+      "correct": 274,
+      "missed": 26
+    },
+    "unseen_word": {
+      "gold": 270,
+      "correct": 250,
+      "missed": 20
+    },
+    "oblique_patronymic_shape": {
+      "gold": 77,
+      "correct": 75,
+      "missed": 2
+    },
+    "single_token": {
+      "gold": 884,
+      "correct": 857,
+      "missed": 27
+    },
+    "full_name_seen_in_training": {
+      "gold": 980,
+      "correct": 963,
+      "missed": 17
+    },
+    "all_components_seen_as_person": {
+      "gold": 1206,
+      "correct": 1186,
+      "missed": 20
+    },
+    "all_uppercase": {
+      "gold": 59,
+      "correct": 52,
+      "missed": 7
+    },
+    "initial": {
+      "gold": 79,
+      "correct": 77,
+      "missed": 2
+    },
+    "ambiguous_component": {
+      "gold": 87,
+      "correct": 82,
+      "missed": 5
+    },
+    "all_lowercase": {
+      "gold": 34,
+      "correct": 28,
+      "missed": 6
+    },
+    "hyphenated": {
+      "gold": 4,
+      "missed": 1,
+      "correct": 3
+    }
+  },
+  "synthetic_variants": {},
+  "independent_final_evaluation": false,
+  "caveat": "Reused development; automated error/coverage categories, not human adjudication; characteristic groups overlap"
+}

@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import { annotationSpans, restoredMaskSpans, coverage, markers } from './coverage.mjs';
+
+const marker = '⟦VALUE-0123456789ABCDEF-1: XXXXX⟧';
+const original = 'Í prófun: Gervislóð 97 - 99.';
+const gold = annotationSpans({ text: original, entities: [{ kind: 'address', value: 'Gervislóð 97 - 99' }] });
+const partial = `Í prófun: ${marker} - 99.`;
+const partialMasks = restoredMaskSpans(original, partial, ['Gervislóð 97']);
+assert.ok(!partial.includes('Gervislóð 97 - 99'), 'Legacy literal check would miss this partial exposure');
+assert.equal(coverage(gold, partialMasks).partially_masked, 1);
+const completeMasks = restoredMaskSpans(original, `Í prófun: ${marker}.`, ['Gervislóð 97 - 99']);
+assert.equal(coverage(gold, completeMasks).fully_masked, 1);
+assert.equal(coverage(gold, []).unmasked, 1);
+assert.equal(completeMasks[0].start, Buffer.byteLength('Í prófun: '));
+assert.deepEqual(markers(partial), [marker]);
+assert.throws(() => restoredMaskSpans(original, partial, ['wrong']), /reconstruct/);
+assert.throws(() => restoredMaskSpans(original, partial, []), /Missing/);
+assert.throws(() => restoredMaskSpans(original, partial, [marker]), /unknown/);
+assert.throws(() => annotationSpans({ text: 'synthetic', entities: null }), /null/);
+assert.throws(() => annotationSpans({ text: 'a a', entities: [{ kind: 'name', value: 'a' }] }), /one occurrence/);
+assert.throws(() => annotationSpans({ text: 'a', entities: [{ kind: 'name', value: 'a' }, { kind: 'name', value: 'a' }] }), /Duplicate/);
+assert.equal(coverage([{ start: 0, end: 10, kind: 'name' }], [{ start: 0, end: 7 }, { start: 5, end: 10 }]).fully_masked, 1);
+assert.equal(coverage([{ start: 0, end: 10, kind: 'name' }], [{ start: 0, end: 4 }, { start: 5, end: 10 }]).partially_masked, 1);
+assert.equal(coverage([{ start: 0, end: 10, kind: 'name' }], [{ start: 0, end: 4 }, { start: 0, end: 4 }]).partially_masked, 1);
+console.log('Complete-identifier coverage, partial exposure, UTF-8, and restoration accounting checks passed');

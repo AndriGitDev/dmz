@@ -22,9 +22,35 @@ type Finding struct {
 }
 
 type Result struct {
-	Allowed     bool      `json:"allowed"`
-	Transformed string    `json:"transformed,omitempty"`
-	Findings    []Finding `json:"findings"`
+	Allowed        bool         `json:"allowed"`
+	Transformed    string       `json:"transformed,omitempty"`
+	Findings       []Finding    `json:"findings"`
+	SpansAvailable bool         `json:"spans_available"`
+	DetectedSpans  []EntitySpan `json:"detected_spans"`
+}
+
+// EntitySpan describes the final non-overlapping detection set in original
+// UTF-8 byte offsets. It contains no original value or reversible mapping.
+type EntitySpan struct {
+	Start int         `json:"start"`
+	End   int         `json:"end"`
+	Kind  detect.Kind `json:"kind"`
+}
+
+// Availability means that individual typed spans exist, not that detection is
+// complete or correct. Whole-text masking and invalid-span guards leave it false.
+func withDetectedSpans(result Result, matches []detect.Match) Result {
+	for _, match := range matches {
+		if match.Kind == detect.UnicodeReview {
+			return result
+		}
+	}
+	result.SpansAvailable = true
+	result.DetectedSpans = make([]EntitySpan, 0, len(matches))
+	for _, match := range matches {
+		result.DetectedSpans = append(result.DetectedSpans, EntitySpan{match.Start, match.End, match.Kind})
+	}
+	return result
 }
 
 type Session struct {
@@ -49,8 +75,8 @@ func (s *Session) SetTenantTerms(terms []string) error {
 		if term == "" {
 			continue
 		}
-		if utf8.RuneCountInString(term) < 3 || utf8.RuneCountInString(term) > 80 || strings.ContainsAny(term, "\r\n⟦⟧") || !utf8.ValidString(term) || strings.IndexFunc(term, func(r rune) bool { return unicode.IsMark(r) || unicode.Is(unicode.Cf, r) }) >= 0 {
-			return fmt.Errorf("tenant terms must be 3–80 characters without markers, newlines, combining marks or format characters")
+		if utf8.RuneCountInString(term) < 3 || utf8.RuneCountInString(term) > 80 || strings.ContainsAny(term, "\x00\r\n⟦⟧") || !utf8.ValidString(term) || strings.IndexFunc(term, func(r rune) bool { return unicode.IsMark(r) || unicode.Is(unicode.Cf, r) }) >= 0 {
+			return fmt.Errorf("tenant terms must be 3–80 characters without NULs, markers, newlines, combining marks or format characters")
 		}
 		if !seen[term] {
 			clean = append(clean, term)
@@ -123,7 +149,9 @@ func (s *Session) maskWhole(input string) Result {
 
 func (s *Session) process(input string, names []NameSpan, bestEffort bool) Result {
 	// Only exact markers issued by this live session may bypass detection.
-	// Blank their bytes in the scan copy so match offsets still address input.
+	// Replace their bytes with opaque barriers so offsets still address input.
+	// Whitespace would let context recognizers skip a protected value and
+	// reinterpret a following token as its replacement on the next scan.
 	// Unknown, edited and nested markers need review; accepting arbitrary marker
 	// contents would let a caller hide real identifiers inside a fake marker.
 	scan := []byte(input)
@@ -150,14 +178,14 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 		}
 		issuedMarkers = append(issuedMarkers, NameSpan{start, end})
 		for i := start; i < end; i++ {
-			scan[i] = ' '
+			scan[i] = 0
 		}
 		offset = end
 	}
 	matches := detect.DetectWithTerms(string(scan), s.tenantTerms)
 	if bestEffort {
 		for _, m := range matches {
-			if m.Kind == detect.UnicodeReview || (m.Kind == detect.Secret && strings.HasPrefix(input[m.Start:m.End], "-----BEGIN")) {
+			if m.Kind == detect.UnicodeReview || (m.Kind == detect.Secret && m.Reason != "private-key-block" && strings.HasPrefix(input[m.Start:m.End], "-----BEGIN")) {
 				return s.maskWhole(input)
 			}
 		}
@@ -177,7 +205,7 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 		result.Findings = append(result.Findings, Finding{m.Kind, m.Confidence, action, m.Reason})
 	}
 	if !result.Allowed {
-		return result
+		return withDetectedSpans(result, matches)
 	}
 	// Only after the original protection rules allow the input, combine names.
 	// Reject malformed/conflicting spans rather than silently losing coverage.
@@ -188,6 +216,7 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 	for _, name := range names {
 		if name.Start < previousEnd || name.Start < 0 || name.End <= name.Start || name.End > len(input) ||
 			!utf8.ValidString(input[:name.Start]) || !utf8.ValidString(input[:name.End]) ||
+			splitsCombiningSequence(input, name.Start) || splitsCombiningSequence(input, name.End) ||
 			strings.TrimSpace(input[name.Start:name.End]) == "" || strings.ContainsAny(input[name.Start:name.End], "⟦⟧") {
 			return nameReview()
 		}
@@ -243,7 +272,10 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 	for _, m := range matches {
 		out.WriteString(input[previous:m.Start])
 		raw := input[m.Start:m.End]
-		key := string(m.Kind) + ":" + detect.Canonical(m.Kind, raw)
+		// A marker has one exact inverse. Canonical identifiers can have several
+		// spellings in the same prompt, so sharing their marker would restore all
+		// occurrences to whichever spelling was encountered first.
+		key := string(m.Kind) + ":" + raw
 		replacement, exists := s.forward[key]
 		if !exists {
 			replacement = s.makeSurrogate(m.Kind, raw)
@@ -260,11 +292,19 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 	}
 	out.WriteString(input[previous:])
 	result.Transformed = out.String()
-	return result
+	return withDetectedSpans(result, matches)
 }
 
 func nameReview() Result {
 	return Result{Allowed: false, Findings: []Finding{{detect.Kind("name_review"), detect.Uncertain, "review", "invalid or conflicting model spans"}}}
+}
+
+func splitsCombiningSequence(input string, offset int) bool {
+	if offset == len(input) {
+		return false
+	}
+	r, _ := utf8.DecodeRuneInString(input[offset:])
+	return unicode.IsMark(r)
 }
 
 func markerReview() Result {

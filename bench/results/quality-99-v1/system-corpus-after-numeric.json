@@ -1,0 +1,566 @@
+{
+  "schema": 1,
+  "scope": "Selected/reused synthetic corpora through packaged Chromium scanner and Go WASM best-effort masking; no live-site submission UI",
+  "independent_validation": false,
+  "metric": "Full UTF-8 identifier interval covered by issued restorable markers; partial masking is not success",
+  "not_measured": "Exact typed detector accuracy, representative field performance, real-site interception, scanner warning UI",
+  "build": {
+    "manifest_sha256": "cea6dfded4808da4e6fa361cb9a37a67766b45349086cb8830c2f3ea498d4343",
+    "version_name": "0.1.0 preview 08723dbdc959aaaa1513569797ef569c96053e0f-dirty",
+    "wasm_sha256": "2174c5201283469824518c907e98ddb1d70fdd14a049f035a5523d6f9ae410fb",
+    "detector_data": {
+      "schema": 1,
+      "lexicon_sha256": "ca8ec42b1dc6878498d00274194375d36d18a589bb5f4e5ab593a83afa63c2e2",
+      "name_seeds": 0,
+      "name_parts": 0,
+      "names": 0,
+      "addresses": 23636
+    },
+    "scanner_manifest_sha256": "2027ff394498299009359abbd38f02612b31a898e7c94b5673a2689d682e65c9"
+  },
+  "external_requests": 0,
+  "sets": [
+    {
+      "source": "v0.jsonl",
+      "sha256": "769673c825ad9da58e416fee15872cf3dfab752f28cecbde10d944b53396e4a3",
+      "basic": {
+        "excerpts": 42,
+        "allowed": 42,
+        "blocked": 0,
+        "negative_excerpts": 8,
+        "altered_negative_excerpts": 0,
+        "fully_masked": 37,
+        "partially_masked": 0,
+        "unmasked": 0,
+        "positive_excerpts_completely_masked": 34,
+        "positive_excerpts": 34,
+        "exact_restorations": 42,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "kennitala": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "iban": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "phone": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "secret": {
+            "fully_masked": 5,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "name_demo": {
+            "fully_masked": 7,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "address": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "tenant_dictionary": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 0
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 1
+      },
+      "trained": {
+        "excerpts": 42,
+        "allowed": 42,
+        "blocked": 0,
+        "negative_excerpts": 8,
+        "altered_negative_excerpts": 0,
+        "fully_masked": 37,
+        "partially_masked": 0,
+        "unmasked": 0,
+        "positive_excerpts_completely_masked": 34,
+        "positive_excerpts": 34,
+        "exact_restorations": 42,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "kennitala": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "iban": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "phone": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "secret": {
+            "fully_masked": 5,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "name_demo": {
+            "fully_masked": 7,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "address": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "tenant_dictionary": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 0
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 1
+      }
+    },
+    {
+      "source": "challenge-v0.jsonl",
+      "sha256": "9217277c892120e6a01e6c4abd3285038ab6d6d5fac870cc6c8f853dee51d6ba",
+      "basic": {
+        "excerpts": 18,
+        "allowed": 18,
+        "blocked": 0,
+        "negative_excerpts": 2,
+        "altered_negative_excerpts": 0,
+        "fully_masked": 14,
+        "partially_masked": 0,
+        "unmasked": 2,
+        "positive_excerpts_completely_masked": 14,
+        "positive_excerpts": 16,
+        "exact_restorations": 18,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "name_demo": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "address": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "secret": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "phone": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 0
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 0.875
+      },
+      "trained": {
+        "excerpts": 18,
+        "allowed": 18,
+        "blocked": 0,
+        "negative_excerpts": 2,
+        "altered_negative_excerpts": 0,
+        "fully_masked": 15,
+        "partially_masked": 0,
+        "unmasked": 1,
+        "positive_excerpts_completely_masked": 15,
+        "positive_excerpts": 16,
+        "exact_restorations": 18,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "name_demo": {
+            "fully_masked": 5,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "address": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "secret": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "phone": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 0
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 0.9375
+      }
+    },
+    {
+      "source": "exploratory-v1.jsonl",
+      "sha256": "9fbd1039bf26cc85decb6629f611c8c4aa92383c5b108b0b221fd694af4c07aa",
+      "basic": {
+        "excerpts": 29,
+        "allowed": 29,
+        "blocked": 0,
+        "negative_excerpts": 4,
+        "altered_negative_excerpts": 1,
+        "fully_masked": 17,
+        "partially_masked": 0,
+        "unmasked": 8,
+        "positive_excerpts_completely_masked": 17,
+        "positive_excerpts": 25,
+        "exact_restorations": 29,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "name_demo": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 2
+          },
+          "email": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "phone": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "address": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 3
+          },
+          "secret": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 2
+          },
+          "kennitala": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "tenant_dictionary": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 1
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 0.68
+      },
+      "trained": {
+        "excerpts": 29,
+        "allowed": 29,
+        "blocked": 0,
+        "negative_excerpts": 4,
+        "altered_negative_excerpts": 1,
+        "fully_masked": 19,
+        "partially_masked": 0,
+        "unmasked": 6,
+        "positive_excerpts_completely_masked": 19,
+        "positive_excerpts": 25,
+        "exact_restorations": 29,
+        "scanner_fallbacks": 3,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "name_demo": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "phone": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "address": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 3
+          },
+          "secret": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 2
+          },
+          "kennitala": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 2,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "tenant_dictionary": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 1
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 0.76
+      }
+    },
+    {
+      "source": "format-v2.jsonl",
+      "sha256": "a2d418355cb88a1807c4b5cc22f20905f80f855b2ff4cea2c5e76ed8e0ecd9c1",
+      "basic": {
+        "excerpts": 41,
+        "allowed": 41,
+        "blocked": 0,
+        "negative_excerpts": 18,
+        "altered_negative_excerpts": 0,
+        "fully_masked": 23,
+        "partially_masked": 0,
+        "unmasked": 0,
+        "positive_excerpts_completely_masked": 23,
+        "positive_excerpts": 23,
+        "exact_restorations": 41,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "kennitala": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "phone": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 5,
+            "partially_masked": 0,
+            "unmasked": 0
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 1
+      },
+      "trained": {
+        "excerpts": 41,
+        "allowed": 41,
+        "blocked": 0,
+        "negative_excerpts": 18,
+        "altered_negative_excerpts": 0,
+        "fully_masked": 23,
+        "partially_masked": 0,
+        "unmasked": 0,
+        "positive_excerpts_completely_masked": 23,
+        "positive_excerpts": 23,
+        "exact_restorations": 41,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "kennitala": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "phone": {
+            "fully_masked": 6,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 5,
+            "partially_masked": 0,
+            "unmasked": 0
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 1
+      }
+    },
+    {
+      "source": "holdout-v2.jsonl",
+      "sha256": "09320a46bc28ab0a50302a8966335f422592139f62c9df6b90a1609172851e2a",
+      "basic": {
+        "excerpts": 30,
+        "allowed": 30,
+        "blocked": 0,
+        "negative_excerpts": 10,
+        "altered_negative_excerpts": 1,
+        "fully_masked": 15,
+        "partially_masked": 0,
+        "unmasked": 5,
+        "positive_excerpts_completely_masked": 15,
+        "positive_excerpts": 20,
+        "exact_restorations": 30,
+        "scanner_fallbacks": 0,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "kennitala": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "phone": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "name_demo": {
+            "fully_masked": 0,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "address": {
+            "fully_masked": 0,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "secret": {
+            "fully_masked": 0,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "tenant_dictionary": {
+            "fully_masked": 0,
+            "partially_masked": 0,
+            "unmasked": 1
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 0.75
+      },
+      "trained": {
+        "excerpts": 30,
+        "allowed": 30,
+        "blocked": 0,
+        "negative_excerpts": 10,
+        "altered_negative_excerpts": 2,
+        "fully_masked": 16,
+        "partially_masked": 0,
+        "unmasked": 4,
+        "positive_excerpts_completely_masked": 16,
+        "positive_excerpts": 20,
+        "exact_restorations": 30,
+        "scanner_fallbacks": 3,
+        "blocked_identifiers": 0,
+        "per_type": {
+          "kennitala": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "card": {
+            "fully_masked": 3,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "phone": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "email": {
+            "fully_masked": 4,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "name_demo": {
+            "fully_masked": 1,
+            "partially_masked": 0,
+            "unmasked": 0
+          },
+          "address": {
+            "fully_masked": 0,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "secret": {
+            "fully_masked": 0,
+            "partially_masked": 0,
+            "unmasked": 1
+          },
+          "tenant_dictionary": {
+            "fully_masked": 0,
+            "partially_masked": 0,
+            "unmasked": 1
+          }
+        },
+        "complete_identifier_coverage_in_allowed_text": 0.8
+      }
+    }
+  ],
+  "status": "complete",
+  "seconds": 91.721
+}

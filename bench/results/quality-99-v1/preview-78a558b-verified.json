@@ -1,0 +1,26 @@
+{
+  "source_commit": "78a558b535e083af7227d14845d6fdb690aeefa7",
+  "archive_sha256": "d0af08319d50c7a21601ab187e0bac41e747abe045e418a91a69070f115f70e8",
+  "archive_bytes": 233858459,
+  "verified_files": 30,
+  "scanner_profile": "trained-fp16storage",
+  "private_preview": true,
+  "independent_validation": false,
+  "system_report_status": "complete",
+  "wasm_and_browser_workflows": "passed on exact recorded package",
+  "system_report_sha256": "97d3de8022504252e8140a06fa1a66584e22864ad5399c0046cbadaad8f710bc",
+  "scanner_workflows_sha256": "6ee39d8308b93966cb1232321cab78eac7f89729a5e46782fea3691ee0362070",
+  "external_requests": 0,
+  "synthetic_corpora": 19,
+  "measurement_sha256": {
+    "apps/shield/scripts/wasm-smoke.mjs": "6ff5cd11bf9995b0af3f0c7acdf42c12663c70a44fa3d8e0b01160f214c700eb",
+    "apps/shield/scripts/scanner-smoke.mjs": "f805a493a61b32801d0822098ab1188dee5af1d46f95aa088e5210bc5a1e0c0e",
+    "apps/shield/scripts/browser-smoke.mjs": "1f950a4366b27d9582cc301437525c37c63d98c52ee98a56aa7a8f77ddac8441",
+    "apps/shield/scripts/chat-smoke.mjs": "d7f2664648eb1051db3cbd11054942e35068c674af9ce39a49a640c09226bee1",
+    "apps/shield/scripts/chat-races.mjs": "518b5bee86cfad8977f7d83a63f7ae08d61d62d000176a4dcb803abb2674849d",
+    "apps/shield/scripts/system-corpus.mjs": "da272bf67e54f9953044c56b9928cf20206d688f6d5db133cd5504a03cae3a51",
+    "apps/shield/scripts/coverage.mjs": "81c8bae2aa29d89b5c8e49bbd13204ac38aa0c6fe613ab73e5ee408446c57448",
+    "apps/shield/scripts/typed-quality.mjs": "ca30b9ab002506e3823647000fba9d2305eada839dc1b689e5a6d7fb1cdddaf2",
+    "bench/contextual/quality.py": "149f60bf4edaaf306df2edbcba4ad79ba55925296941420640faa107b919abb0"
+  }
+}

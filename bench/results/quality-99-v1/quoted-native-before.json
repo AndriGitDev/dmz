@@ -1,0 +1,18 @@
+{
+  "corpus": "bench/corpus/quoted-credential-v3.jsonl",
+  "detector": "dmz",
+  "samples": 46,
+  "scoring": "exact span and entity type",
+  "per_kind": {
+    "secret": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 33,
+      "precision": 0,
+      "recall": 0
+    }
+  },
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ]
+}

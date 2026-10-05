@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "seed": "dmz-document-review-splits-20261004-v1",
+  "status": "Frozen unlabelled review allocation; human extraction and entity review required",
+  "collection_manifest_sha256": "fa685ba9c8a54440e5b051c9aedcc18a11b519ddf91b0c8a257fc9523ca2dbca",
+  "review_sha256": "bbfe077bddcc0714bfe601b83b90bda9f7ed653306e59c1eeead7f160827aaae",
+  "cluster_method": "Transitive components at >=20% normalized exact 12-gram containment; not semantic topic detection",
+  "excluded_documents": {
+    "overlaps_prior_text": 56,
+    "unavailable_or_collection_duplicate": 3
+  },
+  "source_use_review": "pending; private storage only",
+  "model_evaluated": false,
+  "training_use": false,
+  "independent_final_evaluation": false,
+  "splits": {
+    "dev-review": {
+      "documents": 9,
+      "excerpts": 16,
+      "words": 3030,
+      "clusters": 9,
+      "strata": {
+        "general": 4,
+        "public-administration": 12
+      },
+      "sha256": "e8c6352d8a03808cc0e2983314ebcfb1c83a654fadec63990c4eef92fdf5bf44"
+    },
+    "reserved-review": {
+      "documents": 10,
+      "excerpts": 18,
+      "words": 3301,
+      "clusters": 10,
+      "strata": {
+        "general": 4,
+        "public-administration": 14
+      },
+      "sha256": "d271be1bf46b5e1141436437a72aedbf89febefd68e7b6ab6b9f689c70b88a0e"
+    },
+    "train-review": {
+      "documents": 34,
+      "excerpts": 58,
+      "words": 10478,
+      "clusters": 34,
+      "strata": {
+        "general": 18,
+        "public-administration": 38,
+        "financial": 2
+      },
+      "sha256": "dd3690df8205bfb4382cf062f5ffc4a4dd11c7cd6616c916d133ff7ac652490c"
+    }
+  },
+  "document_splits_sha256": "2bcfd64ebf6405266794475bd03492910a51b61ba033a8eb783ee647f1d2c3a2"
+}

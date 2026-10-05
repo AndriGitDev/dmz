@@ -1,0 +1,1167 @@
+{
+  "schema": 1,
+  "seed": "dmz-review-pool-20261004-v1",
+  "indexes": [
+    {
+      "key": "hi",
+      "links_sha256": "e819937a15c7da651d4a94c56c471b9b0bc25be4e03b2c3925464c03fe6783d9"
+    },
+    {
+      "key": "hi-page2",
+      "links_sha256": "c8e25270b82f2b85e73962965f3c3508f1bec5e66a51371f3532114396fcdfcb"
+    },
+    {
+      "key": "stjornarradid",
+      "links_sha256": "ba075babb91d6e8ba640985fa250097c8e4a2173409c5dd78763600ed2212fe3"
+    },
+    {
+      "key": "reykjavik",
+      "links_sha256": "98caabc6473e30250f0294356989729b086b75285d15f2c0ffde3916e1da4a72"
+    },
+    {
+      "key": "landsbankinn",
+      "links_sha256": "006849111ac94159638a79e28fae75b4a1239a26b1daef863ffd78a9c905628f"
+    },
+    {
+      "key": "hagstofa",
+      "links_sha256": "aa57888824ee837c4217dbc95544703a7c00b0eb4e949c17211a959a31ab1f81"
+    },
+    {
+      "key": "personuvernd-news",
+      "links_sha256": "fac5add7a0ad2066dc68aca556bafe765bae970c874472b64bbd4b958d8acac0"
+    }
+  ],
+  "documents": [
+    {
+      "id": "hi-97311765818b",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/466764",
+      "discovery_keys": [
+        "hi"
+      ]
+    },
+    {
+      "id": "hi-c17c2dca832f",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/465656",
+      "discovery_keys": [
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-58b1e2c95b61",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/26126",
+      "discovery_keys": [
+        "hi",
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-f63031f6dc61",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/17490",
+      "discovery_keys": [
+        "hi",
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-0e6751f6e1a6",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/466734",
+      "discovery_keys": [
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-e08e56bd5091",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/10281/",
+      "discovery_keys": [
+        "hi",
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-25cfad93a708",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/465693",
+      "discovery_keys": [
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-b492430d4fc3",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/465666",
+      "discovery_keys": [
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-a250f709f991",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/465690",
+      "discovery_keys": [
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-c86baf551875",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/5556",
+      "discovery_keys": [
+        "hi",
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-24afe9f86b33",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/5341",
+      "discovery_keys": [
+        "hi",
+        "hi-page2"
+      ]
+    },
+    {
+      "id": "hi-7e7f8c6b138d",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/466762",
+      "discovery_keys": [
+        "hi"
+      ]
+    },
+    {
+      "id": "hi-e1de46f46881",
+      "publisher": "hi",
+      "stratum": "general",
+      "genre": "university-research-news",
+      "url": "https://www.hi.is/node/466760",
+      "discovery_keys": [
+        "hi"
+      ]
+    },
+    {
+      "id": "stjornarradid-c207a4feb96e",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-28-framkvaemdasjodur-ferdamannastada-auglysir-eftir-umsoknum-um-styrki-fyrir-arid-2027",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-dda155081185",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-22-innvidaradherra-maelti-fyrir-heildarlogum-um-leidarmerki-og-oryggi-siglinga",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-9fecc61fdeba",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-22-maelt-fyrir-heildarlogum-um-netoryggisvottun-a-svidi-upplysinga-og-fjarskiptataekni",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-111ba391789f",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-29-education-at-a-glance-2026-haskolar-a-islandi",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-2cfa9b356362",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-22-svakalega-lestrarkeppnin-hvad-heldur-thu-ad-gerist-naest",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-3303863daf88",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-28-uppfaerd-handbok-um-sameiningar-rikisstofnana",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-d0d6f5116a71",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-25-breytt-skipulag-logreglu-kynnt-i-logregluradi",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-2f56b453eff3",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-25-undirritudu-verksamning-um-jardvegsframkvaemdir-fyrir-stora-hraun",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-d151a901b304",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-22-maelti-fyrir-tveimur-thingmalum",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-c05f51e85b7a",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-26",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-41546f169339",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-28-styrkveitingar-til-verkefna-og-vidburda-a-malefnasvidum-atvinnuvegaradherra-haustid-2026",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-9fc4b5b8cdef",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-25-maelti-fyrir-tveimur-thingsalyktunartillogum-um-offitu-og-um-sjaldgaefa-sjukdoma",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-852b5a5f9a55",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-25-aldurstakmark-barna-a-samfelagsmidlum-kynnt-til-umsagnar",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-8a9c7621986d",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-25-samrad-hafid-um-breytingar-a-ruv",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "stjornarradid-d3286fdf09e4",
+      "publisher": "stjornarradid",
+      "stratum": "public-administration",
+      "genre": "government-news",
+      "url": "https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2026-09-22-fraedslufundur-fyrir-heilbrigdisstarfsfolk",
+      "discovery_keys": [
+        "stjornarradid"
+      ]
+    },
+    {
+      "id": "reykjavik-7861302286ae",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/evropsk-samgonguvika-2026",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-5aa65c7e7938",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/pinkids-epli-i-oskjum-innkollud",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-20569ee3045f",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/menningarstyrkir-studningur-vid-fjolbreytt-menningarlif",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-3ed400233f4c",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/lokun-vegna-endurnyjunar-umferdarljosa-haaleitisbrautsmaagerdi",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-81ec00582c83",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/kosid-utan-kjorfundar-i-kringlunni",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-2b00a6a40910",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/efling-visindalaesis-i-grunnskolum-borgarinnar",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-fd8162eb22f0",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/nyjar-bryr-fyrir-gangandi-og-hjolandi",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-6847f37414cd",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/simafri-i-grunnskolum-med-velferd-barna-ad-leidarljosi",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-8c3277d50f87",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/laus-plass-hja-dagforeldrum-i-reykjavik",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-da65be56c37a",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/natturuborgin-reykjavik",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-7a7f860ff3e3",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/borgin-okkar-menning-vidburdir-og-afthreying-i-reykjavik-einum-stad",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-9261e299d18f",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/utskipting-umferdarljosabunadar-vid-gatnamot-hofdabakka-og-bildshofda",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-720c11794539",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/monnun-i-leikskolum-gengur-betur-en-fyrri-ar",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-001a1a2ed6ef",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/ithrottavika-evropu-hreyfum-okkur-meira-i-daglega-lifinu",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-40a14b66fe54",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/thridjungur-til-i-ad-skilja-bilinn-eftir-heima",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-04fe4a4f469f",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/borgin-undirbyr-solarhringsopnun-bilahusa",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-e8c3509bed2a",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/verkefnid-er-ad-na-stjorn-rekstri-borgarinnar",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-0574b58c0738",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/brada-og-vidbragdsteymid-pulsinn-tekur-til-starfa-gegn-ofbeldi-medal-barna",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-aa5e3b0855fb",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/innkollun-river-rice-hrisgrjonum",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-2731de55c06f",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/ny-gjaldskra-veitinga-og-faedis",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-40c42d745ef0",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/borgarrad-samthykkir-solu-husnaedis-isaksskola",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-4fb2eab55822",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/david-leitch-og-kelly-mccormick-hljota-heidursverdlaun-riff",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-6d4839d49cba",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/nyr-endurreikningur-serstaks-husnaedisstudnings-gefinn-ut",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-92f41e0d5e99",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/borgarlinuframkvaemdir-hafnar-vid-nautholsveg-hr",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-b91fdf941e3e",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/blasid-til-storsoknar-i-menntamalum-i-reykjavik",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "reykjavik-a5f835186419",
+      "publisher": "reykjavik",
+      "stratum": "public-administration",
+      "genre": "municipal-news",
+      "url": "https://reykjavik.is/frettir/2026/upplysingabaeklingur-um-thjodaratkvaedagreidslu-2026-audlesnu-mali",
+      "discovery_keys": [
+        "reykjavik"
+      ]
+    },
+    {
+      "id": "landsbankinn-54f962a7e64b",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/09/29/opid-fyrir-umsoknir-um-samfelagsstyrki",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-14dd09113fb2",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/06/11/reykjastraeti-6-fyrst-til-ad-hljota-frabaera-fullnadarvottun",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-404123142bc5",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/06/09/vid-vorum-vid-svikatolvupostum",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-0ab68fdda484",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/08/28/landsbankinn-til-radgjafar-vid-solu-alvogen",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-7ce94cb78588",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/08/19/fjolskyldufjor-og-tonleikar-a-menningarnott",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-498cb45b9d80",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/07/24/landsbankinn-radgjafi-blaa-lonsins",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-72af597ac5b2",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/06/02/listahatid-i-reykjavik-er-hafin-tvaer-syningar-i-landsbankanum",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-21059ddabb29",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/06/05/helgi-f-margeirsson-nyr-utibusstjori-a-saudarkroki",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-6d16dbdf2aa4",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/05/29/10-milljonum-uthlutad-i-namsstyrki-2026",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-01b95b5a4898",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/08/18/landsbankinn-140-ara-og-tm-70-ara",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-da6bab716862",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/09/10/tveir-fengu-uthlutad-ur-hvatasjodi-landsbankans-2026",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-ded1f3da9c98",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/06/05/vild-nytt-vildarkerfi",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-c0f55201080d",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/08/21/landsbankinn-breytir-voxtum-agust-2026",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-3acfd0e8e9c0",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/08/05/tolf-hlutu-styrk-ur-gledigongupotti-hinsegin-daga-og-landsbankans",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-ead25435583c",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/07/08/fyrirtaekjaradgjof-landsbankans-annast-skraningu-styrkas",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-0769b0e0f600",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/08/27/landsbref-skila-godum-arangri-a-fyrri-hluta-arsins-2026",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-b5bfdfb9b821",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/06/22/thad-borgar-sig-ad-skoda-sendandann",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "landsbankinn-af42eb30ab55",
+      "publisher": "landsbankinn",
+      "stratum": "financial",
+      "genre": "bank-news",
+      "url": "https://www.landsbankinn.is/frettir/2026/08/04/leidrettingar-vegna-tvibokadra-faerslna",
+      "discovery_keys": [
+        "landsbankinn"
+      ]
+    },
+    {
+      "id": "hagstofa-7c0077f336f0",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/laun-og-tekjur/manadarleg-launavisitala-i-agust-2026-og-tengdar-visitolur/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-e66585a90485",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/menntun/starfsfolk-i-leikskolum-arid-2024/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-a3e6f98c0475",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/ymislegt/skyrsla-hagtalnanefndar-gefin-ut/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-e0b2cf93582d",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/verdlag/visitala-byggingarkostnadar-i-juni-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-f15f81cd979c",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/mannfjoldi/faedingar-2025/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-ecc17f4f058f",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/vinnumarkadur/frett-um-vinnumarkadinn-a-odrum-arsfjordungi-frestad/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-359eec1f1a7a",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/efnahagur/rekstrar-og-efnahagsyfirlit-landbunadarins-2024/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-113033219e2e",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/verdlag/visitala-byggingarkostnadar-i-mai-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-6c9dce05535a",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/vinnumarkadur/starfandi-samkvaemt-skram-i-juli-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-f272dd7c7871",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/vinnumarkadur/vinnumarkadurinn-i-februar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-7935689aec41",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/landbunadur/framleidsla-i-landbunadi-i-november-2025/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-9dda2fee0d89",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/laun-og-tekjur/frett-um-dreifingu-launa-a-islenskum-vinnumarkadi-2025-frestad/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-c4cefce0d038",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/thjodhagsreikningar/thjodhagsreikningar-a-2-arsfjordungi-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-8120c41290d7",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/sjavarutvegur/fiskafli-i-juli-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-2df9dffff28c",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/umhverfi/umhverfisskattar-2024/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-c224efc1477f",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/sjavarutvegur/fiskafli-i-desember-2025/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-be2f687735cd",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/ymislegt/svar-forsaetisradherra-vid-skyrslubeidni-althingis/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-9cf126046225",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/verdlag/visitala-byggingarkostnadar-i-september-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-555fe4b8a0cf",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/vinnumarkadur/starfandi-samkvaemt-skram-i-november-2025/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-5d5cc1e5c2eb",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/verdlag/visitala-framleidsluverds-i-mars-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-e98d54058f39",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/utanrikisverslun/voruvidskipti-i-februar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-76e500c5f25b",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/fyrirtaeki/velta-skv-vsk-mars-april-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-4a3a56165e66",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/utanrikisverslun/voruvidskipti-i-mai-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-a516b3dc0449",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/verdlag/visitala-byggingarkostnadar-i-juli-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-babcb79096e1",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/felagsmal/stjornarmenn-fyrirtaekja-2025/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-efd7993aa193",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/laun-og-tekjur/stadgreidsluskyldar-greidslur-i-februar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-34e154c5c2d2",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/verdlag/visitala-framleidsluverds-i-januar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-200cb97ee522",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/fjarmal-hins-opinbera/aaetladur-medalrekstrarkostnadur-a-grunnskolanema-i-januar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-870c6f1cd0b2",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/menning/uppfaersla-a-menningarvisum-um-rekstrartekjur-og-adila-2024/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-ec112201e9de",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/verdlag/samraemd-visitala-neysluverds-i-mars-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-73751db69c3c",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/utanrikisverslun/voruvidskipti-i-juli-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-7799894a617a",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/laun-og-tekjur/stadgreidsluskyldar-greidslur-i-januar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-b9174b6cf79d",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/midlun/auglysingatekjur-2024/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-89f1bd200619",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/fjarmal-hins-opinbera/aaetladur-medalrekstrarkostnadur-a-grunnskolanema-i-september-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-c3660f5004c6",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/landbunadur/framleidsla-i-landbunadi-i-februar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-154a8f298289",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/efnahagur/uppfaersla-a-okutaekjatolum-til-2025/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-9a29aeaa0837",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/ferdathjonusta/gistinaetur-i-april-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-b124e6ee6451",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/visindi-og-taekni/frett-um-upplysingataekninotkun-fyrirtaekja-2024-frestad/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-4ab113122f57",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/fjarmal-hins-opinbera/fjarmal-hins-opinbera-2025-bradabirgdatolur/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    },
+    {
+      "id": "hagstofa-ebc772173694",
+      "publisher": "hagstofa",
+      "stratum": "financial",
+      "genre": "official-statistics-news",
+      "url": "https://hagstofa.is/utgafur/frettasafn/utanrikisverslun/voruvidskipti-i-januar-2026/",
+      "discovery_keys": [
+        "hagstofa"
+      ]
+    }
+  ],
+  "purpose": "Unassigned model-blind review pool; no training labels or final-test designation",
+  "selection": "Unused article-shaped URLs from 30 September snapshots, SHA256(seed+URL) order, at most 40 per publisher; before inference.",
+  "limitations": "Availability sample; collection date does not imply new publication; clustering, extraction and source-use review remain required.",
+  "exclusions_sha256": [
+    "694738478c6d6dda1efd03a1f25ca9fc52f94bf38769ef056ef3f14546dfae7b"
+  ]
+}

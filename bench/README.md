@@ -37,8 +37,8 @@ Committed kennitölur use century digit `8` and cannot belong to living people. 
 ## Formatting tuning v2
 
 See [the tuning report](../docs/detector-tuning-2026-09-28.md) for changes, data
-sources and live Shield checks. Current exploratory exposure is **8** (previously
-13); name/address/generic-secret/case-variant-term gaps remain. Its original
+sources and live Shield checks. Current exploratory exposure is **5** (originally
+13, then 8 before the 4 October address update); name/generic-secret/case-variant-term gaps remain. Its original
 snapshots are retained as `exploratory-untuned-*`.
 
 `format-v2.jsonl` has 41 examples authored before this change (23 identifier
@@ -58,6 +58,34 @@ An unannotated row must explicitly mean benign, not incomplete annotation.
 go test ./...
 ```
 
+On 4 October, the horizontal numeric-format follow-up recovered the two remaining
+kennitala formatting misses and the tab-separated phone in `holdout-v2` without
+new false detections in the five synthetic corpora. That set is now explicitly
+**reused development**, not an untuned probe. Its previous detection/exposure
+reports are preserved under `results/quality-99-v1/*before-numeric.json`; corpus
+content and pins are unchanged. Five identifiers remain exposed under strict-core
+policy, and the existing benign Unicode review remains. This does not establish
+field accuracy. Packaged best-effort coverage is measured separately by the new
+Shield system harness, including partial-mask accounting.
+
+The subsequent unknown-street shape update accepts lowercase street forms,
+horizontal spacing, and range/apartment notation when a postcode is present.
+These remain uncertain detections. It recovers the remaining `holdout-v2` address
+and the three exploratory address misses with no new address false detections in
+those reused synthetic sets. Four literals remain exposed under strict-core
+policy in `holdout-v2`; its pre-change reports are preserved as
+`results/quality-99-v1/*before-address-shape.json`. Fabricated regression cases
+also check currency amounts, overlong numbers, word boundaries, missing postcodes,
+and line breaks. None of these results establishes representative address recall.
+
+The [canonical Unicode follow-up](../docs/detector-unicode-normalization.md) recovers
+one exact email detection in each of the exploratory and later-probe sets and
+removes their benign decomposed-text guard. Unsupported format characters remain
+guarded. Pre-change snapshots are preserved as `*before-nfc.json`; source corpora,
+pins and recall floors are unchanged. Packaged exact-set accuracy, full masking
+coverage and restoration are reported separately in
+`results/quality-99-v1/system-typed-after-nfc.json`.
+
 CI checks the new corpus pins separately in `gates/corpus-v2.sha256`. Existing
 pins and floors are unchanged. Updating the new pins or weakening the format
 regression assertions requires review, as do existing gates.
@@ -68,9 +96,50 @@ See [the offline contextual experiment](contextual/README.md) for local CRF trai
 the separate 95.5% precision-and-recall check, and the frozen synthetic legal/financial
 probe. These research results do not change the shipped Shield detector.
 
+The [October nine-label trial](contextual/quality-99-protocol.md#completed-result--5-october-2026)
+completed both epochs and all four evaluations. Neither candidate passes the
+frozen comparison; the reference model remains selected. Aggregate results
+preserve both successful domain changes and the general-text regressions.
+
 ## Browser deployment benchmark
 
 See [the private browser harness](browser-detector/README.md) for frozen ONNX
 export, compression accuracy checks and local Chromium runtime measurements.
 [Results and the deployment decision](results/browser-v1/README.md) distinguish
 native development parity from browser feasibility.
+
+The [address vocabulary format audit](address-audit/README.md) checks complete spans across approved forms and synthetic formatting variants, with aggregate before/after reports and private source/failure files. It is a development regression check, not independent quality evidence.
+
+[Private-key block regression cases](private-key-v3.md) distinguish precise Secret spans from the existing whole-prompt protection for malformed or incomplete blocks. Their fabricated payloads are nonfunctional, and the development cases do not establish independent secret-detection quality.
+
+[Database URI regression cases](database-url-v3.md) separate embedded credentials from non-secret connection references and verify full-span masking and restoration on synthetic examples.
+
+[Bearer credential regression cases](bearer-v3.md) check complete opaque-token characters, explicit header context, response challenges and exact restoration while documenting the remaining prose heuristics.
+
+[GitHub token regression cases](github-token-v3.md) cover documented provider prefixes and longer stateless installation-token shapes, with complete masking and restoration checks.
+
+[Credential assignment cases](credential-context-v3.md) test a bounded context/entropy heuristic against benign configuration and code. Unsupported credential values remain labelled positives and visible misses.
+
+[The expression follow-up](credential-expression-v3.md) measures code-reference false positives separately from literal credential values, including four remaining ambiguous errors.
+
+[Complete email shapes](email-shape-v3.md) tracks exact mailbox spans, quoted/internationalized forms, literals and explicit assignment boundaries on two pinned synthetic probes. This is development evidence, not field accuracy or deliverability validation.
+
+[The exact other-type veto result](contextual/entity-veto-result.md) preserves the rejected comparison: fewer false names also meant fewer true names. All four replays match their original Person caches exactly; no browser model was replaced.
+
+[The bounded entity-aware family](contextual/entity-family-result.md) retains all 36 threshold/priority comparisons. None improves the lower recall enough to pass the research gate; the frozen model is retained and the grid is closed.
+
+[The AWS credential component probe](aws-credentials-v3.md) covers temporary access-key IDs and session-token fields alongside public-identifier negatives. Two unsupported positives and one ambiguous code-reference false positive remain in its pinned results.
+
+[The SigV4 presigned URL probe](presigned-url-v3.md) measures complete URL masking, original-byte restoration, embedded-identifier precedence and unsigned URL negatives.
+
+[Marker resubmission robustness](marker-roundtrip.md) records a fuzz-discovered credential-context bug, its correction, and exact restoration/idempotency checks.
+
+[Long-prompt boundary controls](contextual/long-context-result.md) retain four separate frozen synthetic groups. The trained path passes; CRF-only coverage explains why these cases do not isolate neural boundary behavior.
+
+[Verified private preview](private-preview-20261005.md) ties the clean `a8a6704` archive to exact package hashes, 16 browser scanner workflows and 20 separate synthetic corpus results.
+
+[Quoted credential alphabet results](quoted-credential-result.md) cover printable punctuation and Unicode in complete literals, with retained misses and exact restoration evidence.
+
+[Auxiliary Person supervision](contextual/auxiliary-person-result.md) records the completed fixed single-epoch trial, its recall regression and the decision to retain the frozen reference.
+
+The [5 October handoff](../docs/detector-handoff-2026-10-05.md) summarizes the verified preview, remaining errors and independent acceptance work.

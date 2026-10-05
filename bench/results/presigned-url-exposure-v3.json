@@ -1,0 +1,22 @@
+{
+  "corpus": "bench/corpus/presigned-url-v3.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 40,
+  "allowed_prompts": 11,
+  "blocked_prompts": 29,
+  "benign_prompts": 11,
+  "blocked_benign_ids": [],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [],
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "secret": {
+      "masked": 0,
+      "blocked": 30,
+      "exposed": 0
+    }
+  }
+}

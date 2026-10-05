@@ -16,9 +16,23 @@ jobs:
       - run: python3 -m unittest discover -s bench/datasets -p 'test_*.py'
       - run: python3 -m pip install -r bench/contextual/requirements.txt
       - run: python3 -m unittest discover -s bench/contextual -p 'test_*.py'
+      - run: python3 -m pip install -r bench/holdout/requirements.txt
+      - run: python3 -m unittest discover -s bench/holdout -p 'test_*.py'
       - run: sha256sum --check bench/gates/legal-financial-v1.sha256
       - run: sha256sum --check bench/gates/corpus.sha256
       - run: ./scripts/check-detector-v2.sh
+      - run: ./scripts/check-private-key.sh
+      - run: ./scripts/check-database-url.sh
+      - run: ./scripts/check-bearer.sh
+      - run: ./scripts/check-github-token.sh
+      - run: ./scripts/check-credential-context.sh
+      - run: ./scripts/check-credential-expression.sh
+      - run: ./scripts/check-email-shape.sh
+      - run: ./scripts/check-email-context.sh
+      - run: ./scripts/check-aws-credentials.sh
+      - run: ./scripts/check-presigned-url.sh
+      - run: ./scripts/check-long-context.sh
+      - run: ./scripts/check-quoted-credential.sh
       - run: go run ./bench/scorers -baseline bench/results/v0.json -floor bench/gates/selected-v0-recall.json > /tmp/dmz-benchmark-current.json
       - run: diff -u bench/results/v0.json /tmp/dmz-benchmark-current.json
       - run: go run ./bench/scorers -detector regex > /tmp/dmz-regex-current.json
@@ -61,6 +75,11 @@ jobs:
         working-directory: apps/shield
       - run: node scripts/scanner-unit.mjs
         working-directory: apps/shield
+      - run: node scripts/scanner-lifecycle-unit.mjs
+        working-directory: apps/shield
+      - run: node bench/holdout/editor/test-core.cjs
+      - run: npm run test:coverage
+        working-directory: apps/shield
       - name: Install verified TinyGo 0.42.0
         run: |
           curl --fail --location --retry 3 --output /tmp/tinygo.tar.gz https://github.com/tinygo-org/tinygo/releases/download/v0.42.0/tinygo0.42.0.linux-amd64.tar.gz
@@ -73,6 +92,7 @@ jobs:
         working-directory: apps/shield
       - run: npx playwright install --with-deps chromium
         working-directory: apps/shield
+      - run: node bench/holdout/editor/test-browser.mjs
       - run: npm run test:browser
         working-directory: apps/shield
       - run: npm audit --omit=dev --audit-level=high

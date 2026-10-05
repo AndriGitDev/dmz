@@ -1,0 +1,74 @@
+{
+  "corpus": "bench/corpus/holdout-v2.jsonl",
+  "detector": "dmz",
+  "samples": 30,
+  "scoring": "exact span and entity type",
+  "per_kind": {
+    "address": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1
+    },
+    "card": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.75
+    },
+    "email": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1,
+      "recall": 0.5
+    },
+    "kennitala": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1
+    },
+    "name_demo": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0,
+      "recall": 0
+    },
+    "phone": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1
+    },
+    "secret": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0,
+      "recall": 0
+    },
+    "tenant_dictionary": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0,
+      "recall": 0
+    },
+    "unicode_review": {
+      "tp": 0,
+      "fp": 3,
+      "fn": 0,
+      "precision": 0,
+      "recall": 0
+    }
+  },
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ]
+}

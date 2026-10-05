@@ -91,7 +91,7 @@ class Fetcher:
         raise ValueError('redirect limit')
 
 
-def extract(body):
+def extract(body, source_host=None):
     tree = Tree(); tree.feed(body.decode('utf-8-sig'))
     # Eliminate navigation/related-content subtrees before extracting prose.
     for node in tree.nodes:
@@ -112,6 +112,10 @@ def extract(body):
         ('main', lambda n: n.tag == 'main'),
         ('role-main', lambda n: n.attrs.get('role') == 'main'),
     ]
+    if source_host == 'yskn.is':
+        # The public ruling viewer uses a bounded div rather than article/main.
+        # Keep this site-specific selector away from unrelated result pages.
+        selectors.insert(0, ('yskn-resultviewer', lambda n: n.tag == 'div' and n.attrs.get('id') == 'resultviewer'))
     for label, predicate in selectors:
         candidates = [n for n in tree.nodes if predicate(n)]
         if not candidates:
@@ -205,7 +209,7 @@ def main():
                 url, headers, body = fetcher.get(source['url'])
             (output / (source['id'] + '.html')).write_bytes(body)
             entry.update(resolved_url=url, html_sha256=sha(body))
-            text, selector, dates = extract(body)
+            text, selector, dates = extract(body, urlsplit(url).hostname)
             (output / (source['id'] + '.txt')).write_text(text)
             grams = shingles(text); normalized_sha = sha(' '.join(text.casefold().split()).encode())
             similarities = [(doc, len(grams & other) / max(1, min(len(grams), len(other)))) for doc, other in accepted_shingles]

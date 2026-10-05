@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "method": "FP32 full encoder and BIO head fine-tuning; mean subword pooling without float16 round-trip",
+  "input_sha256": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+  "split": "train",
+  "rows": 46196,
+  "chunks": 46236,
+  "base_weights_sha256": "8b7daed5f856243fd7a55b5d021a5f761d11d170ff78080564e4284b3d2e485a",
+  "initial_head_sha256": null,
+  "warm_start": {
+    "checkpoint_sha256": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+    "training_sha256": "e7d56edc7f3edcce0e0e67c7896edd7d37405fb0f8ab7798b737b6cccfcfc1ed",
+    "source_epoch": 2,
+    "optimizer": "fresh AdamW; not optimizer-state resumption"
+  },
+  "label_mode": "entities",
+  "labels": [
+    "O",
+    "B-Person",
+    "I-Person",
+    "B-Organization",
+    "I-Organization",
+    "B-Location",
+    "I-Location",
+    "B-Miscellaneous",
+    "I-Miscellaneous"
+  ],
+  "settings": {
+    "command": "train",
+    "epochs": 2,
+    "seed": 44,
+    "label_mode": "entities",
+    "encoder_lr": 5e-06,
+    "head_lr": 5e-05,
+    "accumulation": 4,
+    "max_seconds": 16200.0,
+    "max_steps": 0,
+    "probe": false,
+    "batch_size": 8,
+    "threads": 3
+  },
+  "torch": "2.8.0+cpu",
+  "checkpoints": [
+    {
+      "epoch": 1,
+      "complete_epoch": true,
+      "optimizer_steps": 1445,
+      "tokens_seen": 824869,
+      "loss": 0.0698225265146351,
+      "seconds": 6871.982092729886,
+      "file": "epoch-1.safetensors",
+      "sha256": "fbdc472abe1cb41afd37d7c4be2ed7cf5c9b5c0dcb4a3f189a399ae124b12989",
+      "bytes": 495834836
+    },
+    {
+      "epoch": 2,
+      "complete_epoch": true,
+      "optimizer_steps": 2890,
+      "tokens_seen": 824869,
+      "loss": 0.0283238495293291,
+      "seconds": 13855.846057446906,
+      "file": "epoch-2.safetensors",
+      "sha256": "094e251619916e2dea8822fe0869ec33844e83480032ef306860b50147dfbd10",
+      "bytes": 495834836
+    }
+  ],
+  "independent_final_evaluation": false
+}

@@ -1,0 +1,56 @@
+{"id": "email-v3-apostrophe", "text": "Contact o'connor@example.invalid today.", "entities": [{"kind": "email", "value": "o'connor@example.invalid"}]}
+{"id": "email-v3-bang", "text": "Contact help!desk@example.invalid today.", "entities": [{"kind": "email", "value": "help!desk@example.invalid"}]}
+{"id": "email-v3-hash", "text": "Contact team#one@example.invalid today.", "entities": [{"kind": "email", "value": "team#one@example.invalid"}]}
+{"id": "email-v3-dollar", "text": "Contact team$one@example.invalid today.", "entities": [{"kind": "email", "value": "team$one@example.invalid"}]}
+{"id": "email-v3-ampersand", "text": "Contact team&one@example.invalid today.", "entities": [{"kind": "email", "value": "team&one@example.invalid"}]}
+{"id": "email-v3-star", "text": "Contact team*one@example.invalid today.", "entities": [{"kind": "email", "value": "team*one@example.invalid"}]}
+{"id": "email-v3-slash", "text": "Contact team/one@example.invalid today.", "entities": [{"kind": "email", "value": "team/one@example.invalid"}]}
+{"id": "email-v3-equal", "text": "Contact team=one@example.invalid today.", "entities": [{"kind": "email", "value": "team=one@example.invalid"}]}
+{"id": "email-v3-question", "text": "Contact team?one@example.invalid today.", "entities": [{"kind": "email", "value": "team?one@example.invalid"}]}
+{"id": "email-v3-caret", "text": "Contact team^one@example.invalid today.", "entities": [{"kind": "email", "value": "team^one@example.invalid"}]}
+{"id": "email-v3-backtick", "text": "Contact team`one@example.invalid today.", "entities": [{"kind": "email", "value": "team`one@example.invalid"}]}
+{"id": "email-v3-brace", "text": "Contact team{one}@example.invalid today.", "entities": [{"kind": "email", "value": "team{one}@example.invalid"}]}
+{"id": "email-v3-pipe", "text": "Contact team|one@example.invalid today.", "entities": [{"kind": "email", "value": "team|one@example.invalid"}]}
+{"id": "email-v3-tilde", "text": "Contact team~one@example.invalid today.", "entities": [{"kind": "email", "value": "team~one@example.invalid"}]}
+{"id": "email-v3-plus", "text": "Contact team+one@example.invalid today.", "entities": [{"kind": "email", "value": "team+one@example.invalid"}]}
+{"id": "email-v3-percent", "text": "Contact team%one@example.invalid today.", "entities": [{"kind": "email", "value": "team%one@example.invalid"}]}
+{"id": "email-v3-dot", "text": "Contact team.one@example.invalid today.", "entities": [{"kind": "email", "value": "team.one@example.invalid"}]}
+{"id": "email-v3-underscore", "text": "Contact team_one@example.invalid today.", "entities": [{"kind": "email", "value": "team_one@example.invalid"}]}
+{"id": "email-v3-hyphen", "text": "Contact team-one@example.invalid today.", "entities": [{"kind": "email", "value": "team-one@example.invalid"}]}
+{"id": "email-v3-unicode-local", "text": "Contact próf@example.invalid today.", "entities": [{"kind": "email", "value": "próf@example.invalid"}]}
+{"id": "email-v3-decomposed", "text": "Contact próf@example.invalid today.", "entities": [{"kind": "email", "value": "próf@example.invalid"}]}
+{"id": "email-v3-unicode-domain", "text": "Contact contact@próf.invalid today.", "entities": [{"kind": "email", "value": "contact@próf.invalid"}]}
+{"id": "email-v3-punycode-domain", "text": "Contact contact@xn--prf-ena.invalid today.", "entities": [{"kind": "email", "value": "contact@xn--prf-ena.invalid"}]}
+{"id": "email-v3-punycode-tld", "text": "Contact contact@example.xn--p1ai today.", "entities": [{"kind": "email", "value": "contact@example.xn--p1ai"}]}
+{"id": "email-v3-quoted-space", "text": "Contact \"team one\"@example.invalid today.", "entities": [{"kind": "email", "value": "\"team one\"@example.invalid"}]}
+{"id": "email-v3-quoted-at", "text": "Contact \"team@one\"@example.invalid today.", "entities": [{"kind": "email", "value": "\"team@one\"@example.invalid"}]}
+{"id": "email-v3-quoted-escaped", "text": "Contact \"team\\\"one\"@example.invalid today.", "entities": [{"kind": "email", "value": "\"team\\\"one\"@example.invalid"}]}
+{"id": "email-v3-domain-literal", "text": "Contact team@[192.0.2.1] today.", "entities": [{"kind": "email", "value": "team@[192.0.2.1]"}]}
+{"id": "email-v3-ipv6-literal", "text": "Contact team@[IPv6:2001:db8::1] today.", "entities": [{"kind": "email", "value": "team@[IPv6:2001:db8::1]"}]}
+{"id": "email-v3-unicode-symbol", "text": "Contact 📮@example.invalid today.", "entities": [{"kind": "email", "value": "📮@example.invalid"}]}
+{"id": "email-v3-single-wrapper", "text": "Contact 'demo@example.invalid'.", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-double-wrapper", "text": "Contact \"demo@example.invalid\".", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-backtick-wrapper", "text": "Use `demo@example.invalid`.", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-angle-wrapper", "text": "Contact <demo@example.invalid>.", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-paren-wrapper", "text": "Contact (demo@example.invalid).", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-brace-wrapper", "text": "Contact {demo@example.invalid}.", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-mailto", "text": "Contact mailto:demo@example.invalid?subject=Hello", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-markdown", "text": "[Contact](mailto:demo@example.invalid)", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-json", "text": "{\"email\":\"demo@example.invalid\"}", "entities": [{"kind": "email", "value": "demo@example.invalid"}]}
+{"id": "email-v3-missing-local", "text": "@example.invalid", "entities": []}
+{"id": "email-v3-missing-domain", "text": "demo@", "entities": []}
+{"id": "email-v3-local-leading-dot", "text": ".demo@example.invalid", "entities": []}
+{"id": "email-v3-local-trailing-dot", "text": "demo.@example.invalid", "entities": []}
+{"id": "email-v3-local-double-dot", "text": "de..mo@example.invalid", "entities": []}
+{"id": "email-v3-domain-leading-hyphen", "text": "demo@-example.invalid", "entities": []}
+{"id": "email-v3-domain-trailing-hyphen", "text": "demo@example-.invalid", "entities": []}
+{"id": "email-v3-domain-double-dot", "text": "demo@example..invalid", "entities": []}
+{"id": "email-v3-domain-underscore", "text": "demo@bad_domain.invalid", "entities": []}
+{"id": "email-v3-domain-numeric-tld", "text": "demo@example.123", "entities": []}
+{"id": "email-v3-two-at", "text": "demo@@example.invalid", "entities": []}
+{"id": "email-v3-web-userinfo", "text": "https://demo@example.invalid/path", "entities": []}
+{"id": "email-v3-database-userinfo", "text": "postgres://demo@example.invalid/db", "entities": []}
+{"id": "email-v3-package-spec", "text": "npm install @scope/package", "entities": []}
+{"id": "email-v3-python-matmul", "text": "result = left @ right", "entities": []}
+{"id": "email-v3-annotation", "text": "@dataclass", "entities": []}
+{"id": "email-v3-prose", "text": "Reach the team by email tomorrow.", "entities": []}

@@ -1,0 +1,775 @@
+{
+  "schema": 1,
+  "scope": "Mechanical construction of reused synthetic long-prompt controls; no inference",
+  "tokenizer_sha256": "0305755b907b7a616fed8aa81aa0d12fe45a0916111988189b8646cc066fe20a",
+  "source_sha256": {
+    "bench/contextual/make-long-context.mjs": "1c6608d892c270f2dab64ed21f9735327fc9727e1ac582168b3bbaae7f45cf55",
+    "bench/contextual/long-context-protocol.md": "f92fca0c6ad1fe26fdb7f69c0fe9cd14d22c2ca6b4de428b0f9ef756968c05a6",
+    "apps/shield/scanner/text.mjs": "6e5317831ca047027e9b2516aac0c19238321b16de8469b12b2381ae60102abc"
+  },
+  "corpus_sha256": {
+    "long-context-short-v3.jsonl": "2264d916d5409692e8fb721a24b7ceed0796be711ee28099df2fe12712835c0c",
+    "long-context-crossing-v3.jsonl": "a342659aacb2c741efb51aaafe7686364b7bdaab063c8e5555fb1af3dee8b68a",
+    "long-context-interior-v3.jsonl": "9f83833e71a08bfeabd710af35fde1832c2ca5e41f23082e356469497f4c7555",
+    "long-context-nfd-v3.jsonl": "e9500336f2840c199e55de13492e16ee08f99da183c1cb2a0477811628280e49"
+  },
+  "records": [
+    {
+      "id": "long-context-short-1",
+      "group": "short",
+      "chars": 63,
+      "bytes": 70,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        18
+      ],
+      "gold_start": 15,
+      "gold_end": 40,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-1",
+      "group": "crossing",
+      "chars": 1513,
+      "bytes": 1617,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        133
+      ],
+      "gold_start": 793,
+      "gold_end": 818,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-1",
+      "group": "interior",
+      "chars": 1513,
+      "bytes": 1617,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        136,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 754,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-1",
+      "group": "nfd",
+      "chars": 1564,
+      "bytes": 1668,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        133
+      ],
+      "gold_start": 817,
+      "gold_end": 844,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-2",
+      "group": "short",
+      "chars": 60,
+      "bytes": 68,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        19
+      ],
+      "gold_start": 15,
+      "gold_end": 38,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-2",
+      "group": "crossing",
+      "chars": 1510,
+      "bytes": 1615,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 793,
+      "gold_end": 816,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-2",
+      "group": "interior",
+      "chars": 1510,
+      "bytes": 1615,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        137,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 752,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-2",
+      "group": "nfd",
+      "chars": 1562,
+      "bytes": 1667,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 817,
+      "gold_end": 843,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-3",
+      "group": "short",
+      "chars": 59,
+      "bytes": 65,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        19
+      ],
+      "gold_start": 15,
+      "gold_end": 35,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-3",
+      "group": "crossing",
+      "chars": 1509,
+      "bytes": 1612,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 793,
+      "gold_end": 813,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-3",
+      "group": "interior",
+      "chars": 1509,
+      "bytes": 1612,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        137,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 749,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-3",
+      "group": "nfd",
+      "chars": 1559,
+      "bytes": 1662,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 817,
+      "gold_end": 838,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-4",
+      "group": "short",
+      "chars": 58,
+      "bytes": 64,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        19
+      ],
+      "gold_start": 15,
+      "gold_end": 34,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-4",
+      "group": "crossing",
+      "chars": 1508,
+      "bytes": 1611,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 793,
+      "gold_end": 812,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-4",
+      "group": "interior",
+      "chars": 1508,
+      "bytes": 1611,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        137,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 748,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-4",
+      "group": "nfd",
+      "chars": 1558,
+      "bytes": 1661,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 817,
+      "gold_end": 837,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-5",
+      "group": "short",
+      "chars": 62,
+      "bytes": 72,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        19
+      ],
+      "gold_start": 15,
+      "gold_end": 42,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-5",
+      "group": "crossing",
+      "chars": 1512,
+      "bytes": 1619,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 793,
+      "gold_end": 820,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-5",
+      "group": "interior",
+      "chars": 1512,
+      "bytes": 1619,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        137,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 756,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-5",
+      "group": "nfd",
+      "chars": 1565,
+      "bytes": 1672,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 817,
+      "gold_end": 848,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-6",
+      "group": "short",
+      "chars": 63,
+      "bytes": 70,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        19
+      ],
+      "gold_start": 15,
+      "gold_end": 40,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-6",
+      "group": "crossing",
+      "chars": 1513,
+      "bytes": 1617,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 793,
+      "gold_end": 818,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-6",
+      "group": "interior",
+      "chars": 1513,
+      "bytes": 1617,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        137,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 754,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-6",
+      "group": "nfd",
+      "chars": 1564,
+      "bytes": 1668,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        134
+      ],
+      "gold_start": 817,
+      "gold_end": 844,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-7",
+      "group": "short",
+      "chars": 54,
+      "bytes": 59,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        18
+      ],
+      "gold_start": 15,
+      "gold_end": 29,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-7",
+      "group": "crossing",
+      "chars": 1504,
+      "bytes": 1606,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        133
+      ],
+      "gold_start": 793,
+      "gold_end": 807,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-7",
+      "group": "interior",
+      "chars": 1504,
+      "bytes": 1606,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        136,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 743,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-7",
+      "group": "nfd",
+      "chars": 1553,
+      "bytes": 1655,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        133
+      ],
+      "gold_start": 817,
+      "gold_end": 831,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-8",
+      "group": "short",
+      "chars": 56,
+      "bytes": 61,
+      "words": 9,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        20
+      ],
+      "gold_start": 15,
+      "gold_end": 31,
+      "name_word_start": 2,
+      "name_word_end": 4,
+      "crossing_cuts": []
+    },
+    {
+      "id": "long-context-crossing-8",
+      "group": "crossing",
+      "chars": 1506,
+      "bytes": 1608,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        135
+      ],
+      "gold_start": 793,
+      "gold_end": 809,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-interior-8",
+      "group": "interior",
+      "chars": 1506,
+      "bytes": 1608,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        138,
+        128
+      ],
+      "gold_start": 729,
+      "gold_end": 745,
+      "name_word_start": 114,
+      "name_word_end": 116,
+      "crossing_cuts": [],
+      "interior_distance": 9,
+      "filler_before": 11
+    },
+    {
+      "id": "long-context-nfd-8",
+      "group": "nfd",
+      "chars": 1555,
+      "bytes": 1657,
+      "words": 251,
+      "chunk_word_offsets": [
+        0,
+        125
+      ],
+      "chunk_subwords": [
+        131,
+        135
+      ],
+      "gold_start": 817,
+      "gold_end": 833,
+      "name_word_start": 124,
+      "name_word_end": 126,
+      "crossing_cuts": [
+        125
+      ],
+      "interior_distance": 1,
+      "filler_before": 12
+    },
+    {
+      "id": "long-context-short-negative",
+      "group": "short",
+      "chars": 59,
+      "bytes": 63,
+      "words": 10,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        12
+      ]
+    },
+    {
+      "id": "long-context-crossing-negative",
+      "group": "crossing",
+      "chars": 1440,
+      "bytes": 1536,
+      "words": 240,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        242
+      ]
+    },
+    {
+      "id": "long-context-interior-negative",
+      "group": "interior",
+      "chars": 1440,
+      "bytes": 1536,
+      "words": 240,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        242
+      ]
+    },
+    {
+      "id": "long-context-nfd-negative",
+      "group": "nfd",
+      "chars": 1488,
+      "bytes": 1584,
+      "words": 240,
+      "chunk_word_offsets": [
+        0
+      ],
+      "chunk_subwords": [
+        242
+      ]
+    }
+  ],
+  "independent_validation": false
+}

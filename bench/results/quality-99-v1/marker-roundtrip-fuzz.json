@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "scope": "Synthetic valid-UTF8 best-effort exact restoration, final span validity, issued-marker idempotency and same-session repeat stability; not detector completeness",
+  "before": {
+    "source_commit": "bc501b1",
+    "status": "failed",
+    "failure": "issued marker whitespace allowed Bearer context to capture following token on resubmission",
+    "log_sha256": "40e40305221ac03dc8f1f1be88b6f3c62c4b86efa71660d4a04edcc52c74b3cb",
+    "minimized_reproducer_sha256": "a187670f84098e9e2e2ab13561b918b73ff2ad04b1d6eb5e45dcb3d6da42a666"
+  },
+  "independent_validation": false,
+  "limitation": "Coverage-guided fuzz exploration is neither exhaustive nor a representative accuracy sample. It does not assess whether all identifiers were detected. Fuzzer uses default tenant terms; separate native and WASM tests cover NUL-term rejection and mapping preservation. Counts across runs are not unique cases or latency comparisons; the final run reuses coverage cache and overlaps other local work.",
+  "barrier_only_run": {
+    "status": "pass",
+    "fuzz_executions": 173152,
+    "reported_seconds": 181.066,
+    "new_interesting_inputs": 110,
+    "workers": 1,
+    "max_input_bytes": 16000,
+    "go": "go1.27.1 linux/amd64",
+    "log_sha256": "59eb36cbfcc7d67f4c40ad1136f94c09e49c73518d44d1978ba2f23b43a37fb0",
+    "source_sha256": {
+      "packages/surrogates/session.go": "31f902cb3ae8691c4c263c62a738a5d52207047479e18d80f6084d5285d15993",
+      "packages/surrogates/roundtrip_fuzz_test.go": "71f20b8a6cd79cffb08b76be856259dc2a4a1ffb3537fa2e88da791102ea4162",
+      "packages/surrogates/testdata/fuzz/FuzzBestEffortExactRoundTrip/a187670f84098e9e": "a187670f84098e9e2e2ab13561b918b73ff2ad04b1d6eb5e45dcb3d6da42a666"
+    }
+  },
+  "after": {
+    "status": "pass",
+    "fuzz_executions": 76166,
+    "reported_seconds": 181.136,
+    "new_interesting_inputs": 67,
+    "workers": 1,
+    "max_input_bytes": 16000,
+    "go": "go1.27.1 linux/amd64",
+    "log_sha256": "fda4bf0f9e5b1ac34e878eaf126e5ac997f8c38da5c8b548d4e0294025e17f41",
+    "source_sha256": {
+      "packages/surrogates/session.go": "ada4a9f2b6a2b83aaee687dc3a74a04c6ae2e4272212a8e80d6b2840908f4669",
+      "packages/surrogates/roundtrip_fuzz_test.go": "71f20b8a6cd79cffb08b76be856259dc2a4a1ffb3537fa2e88da791102ea4162",
+      "packages/surrogates/testdata/fuzz/FuzzBestEffortExactRoundTrip/a187670f84098e9e": "a187670f84098e9e2e2ab13561b918b73ff2ad04b1d6eb5e45dcb3d6da42a666"
+    },
+    "includes_nul_tenant_term_guard": true
+  }
+}

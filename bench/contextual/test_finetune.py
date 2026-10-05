@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from finetune import prepare, tensors, warm_start_record
+from finetune import prepare, tensors, warm_start_record, expand_entity_head, ENTITY_DECODE
 from encoder import digest
 
 
@@ -14,6 +14,33 @@ class Encoded(dict):
 
 
 class FineTuneTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec('torch'), 'optional encoder environment')
+    def test_entity_head_preserves_person_parameters_and_expands_output(self):
+        import torch
+        from encoder import classifier
+        model = torch.nn.Module()
+        model.head = classifier(8, 4)
+        previous = {k: v.clone() for k, v in model.head.state_dict().items()}
+        expand_entity_head(model)
+        current = model.head.state_dict()
+        for key, value in previous.items():
+            actual = current[key][:3] if key.startswith('4.') else current[key]
+            self.assertTrue(torch.equal(value, actual))
+        self.assertEqual(model.head(torch.ones(2, 8)).shape, (2, 9))
+        with self.assertRaises(ValueError):
+            expand_entity_head(model)
+
+    def test_entity_training_retains_other_types_in_labels(self):
+        row = dict(split='train', text='Ása Jóns', entities=[dict(start=0,end=4,kind='Person'),
+                                                           dict(start=5,end=10,kind='Location')])
+        tokenizer=lambda words,**kwargs:Encoded(input_ids=[0,4,5,6,2])
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'sample.jsonl';path.write_text(json.dumps(row)+'\n')
+            records,jobs=prepare(path,'train',tokenizer,label_mode='entities')
+            self.assertEqual(records[0]['labels'], ['B-Person','B-Location'])
+            self.assertEqual(jobs[0]['labels'], [1,5])
+            self.assertEqual(ENTITY_DECODE[5], 'B-Location')
+
     def test_warm_start_rejects_partial_tampered_or_different_training(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory); checkpoint=root/'epoch.safetensors'

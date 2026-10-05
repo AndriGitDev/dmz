@@ -1,0 +1,25 @@
+{"id": "bearer-prose-0", "text": "Prófun: Bearer synthetic_token/with+padding==; lokið.", "entities": [{"kind": "secret", "value": "synthetic_token/with+padding=="}]}
+{"id": "bearer-prose-1", "text": "Prófun: Bearer synthetic.token~with.parts; lokið.", "entities": [{"kind": "secret", "value": "synthetic.token~with.parts"}]}
+{"id": "bearer-prose-2", "text": "Prófun: Bearer synthetic_token==malformed_padding; lokið.", "entities": [{"kind": "secret", "value": "synthetic_token==malformed_padding"}]}
+{"id": "bearer-prose-3", "text": "Prófun: Bearer synthetic_token/with/slashes; lokið.", "entities": [{"kind": "secret", "value": "synthetic_token/with/slashes"}]}
+{"id": "bearer-prose-4", "text": "Prófun: Bearer synthetic_token+with+pluses; lokið.", "entities": [{"kind": "secret", "value": "synthetic_token+with+pluses"}]}
+{"id": "bearer-prose-5", "text": "Prófun: Bearer synthetic_token~with~tildes; lokið.", "entities": [{"kind": "secret", "value": "synthetic_token~with~tildes"}]}
+{"id": "bearer-header-0-0", "text": "Authorization: bEaReR a/b+c~d==\r\n", "entities": [{"kind": "secret", "value": "a/b+c~d=="}]}
+{"id": "bearer-header-0-1", "text": "\r\n  proxy-authorization:\tbEaReR a/b+c~d==\r\n", "entities": [{"kind": "secret", "value": "a/b+c~d=="}]}
+{"id": "bearer-header-1-0", "text": "Authorization: bEaReR synthetic.token.\r\n", "entities": [{"kind": "secret", "value": "synthetic.token."}]}
+{"id": "bearer-header-1-1", "text": "\r\n  proxy-authorization:\tbEaReR synthetic.token.\r\n", "entities": [{"kind": "secret", "value": "synthetic.token."}]}
+{"id": "bearer-header-2-0", "text": "Authorization: bEaReR Q\r\n", "entities": [{"kind": "secret", "value": "Q"}]}
+{"id": "bearer-header-2-1", "text": "\r\n  proxy-authorization:\tbEaReR Q\r\n", "entities": [{"kind": "secret", "value": "Q"}]}
+{"id": "bearer-header-3-0", "text": "Authorization: bEaReR synthetic_token/with+padding==\r\n", "entities": [{"kind": "secret", "value": "synthetic_token/with+padding=="}]}
+{"id": "bearer-header-3-1", "text": "\r\n  proxy-authorization:\tbEaReR synthetic_token/with+padding==\r\n", "entities": [{"kind": "secret", "value": "synthetic_token/with+padding=="}]}
+{"id": "bearer-negative-0", "text": "NotBearer synthetic_token_abcdefghijklmnop", "entities": []}
+{"id": "bearer-negative-1", "text": "ÍBearer synthetic_token_abcdefghijklmnop", "entities": []}
+{"id": "bearer-negative-2", "text": "Bearer short", "entities": []}
+{"id": "bearer-negative-3", "text": "Bearer\nsynthetic_token_abcdefghijklmnop", "entities": []}
+{"id": "bearer-negative-4", "text": "Authorization: Bearer ", "entities": []}
+{"id": "bearer-negative-5", "text": "WWW-Authenticate: Bearer realm=\"synthetic\"", "entities": []}
+{"id": "bearer-negative-6", "text": "the bearer carries something", "entities": []}
+{"id": "bearer-negative-7", "text": "synthetic_token/with+padding==", "entities": []}
+{"id": "bearer-prose-period", "text": "Prófun Bearer synthetic_token_abcdefghijklmnop.", "entities": [{"kind": "secret", "value": "synthetic_token_abcdefghijklmnop"}]}
+{"id": "bearer-challenge-0", "text": "WWW-Authenticate: Bearer error_description=\"synthetic\"", "entities": []}
+{"id": "bearer-challenge-1", "text": "proxy-authenticate: Bearer error_description=\"synthetic\"", "entities": []}

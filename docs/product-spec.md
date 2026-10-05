@@ -49,15 +49,38 @@ Shield never sends real prompt contents or its map to dmz servers. Portal and Ga
 
 The planned policy schema lives in [`packages/policy/default.json`](../packages/policy/default.json); it has not been wired into the Shield prototype yet. The prototype uses the fixed behaviour in ADR 0002 and 0003. A tenant policy UI and enforcement still need to be built before a pilot.
 
-Current implementation includes a device-local, exact, case-sensitive dictionary of up to 32 user-entered terms. It is cleared on reset and does not provide the planned tenant-admin workflow, inflection or per-tenant distribution. Selected API-key, JWT, bearer-token, PEM-header and database-URL patterns block the entire prompt. General high-entropy-token and log-line detection remain unimplemented.
-Four hand-authored full-name forms are masked. Other two-token names with an Icelandic patronymic shape and diacritics are marked uncertain and block the prompt; this heuristic is not a general Icelandic-name recognizer and can block benign text.
-A narrow street-suffix/house-number/postcode pattern, with optional comma or city in selected forms, is marked uncertain and blocks. It has no licensed street gazetteer, misses other address formats and can block benign text. It must not be marketed as broad address coverage. Internationalized email local parts and `00354` phone shapes now block for review; a `ghp_` token shape blocks as a secret. These rules cover selected forms only.
+Current implementation includes a device-local, exact, case-sensitive dictionary
+of up to 32 user-entered terms. It is cleared on reset and does not provide the
+planned tenant-admin workflow, inflection or per-tenant distribution. Selected
+API-key, documented GitHub-prefix, JWT, bearer-token, complete private-key-block and database-URL patterns are detected. GitHub token shapes include longer stateless installation values; detection does not validate issuer credentials. Incomplete or mismatched private-key fences keep Shield’s whole-prompt masking fallback; complete blocks preserve surrounding prose.
+Database URI detection requires embedded password or credential-query material; plain connection references are not Secret signals. A [bounded assignment-context heuristic](../bench/credential-context-v3.md) also recognises selected credential fields with complete, high-entropy token-shaped values. It misses short, low-entropy and other unsupported values; arbitrary high-entropy-string and log-line detection remain unimplemented. Strict
+core callers block secrets and most uncertain findings; Shield's owner-approved
+best-effort policy masks them locally instead.
 
-Combining marks, Unicode format characters (including invisible separators), and invalid UTF-8 bytes cause an uncertain review finding and block the whole prompt. This is a conservative prototype guard for obfuscated text, not Unicode normalization or complete evasion protection. Legitimate text using combining marks may also be blocked.
+The basic core recognizes four hand-authored name forms and an uncertain
+patronymic heuristic. The private trained preview adds a local CRF/neural name
+scanner, whose [measured limits](detector-quality-contract.md) remain below the
+current research target. Scanner failure warns and falls back to basic masking.
+
+The trained preview also bundles 23,636 approved HMS address forms. A recognized
+form plus a house number can be detected without a postcode, with optional unit,
+range and postcode notation. An uncertain street-suffix/number/postcode heuristic
+covers selected unknown forms. This is not representative address validation:
+rural forms, ambiguity and contextual precision still need independent evidence.
+Internationalized email local parts and `00354` phone shapes remain uncertain
+findings; the applicable policy decides whether to mask or block them.
+
+Canonical Unicode composition is now supported through an NFC detection copy with
+original-byte offset mapping. Masking and restoration preserve the original text.
+Unresolved combining marks, Unicode format characters (including invisible
+separators), invalid UTF-8 and ambiguous boundaries retain the review guard:
+strict-core callers block, while Shield masks the whole text under its best-effort
+policy. The JavaScript/WASM boundary separately rejects lone UTF-16 surrogates before lossy conversion; Shield leaves those drafts unsent. This is not complete evasion protection. See the
+[normalization implementation and evidence](detector-unicode-normalization.md).
 
 ## Surrogate and vault requirements
 
-- In masking mode, each value selected for masking becomes a visible, typed marker, consistently within a session. Approved untransformed PII needs no restoration. Name case forms need complete coverage and mapping before launch; the prototype recognizes only four hand-authored full-name forms.
+- In masking mode, each exact original form selected for masking becomes a visible, typed marker, consistently within a session. Approved untransformed PII needs no restoration. Name case forms need complete coverage and mapping before launch; the basic core's four hand-authored forms and the trained preview do not establish that coverage.
 - Each tenant/session map links real value and visible marker. Envelope encryption uses a tenant key via OpenBao Transit. Customer-managed keys are a later option.
 - Entries expire at session end or within 24 hours; the exact rule must be policy-controlled and documented. No prompt or response body persistence.
 - A prototype streaming restorer now buffers partial visible markers across arbitrary chunk boundaries in the Go core. It has no Gateway integration yet. The production path still needs bounded-memory review, adversarial output tests and stream cancellation handling.
@@ -113,13 +136,13 @@ CI should include detector conformance tests (Go and WASM), benchmark no-regress
 
 TinyGo feasibility and WASM size/performance; source and redistribution rights for BÍN and Mannanafnaskrá; postcode/street data licence; exact model routing matrix; OpenBao tenancy and key rotation; durable audit schema; direct vs proxied API credentials; browser interface interception reliability; retention evidence for each provider/model; reproducible extension signing.
 
-## Trained Shield preview — 30 September 2026
+## Trained Shield preview — updated 5 October 2026
 
-The explicit trained-scanner build now adds the frozen contextual Person detector to supported text submissions. Original text is tokenized in a private extension offscreen worker shared across tabs, with no remote inference. Returned UTF-8 spans enter the existing per-tab Go masking session only after the original protection rules allow the prompt. Existing secret, uncertainty, Unicode and marker checks cannot be overridden by model output. Draft/route/composer/session changes invalidate an asynchronous scan. Failure, corruption, excessive input and a busy scanner block sending.
+The explicit trained-scanner build now adds the frozen contextual Person detector to supported text submissions. Original text is tokenized in a private extension offscreen worker shared across tabs, with no remote inference. Returned UTF-8 spans augment the per-tab Go best-effort masking session without weakening existing rule coverage. Draft/route/composer/session changes invalidate an asynchronous scan. Scanner failure, corruption, excessive input or a busy scanner fall back to basic local masking with a visible warning; an unavailable masking core or unsafe draft/session transition still prevents sending.
 
 This extends the prototype's detection architecture for a separate test build; the ordinary build and CI artifact remain rule-based because private weights are not checked into Git or fetched by CI. See [scanner instructions and measured scope](../apps/shield/scanner/README.md). Synthetic extension workflow checks and exact domain replay establish integration evidence, not independent real-world quality or general-release readiness. A Chrome Web Store developer account has been reported by the owner; store submission and publication have not been performed.
 
 
 ## Shield policy revision — 30 September 2026
 
-Owner-directed best-effort behavior supersedes the earlier Shield content-blocking policy: detected PII, uncertain identifiers and secrets are masked and restored locally. Names within recognized emails preserve the full email mask. Trained-scanner failure falls back to basic local masking with an explicit warning; name coverage can decrease. This does not change detector weights, thresholds, strict-core callers or baseline evaluation. Unsafe draft/session transitions, an unavailable masking core and unsupported attachment paths still cannot be sent by Shield. Unrepresentable Unicode/marker inputs are masked as a whole rather than released. No encryption claim is made for placeholders or the in-memory map.
+Owner-directed best-effort behavior supersedes the earlier Shield content-blocking policy: detected PII, uncertain identifiers and secrets are masked and restored locally. Names within recognized emails preserve the full email mask. Trained-scanner failure falls back to basic local masking with an explicit warning; name coverage can decrease. This does not change detector weights, thresholds, strict-core callers or baseline evaluation. Unsafe draft/session transitions, an unavailable masking core and unsupported attachment paths still cannot be sent by Shield. Unresolved Unicode-review and unknown-marker inputs are masked as a whole when the original text can be preserved; malformed JavaScript UTF-16 is rejected before conversion. No encryption claim is made for placeholders or the in-memory map.
