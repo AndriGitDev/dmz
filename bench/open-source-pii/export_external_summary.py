@@ -59,11 +59,22 @@ def main():
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--kind', choices=['public-models', 'public-core', 'development-core', 'address-selection'], required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--baseline', choices=['original', 'current'])
     a = p.parse_args()
     source, output = a.source.resolve(), a.output.resolve()
     if source.is_relative_to(ROOT) or not output.is_relative_to(ROOT / 'bench/results'):
         raise ValueError('private input and benchmark aggregate destination required')
     result = project(json.loads(source.read_text()), a.kind)
+    if a.kind == 'public-models':
+        if not a.baseline:
+            raise ValueError('public model comparisons require an explicit baseline')
+        reference = source.parent / ('external-frozen-browser.json' if a.baseline == 'original' else 'external-contained-token-core-replay.json')
+        if result['reference_sha256'] != digest(reference):
+            raise ValueError('baseline label does not match the comparison reference')
+        result['baseline'] = ('Original frozen core and contextual names' if a.baseline == 'original'
+                              else 'Updated core with unchanged cached contextual names; frozen run keys refer to this fixed comparison baseline')
+    elif a.baseline:
+        raise ValueError('baseline choice is only for public model comparisons')
     result['private_report_sha256'] = digest(source)
     result['exporter_sha256'] = digest(Path(__file__))
     with output.open('x') as stream:

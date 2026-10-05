@@ -96,6 +96,63 @@ excerpts mean no projected in-scope labels, not an absence of all PII. See
 `public-core-replay.json` and the
 [conversion protocol](../../open-source-pii/external-english-protocol.md).
 
+## Completed public model comparisons
+
+The following compositions use the updated phone/vendor core and the original
+cached contextual-name predictions on the same 4,996 test excerpts. Existing
+core matches retain precedence over overlapping model additions. These are
+diagnostic comparisons on public synthetic data, not independent acceptance.
+
+| Composition | Exact excerpts / 4,996 | Entity recall | False spans |
+| --- | ---: | ---: | ---: |
+| Updated trained core | 2,443 | 51.60% | 2,701 |
+| + Presidio | 1,904 | 60.97% | 4,734 |
+| + BERT Person | 2,422 | 52.70% | 3,459 |
+| + GLiNER | 2,274 | 80.39% | 4,643 |
+| + GLiNER2 | 2,014 | 75.84% | 5,503 |
+| + GLiNER2 address-only | 2,493 | 59.46% | 2,998 |
+| + usaddress standalone parser | 2,478 | 52.94% | 2,836 |
+
+Broad additions trade higher recall for lower complete-excerpt accuracy. The
+address-only GLiNER2 supplement adds 505 true and 297 false spans and improves
+50 exact excerpts; that false-positive cost does not justify enabling it by
+default. GLiNER alone reaches 3,098 exact excerpts and 91.82% recall, but its
+additive composition inherits existing errors and introduces others. This does
+not validate replacing the current detector or selecting a language router.
+The separate composition attribution report explains this overlap limitation.
+
+OpenAI Privacy Filter was evaluated on a deterministic, outcome-independent
+512-excerpt selection. All candidates below are rescored on those same IDs;
+these counts must not be compared directly with the full-set counts above.
+
+| Composition | Exact excerpts / 512 | Entity recall | False spans |
+| --- | ---: | ---: | ---: |
+| Updated trained core | 256 | 53.69% | 291 |
+| + Presidio | 187 | 62.77% | 524 |
+| + BERT Person | 254 | 55.23% | 370 |
+| + GLiNER | 236 | 80.92% | 480 |
+| + GLiNER2 | 209 | 77.38% | 600 |
+| + GLiNER2 address-only | 268 | 61.69% | 327 |
+| + usaddress standalone parser | 261 | 55.08% | 312 |
+| + OpenAI Privacy Filter | 253 | 71.38% | 509 |
+
+Privacy Filter completed this sample without inference failures in about 126
+minutes on the shared CPU host, with roughly 4.1 GiB peak resident memory. Its
+2.799 GB checkpoint and observed cost are unsuitable for the current extension
+budget, and the additive quality result does not justify a default integration.
+An earlier 22-excerpt public attempt and a 302-excerpt Icelandic attempt were
+stopped for resource limits; neither is reported as a complete evaluation.
+GLiNER2 completed the full public set with one malformed candidate response,
+retained as an abstention rather than dropped from scoring.
+
+The four `public-{original,current}-core-{full,sample}-models.json` aggregates
+keep the two baselines and two sample sizes separate. In current-core reports,
+the machine-readable `frozen-trained` run key denotes the updated core with
+unchanged frozen name predictions, not the original core. Export validates
+the corresponding reference hash. Raw text and per-excerpt predictions remain
+private. The selection protocol and source revisions are recorded in the
+[public English protocol](../../open-source-pii/external-english-protocol.md).
+
 ## Icelandic regression guard
 
 The final trained WASM core was replayed with the same cached contextual-name
@@ -122,6 +179,17 @@ and trained browser workflows. This avoids the rules-only hang at 64 KiB with
 less observed overhead than the initial 256 KiB fix. See
 [the structured runtime record](../../open-source-pii/structured-runtime.md)
 and `structured-runtime.json` for counts, hashes and timing limitations.
+
+A later composition regression exposed an opaque vendor token when a phone or
+card pattern inside it won overlap resolution. A validated complete vendor
+token now takes precedence over strictly contained findings; surrounding or
+equal-span findings and Unicode review retain their existing precedence.
+This code-derived regression is covered by native, WASM and browser tests, plus
+191,202 composition-fuzz executions. It is not a new blind quality result.
+`final-runtime-validation.json` binds the immutable score reports above to the
+final binaries: all replay records remain identical, all 272 specialist cases
+agree with newly regenerated native results, and the final phone-rule audits
+retain exact restoration and zero native/WASM span mismatches.
 
 GLiNER2's FP32 ONNX export reproduces all original predictions on the reused
 90-excerpt probe, but its NER graphs total about 1.219 GB. Two declared QUInt8
@@ -159,5 +227,7 @@ See the [survey](../../open-source-pii/survey.md),
 [GLiNER runtime protocol](../../open-source-pii/gliner-runtime-protocol.md) for
 pinned sources, licensing distinctions and evaluation limits.
 
-Broader public English and identical-sample Privacy Filter evaluations are still
-running. Their results will be recorded separately from these synthetic probes.
+The full public candidate comparisons and identical-sample Privacy Filter
+evaluation are complete. A fresh 4,996-excerpt browser run of the final product
+build is in progress; the updated-core quality tables currently use cached-name
+replays and must not be described as that fresh browser result.

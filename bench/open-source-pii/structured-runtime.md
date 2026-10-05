@@ -34,6 +34,16 @@ change during this runtime comparison.
 
 ## Timing limits
 
+After stack selection, a separate overlap regression was fixed: a validated
+vendor token must cover phone/card-like substrings inside its body. Final
+generic and trained builds were rechecked after that product change, including
+the complete phone audit, all 272 specialist fixtures, cached-name replays and
+browser send/restoration workflows. The immutable earlier score reports are
+linked to the final binaries by exact record equality in
+[`final-runtime-validation.json`](../results/open-source-pii-v1/final-runtime-validation.json).
+That report records the final product source and both binary hashes; the
+earlier stack-comparison artifacts remain historical measurements.
+
 Measurements ran on a contended CPU host alongside model evaluation; they are
 diagnostics, not device or field latency guarantees. A short synthetic
 phone/email input was measured 100 times after 20 warmups, timing each callback

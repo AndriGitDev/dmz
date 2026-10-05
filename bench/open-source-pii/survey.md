@@ -66,6 +66,18 @@ large. Neither is enabled in Shield. A fixed confidence-only address selection
 on 4,995 validation excerpts rejected every declared GLiNER QUInt8 threshold.
 The selected GLiNER2 address-only path remains experimental because its fresh
 90-excerpt diagnostic added six false spans along with 14 true spans.
+On the complete public test set with the updated core, that address supplement
+adds 505 true and 297 false spans, improving exact excerpts from 2,443 to 2,493.
+The larger sample therefore retains the false-positive concern. Full GLiNER2
+addition instead lowers exact excerpts to 2,014 despite increasing recall.
+
+OpenAI Privacy Filter completed a fixed, outcome-independent 512-excerpt public
+sample in about 126 minutes on the shared CPU host. Adding it to the updated
+core raises recall from 53.69% to 71.38%, but lowers exact excerpts from 256 to
+253 and raises false spans from 291 to 509. Its original checkpoint is about
+2.799 GB and observed peak resident memory was roughly 4.1 GiB. The complete
+same-sample comparison, rather than an incomplete larger attempt, is retained;
+it does not justify a browser integration or default quality change.
 
 [usaddress](https://github.com/datamade/usaddress), a small MIT-licensed US address
 parser, was also evaluated as a specialist. Its complete public-test address
