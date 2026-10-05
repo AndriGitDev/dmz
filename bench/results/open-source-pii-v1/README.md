@@ -223,6 +223,7 @@ or evidence of the user's exact-excerpt/recall target. All fixed trials and
 source hashes are retained in `address-confidence-selection.json`.
 
 See the [survey](../../open-source-pii/survey.md),
+[reproduction guide](../../open-source-pii/reproduce.md),
 [next English experiment priorities](../../open-source-pii/next-english-work.md),
 [GLiNER2 runtime record](../../open-source-pii/runtime-feasibility.md) and
 [GLiNER runtime protocol](../../open-source-pii/gliner-runtime-protocol.md) for
