@@ -35,6 +35,17 @@ already selected GLiNER2 address-only composition. Keep projected exact sets,
 per-type recall/precision, false positives and runtime separate. Do not use this
 public diagnostic to tune a variant and present the same run as validation.
 
+Interpret “negative excerpts” as **no projected in-scope annotation**, not as
+benign or free of PII. The source also contains dates, IPs, SSNs, usernames and
+other identifiers outside the six-type projection. A post-run inspection of
+12 deterministically selected zero-projected-gold excerpts confirmed this
+distinction. GLiNER emitted 10 in-scope spans across five of them, including
+employee IDs/usernames as persons and IPs as phone/secret. The inspection did
+not change labels or thresholds and is not independent annotation validation.
+Retain typed errors even when the underlying text may be sensitive in another
+category; broader masking coverage and correct entity classification are
+different measurements.
+
 Runtime exception, recorded after a short full-test Privacy Filter prefix:
 CPU inference averaged roughly 16 seconds per excerpt, projecting well beyond
 the requested eight-hour work slice. Preserve the stopped prefix as incomplete.
