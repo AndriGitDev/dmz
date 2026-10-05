@@ -34,3 +34,10 @@ numbering metadata at build time and uses the existing portable Go detector.
 It must reproduce the frozen phone probes and pass native/WASM conformance.
 This is a restricted explicit-country-code adapter, not a claim to implement
 every upstream parsing behavior.
+
+GLiNER2's first Icelandic guard stopped at development row 500: it returned an
+end character offset of 8 for a 7-character input. The raw failure is retained.
+For the restarted guard, invalid offsets abstain for the entire candidate
+excerpt; additive composition keeps the frozen pipeline. Do not clip offsets or
+keep a partially valid model response. Report the failure count and measurement
+revision. This is error handling, not a correction to corpus labels.

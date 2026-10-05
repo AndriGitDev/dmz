@@ -42,9 +42,11 @@ try{
  await core.addScriptTag({url:origin+'/wasm_exec.js'});
  await core.evaluate(async()=>{const go=new globalThis.Go();const b=await(await fetch(chrome.runtime.getURL('dmz.wasm'))).arrayBuffer();const {instance}=await WebAssembly.instantiate(b,go.importObject);void go.run(instance);});
  await core.waitForFunction(()=>typeof globalThis.dmzProcessBestEffort==='function');
+ await worker.evaluate(()=>{globalThis.__probeKeepalive=setInterval(()=>chrome.runtime.getPlatformInfo(),15000);});
  await worker.evaluate(()=>chrome.offscreen.createDocument({url:'scanner.html',reasons:[chrome.offscreen.Reason.WORKERS],justification:'Local synthetic integration comparison'}));
  for(const row of rows){
   const t=Date.now();const scan=await worker.evaluate(text=>chrome.runtime.sendMessage({type:'dmz:scanner-run',text}),row.text);
+  if(scan?.error||!Array.isArray(scan?.spans))throw Error('Frozen trained scanner failed; refuse a basic-only baseline');
   const record={id:row.id,text_sha256:digest(row.text),stratum:row.stratum,names:scan.spans||[],scanner_code:scan.code||null,scan_seconds:(Date.now()-t)/1000};
   for(const mode of ['basic','trained']){
    const names=mode==='trained'&&!scan.error?scan.spans:[];

@@ -57,16 +57,17 @@ def main():
     with partial.open('x') as log,torch.inference_mode():
         for i,row in enumerate(data):
             if time.monotonic()-start>a.max_seconds:status='time_limit';break
-            entities=predict(row['text']);scored=[];raw=[]
+            entities=predict(row['text']);scored=[];raw=[];failure=None
             for e in entities:
                 if config['mapping'].get(e['label'])!='name_demo':continue
                 x,y=int(e['start']),int(e['end']);text=row['text']
-                if not 0<=x<y<=len(text):raise ValueError('invalid offsets')
+                if not 0<=x<y<=len(text):
+                    failure='invalid_offsets';scored=[];raw=[];break
                 span=[len(text[:x].encode()),len(text[:y].encode()),'name_demo']
                 if span not in raw:raw.append(span)
                 scored.append({'span':span,'score':float(e['score'])})
             r={k:row[k] for k in ['id','stratum','gold','frozen']}
-            r.update(text_sha256=hashlib.sha256(row['text'].encode()).hexdigest(),predicted=raw,scored=scored,combined=add_nonoverlapping(row['frozen'],scored))
+            r.update(text_sha256=hashlib.sha256(row['text'].encode()).hexdigest(),predicted=raw,scored=scored,abstained=failure is not None,candidate_failure=failure,combined=add_nonoverlapping(row['frozen'],scored))
             records.append(r);log.write(json.dumps(r)+'\n');log.flush()
             if (i+1)%100==0:print(json.dumps({'candidate':a.candidate,'completed':i+1,'total':len(data),'seconds':time.monotonic()-start}),flush=True)
     for path in paths:
@@ -74,7 +75,9 @@ def main():
     result={'schema':1,'status':status,'candidate':a.candidate,'config':config,'model':identity,'inputs':inputs,'selection_sha256':digest(selected),'measurement_sha256':source_hashes,'scope':'Person only on reused Icelandic development; not all-entity system accuracy or independent acceptance','independent_validation':False,'seconds':time.monotonic()-start,'load_seconds':load_seconds,'peak_rss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,'evaluated_excerpts':len(records),'expected_excerpts':len(data),'partial_sha256':digest(partial),'network':'socket connections denied throughout model loading and inference','reference':references}
     if status=='complete':
         result['candidate_alone']=score(records,['name_demo'])
-        result['additive']=score([r|{'predicted':r['combined']} for r in records],['name_demo'])
+        result['additive']=score([r|{'predicted':r['combined'],'abstained':False} for r in records],['name_demo'])
+    result['candidate_failure_excerpts']=sum(r['candidate_failure'] is not None for r in records)
+    result['failure_policy']='Invalid candidate offsets abstain for the entire candidate excerpt; additive composition retains frozen predictions. No clipping or partial acceptance.'
     with out.open('x') as f:json.dump(result,f,indent=2)
     print(json.dumps({k:result[k] for k in ['status','candidate','seconds','evaluated_excerpts','peak_rss_kib']}),flush=True)
 if __name__=='__main__':main()
