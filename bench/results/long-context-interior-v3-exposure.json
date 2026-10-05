@@ -1,0 +1,25 @@
+{
+  "corpus": "bench/corpus/long-context-interior-v3.jsonl",
+  "mode": "outbound-exposure",
+  "samples": 9,
+  "allowed_prompts": 3,
+  "blocked_prompts": 6,
+  "benign_prompts": 1,
+  "blocked_benign_ids": [],
+  "altered_benign_ids": [],
+  "exposed_case_ids": [
+    "long-context-interior-7",
+    "long-context-interior-8"
+  ],
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ],
+  "method": "per annotated direct-identifier literal: masked, blocked with prompt, or still present in allowed text",
+  "per_kind": {
+    "name_demo": {
+      "masked": 0,
+      "blocked": 6,
+      "exposed": 2
+    }
+  }
+}

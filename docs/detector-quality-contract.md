@@ -168,3 +168,5 @@ A separate [exact other-type veto experiment](../bench/contextual/entity-veto-re
 The [bounded entity-aware family](../bench/contextual/entity-family-result.md) evaluates all 36 predeclared threshold/priority configurations from verified caches. None passes the unchanged research criterion; the family is closed without model promotion.
 
 The [reused split audit](../bench/contextual/split-overlap.md) finds no exact or NFC token-sequence matches across training and either development set, but seven case-folded general matches, all Person-negative. It does not establish document independence or alter frozen scores; no matching rows are removed.
+
+The [long-prompt boundary diagnostic](../bench/contextual/long-context-result.md) passes its four trained synthetic groups, including names crossing a chunk cut and NFD forms. The CRF alone covers all selected names, so this does not establish neural-only boundary robustness, maximum-length performance or independent long-text accuracy. Production chunking remains unchanged.

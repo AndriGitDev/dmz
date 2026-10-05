@@ -1,0 +1,18 @@
+{
+  "corpus": "bench/corpus/long-context-interior-v3.jsonl",
+  "detector": "dmz",
+  "samples": 9,
+  "scoring": "exact span and entity type",
+  "per_kind": {
+    "name_demo": {
+      "tp": 6,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1,
+      "recall": 0.75
+    }
+  },
+  "tenant_terms": [
+    "Verkefni Gervi"
+  ]
+}

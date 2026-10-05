@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "scope": "Fixed CRF-only .75 on the frozen synthetic long-context controls; excludes neural, core masking and independent acceptance",
+  "crf_sha256": "b777808dee5c9eecc5596912aca46c5f65692acd51b0e632b9c55e4bdf0f0419",
+  "preprocessor_sha256": "6e5317831ca047027e9b2516aac0c19238321b16de8469b12b2381ae60102abc",
+  "runner_sha256": "6e2eb519f237241deed942683f9f0ae46581ddc743513ca49f808c9d47f2c76c",
+  "sets": [
+    {
+      "source": "long-context-short-v3.jsonl",
+      "sha256": "2264d916d5409692e8fb721a24b7ceed0796be711ee28099df2fe12712835c0c",
+      "excerpts": 9,
+      "exact_excerpts": 9,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "source": "long-context-crossing-v3.jsonl",
+      "sha256": "a342659aacb2c741efb51aaafe7686364b7bdaab063c8e5555fb1af3dee8b68a",
+      "excerpts": 9,
+      "exact_excerpts": 9,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "source": "long-context-interior-v3.jsonl",
+      "sha256": "9f83833e71a08bfeabd710af35fde1832c2ca5e41f23082e356469497f4c7555",
+      "excerpts": 9,
+      "exact_excerpts": 9,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "source": "long-context-nfd-v3.jsonl",
+      "sha256": "e9500336f2840c199e55de13492e16ee08f99da183c1cb2a0477811628280e49",
+      "excerpts": 9,
+      "exact_excerpts": 9,
+      "tp": 8,
+      "fp": 0,
+      "fn": 0
+    }
+  ],
+  "independent_validation": false
+}
