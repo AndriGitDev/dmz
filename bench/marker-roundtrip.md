@@ -38,3 +38,14 @@ passes all sixteen workflows, including actual chat resubmission and the real
 packaged files match their pre-test hashes after deliberately corrupted-model
 and stalled-worker tests restore their fixtures. Source and package hashes are
 recorded; this is a development build, not a clean release archive.
+
+The subsequent [fifteen-corpus replay](results/quality-99-v1/marker-after.json)
+retains every first-pass typed-quality, masking and restoration metric from the
+presigned-URL package on both paths, with zero external requests.
+
+A separate [custom-term fuzz run](results/quality-99-v1/tenant-term-fuzz.json)
+passes 812,250 executions over 180.087 seconds. It checks rejected-update mapping
+preservation, accepted-update session reset, full coverage of an inserted accepted
+term, exact restoration and stable resubmission. The count includes rejected
+configurations and skipped invalid/oversized strings; it is not a count of unique
+accepted terms or an accuracy estimate.

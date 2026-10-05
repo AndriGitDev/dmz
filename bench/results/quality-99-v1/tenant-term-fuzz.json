@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "scope": "Synthetic custom-term configuration fuzz: rejected-update mapping preservation, accepted-update session reset, exact inserted-term coverage, byte restoration and issued-marker idempotency",
+  "status": "pass",
+  "fuzz_executions": 812250,
+  "reported_seconds": 180.087,
+  "new_interesting_inputs": 165,
+  "workers": 1,
+  "max_term_bytes": 512,
+  "go": "go1.27.1 linux/amd64",
+  "source_sha256": {
+    "packages/surrogates/session.go": "ada4a9f2b6a2b83aaee687dc3a74a04c6ae2e4272212a8e80d6b2840908f4669",
+    "packages/surrogates/tenant_fuzz_test.go": "7ed3d6dd5499250dd0b5f9e930d8ed5ab38da2c17285104c73dfde6f656f0863"
+  },
+  "log_sha256": "a54b13c5d652dcfe1b9a56792de56d2654d40768af7de5725b71505101a9d22a",
+  "independent_validation": false,
+  "limitation": "Executions include rejected configurations and skipped invalid/oversized strings, not812250 accepted terms or unique samples. Coverage-guided fuzzing is neither exhaustive nor representative accuracy evidence."
+}
