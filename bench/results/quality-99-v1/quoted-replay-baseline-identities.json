@@ -1,0 +1,12 @@
+[
+  {
+    "baseline": "preview-78a558b-system.json",
+    "sha256": "97d3de8022504252e8140a06fa1a66584e22864ad5399c0046cbadaad8f710bc",
+    "private_input_matches_committed_evidence": true
+  },
+  {
+    "baseline": "quoted-targeted-after.json",
+    "sha256": "3f841a5d0dace5717d51a20cd26b6880ccc612dccbeddc1b22e7930f796e5be9",
+    "private_input_matches_committed_evidence": true
+  }
+]

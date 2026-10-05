@@ -16,4 +16,4 @@ The native detector, session tests and rebuilt WASM validate complete original U
 - [Targeted packaged result](results/quality-99-v1/quoted-targeted-after.json).
 - [Source-pinned fuzz result](results/quality-99-v1/quoted-roundtrip-fuzz.json).
 
-A clean twenty-corpus replay and complete private-preview browser/archive verification are pending. The verified `78a558b` archive predates this extension and remains evidence only for its recorded source. The frozen name model and auxiliary-training protocol are unchanged.
+The [clean twenty-corpus replay and private-preview verification](private-preview-20261005.md) are complete at `a8a6704`. All eighteen unaffected earlier corpora retain every metric, and both changed probes retain their targeted results. The exact recorded package passes all browser workflows and archive-member checks. The frozen name model and auxiliary-training protocol are unchanged.
