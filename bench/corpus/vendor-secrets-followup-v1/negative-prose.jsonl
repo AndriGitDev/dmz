@@ -1,0 +1,8 @@
+{"id": "benign-00", "stratum": "negative-prose", "family": "benign", "text": "publishable_key = \"pk_live_Zc51xkmajgfKl0dbEdpzRyZrKQobEXBd\"", "entities": []}
+{"id": "benign-01", "stratum": "negative-prose", "family": "benign", "text": "The file checksum is 71a9b29e9c5dbd9f8487b0c87ba431cac5bf1b9ad65e0b6b330693c3ecf5d702", "entities": []}
+{"id": "benign-02", "stratum": "negative-prose", "family": "benign", "text": "NPM package names and versions are public metadata.", "entities": []}
+{"id": "benign-03", "stratum": "negative-prose", "family": "benign", "text": "Hugging Face model identifiers are not access tokens.", "entities": []}
+{"id": "benign-04", "stratum": "negative-prose", "family": "benign", "text": "Rotate the deployment credential without pasting it here.", "entities": []}
+{"id": "benign-05", "stratum": "negative-prose", "family": "benign", "text": "Áætlun fyrir uppfærslu — no credential values are present.", "entities": []}
+{"id": "benign-06", "stratum": "negative-prose", "family": "benign", "text": "client_secret = \"${DEPLOYMENT_SECRET}\"", "entities": []}
+{"id": "benign-07", "stratum": "negative-prose", "family": "benign", "text": "service_token: \"{{ secrets.DEPLOYMENT_TOKEN }}\"", "entities": []}
