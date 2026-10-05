@@ -13,6 +13,37 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
   await new Promise((resolve) => setTimeout(resolve, 10));
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
+assert.equal(typeof globalThis.dmzProcessBestEffortWithEntities, 'function');
+// The optional typed adapter retains byte offsets, exact inverses and existing
+// structured matches. It does not enable a supplemental model by itself.
+{
+  const text = '🙂 Meet José Navarro at 18 Maple Avenue.';
+  const start = Buffer.byteLength(text.slice(0, text.indexOf('18 Maple')));
+  const entities = [{ start, end: start + Buffer.byteLength('18 Maple Avenue'), kind: 'address' }];
+  const result = JSON.parse(globalThis.dmzProcessBestEffortWithEntities(text, '[]', JSON.stringify(entities)));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, entities);
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+  const preserved = result.transformed;
+  for (const bad of [
+    [{ start: 1, end: 3, kind: 'name_demo' }],
+    [{ start: 0, end: 4, kind: 'PERSON' }],
+    [{ start: 0, end: 4, kind: 'kennitala' }],
+    [{ start: 5, end: 7, kind: 'phone' }, { start: 4, end: 8, kind: 'phone' }],
+  ]) {
+    const invalid = JSON.parse(globalThis.dmzProcessBestEffortWithEntities(text, '[]', JSON.stringify(bad)));
+    assert.equal(invalid.allowed, false);
+    assert.equal(globalThis.dmzRestore(preserved), text);
+  }
+  assert.ok(JSON.parse(globalThis.dmzProcessBestEffortWithEntities(text, '[]', '[{"start":0.5,"end":3,"kind":"phone"}]')).error);
+  assert.equal(JSON.parse(globalThis.dmzProcessBestEffortWithEntities('\ud800', '[]', '[]')).error, 'invalid Unicode input');
+  const email = 'person@example.invalid';
+  const typed = JSON.parse(globalThis.dmzProcessBestEffortWithEntities(email, '[]', JSON.stringify([{start:0,end:6,kind:'name_demo'}])));
+  assert.deepEqual(typed.detected_spans, [{start:0,end:email.length,kind:'email'}]);
+  assert.equal(globalThis.dmzRestore(typed.transformed), email);
+  globalThis.dmzReset();
+}
+
 
 // JavaScript can contain unpaired UTF-16 surrogates. The Go string bridge would
 // replace them before detection, so reject processing instead of silently

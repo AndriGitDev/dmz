@@ -125,13 +125,23 @@ type NameSpan struct {
 }
 
 func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
-	return s.process(input, names, false)
+	return s.process(input, names, nil, false)
 }
 
 // ProcessBestEffort masks uncertain identifiers and secrets for Shield. The
 // default policy remains available to other callers and baseline evaluations.
 func (s *Session) ProcessBestEffort(input string, names []NameSpan) Result {
-	return s.process(input, names, true)
+	return s.process(input, names, nil, true)
+}
+
+// ProcessBestEffortWithEntities adds typed local-model findings after the existing
+// core and name pipeline. Additions never replace or extend an existing match.
+// Callers must supply sorted, non-overlapping original UTF-8 spans; unsupported
+// kinds or malformed boundaries reject the request without creating mappings.
+// Existing whole-text safety fallbacks take precedence over model processing.
+// This experimental adapter does not select or enable any external model.
+func (s *Session) ProcessBestEffortWithEntities(input string, names []NameSpan, entities []EntitySpan) Result {
+	return s.process(input, names, entities, true)
 }
 
 // When individual spans cannot safely represent an input, cover the whole
@@ -147,7 +157,7 @@ func (s *Session) maskWhole(input string) Result {
 	return Result{Allowed: true, Transformed: marker, Findings: []Finding{{detect.Kind("text"), detect.Uncertain, "mask", "whole-text-coverage"}}}
 }
 
-func (s *Session) process(input string, names []NameSpan, bestEffort bool) Result {
+func (s *Session) process(input string, names []NameSpan, entities []EntitySpan, bestEffort bool) Result {
 	// Only exact markers issued by this live session may bypass detection.
 	// Replace their bytes with opaque barriers so offsets still address input.
 	// Whitespace would let context recognizers skip a protected value and
@@ -258,6 +268,43 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 		matches = append(kept, detect.Match{Start: start, End: end, Kind: detect.Name, Confidence: detect.High, Reason: "local-trained-name"})
 		result.Findings = append(result.Findings, Finding{detect.Name, detect.High, "mask", "local-trained-name"})
 	}
+	// Validate the complete supplemental response before creating any mappings.
+	// Preserve existing typed matches, including names, on every overlap. This
+	// avoids a broader or differently typed model span erasing a correct match.
+	if len(names)+len(entities) > 512 {
+		return entityReview()
+	}
+	previousEnd = 0
+	for _, entity := range entities {
+		if !supportedEntityKind(entity.Kind) || entity.Start < previousEnd || entity.Start < 0 ||
+			entity.End <= entity.Start || entity.End > len(input) ||
+			!utf8.ValidString(input[:entity.Start]) || !utf8.ValidString(input[:entity.End]) ||
+			splitsCombiningSequence(input, entity.Start) || splitsCombiningSequence(input, entity.End) ||
+			strings.TrimSpace(input[entity.Start:entity.End]) == "" ||
+			strings.ContainsAny(input[entity.Start:entity.End], "⟦⟧") {
+			return entityReview()
+		}
+		for _, marker := range issuedMarkers {
+			if entity.Start < marker.End && marker.Start < entity.End {
+				return entityReview()
+			}
+		}
+		previousEnd = entity.End
+		conflict := false
+		for _, existing := range matches {
+			if entity.Start < existing.End && existing.Start < entity.End {
+				conflict = true
+				break
+			}
+		}
+		if conflict {
+			continue
+		}
+		matches = append(matches, detect.Match{Start: entity.Start, End: entity.End,
+			Kind: entity.Kind, Confidence: detect.Uncertain, Reason: "local-model-entity"})
+		result.Findings = append(result.Findings, Finding{entity.Kind, detect.Uncertain, "mask", "local-model-entity"})
+	}
+
 	sort.Slice(matches, func(i, j int) bool { return matches[i].Start < matches[j].Start })
 	for i := 1; i < len(matches); i++ {
 		if matches[i].Start < matches[i-1].End {
