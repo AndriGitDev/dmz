@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "authorship": "synthetic authored before adapter; domestic forms deliberately retained as out-of-initial-scope diagnostic",
+  "scope": [
+    "name_demo",
+    "address",
+    "phone",
+    "email",
+    "iban",
+    "card",
+    "kennitala",
+    "secret",
+    "tenant_dictionary"
+  ],
+  "sets": {
+    "international.jsonl": {
+      "sha256": "fe8d5a83517c91b78b5f9a16a0394495257fb274e3f1ca66f729160d61e54a36",
+      "excerpts": 18,
+      "positive_excerpts": 18,
+      "entities": 19
+    },
+    "domestic.jsonl": {
+      "sha256": "64f62bcd24796842330d6b1855a669afe6a518d6f4a77a0020e7a99ad6163f31",
+      "excerpts": 4,
+      "positive_excerpts": 4,
+      "entities": 4
+    },
+    "negative-and-overlap.jsonl": {
+      "sha256": "f6dbb9530c6525e911725c8a4207e65c279e4f34619af3e69dee03ebcb1e52be",
+      "excerpts": 14,
+      "positive_excerpts": 4,
+      "entities": 4
+    }
+  }
+}

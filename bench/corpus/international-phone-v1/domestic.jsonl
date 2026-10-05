@@ -1,0 +1,4 @@
+{"id": "domestic-us-parentheses", "stratum": "domestic", "family": "us-parentheses", "text": "Phone: (202) 555-0114.", "entities": [{"kind": "phone", "value": "(202) 555-0114"}]}
+{"id": "domestic-us-dots", "stratum": "domestic", "family": "us-dots", "text": "Contact number: 202.555.0138.", "entities": [{"kind": "phone", "value": "202.555.0138"}]}
+{"id": "domestic-uk-local", "stratum": "domestic", "family": "uk-local", "text": "Phone: 020 7946 0123.", "entities": [{"kind": "phone", "value": "020 7946 0123"}]}
+{"id": "domestic-is-local-space", "stratum": "domestic", "family": "is-local-space", "text": "Phone: 555 1234.", "entities": [{"kind": "phone", "value": "555 1234"}]}

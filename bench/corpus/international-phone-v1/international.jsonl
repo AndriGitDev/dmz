@@ -1,0 +1,18 @@
+{"id": "international-us-space", "stratum": "international", "family": "us-space", "text": "Call +1 202-555-0107 tomorrow.", "entities": [{"kind": "phone", "value": "+1 202-555-0107"}]}
+{"id": "international-us-compact", "stratum": "international", "family": "us-compact", "text": "Telephone: +12025550114.", "entities": [{"kind": "phone", "value": "+12025550114"}]}
+{"id": "international-us-parens", "stratum": "international", "family": "us-parens", "text": "Contact +1 (202) 555-0138.", "entities": [{"kind": "phone", "value": "+1 (202) 555-0138"}]}
+{"id": "international-us-dots", "stratum": "international", "family": "us-dots", "text": "Telephone: +1.202.555.0148", "entities": [{"kind": "phone", "value": "+1.202.555.0148"}]}
+{"id": "international-us-extension", "stratum": "international", "family": "us-extension", "text": "Call +1 202-555-0162 ext. 45.", "entities": [{"kind": "phone", "value": "+1 202-555-0162 ext. 45"}]}
+{"id": "international-uk-spaces", "stratum": "international", "family": "uk-spaces", "text": "Call +44 20 7946 0123.", "entities": [{"kind": "phone", "value": "+44 20 7946 0123"}]}
+{"id": "international-uk-compact", "stratum": "international", "family": "uk-compact", "text": "Telephone: +442079460456", "entities": [{"kind": "phone", "value": "+442079460456"}]}
+{"id": "international-uk-parens", "stratum": "international", "family": "uk-parens", "text": "Reach us at +44 (20) 7946 0789.", "entities": [{"kind": "phone", "value": "+44 (20) 7946 0789"}]}
+{"id": "international-is", "stratum": "international", "family": "is", "text": "Sími +354 555 1234.", "entities": [{"kind": "phone", "value": "+354 555 1234"}]}
+{"id": "international-is-local", "stratum": "international", "family": "is-local", "text": "Síminn er 555-1234.", "entities": [{"kind": "phone", "value": "555-1234"}]}
+{"id": "international-is-dialling", "stratum": "international", "family": "is-dialling", "text": "Sími 00354 555 1234.", "entities": [{"kind": "phone", "value": "00354 555 1234"}]}
+{"id": "international-unicode-prefix", "stratum": "international", "family": "unicode-prefix", "text": "Þú getur hringt í +1 202-555-0107.", "entities": [{"kind": "phone", "value": "+1 202-555-0107"}]}
+{"id": "international-nfd-prefix", "stratum": "international", "family": "nfd-prefix", "text": "José: +44 20 7946 0123.", "entities": [{"kind": "phone", "value": "+44 20 7946 0123"}]}
+{"id": "international-json", "stratum": "international", "family": "json", "text": "{\"phone\":\"+12025550185\"}", "entities": [{"kind": "phone", "value": "+12025550185"}]}
+{"id": "international-two", "stratum": "international", "family": "two", "text": "Call +1 202-555-0107 or +44 20 7946 0123.", "entities": [{"kind": "phone", "value": "+1 202-555-0107"}, {"kind": "phone", "value": "+44 20 7946 0123"}]}
+{"id": "international-newline", "stratum": "international", "family": "newline", "text": "Telephone:\n+1 202 555 0194", "entities": [{"kind": "phone", "value": "+1 202 555 0194"}]}
+{"id": "international-unicode-space", "stratum": "international", "family": "unicode-space", "text": "Phone: +1 202 555 0107.", "entities": [{"kind": "phone", "value": "+1 202 555 0107"}]}
+{"id": "international-parenthesized", "stratum": "international", "family": "parenthesized", "text": "Call (+1 202-555-0107).", "entities": [{"kind": "phone", "value": "+1 202-555-0107"}]}
