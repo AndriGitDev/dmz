@@ -4,9 +4,38 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/AndriGitDev/dmz/packages/detect"
 )
+
+func FuzzTypedSupplementRestoration(f *testing.F) {
+	f.Add("🙂 José at 18 Maple Avenue.", 13, 28, uint8(1))
+	f.Add("Jose\u0301 Navarro", 0, 4, uint8(0))
+	f.Add("person@example.invalid", 0, 6, uint8(2))
+	f.Add("ordinary text", -1, 99, uint8(255))
+	f.Fuzz(func(t *testing.T, input string, start, end int, selector uint8) {
+		if len(input) > 2048 || !utf8.ValidString(input) {
+			t.Skip()
+		}
+		kinds := []detect.Kind{detect.Name, detect.Address, detect.Phone, detect.Email,
+			detect.IBAN, detect.Card, detect.Secret, detect.Kennitala, "unsupported"}
+		s := NewSession()
+		prior := s.ProcessBestEffort("previous@example.invalid", nil)
+		mappings := len(s.reverse)
+		r := s.ProcessBestEffortWithEntities(input, nil, []EntitySpan{{start, end, kinds[int(selector)%len(kinds)]}})
+		if s.Restore(prior.Transformed) != "previous@example.invalid" {
+			t.Fatal("supplement corrupted an existing mapping")
+		}
+		if r.Allowed {
+			if s.Restore(r.Transformed) != input {
+				t.Fatal("accepted supplemental response failed exact restoration")
+			}
+		} else if len(s.reverse) != mappings {
+			t.Fatal("rejected supplemental response created mappings")
+		}
+	})
+}
 
 func TestTypedModelAddsOriginalSpansAndRestores(t *testing.T) {
 	input := "Send José Navarro to 18 Maple Avenue."
