@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "status": "complete",
+  "independent_validation": false,
+  "execution": "Fresh trained Chromium inference and WASM masking/restoration",
+  "limitation": "Fresh runtime confirmation on the same public synthetic projection; not independent field quality.",
+  "excerpts": 4996,
+  "changed_prediction_records": 0,
+  "exact_restoration": true,
+  "external_requests": 0,
+  "resumed_excerpts": 0,
+  "seconds": 6965.073,
+  "product_source_commit": "aab7d6e94488b9e813b115ac3d7a7f370daa96fb",
+  "build_manifest_sha256": "73d3a8d574f99d247f67b2ff495bd936e9eff6305e16260f195cb85311163cad",
+  "trained_wasm_sha256": "6e1dfb6bbd73971069ee4f65977955df746fe40e5335a989f75198a6f516669e",
+  "browser_measurement_sha256": "e99ae9433d04faca4f82f0bddda9c0f8fd056dafba5ef55a7ad6734ddcc989f1",
+  "verifier_sha256": "e02ee3d2c37ad6a1d4fff5989cad48e94ee2175f8340d3ed6f1f31a3dfedf397",
+  "private_source_sha256": {
+    "external-final-browser.json": "031eefd2c5b8c3319df863614b381825a7ea7bb19a584e725e8fb23249eaf48f",
+    "external-contained-token-core-replay.json": "f550bc4df94aeadcedd38bde3e7b07e52b64c3f5b50e91b377edeeed21a49190",
+    "external-final-browser.json.checkpoint.json": "97f330aa65dbd7d96dde2df8ace85b08e5f1f80b2ed477847c3c97317bcb9eb0",
+    "final-browser-build-aab7d6e/BUILD.json": "73d3a8d574f99d247f67b2ff495bd936e9eff6305e16260f195cb85311163cad"
+  },
+  "partial_sha256": "519cc90dcc0dfb526328f9a2c19edd85ef3ef0dd44500fda8dd645a3934b2179",
+  "published_score_sha256": {
+    "final-runtime-validation.json": "a5706d9b9833413304ea8e1963d9c5b3bf0cc527bbb2d20bcb97861ebd891ea6",
+    "public-current-core-full-models.json": "c8b4a7fbeab621ee74cbb32dc34aa092bfd76cac6823fb0dfaffda62ca649026",
+    "public-current-core-sample-models.json": "5f524b7ee2744f8597b4e23e5b7c9af947a37ed29b8a7c974fc90737f9beda72"
+  }
+}

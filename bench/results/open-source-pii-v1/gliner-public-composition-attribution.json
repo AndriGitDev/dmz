@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "limitation": "Post-evaluation attribution on public synthetic annotations; not a replacement-policy trial or field accuracy.",
+  "reference_sha256": "c2e22fd396f86c713a649706d40bfa0dc93f51eceb8da9c3536c95a8e85d4c9c",
+  "candidate_sha256": "cf2da787c1d54735ce81134e0efe1a47adeafdd3b1af98be62804280dd28083c",
+  "measurement_sha256": "941ca085db41016ecaa2751c023698ef221894ecbd0a5991ff18e07b4c6560b3",
+  "candidate": "gliner",
+  "counts": {
+    "basic": {
+      "excerpts": 4996,
+      "retained_core_tp": 1471,
+      "retained_core_fp": 211,
+      "added_candidate_tp": 4295,
+      "added_candidate_fp": 2425,
+      "candidate_correct_present_in_final": 5752,
+      "candidate_correct_blocked_by_core": 139,
+      "candidate_correct_lost_to_core_abstention": 5
+    },
+    "trained": {
+      "excerpts": 4996,
+      "retained_core_tp": 3152,
+      "retained_core_fp": 2714,
+      "added_candidate_tp": 1995,
+      "added_candidate_fp": 1945,
+      "candidate_correct_present_in_final": 4971,
+      "candidate_correct_blocked_by_core": 920,
+      "candidate_correct_lost_to_core_abstention": 5
+    }
+  },
+  "core_blocker_type_pairs": {
+    "basic": {
+      "incorrect:card -> phone": 1,
+      "incorrect:email -> email": 17,
+      "incorrect:phone -> phone": 119,
+      "incorrect:secret -> secret": 1,
+      "outside_scope:kennitala -> phone": 1
+    },
+    "trained": {
+      "incorrect:card -> phone": 1,
+      "incorrect:email -> email": 17,
+      "incorrect:name_demo -> address": 664,
+      "incorrect:name_demo -> email": 3,
+      "incorrect:name_demo -> name_demo": 242,
+      "incorrect:name_demo -> secret": 2,
+      "incorrect:phone -> phone": 119,
+      "incorrect:secret -> secret": 1,
+      "outside_scope:kennitala -> phone": 1
+    }
+  }
+}

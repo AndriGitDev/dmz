@@ -1,0 +1,14 @@
+{"id": "negative-and-overlap-counts", "stratum": "negative-and-overlap", "family": "counts", "text": "There are 202 items, 555 pages and 107 comments.", "entities": []}
+{"id": "negative-and-overlap-equation", "stratum": "negative-and-overlap", "family": "equation", "text": "Compute +1 + 202 + 555 + 107.", "entities": []}
+{"id": "negative-and-overlap-date", "stratum": "negative-and-overlap", "family": "date", "text": "Review date: 2026-10-05.", "entities": []}
+{"id": "negative-and-overlap-price", "stratum": "negative-and-overlap", "family": "price", "text": "The price increased by +1202.55 dollars.", "entities": []}
+{"id": "negative-and-overlap-version", "stratum": "negative-and-overlap", "family": "version", "text": "Version 1.202.555.0107 is a software build identifier.", "entities": []}
+{"id": "negative-and-overlap-long", "stratum": "negative-and-overlap", "family": "long", "text": "Batch 120255501071234567890 has not finished.", "entities": []}
+{"id": "negative-and-overlap-prefixed", "stratum": "negative-and-overlap", "family": "prefixed", "text": "Reference ABC12025550107XYZ is a synthetic identifier.", "entities": []}
+{"id": "negative-and-overlap-short", "stratum": "negative-and-overlap", "family": "short", "text": "Country code +44 and extension 123 are separate fields.", "entities": []}
+{"id": "negative-and-overlap-email", "stratum": "negative-and-overlap", "family": "email", "text": "Email +12025550107@example.invalid.", "entities": [{"kind": "email", "value": "+12025550107@example.invalid"}]}
+{"id": "negative-and-overlap-card", "stratum": "negative-and-overlap", "family": "card", "text": "Test card: 4111 1111 1111 1111.", "entities": [{"kind": "card", "value": "4111 1111 1111 1111"}]}
+{"id": "negative-and-overlap-iban", "stratum": "negative-and-overlap", "family": "iban", "text": "Test IBAN: IS140159260076545510730339.", "entities": [{"kind": "iban", "value": "IS140159260076545510730339"}]}
+{"id": "negative-and-overlap-secret", "stratum": "negative-and-overlap", "family": "secret", "text": "password=\"+12025550107AbC9zX8qW7\"", "entities": [{"kind": "secret", "value": "+12025550107AbC9zX8qW7"}]}
+{"id": "negative-and-overlap-placeholder", "stratum": "negative-and-overlap", "family": "placeholder", "text": "Phone: [PHONE].", "entities": []}
+{"id": "negative-and-overlap-roles", "stratum": "negative-and-overlap", "family": "roles", "text": "The customer will call the doctor tomorrow.", "entities": []}

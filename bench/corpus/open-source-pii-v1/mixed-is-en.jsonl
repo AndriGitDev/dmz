@@ -1,0 +1,24 @@
+{"id": "mixed-is-en-en-icelandic-name", "stratum": "mixed-is-en", "family": "en-icelandic-name", "text": "Please contact Arna Jónsdóttir about the file.", "entities": [{"kind": "name_demo", "value": "Arna Jónsdóttir"}]}
+{"id": "mixed-is-en-is-english-name", "stratum": "mixed-is-en", "family": "is-english-name", "text": "Sendu skjalið til Emily Carter fyrir fundinn.", "entities": [{"kind": "name_demo", "value": "Emily Carter"}]}
+{"id": "mixed-is-en-two-languages", "stratum": "mixed-is-en", "family": "two-languages", "text": "Bjarni Jónsson spoke with Oliver Bennett yesterday.", "entities": [{"kind": "name_demo", "value": "Bjarni Jónsson"}, {"kind": "name_demo", "value": "Oliver Bennett"}]}
+{"id": "mixed-is-en-case-name", "stratum": "mixed-is-en", "family": "case-name", "text": "Ég ræddi við Örnu Jónsdóttur. Please send the summary.", "entities": [{"kind": "name_demo", "value": "Örnu Jónsdóttur"}]}
+{"id": "mixed-is-en-icelandic-street", "stratum": "mixed-is-en", "family": "icelandic-street", "text": "The delivery address is Laugavegur 12.", "entities": [{"kind": "address", "value": "Laugavegur 12"}]}
+{"id": "mixed-is-en-is-english-street", "stratum": "mixed-is-en", "family": "is-english-street", "text": "Sendu pakkann á 18 Maple Avenue.", "entities": [{"kind": "address", "value": "18 Maple Avenue"}]}
+{"id": "mixed-is-en-icelandic-phone", "stratum": "mixed-is-en", "family": "icelandic-phone", "text": "Sími: +354 555 1234. Please call tomorrow.", "entities": [{"kind": "phone", "value": "+354 555 1234"}]}
+{"id": "mixed-is-en-us-phone", "stratum": "mixed-is-en", "family": "us-phone", "text": "Hringdu í +1 202-555-0123 eftir hádegi.", "entities": [{"kind": "phone", "value": "+1 202-555-0123"}]}
+{"id": "mixed-is-en-mixed-emails", "stratum": "mixed-is-en", "family": "mixed-emails", "text": "Netfang: anna@example.invalid. Reply in English.", "entities": [{"kind": "email", "value": "anna@example.invalid"}]}
+{"id": "mixed-is-en-combined", "stratum": "mixed-is-en", "family": "combined", "text": "Arna Jónsdóttir og Charlotte Blake mæta á fundinn.", "entities": [{"kind": "name_demo", "value": "Arna Jónsdóttir"}, {"kind": "name_demo", "value": "Charlotte Blake"}]}
+{"id": "mixed-is-en-unicode-english", "stratum": "mixed-is-en", "family": "unicode-english", "text": "Viðskiptavinur: Zoë Fisher. Please confirm.", "entities": [{"kind": "name_demo", "value": "Zoë Fisher"}]}
+{"id": "mixed-is-en-unicode-nfd", "stratum": "mixed-is-en", "family": "unicode-nfd", "text": "Viðskiptavinur: Zoë Fisher. Please confirm.", "entities": [{"kind": "name_demo", "value": "Zoë Fisher"}]}
+{"id": "mixed-is-en-signature", "stratum": "mixed-is-en", "family": "signature", "text": "Kveðja / Best regards,\nHenry Caldwell", "entities": [{"kind": "name_demo", "value": "Henry Caldwell"}]}
+{"id": "mixed-is-en-company-negative", "stratum": "mixed-is-en", "family": "company-negative", "text": "Cedar Systems og Gervifélagið vinna að verkefninu.", "entities": []}
+{"id": "mixed-is-en-place-negative", "stratum": "mixed-is-en", "family": "place-negative", "text": "Fundurinn er í Reykjavík, followed by a trip to London.", "entities": []}
+{"id": "mixed-is-en-month-negative", "stratum": "mixed-is-en", "family": "month-negative", "text": "Skýrslan nær yfir maí og júní, May and June.", "entities": []}
+{"id": "mixed-is-en-common-negative", "stratum": "mixed-is-en", "family": "common-negative", "text": "Please mark the document. Vinsamlegast merktu skjalið.", "entities": []}
+{"id": "mixed-is-en-numbers-negative", "stratum": "mixed-is-en", "family": "numbers-negative", "text": "Verkefni 2048 kostar 1200 kr. The total is provisional.", "entities": []}
+{"id": "mixed-is-en-code-negative", "stratum": "mixed-is-en", "family": "code-negative", "text": "Skoðaðu stillinguna: const email = profile.email;", "entities": []}
+{"id": "mixed-is-en-roles-negative", "stratum": "mixed-is-en", "family": "roles-negative", "text": "Læknirinn og hjúkrunarfræðingurinn reviewed the case.", "entities": []}
+{"id": "mixed-is-en-card", "stratum": "mixed-is-en", "family": "card", "text": "Prófunarkort: 4111 1111 1111 1111. Test only.", "entities": [{"kind": "card", "value": "4111 1111 1111 1111"}]}
+{"id": "mixed-is-en-tenant", "stratum": "mixed-is-en", "family": "tenant", "text": "Please summarize Verkefni Gervi á íslensku.", "entities": [{"kind": "tenant_dictionary", "value": "Verkefni Gervi"}]}
+{"id": "mixed-is-en-address-name", "stratum": "mixed-is-en", "family": "address-name", "text": "Bjarni Jónsson: Laugavegur 12, reply in English.", "entities": [{"kind": "name_demo", "value": "Bjarni Jónsson"}, {"kind": "address", "value": "Laugavegur 12"}]}
+{"id": "mixed-is-en-secret", "stratum": "mixed-is-en", "family": "secret", "text": "Prófun: Authorization: Bearer TestR7xQ2mN9pL4zW8cV3bD6fG1hJ5kS0aU2", "entities": [{"kind": "secret", "value": "TestR7xQ2mN9pL4zW8cV3bD6fG1hJ5kS0aU2"}]}

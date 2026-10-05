@@ -70,6 +70,27 @@ func main() {
 		}
 		return string(encoded)
 	})
+	expose("dmzProcessBestEffortWithEntities", func(args []js.Value) any {
+		if len(args) != 3 || args[0].Type() != js.TypeString || args[1].Type() != js.TypeString || args[2].Type() != js.TypeString {
+			return `{"error":"invalid entity request"}`
+		}
+		if !validText(args[0]) {
+			return `{"error":"invalid Unicode input"}`
+		}
+		var names []surrogates.NameSpan
+		var entities []surrogates.EntitySpan
+		if err := json.Unmarshal([]byte(args[1].String()), &names); err != nil {
+			return `{"error":"invalid model spans"}`
+		}
+		if err := json.Unmarshal([]byte(args[2].String()), &entities); err != nil {
+			return `{"error":"invalid model entities"}`
+		}
+		encoded, err := json.Marshal(session.ProcessBestEffortWithEntities(args[0].String(), names, entities))
+		if err != nil {
+			return `{"error":"encoding failed"}`
+		}
+		return string(encoded)
+	})
 	expose("dmzRestore", func(args []js.Value) any {
 		if len(args) != 1 || args[0].Type() != js.TypeString {
 			return ""

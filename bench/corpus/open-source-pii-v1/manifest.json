@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "authorship": "manually authored synthetic diagnostic, before candidate predictions",
+  "scope": [
+    "name_demo",
+    "address",
+    "phone",
+    "email",
+    "iban",
+    "card",
+    "kennitala",
+    "secret",
+    "tenant_dictionary"
+  ],
+  "sets": {
+    "english-general.jsonl": {
+      "sha256": "d1250755de8ac1ddff4bdd85182d19124e5ca18c7a9f6d9ac191099dfcc4b587",
+      "excerpts": 40,
+      "positive_excerpts": 30,
+      "entities": 33
+    },
+    "english-work.jsonl": {
+      "sha256": "5fa6cfdc8272466f543bf65fd4f28ddae0b8acfae782be04b53e9bb436f8e5ab",
+      "excerpts": 36,
+      "positive_excerpts": 24,
+      "entities": 31
+    },
+    "mixed-is-en.jsonl": {
+      "sha256": "c89987b74af925c876f8129851627bfe794c70dce0cdd619625373f0fef31fc4",
+      "excerpts": 24,
+      "positive_excerpts": 17,
+      "entities": 20
+    }
+  }
+}

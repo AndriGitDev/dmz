@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "status": "complete",
+  "independent_validation": false,
+  "limitation": "Runtime/record parity; synthetic and reused development evidence, not independent field quality.",
+  "product_source_commit": "aab7d6e94488b9e813b115ac3d7a7f370daa96fb",
+  "trained_wasm_sha256": "6e1dfb6bbd73971069ee4f65977955df746fe40e5335a989f75198a6f516669e",
+  "generic_wasm_sha256": "b9fd2818d38c33858c870c6d3c905510ba7d0f4c891c23de7d6c0ba307dfe60a",
+  "measurement_sha256": "e865d69e07379b1e729e61bc7cd0d6c7a064f8cb3b83118f2bfa8097b275333f",
+  "checks": {
+    "initial": {
+      "excerpts": 100,
+      "changed_records": 0,
+      "exact_restoration": true
+    },
+    "followup": {
+      "excerpts": 90,
+      "changed_records": 0,
+      "exact_restoration": true
+    },
+    "public-english": {
+      "excerpts": 4996,
+      "changed_records": 0,
+      "exact_restoration": true
+    },
+    "icelandic-person": {
+      "excerpts": 5838,
+      "changed_records": 0,
+      "exact_restoration": true
+    },
+    "vendor": {
+      "excerpts": 102,
+      "native_changed_records": 0,
+      "native_wasm_span_mismatches": 0,
+      "exact_restoration": true
+    },
+    "vendor-followup": {
+      "excerpts": 134,
+      "native_changed_records": 0,
+      "native_wasm_span_mismatches": 0,
+      "exact_restoration": true
+    },
+    "phone": {
+      "excerpts": 36,
+      "native_changed_records": 0,
+      "native_wasm_span_mismatches": 0,
+      "exact_restoration": true
+    },
+    "phone-world": {
+      "cases": 49245,
+      "fixture_sha256": "fe0cfbed40c28694e8a0eb745f0ba5e6da37b3f0a8a33792b4a8c4c1c8565fb8",
+      "native_span_mismatches": 0,
+      "exact_restoration": true
+    },
+    "global-network-generic": {
+      "cases": 9,
+      "fixture_sha256": "787ddf5cfb0828f917d3748c09cf7d71a0032bd3ca03cec968529636e7b4b15d",
+      "native_span_mismatches": 0,
+      "exact_restoration": true
+    },
+    "global-network-trained": {
+      "cases": 9,
+      "fixture_sha256": "787ddf5cfb0828f917d3748c09cf7d71a0032bd3ca03cec968529636e7b4b15d",
+      "native_span_mismatches": 0,
+      "exact_restoration": true
+    }
+  },
+  "published_score_sha256": {
+    "public-core-replay.json": "190f9b39360c92ca0eb87032fe673e0a45f2e89e734f546de1a7fbb5259a35e7",
+    "icelandic-core-replay.json": "4f12120f263d58eded12f5723047ebcd1d25d30ab5985448082ab1721e7de968",
+    "initial-structured-replay.json": "46003fdb5d20552e8049d4151532723407f2cfd8ae3e7479a395deae50c400e3",
+    "followup-structured-replay.json": "cda367099a3be9de35fb5d93c785270b1d9b71ad19ad8f915217a3131ced4536",
+    "vendor-specialist-calibration.json": "b9c00c66228665e0dee1fad9665f45179aaf6a62b13a942cb23ce0d2089c42ef",
+    "vendor-specialist-followup.json": "9dc7c994f62c8873023175923795e3e650edfd61a231e9647cfe889828c72edd",
+    "phone-specialist.json": "c2ce458ea4a26672914cda8b7aaa382da9d7158f50e66e41fedf360e178050c9"
+  },
+  "private_source_sha256": {
+    "structured-core-initial-replay.json": "5f5a96a77614ba272ddf4c89e298ecd980a939d90bfa85edbcf0cd0497985fce",
+    "initial-contained-token-core-replay.json": "7a1205ad210ffc565a5ee7e32bde867e716c8c9eadb3510494d1d4b16361edf2",
+    "structured-core-followup-replay.json": "475e06d286584dd6ed2585fab0e8c9869700fcbcbcfd3114df459408189022ae",
+    "followup-contained-token-core-replay.json": "6ddcd2ad24a9c19749665c8914ffb74349656da6ca907d802e17e137fe7add51",
+    "external-stack128k-core-replay.json": "763acc23494bf206221db9524b9f031ac64ebba6a75a0b84ba07104d9477269a",
+    "external-contained-token-core-replay.json": "f550bc4df94aeadcedd38bde3e7b07e52b64c3f5b50e91b377edeeed21a49190",
+    "icelandic-core-stack128k.json": "60a46b8db32a53e32b05fa2b6785ecb9c5a20bcd6f9da3ab2a3c50ae4e574af1",
+    "icelandic-core-contained-token.json": "2e2a4c8460404b51020570ce322fb9c18e9b6dff38117f2af4df4b6c9073c34e",
+    "vendor-core-first.jsonl": "ba88b109a9be7a4c700b9ab05f6ed0ae27f2a27eb4b6a7ecfa36fcb1cd708e26",
+    "vendor-final-native.jsonl": "ba88b109a9be7a4c700b9ab05f6ed0ae27f2a27eb4b6a7ecfa36fcb1cd708e26",
+    "vendor-contained-token-wasm-parity.json": "4ebb741d67522a81044809ad2747144ed04d172f794d517dfaaa97e3fe39d56e",
+    "vendor-followup-after.jsonl": "ed33da2fa20c77c9b5ed3889130b9f41bae6d85d19db4628c2eec78ccc91f191",
+    "vendor-followup-final-native.jsonl": "ed33da2fa20c77c9b5ed3889130b9f41bae6d85d19db4628c2eec78ccc91f191",
+    "vendor-followup-contained-token-wasm-parity.json": "d7affd9d73acdc5e0ba2319e7821dbccd7b11c78bd06cdc2591a9e84cf6fe74f",
+    "phone-core-final.jsonl": "79b9fd439c7c5a193307eab60e36fddd43969805d99a7e9b6d7487fbe6be9561",
+    "phone-final-native.jsonl": "74bda8547946e825fd5990a83f88e2abf6f03ceda8c2081f106917ffffbd6bee",
+    "phone-contained-token-wasm-parity.json": "af45fcaf1798000a90c8c1fe5745c67b051f896431d4dc0afa053f660d9d1274",
+    "phone-world-wasm-contained-token.json": "f1db30db1e510d31dc6ed282f15fa4262e7140ba3001eadb577e66ceb730e81c",
+    "phone-nongeographic-generic-contained-token.json": "9ef211189a9433feae304e7fdc22fdaf1cd3d05efdf008947acf37101cd5dd1a",
+    "phone-nongeographic-trained-contained-token.json": "0bee009f1cec317105a5ab8a0b6a25d212fc8d6a433ac0eb847fde33423a4dc6",
+    "build-browser-aab7d6e-verification.json": "e00e04c0f80d2d1304aecdd1299a0b1f38303bf34a9079cbfbc608c7f9de22ed",
+    "structured-core-initial-comparison.json": "6fc7d367e5a9602cdd9d4106f8a6a15c915a56120135fe0d76f91a51c1555038",
+    "structured-core-followup-comparison.json": "c16554de05ab814c39ac37b0d628bacadd30e6d3fff360064ae6608b6027bb7e"
+  }
+}

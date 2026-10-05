@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "classification": "Post-evaluation diagnostic; no relabelling or policy selection",
+  "limitation": "Overlap with projected synthetic labels; absence of gold overlap does not establish benign text or field errors.",
+  "excerpts": 4996,
+  "false_span_relations": {
+    "card": {
+      "equal_span_wrong_type": 1,
+      "no_projected_gold_overlap": 23
+    },
+    "email": {
+      "contains_gold": 17,
+      "no_projected_gold_overlap": 20
+    },
+    "name_demo": {
+      "contained_in_gold": 953,
+      "contains_gold": 92,
+      "equal_span_wrong_type": 1,
+      "multiple_gold_spans": 6,
+      "no_projected_gold_overlap": 1444,
+      "partial_overlap": 7
+    },
+    "phone": {
+      "contained_in_gold": 107,
+      "no_projected_gold_overlap": 24
+    },
+    "secret": {
+      "contains_gold": 1,
+      "multiple_gold_spans": 1,
+      "no_projected_gold_overlap": 4
+    }
+  },
+  "missed_gold_relations": {
+    "address": {
+      "covered_by_wrong_span_or_type": 1,
+      "no_entity_span_overlap": 795,
+      "partial_overlap": 633
+    },
+    "card": {
+      "covered_by_wrong_span_or_type": 2,
+      "no_entity_span_overlap": 231
+    },
+    "email": {
+      "covered_by_wrong_span_or_type": 20,
+      "no_entity_span_overlap": 2,
+      "partial_overlap": 1,
+      "whole_text_abstention": 2
+    },
+    "name_demo": {
+      "covered_by_wrong_span_or_type": 99,
+      "no_entity_span_overlap": 288,
+      "partial_overlap": 188
+    },
+    "phone": {
+      "covered_by_wrong_span_or_type": 2,
+      "no_entity_span_overlap": 638,
+      "partial_overlap": 107,
+      "whole_text_abstention": 3
+    },
+    "secret": {
+      "covered_by_wrong_span_or_type": 1,
+      "no_entity_span_overlap": 93,
+      "partial_overlap": 2
+    }
+  },
+  "false_to_gold_overlap_pairs": {
+    "card": {
+      "phone": 1
+    },
+    "email": {
+      "email": 17
+    },
+    "name_demo": {
+      "address": 736,
+      "email": 4,
+      "name_demo": 323,
+      "secret": 2
+    },
+    "phone": {
+      "phone": 107
+    },
+    "secret": {
+      "card": 2,
+      "secret": 1
+    }
+  },
+  "pair_limitation": "A false span can overlap multiple gold spans; pair counts are not distinct-span counts.",
+  "private_reference_sha256": "f550bc4df94aeadcedd38bde3e7b07e52b64c3f5b50e91b377edeeed21a49190",
+  "corpus_test_sha256": "6b70350932be463af6b53fc79bee5e53be2e66cc4133ae9bd0ff672d2237ad29",
+  "published_score_sha256": "c8b4a7fbeab621ee74cbb32dc34aa092bfd76cac6823fb0dfaffda62ca649026",
+  "measurement_sha256": "4efe48bf677eb587e8d17a181592ac6748970569a776527b627eb6154aa217f8"
+}

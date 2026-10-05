@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "description": "Fresh seeded fabricated vendor tokens; includes declared entropy/path limitations. No issued credentials or verification.",
+  "selection_commit": "cb1f9cd",
+  "independent_validation": false,
+  "scope": [
+    "name_demo",
+    "address",
+    "phone",
+    "email",
+    "iban",
+    "card",
+    "kennitala",
+    "secret",
+    "tenant_dictionary"
+  ],
+  "sets": {
+    "english-punctuation.jsonl": {
+      "sha256": "52ef76659bba106bf1d8962f4646296a2bd0e73070d085a86a981fa35662650b",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "low-entropy-limit.jsonl": {
+      "sha256": "5573cf576ee1fcf487c31f52a5b6f7d1a16dab046df9d2c95ab981eda034c186",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "mixed-unicode.jsonl": {
+      "sha256": "b4aac610b6b90f21154245987ccb26aeb85b1cf8a623e380708c14e52e6f741b",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "negative-boundary.jsonl": {
+      "sha256": "bfb148e90197ba6df27b90ddfba9d11acde534f5902f946920acd34424d21355",
+      "excerpts": 18,
+      "entities": 0
+    },
+    "negative-prose.jsonl": {
+      "sha256": "eb444292a336d236d89356ad1ff530dd133c2d31699a345d31be09305cc63e5c",
+      "excerpts": 8,
+      "entities": 0
+    },
+    "negative-short.jsonl": {
+      "sha256": "c38620ec177cc436a7e837ee5ec2cf9d2446001b0a301f2cb70de3e820fd5a32",
+      "excerpts": 18,
+      "entities": 0
+    },
+    "path-limit.jsonl": {
+      "sha256": "ff90d065d13a9c8c21af014aecb6d6902e60b41afbd61a98d4110866a6ca8238",
+      "excerpts": 18,
+      "entities": 18
+    },
+    "quoted-assignment.jsonl": {
+      "sha256": "190fbef37db6509509bdd7260eabdf69fab55b2f0f6b447afaa3c4dfc89b29cb",
+      "excerpts": 18,
+      "entities": 18
+    }
+  }
+}

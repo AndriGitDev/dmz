@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "authorship": "fresh synthetic text authored after bounded calibration; before follow-up predictions; not independently annotated or sampled",
+  "scope": [
+    "name_demo",
+    "address",
+    "phone",
+    "email",
+    "iban",
+    "card",
+    "kennitala",
+    "secret",
+    "tenant_dictionary"
+  ],
+  "sets": {
+    "english-general.jsonl": {
+      "sha256": "27e823fef1af0942b3d9c522996c6faf393db3e309f4d09e0f157363b9520774",
+      "excerpts": 30,
+      "positive_excerpts": 20,
+      "entities": 20
+    },
+    "english-work.jsonl": {
+      "sha256": "102529a00dd7941980701ab2b545083c8434760af8b77807fbc21b2a731342f4",
+      "excerpts": 30,
+      "positive_excerpts": 20,
+      "entities": 24
+    },
+    "mixed-is-en.jsonl": {
+      "sha256": "7df8eb9f4eb1f231835be467c2955af6a995a90b741763b6a93428a8f64fd3cb",
+      "excerpts": 30,
+      "positive_excerpts": 20,
+      "entities": 22
+    }
+  }
+}

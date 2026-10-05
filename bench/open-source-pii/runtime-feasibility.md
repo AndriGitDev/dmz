@@ -1,0 +1,79 @@
+# GLiNER2 local runtime feasibility
+
+This is a research adapter under `bench/`, not a Shield feature or new remote
+service. Original model, FP32 export, quantized variants and caches stay outside
+Git. The fixed comparison is original seven labels at 0.5, with address-only
+additions selected before the fresh 90-excerpt evaluation.
+
+The reviewed community Python export/runtime is
+[`lmoe/gliner2-onnx`](https://github.com/lmoe/gliner2-onnx), revision
+`35655a6b18fa24e81584645415a1733e9d47e321` (MIT). Its FP32 encoder,
+span representation and CountLSTM counting graph were exported offline from the
+pinned Fastino model. The classifier graph is unused for NER. The community
+Node implementation was also reviewed at
+`lmoe/gliner-onnx.js@c1f2937da282ab38dd61c889d1b0d54cb03c23c7` (MIT), but
+its filesystem/download dependencies and persistent cache of input words are
+unsuitable for direct reuse in Shield.
+Pinned reference implementation notices are retained in [licenses/](licenses/README.md).
+
+The browser prototype uses ORT Web 1.23.2 and local assets only. It does not cache
+input words, log prompts, download models from a hub or call an inference API.
+Public label strings and model weights may remain loaded; prompt strings and
+intermediate arrays are request-local. This does not promise physical memory
+zeroization by JavaScript or the inference runtime.
+
+Tokenization uses pinned `@huggingface/tokenizers@0.2.0` (Apache-2.0) with the
+export's original Unigram tokenizer. A parity probe found 666/667 exact word-ID
+matches; the exception was U+FEFF, which the JS tokenizer dropped. The prototype
+rejects unsupported format/control characters before tokenization and rejects
+any unexpectedly empty tokenization. It matches against the original string,
+then lowercases token values, as GLiNER2 2.0.0 does; the community Python runtime
+instead lowercases the whole string first. Thus the unmodified Python runtime
+is a parity diagnostic, not an assumed authority for Unicode offsets.
+
+Bounds are fixed before browser inference: 4,096 original UTF-8 bytes, 512 total
+subword/schema tokens, eight-word candidate spans, at most 512 returned entities
+and one request at a time. No truncation or untested long-document chunking.
+Return UTF-8 byte spans against original text; reject malformed, surrogate-split
+or combining-sequence-split offsets for the entire candidate. Model failure
+must preserve the frozen core/name result in any eventual additive integration.
+
+The browser computes span-label dot products in JavaScript before sigmoid,
+whereas Python uses NumPy float32 einsum. Measure prediction and score differences;
+do not assume bitwise floating-point parity. Quantization and runtime changes
+must retain their own quality/runtime reports. Neither a successful export nor
+a smaller file establishes readiness for a default detector.
+
+## Measured export and quantization results
+
+The FP32 NER graphs total approximately 1.219 GB, plus the tokenizer. On the
+fresh 90-excerpt diagnostic, the native ONNX runtime reproduced all original
+PyTorch prediction sets. Its measured run took 26.03 seconds and peaked at
+2,416,648 KiB RSS on the shared research host. This establishes parity on those
+90 inputs, not universal parity.
+
+Two variants were declared before evaluation: quantized encoder with FP32 heads,
+and quantized encoder plus heads. ORT 1.23.2 dynamic per-channel QUInt8 conversion
+covered MatMul, Gemm and Gather. Both changed 29/90 prediction sets and reduced
+standalone exact excerpts from 66/90 to 51/90. Both are rejected as default
+replacements. The all-quantized NER graphs total 364,857,449 bytes, plus roughly
+16 MB of tokenizer assets. Smaller storage did not preserve quality.
+
+Two initial quantization attempts hit the available-memory guard. A subsequent
+isolated attempt used a bounded-array implementation of the same scalar-scale
+UINT8 primitive, checked against 36 exact primitive comparisons. Conversion
+then finished in 66.44 seconds. All failures and source/output hashes remain in
+the private experiment record.
+
+The all-quantized local-origin Chromium prototype loaded in 10.88 seconds and
+processed 90 excerpts in 52.21 seconds, with no external requests or candidate
+failures. Four prediction sets differed from native ORT: one address, one phone
+and two person results. Browser standalone exact accuracy was 54/90, versus
+51/90 for native quantized and 66/90 for original FP32. These are runtime
+variants, not interchangeable evaluations. The browser result remains rejected
+for default use; this prototype has not been wired into the Shield extension.
+
+Timings come from a contended CPU host and are feasibility observations, not
+representative customer latency guarantees. The prototype's control-character,
+input-size and tokenization guards remain necessary even where this finite
+probe produced matching spans.

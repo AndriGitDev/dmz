@@ -185,6 +185,8 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 	}
 	lexicon.extendNames(input, candidates)
 	candidates = lexicon.filterSeedBoundaries(input, candidates)
+	candidates = append(candidates, internationalPhones(input, candidates)...)
+	candidates = append(candidates, vendorSecrets(input, candidates)...)
 	if originalOffsets != nil {
 		for i := range candidates {
 			start, end := originalOffsets[candidates[i].Start], originalOffsets[candidates[i].End]

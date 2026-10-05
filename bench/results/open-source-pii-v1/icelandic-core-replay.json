@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "kind": "development-core",
+  "limitation": "Person-only reused Icelandic development; cached names, not full entity accuracy or independent validation.",
+  "input_sha256": {
+    "before": "a899c24a0b2b77f059efd56262072080e707fec244670f5375be13a92e34a0fb",
+    "after": "60a46b8db32a53e32b05fa2b6785ecb9c5a20bcd6f9da3ab2a3c50ae4e574af1"
+  },
+  "changed_excerpts": 0,
+  "runs": {
+    "before": {
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "name_demo"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 1936,
+        "fp": 70,
+        "fn": 50,
+        "excerpts": 5838,
+        "exact_excerpts": 5753,
+        "positive_excerpts": 1286,
+        "exact_positive_excerpts": 1233,
+        "negative_excerpts": 4552,
+        "false_positive_negative_excerpts": 32,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.9651046859421735,
+        "recall": 0.9748237663645518,
+        "f1": 0.969939879759519,
+        "accuracy": 0.9854402192531689,
+        "positive_excerpt_accuracy": 0.9587869362363919,
+        "negative_excerpt_false_positive_rate": 0.007029876977152899,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "name_demo": {
+          "tp": 1936,
+          "fp": 70,
+          "fn": 50,
+          "precision": 0.9651046859421735,
+          "recall": 0.9748237663645518,
+          "f1": 0.969939879759519
+        }
+      },
+      "strata": {
+        "domain": {
+          "tp": 474,
+          "fp": 3,
+          "fn": 6,
+          "excerpts": 256,
+          "exact_excerpts": 250,
+          "positive_excerpts": 192,
+          "exact_positive_excerpts": 186,
+          "negative_excerpts": 64,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9937106918238994,
+          "recall": 0.9875,
+          "f1": 0.9905956112852664,
+          "accuracy": 0.9765625,
+          "positive_excerpt_accuracy": 0.96875,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "general": {
+          "tp": 1462,
+          "fp": 67,
+          "fn": 44,
+          "excerpts": 5582,
+          "exact_excerpts": 5503,
+          "positive_excerpts": 1094,
+          "exact_positive_excerpts": 1047,
+          "negative_excerpts": 4488,
+          "false_positive_negative_excerpts": 32,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9561805101373446,
+          "recall": 0.9707835325365206,
+          "f1": 0.9634266886326195,
+          "accuracy": 0.985847366535292,
+          "positive_excerpt_accuracy": 0.9570383912248629,
+          "negative_excerpt_false_positive_rate": 0.0071301247771836,
+          "point_targets_met": false
+        }
+      }
+    },
+    "after": {
+      "metric": "exact entity-set accuracy per excerpt",
+      "annotation_scope": [
+        "name_demo"
+      ],
+      "minimum": 0.99,
+      "overall": {
+        "tp": 1936,
+        "fp": 70,
+        "fn": 50,
+        "excerpts": 5838,
+        "exact_excerpts": 5753,
+        "positive_excerpts": 1286,
+        "exact_positive_excerpts": 1233,
+        "negative_excerpts": 4552,
+        "false_positive_negative_excerpts": 32,
+        "abstained_excerpts": 0,
+        "abstained_negative_excerpts": 0,
+        "precision": 0.9651046859421735,
+        "recall": 0.9748237663645518,
+        "f1": 0.969939879759519,
+        "accuracy": 0.9854402192531689,
+        "positive_excerpt_accuracy": 0.9587869362363919,
+        "negative_excerpt_false_positive_rate": 0.007029876977152899,
+        "point_targets_met": false
+      },
+      "per_type": {
+        "name_demo": {
+          "tp": 1936,
+          "fp": 70,
+          "fn": 50,
+          "precision": 0.9651046859421735,
+          "recall": 0.9748237663645518,
+          "f1": 0.969939879759519
+        }
+      },
+      "strata": {
+        "domain": {
+          "tp": 474,
+          "fp": 3,
+          "fn": 6,
+          "excerpts": 256,
+          "exact_excerpts": 250,
+          "positive_excerpts": 192,
+          "exact_positive_excerpts": 186,
+          "negative_excerpts": 64,
+          "false_positive_negative_excerpts": 0,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9937106918238994,
+          "recall": 0.9875,
+          "f1": 0.9905956112852664,
+          "accuracy": 0.9765625,
+          "positive_excerpt_accuracy": 0.96875,
+          "negative_excerpt_false_positive_rate": 0.0,
+          "point_targets_met": false
+        },
+        "general": {
+          "tp": 1462,
+          "fp": 67,
+          "fn": 44,
+          "excerpts": 5582,
+          "exact_excerpts": 5503,
+          "positive_excerpts": 1094,
+          "exact_positive_excerpts": 1047,
+          "negative_excerpts": 4488,
+          "false_positive_negative_excerpts": 32,
+          "abstained_excerpts": 0,
+          "abstained_negative_excerpts": 0,
+          "precision": 0.9561805101373446,
+          "recall": 0.9707835325365206,
+          "f1": 0.9634266886326195,
+          "accuracy": 0.985847366535292,
+          "positive_excerpt_accuracy": 0.9570383912248629,
+          "negative_excerpt_false_positive_rate": 0.0071301247771836,
+          "point_targets_met": false
+        }
+      }
+    }
+  },
+  "private_report_sha256": "c4e52c6027c07bd3a473f0f5d1ee82b2b01fcf015483b2aa77a91157ee445a3e",
+  "exporter_sha256": "cbb683a759919c8313c912d200cd8cd73cae5a56ad8e3884c1d1db549f797447"
+}

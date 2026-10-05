@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "selected_stack_kib": 128,
+  "limitation": "Runtime parity and contended-host diagnostic timing; not PII field accuracy or latency guarantees",
+  "reports": {
+    "phone-world-wasm-generic-batched.json": {
+      "private_report_sha256": "7adcd19cdac57229b63f3d5d182fbd97c72f637b89274f0dae600cd9027e7615",
+      "schema": 1,
+      "status": "complete",
+      "cases": 49245,
+      "source": "nyaruka/phonenumbers/v2 v2.0.14, libphonenumber metadata v9.0.40",
+      "fixture_sha256": "fe0cfbed40c28694e8a0eb745f0ba5e6da37b3f0a8a33792b4a8c4c1c8565fb8",
+      "wasm_sha256": "3cfb77c81eca6938116e87571e56a3723f77d335fb0fc15b312be0345525b8c9",
+      "runtime_sha256": "2d75ac9b1d4bfc5c53e35e42a43ec4a2aaa2e95a21cc6d1b6e21bc2a53e05cbf",
+      "measurement_sha256": "6072f910b2a96643bbedf361d080401633522e23b33e61b29a6caef8a4c06ce3",
+      "seconds": 2731.918076463,
+      "cases_per_session": 128,
+      "p50_ms": 0.48328900011256337,
+      "p95_ms": 171.91034299973398,
+      "max_ms": 617.0449540000409,
+      "exact_restoration": true,
+      "native_span_mismatches": 0,
+      "scope": "Canonical phone-rule runtime parity, not PII accuracy or independent field evidence"
+    },
+    "phone-world-wasm-stack128k.json": {
+      "private_report_sha256": "207d2e8001c5bafab4090cf2e806579d698f57c041402da1d97ee70993832f84",
+      "schema": 1,
+      "status": "complete",
+      "cases": 49245,
+      "source": "nyaruka/phonenumbers/v2 v2.0.14, libphonenumber metadata v9.0.40",
+      "fixture_sha256": "fe0cfbed40c28694e8a0eb745f0ba5e6da37b3f0a8a33792b4a8c4c1c8565fb8",
+      "wasm_sha256": "57751672b148964cbd6b637c2163f29dbf817c4a628871030b124b9bd57d5325",
+      "runtime_sha256": "2d75ac9b1d4bfc5c53e35e42a43ec4a2aaa2e95a21cc6d1b6e21bc2a53e05cbf",
+      "measurement_sha256": "6072f910b2a96643bbedf361d080401633522e23b33e61b29a6caef8a4c06ce3",
+      "seconds": 1226.5288335970001,
+      "cases_per_session": 128,
+      "p50_ms": 0.49000899982638657,
+      "p95_ms": 87.14352000004146,
+      "max_ms": 435.38531399995554,
+      "exact_restoration": true,
+      "native_span_mismatches": 0,
+      "scope": "Canonical phone-rule runtime parity, not PII accuracy or independent field evidence"
+    },
+    "phone-nongeographic-stack128k-wasm.json": {
+      "private_report_sha256": "cfeb9c081933559fc6f25fdfc50573abbc2022bc1d4a7cc5a2e309b310429238",
+      "schema": 1,
+      "status": "complete",
+      "cases": 9,
+      "source": "nyaruka/phonenumbers/v2 v2.0.14, libphonenumber metadata v9.0.40",
+      "fixture_sha256": "787ddf5cfb0828f917d3748c09cf7d71a0032bd3ca03cec968529636e7b4b15d",
+      "wasm_sha256": "75990035e551d44ba82027bba9ad5443b63ea109700123ebb02af5ad7c1ae336",
+      "runtime_sha256": "2d75ac9b1d4bfc5c53e35e42a43ec4a2aaa2e95a21cc6d1b6e21bc2a53e05cbf",
+      "measurement_sha256": "5c430d69209fa81f13d9087b809d12ad2edd63e0e0d36d914c25031c473d51f9",
+      "seconds": 0.48754480300000014,
+      "cases_per_session": 128,
+      "p50_ms": 2.6511259999999766,
+      "p95_ms": 96.02385500000003,
+      "max_ms": 96.02385500000003,
+      "exact_restoration": true,
+      "native_span_mismatches": 0,
+      "scope": "Canonical phone-rule runtime parity, not PII accuracy or independent field evidence"
+    },
+    "phone-nongeographic-generic-stack128k-wasm.json": {
+      "private_report_sha256": "2379afed17b3dfd66e30d6990d25ca211ebdfc3ca1243d7d88b07eb607cb0078",
+      "schema": 1,
+      "status": "complete",
+      "cases": 9,
+      "source": "nyaruka/phonenumbers/v2 v2.0.14, libphonenumber metadata v9.0.40",
+      "fixture_sha256": "787ddf5cfb0828f917d3748c09cf7d71a0032bd3ca03cec968529636e7b4b15d",
+      "wasm_sha256": "57751672b148964cbd6b637c2163f29dbf817c4a628871030b124b9bd57d5325",
+      "runtime_sha256": "2d75ac9b1d4bfc5c53e35e42a43ec4a2aaa2e95a21cc6d1b6e21bc2a53e05cbf",
+      "measurement_sha256": "5c430d69209fa81f13d9087b809d12ad2edd63e0e0d36d914c25031c473d51f9",
+      "seconds": 0.344097108,
+      "cases_per_session": 128,
+      "p50_ms": 4.648042999999973,
+      "p95_ms": 183.52501700000002,
+      "max_ms": 183.52501700000002,
+      "exact_restoration": true,
+      "native_span_mismatches": 0,
+      "scope": "Canonical phone-rule runtime parity, not PII accuracy or independent field evidence"
+    },
+    "vendor-stack128k-wasm-parity.json": {
+      "private_report_sha256": "043285811c27681beebc1e5794646dc29dbf31574515773784dc94a22281f959",
+      "schema": 1,
+      "status": "complete",
+      "wasm_sha256": "75990035e551d44ba82027bba9ad5443b63ea109700123ebb02af5ad7c1ae336",
+      "runtime_sha256": "2d75ac9b1d4bfc5c53e35e42a43ec4a2aaa2e95a21cc6d1b6e21bc2a53e05cbf",
+      "native_sha256": "ba88b109a9be7a4c700b9ab05f6ed0ae27f2a27eb4b6a7ecfa36fcb1cd708e26",
+      "excerpts": 102,
+      "p50_ms": 1.4874610000001667,
+      "p95_ms": 5.617702999999892,
+      "max_ms": 31.816596000000004
+    },
+    "vendor-followup-stack128k-wasm-parity.json": {
+      "private_report_sha256": "0df6b626821142afecd2e05b2f27343734b77f412b4100348010221cfd984dd2",
+      "schema": 1,
+      "status": "complete",
+      "wasm_sha256": "75990035e551d44ba82027bba9ad5443b63ea109700123ebb02af5ad7c1ae336",
+      "runtime_sha256": "2d75ac9b1d4bfc5c53e35e42a43ec4a2aaa2e95a21cc6d1b6e21bc2a53e05cbf",
+      "native_sha256": "ed33da2fa20c77c9b5ed3889130b9f41bae6d85d19db4628c2eec78ccc91f191",
+      "excerpts": 134,
+      "p50_ms": 1.2231279999996332,
+      "p95_ms": 4.642570999999862,
+      "max_ms": 29.086456
+    },
+    "phone-stack128k-wasm-parity.json": {
+      "private_report_sha256": "b4d3cf515457432d7779fa10f0ad6564a267ac33a6e6f6975c2343b5195e5920",
+      "schema": 1,
+      "status": "complete",
+      "wasm_sha256": "75990035e551d44ba82027bba9ad5443b63ea109700123ebb02af5ad7c1ae336",
+      "runtime_sha256": "2d75ac9b1d4bfc5c53e35e42a43ec4a2aaa2e95a21cc6d1b6e21bc2a53e05cbf",
+      "native_sha256": "79b9fd439c7c5a193307eab60e36fddd43969805d99a7e9b6d7487fbe6be9561",
+      "excerpts": 36,
+      "p50_ms": 0.8287609999999859,
+      "p95_ms": 10.108890999999858,
+      "max_ms": 163.215013
+    },
+    "callback-runtime-stack128k.json": {
+      "private_report_sha256": "bbb43b558187b688b4ca5289500fd6588006fbef09b4b3d679b8f9ff93cebb1b",
+      "schema": 1,
+      "status": "complete",
+      "wasm_sha256": "75990035e551d44ba82027bba9ad5443b63ea109700123ebb02af5ad7c1ae336",
+      "iterations": 100,
+      "warmup": 20,
+      "limitation": "One short synthetic input, contended host, no field latency claim",
+      "timing": {
+        "reset": {
+          "p50_ms": 0.08300599999984115,
+          "p95_ms": 67.51663300000018,
+          "max_ms": 120.3161799999998,
+          "sum_ms": 811.8902130000024
+        },
+        "tenant": {
+          "p50_ms": 0.14034199999969132,
+          "p95_ms": 60.948520999999346,
+          "max_ms": 117.05487400000038,
+          "sum_ms": 751.9128909999977
+        },
+        "mask": {
+          "p50_ms": 1.0470589999999902,
+          "p95_ms": 63.23772699999972,
+          "max_ms": 144.13792999999987,
+          "sum_ms": 863.4102830000043
+        },
+        "restore": {
+          "p50_ms": 0.19937599999957456,
+          "p95_ms": 67.01947400000017,
+          "max_ms": 101.6388579999998,
+          "sum_ms": 774.7358330000011
+        }
+      }
+    },
+    "callback-runtime-stack256k.json": {
+      "private_report_sha256": "f3635fac224ee48753b7b4c37d93cb4bd671e13c70fd911ea7e1e27e792bd732",
+      "schema": 1,
+      "status": "complete",
+      "wasm_sha256": "dd14f1f36541b0983c52e06d3d9ee3968f4ab988c9db473beba1534f646692fa",
+      "iterations": 100,
+      "warmup": 20,
+      "limitation": "One short synthetic input, contended host, no field latency claim",
+      "timing": {
+        "reset": {
+          "p50_ms": 0.1365339999997559,
+          "p95_ms": 178.11719799999992,
+          "max_ms": 207.99324799999977,
+          "sum_ms": 1957.1641110000037
+        },
+        "tenant": {
+          "p50_ms": 0.20066599999972823,
+          "p95_ms": 157.60815299999922,
+          "max_ms": 180.08639700000003,
+          "sum_ms": 1641.3857779999962
+        },
+        "mask": {
+          "p50_ms": 1.102024999999685,
+          "p95_ms": 155.6846119999991,
+          "max_ms": 224.73937999999998,
+          "sum_ms": 1861.0914270000028
+        },
+        "restore": {
+          "p50_ms": 0.2852230000007694,
+          "p95_ms": 169.42455100000006,
+          "max_ms": 243.5322900000001,
+          "sum_ms": 1812.4509610000016
+        }
+      }
+    },
+    "public-stack128k-runtime-parity.json": {
+      "private_report_sha256": "a0480e21bb9cf0feda13a08f45c8dabb842e8a6f2fbf43ce2b51ebe7bc37fb55",
+      "schema": 1,
+      "status": "complete",
+      "excerpts": 4996,
+      "changed_records": 0,
+      "source_sha256": {
+        "external-stack256k-core-replay.json": "9d12686c164a6b02811651c7fdb701a82827eda321270ae1a23cec925ac18097",
+        "external-stack128k-core-replay.json": "763acc23494bf206221db9524b9f031ac64ebba6a75a0b84ba07104d9477269a"
+      },
+      "scope": "All typed core spans, cachednames, abstentions and restoration records identical across128/256KiB"
+    },
+    "runtime-trial-source-parity.json": {
+      "private_report_sha256": "199d9303f0d73744b17ad1867bac47cf406531873d000c6d0cd2dec244e6ac56",
+      "schema": 1,
+      "product_trees_identical": true,
+      "trees": {
+        "489e74a": {
+          "packages/detect": "4aedac5a09f9aaf340c6cbdc92e471e9a6aa1b30",
+          "packages/surrogates": "df47ab6e648efe0eb747d8741c3429bf7062a564",
+          "apps/shield/wasm": "34be57eea3f76ac95bb20a6a8a181801e8b4758a"
+        },
+        "1f1d966": {
+          "packages/detect": "4aedac5a09f9aaf340c6cbdc92e471e9a6aa1b30",
+          "packages/surrogates": "df47ab6e648efe0eb747d8741c3429bf7062a564",
+          "apps/shield/wasm": "34be57eea3f76ac95bb20a6a8a181801e8b4758a"
+        },
+        "60062a4": {
+          "packages/detect": "4aedac5a09f9aaf340c6cbdc92e471e9a6aa1b30",
+          "packages/surrogates": "df47ab6e648efe0eb747d8741c3429bf7062a564",
+          "apps/shield/wasm": "34be57eea3f76ac95bb20a6a8a181801e8b4758a"
+        }
+      }
+    }
+  }
+}

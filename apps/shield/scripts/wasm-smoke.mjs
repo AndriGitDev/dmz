@@ -13,6 +13,73 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
   await new Promise((resolve) => setTimeout(resolve, 10));
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
+assert.equal(typeof globalThis.dmzProcessBestEffortWithEntities, 'function');
+// The upstream PyPI bounded repetition overflowed TinyGo's regexp compiler
+// stack. Exercise cold initialization and both explicit length boundaries.
+for (const n of [49, 50, 1000, 1001]) {
+  const body = 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(Math.ceil(n / 32)).slice(0, n);
+  const value = 'pypi-AgEIcHlwaS5vcmc' + body;
+  const text = `🙂 [${value}].`;
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  const spans = (result.detected_spans || []).filter(s => s.kind === 'secret');
+  assert.equal(spans.length, n >= 50 && n <= 1000 ? 1 : 0);
+  if (spans.length) assert.deepEqual(spans[0], { start: Buffer.byteLength('🙂 ['), end: Buffer.byteLength('🙂 [' + value), kind: 'secret' });
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+}
+// Numeric substrings inside a recognized opaque token must not leave its body exposed.
+for (const fragment of ['555-0148', '4111111111111111', '140182-8858', 'IS460000000000000000000000']) {
+  const value = 'pypi-AgEIcHlwaS5vcmc' + 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(3) + '-' + fragment + '-';
+  const text = `🙂 [${value}].`;
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, [{start: Buffer.byteLength('🙂 ['), end: Buffer.byteLength('🙂 [' + value), kind: 'secret'}]);
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+}
+globalThis.dmzReset();
+// The optional typed adapter retains byte offsets, exact inverses and existing
+// structured matches. It does not enable a supplemental model by itself.
+{
+  const text = '🙂 Meet José Navarro at 18 Maple Avenue.';
+  const start = Buffer.byteLength(text.slice(0, text.indexOf('18 Maple')));
+  const entities = [{ start, end: start + Buffer.byteLength('18 Maple Avenue'), kind: 'address' }];
+  const result = JSON.parse(globalThis.dmzProcessBestEffortWithEntities(text, '[]', JSON.stringify(entities)));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, entities);
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+  const preserved = result.transformed;
+  for (const bad of [
+    [{ start: 1, end: 3, kind: 'name_demo' }],
+    [{ start: 0, end: 4, kind: 'PERSON' }],
+    [{ start: 0, end: 4, kind: 'kennitala' }],
+    [{ start: 5, end: 7, kind: 'phone' }, { start: 4, end: 8, kind: 'phone' }],
+  ]) {
+    const invalid = JSON.parse(globalThis.dmzProcessBestEffortWithEntities(text, '[]', JSON.stringify(bad)));
+    assert.equal(invalid.allowed, false);
+    assert.equal(globalThis.dmzRestore(preserved), text);
+  }
+  assert.ok(JSON.parse(globalThis.dmzProcessBestEffortWithEntities(text, '[]', '[{"start":0.5,"end":3,"kind":"phone"}]')).error);
+  assert.equal(JSON.parse(globalThis.dmzProcessBestEffortWithEntities('\ud800', '[]', '[]')).error, 'invalid Unicode input');
+  const email = 'person@example.invalid';
+  const typed = JSON.parse(globalThis.dmzProcessBestEffortWithEntities(email, '[]', JSON.stringify([{start:0,end:6,kind:'name_demo'}])));
+  assert.deepEqual(typed.detected_spans, [{start:0,end:email.length,kind:'email'}]);
+  assert.equal(globalThis.dmzRestore(typed.transformed), email);
+  globalThis.dmzReset();
+}
+
+
+// The portable numbering metadata must execute in TinyGo, not just compile.
+for (const phone of ['+1 202-555-0107', '(+44) 20 7946 0123', '+1 (202) 555-0162 ext. 45']) {
+  globalThis.dmzReset();
+  const prefix = 'Þú: ';
+  const text = `${prefix}${phone}.`;
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
+  assert.deepEqual(result.detected_spans, [{start: Buffer.byteLength(prefix), end: Buffer.byteLength(prefix + phone), kind: 'phone'}]);
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+}
+globalThis.dmzReset();
 
 // JavaScript can contain unpaired UTF-16 surrogates. The Go string bridge would
 // replace them before detection, so reject processing instead of silently
