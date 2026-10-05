@@ -42,3 +42,37 @@ whereas Python uses NumPy float32 einsum. Measure prediction and score differenc
 do not assume bitwise floating-point parity. Quantization and runtime changes
 must retain their own quality/runtime reports. Neither a successful export nor
 a smaller file establishes readiness for a default detector.
+
+## Measured export and quantization results
+
+The FP32 NER graphs total approximately 1.219 GB, plus the tokenizer. On the
+fresh 90-excerpt diagnostic, the native ONNX runtime reproduced all original
+PyTorch prediction sets. Its measured run took 26.03 seconds and peaked at
+2,416,648 KiB RSS on the shared research host. This establishes parity on those
+90 inputs, not universal parity.
+
+Two variants were declared before evaluation: quantized encoder with FP32 heads,
+and quantized encoder plus heads. ORT 1.23.2 dynamic per-channel QUInt8 conversion
+covered MatMul, Gemm and Gather. Both changed 29/90 prediction sets and reduced
+standalone exact excerpts from 66/90 to 51/90. Both are rejected as default
+replacements. The all-quantized NER graphs total 364,857,449 bytes, plus roughly
+16 MB of tokenizer assets. Smaller storage did not preserve quality.
+
+Two initial quantization attempts hit the available-memory guard. A subsequent
+isolated attempt used a bounded-array implementation of the same scalar-scale
+UINT8 primitive, checked against 36 exact primitive comparisons. Conversion
+then finished in 66.44 seconds. All failures and source/output hashes remain in
+the private experiment record.
+
+The all-quantized local-origin Chromium prototype loaded in 10.88 seconds and
+processed 90 excerpts in 52.21 seconds, with no external requests or candidate
+failures. Four prediction sets differed from native ORT: one address, one phone
+and two person results. Browser standalone exact accuracy was 54/90, versus
+51/90 for native quantized and 66/90 for original FP32. These are runtime
+variants, not interchangeable evaluations. The browser result remains rejected
+for default use; this prototype has not been wired into the Shield extension.
+
+Timings come from a contended CPU host and are feasibility observations, not
+representative customer latency guarantees. The prototype's control-character,
+input-size and tokenization guards remain necessary even where this finite
+probe produced matching spans.
