@@ -141,6 +141,19 @@ try {
   assert.equal(await keyPage.frameLocator('iframe[data-dmz-restored]').locator('#restored-text').textContent(), keyInput);
   await keyPage.close();
   metrics.cases.push({ case: 'complete-private-key-preserves-prose-and-restores', passed: true });
+  const repeatPage = await page();
+  const repeatInput = 'AuthoriZAtion:BeArer 0 0';
+  await fill(repeatPage, repeatInput);
+  await repeatPage.waitForFunction(() => window.sent.length === 1, null, { timeout: 130000 });
+  const repeatSent = await repeatPage.evaluate(() => window.sent[0]);
+  assert.match(repeatSent, /^AuthoriZAtion:BeArer ⟦[^⟦⟧]+⟧ 0$/);
+  await repeatPage.frameLocator('iframe[data-dmz-restored]').getByText(repeatInput, { exact: true }).waitFor();
+  await fill(repeatPage, repeatSent);
+  await repeatPage.waitForFunction(() => window.sent.length === 2, null, { timeout: 130000 });
+  assert.equal(await repeatPage.evaluate(() => window.sent[1]), repeatSent,
+    'resubmitting a masked credential changed the following prose token');
+  await repeatPage.close();
+  metrics.cases.push({ case: 'issued-credential-marker-resubmission-is-stable', passed: true });
   if (process.env.DMZ_LEXICON_FILE) {
     // Local vocabulary plus a fabricated number; never persist source forms.
     const pack = JSON.parse(await readFile(process.env.DMZ_LEXICON_FILE, 'utf8'));

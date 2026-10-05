@@ -131,3 +131,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [The AWS credential component probe](aws-credentials-v3.md) covers temporary access-key IDs and session-token fields alongside public-identifier negatives. Two unsupported positives and one ambiguous code-reference false positive remain in its pinned results.
 
 [The SigV4 presigned URL probe](presigned-url-v3.md) measures complete URL masking, original-byte restoration, embedded-identifier precedence and unsigned URL negatives.
+
+[Marker resubmission robustness](marker-roundtrip.md) records a fuzz-discovered credential-context bug, its correction, and exact restoration/idempotency checks.

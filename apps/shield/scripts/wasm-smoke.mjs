@@ -19,6 +19,10 @@ assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready')
 // changing the draft; restoration must pass such a response through unchanged.
 assert.equal(JSON.parse(globalThis.dmzSetTenantTerms('["Gervi term"]')).ok, true);
 const preservedMarker = JSON.parse(globalThis.dmzProcess('demo@example.invalid')).transformed;
+for (const term of ['\u0000\u0000\u0000', 'before\u0000after']) {
+  assert.ok(JSON.parse(globalThis.dmzSetTenantTerms(JSON.stringify([term]))).error);
+  assert.equal(globalThis.dmzRestore(preservedMarker), 'demo@example.invalid');
+}
 for (const value of ['\ud800', '\udfff', 'before\ud800after']) {
   for (const result of [globalThis.dmzProcess(value), globalThis.dmzProcessWithNames(value, '[]'),
     globalThis.dmzProcessBestEffort(value, '[]')]) {
@@ -62,6 +66,27 @@ for (const value of [
   assert.ok(!result.transformed.includes('synthetic') && !result.transformed.includes('placeholder'));
   assert.equal(globalThis.dmzRestore(result.transformed), input);
 }
+// Issued markers must not act like whitespace that moves a credential field
+// onto its next prose token during a later scan.
+for (const input of ['AuthoriZAtion:BeArer 0 0',
+  'api_key=synthetic_Ab9Cd2Ef3Gh4Ij5Kl6Mn7 metadataAb1Cd2Ef3Gh4Ij5Kl6Mn7']) {
+  globalThis.dmzReset();
+  const first = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.ok(first.allowed && first.transformed !== input);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const again = JSON.parse(globalThis.dmzProcessBestEffort(first.transformed, '[]'));
+    assert.ok(again.allowed);
+    assert.equal(again.transformed, first.transformed);
+    assert.deepEqual(again.findings, []);
+    assert.equal(globalThis.dmzRestore(again.transformed), input);
+  }
+  const mixed = JSON.parse(globalThis.dmzProcessBestEffort(first.transformed + ' next@example.test', '[]'));
+  assert.ok(mixed.allowed && mixed.transformed.startsWith(first.transformed));
+  assert.ok(!mixed.transformed.includes('next@example.test'));
+  assert.equal(globalThis.dmzRestore(mixed.transformed), input + ' next@example.test');
+}
+globalThis.dmzReset();
+
 // A presigned URL is one credential, including path, query and inner identifiers.
 for (const tail of ['', '&opaque=a(b).,!']) {
   const value = 'https://objects.example/audit@example.test?X-Amz-Algorithm=AWS4-HMAC-SHA256' +

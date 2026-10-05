@@ -228,3 +228,42 @@ func TestFormattingVariantsRoundTripAndResubmit(t *testing.T) {
 		}
 	}
 }
+
+func TestIssuedMarkersDoNotBecomeCredentialWhitespace(t *testing.T) {
+	for _, input := range []string{
+		"AuthoriZAtion:BeArer 0 0",
+		"api_key=synthetic_Ab9Cd2Ef3Gh4Ij5Kl6Mn7 metadataAb1Cd2Ef3Gh4Ij5Kl6Mn7",
+		"AccessKeyId=ASIAaB_7aB_7aB_7 ASIAxY_8xY_8xY_8",
+	} {
+		s := NewSession()
+		first := s.ProcessBestEffort(input, nil)
+		if !first.Allowed || first.Transformed == input || s.Restore(first.Transformed) != input {
+			t.Fatalf("expected an initial credential mask: %#v", first)
+		}
+		for i := 0; i < 3; i++ {
+			again := s.ProcessBestEffort(first.Transformed, nil)
+			if !again.Allowed || again.Transformed != first.Transformed || len(again.Findings) != 0 || strings.ContainsRune(again.Transformed, 0) {
+				t.Fatalf("issued marker introduced a new credential: %#v", again)
+			}
+		}
+		mixed := first.Transformed + " next@example.test"
+		result := s.ProcessBestEffort(mixed, nil)
+		if !result.Allowed || strings.Contains(result.Transformed, "next@example.test") || !strings.HasPrefix(result.Transformed, first.Transformed) {
+			t.Fatalf("marker barrier suppressed a separate raw entity: %#v", result)
+		}
+	}
+}
+
+func TestTenantTermsRejectInternalNULBarrierWithoutResettingMappings(t *testing.T) {
+	s := NewSession()
+	original := "demo@example.test"
+	masked := s.ProcessBestEffort(original, nil).Transformed
+	for _, term := range []string{"\x00\x00\x00", "before\x00after"} {
+		if err := s.SetTenantTerms([]string{term}); err == nil {
+			t.Fatal("NUL scan barrier accepted as a tenant term")
+		}
+		if s.Restore(masked) != original {
+			t.Fatal("invalid term update reset live mappings")
+		}
+	}
+}

@@ -75,8 +75,8 @@ func (s *Session) SetTenantTerms(terms []string) error {
 		if term == "" {
 			continue
 		}
-		if utf8.RuneCountInString(term) < 3 || utf8.RuneCountInString(term) > 80 || strings.ContainsAny(term, "\r\n⟦⟧") || !utf8.ValidString(term) || strings.IndexFunc(term, func(r rune) bool { return unicode.IsMark(r) || unicode.Is(unicode.Cf, r) }) >= 0 {
-			return fmt.Errorf("tenant terms must be 3–80 characters without markers, newlines, combining marks or format characters")
+		if utf8.RuneCountInString(term) < 3 || utf8.RuneCountInString(term) > 80 || strings.ContainsAny(term, "\x00\r\n⟦⟧") || !utf8.ValidString(term) || strings.IndexFunc(term, func(r rune) bool { return unicode.IsMark(r) || unicode.Is(unicode.Cf, r) }) >= 0 {
+			return fmt.Errorf("tenant terms must be 3–80 characters without NULs, markers, newlines, combining marks or format characters")
 		}
 		if !seen[term] {
 			clean = append(clean, term)
@@ -149,7 +149,9 @@ func (s *Session) maskWhole(input string) Result {
 
 func (s *Session) process(input string, names []NameSpan, bestEffort bool) Result {
 	// Only exact markers issued by this live session may bypass detection.
-	// Blank their bytes in the scan copy so match offsets still address input.
+	// Replace their bytes with opaque barriers so offsets still address input.
+	// Whitespace would let context recognizers skip a protected value and
+	// reinterpret a following token as its replacement on the next scan.
 	// Unknown, edited and nested markers need review; accepting arbitrary marker
 	// contents would let a caller hide real identifiers inside a fake marker.
 	scan := []byte(input)
@@ -176,7 +178,7 @@ func (s *Session) process(input string, names []NameSpan, bestEffort bool) Resul
 		}
 		issuedMarkers = append(issuedMarkers, NameSpan{start, end})
 		for i := start; i < end; i++ {
-			scan[i] = ' '
+			scan[i] = 0
 		}
 		offset = end
 	}
