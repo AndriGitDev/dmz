@@ -16,16 +16,21 @@ def indexed(records):
     return result
 
 
-def compare(reference_path, candidate_paths, corpus):
+def compare(reference_path, candidate_paths, corpus, selection_path=None):
     manifest = json.loads((corpus / 'manifest.json').read_text())
     if digest(corpus / 'test.jsonl') != TEST_SHA:
         raise ValueError('wrong public projection')
-    rows = indexed([json.loads(s) for s in (corpus / 'test.jsonl').read_text().splitlines()])
+    all_rows = indexed([json.loads(s) for s in (corpus / 'test.jsonl').read_text().splitlines()])
+    rows, selection = all_rows, None
+    if selection_path:
+        from external_selection import load_selection
+        selected, selection = load_selection(selection_path, list(all_rows.values()), TEST_SHA)
+        rows = indexed(selected)
     reference = json.loads(reference_path.read_text())
     if reference['status'] != 'complete' or reference['corpus'] != manifest or reference['external_requests']:
         raise ValueError('incomplete or incompatible browser baseline')
     base = indexed(reference['records'])
-    if set(base) != set(rows):
+    if set(base) != set(all_rows):
         raise ValueError('incomplete browser baseline')
     for key, row in rows.items():
         if row['text_sha256'] != hashlib.sha256(row['text'].encode()).hexdigest() or base[key]['text_sha256'] != row['text_sha256']:
@@ -47,6 +52,7 @@ def compare(reference_path, candidate_paths, corpus):
     result = {'schema': 1, 'independent_validation': False,
               'limitation': 'Public synthetic annotations; training overlap and label completeness unknown.',
               'reference_sha256': digest(reference_path), 'corpus': manifest,
+              'selection': selection, 'evaluated_excerpts': len(rows),
               'runs': runs, 'candidate_hashes': {}, 'paired_exact_changes': {}}
     for path in candidate_paths:
         data = json.loads(path.read_text())
@@ -54,8 +60,13 @@ def compare(reference_path, candidate_paths, corpus):
         if data['status'] != 'complete' or data['corpus'] != manifest or digest(partial) != data['partial_sha256']:
             raise ValueError('incomplete or changed candidate')
         predictions = indexed([json.loads(s) for s in partial.read_text().splitlines()])
-        if set(predictions) != set(rows):
+        candidate_selection = data.get('selection')
+        if candidate_selection:
+            if not selection or candidate_selection['manifest_sha256'] != selection['manifest_sha256'] or set(predictions) != set(rows):
+                raise ValueError('wrong candidate selection')
+        elif set(predictions) != set(all_rows):
             raise ValueError('incomplete candidate records')
+        predictions = {key: predictions[key] for key in rows}
         for key, pred in predictions.items():
             if pred['text_sha256'] != rows[key]['text_sha256'] or pred['gold'] != rows[key]['gold']:
                 raise ValueError('candidate text or gold mismatch')
@@ -65,7 +76,7 @@ def compare(reference_path, candidate_paths, corpus):
         result['candidate_hashes'][name] = digest(path)
         runs[name + '-alone'] = score(list(predictions.values()), scope)
         # The address-only GLiNER2 choice was fixed before fresh evaluation.
-        variants = ['all', 'address-only'] if name == 'gliner2' else ['all']
+        variants = ['all', 'address-only'] if name in {'gliner2', 'gliner2-onnx-fp32'} else ['all']
         for variant in variants:
             for mode in ['basic', 'trained']:
                 records = []
@@ -93,9 +104,10 @@ if __name__ == '__main__':
     p.add_argument('--candidate', type=Path, action='append', required=True)
     p.add_argument('--corpus', type=Path, required=True)
     p.add_argument('--output', required=True)
+    p.add_argument('--selection', type=Path)
     a = p.parse_args()
     out = private_output(a.output)
-    result = compare(a.reference, a.candidate, a.corpus)
+    result = compare(a.reference, a.candidate, a.corpus, a.selection)
     with out.open('x') as f:
         json.dump(result, f, indent=2)
     for name, run in result['runs'].items():
