@@ -125,3 +125,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [Complete email shapes](email-shape-v3.md) tracks exact mailbox spans, quoted/internationalized forms, literals and explicit assignment boundaries on two pinned synthetic probes. This is development evidence, not field accuracy or deliverability validation.
 
 [The exact other-type veto result](contextual/entity-veto-result.md) preserves the rejected comparison: fewer false names also meant fewer true names. All four replays match their original Person caches exactly; no browser model was replaced.
+
+[The bounded entity-aware family](contextual/entity-family-result.md) retains all 36 threshold/priority comparisons. None improves the lower recall enough to pass the research gate; the frozen model is retained and the grid is closed.
