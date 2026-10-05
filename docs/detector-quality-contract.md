@@ -97,6 +97,12 @@ read blind packets or modify weights. `bench/contextual/quality.py` supplies the
 shared metric implementation and rejects incomplete labels, duplicate spans and
 predictions outside the declared annotation scope.
 
+The [completed nine-label training trial](../bench/contextual/quality-99-protocol.md#completed-result--5-october-2026)
+retains this reference. Both candidate epochs fail the predeclared general-text
+guard. Epoch two reaches 99.1667% domain recall but only 98.4375% domain exact
+accuracy, so even that stratum does not meet both targets. No candidate model was
+promoted; the full comparison includes the failed criteria and aggregate counts.
+
 ## System acceptance
 
 Detection scores do not measure the whole extension. Separately measure complete

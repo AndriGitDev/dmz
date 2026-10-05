@@ -1,0 +1,186 @@
+{
+  "schema": 1,
+  "scope": "Reused development; Person only",
+  "candidates": [
+    {
+      "epoch": 1,
+      "model_sha256": "fbdc472abe1cb41afd37d7c4be2ed7cf5c9b5c0dcb4a3f189a399ae124b12989",
+      "lower_recall": 0.9687915006640107,
+      "research_gate_passed": false,
+      "failures": [
+        "general accuracy below frozen reference",
+        "general precision below frozen reference",
+        "lower-stratum recall did not improve"
+      ],
+      "strata": {
+        "general": {
+          "counts": {
+            "tp": 1459,
+            "fp": 72,
+            "fn": 47,
+            "excerpts": 5582,
+            "exact_excerpts": 5498,
+            "positive_excerpts": 1094,
+            "exact_positive_excerpts": 1044,
+            "negative_excerpts": 4488,
+            "false_positive_negative_excerpts": 34,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.952971913781842,
+            "recall": 0.9687915006640107,
+            "f1": 0.9608165953243333,
+            "accuracy": 0.9849516302400573,
+            "positive_excerpt_accuracy": 0.9542961608775137,
+            "negative_excerpt_false_positive_rate": 0.007575757575757576,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": -0.0007165890361877463,
+            "recall": -0.0013280212483399733,
+            "precision": -0.0025545741187466865
+          },
+          "point_targets_met": false
+        },
+        "domain": {
+          "counts": {
+            "tp": 474,
+            "fp": 1,
+            "fn": 6,
+            "excerpts": 256,
+            "exact_excerpts": 250,
+            "positive_excerpts": 192,
+            "exact_positive_excerpts": 186,
+            "negative_excerpts": 64,
+            "false_positive_negative_excerpts": 0,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.9978947368421053,
+            "recall": 0.9875,
+            "f1": 0.9926701570680628,
+            "accuracy": 0.9765625,
+            "positive_excerpt_accuracy": 0.96875,
+            "negative_excerpt_false_positive_rate": 0.0,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": 0.0,
+            "recall": 0.0,
+            "precision": 0.0041840450182058925
+          },
+          "point_targets_met": false
+        }
+      },
+      "both_strata_point_targets_met": false
+    },
+    {
+      "epoch": 2,
+      "model_sha256": "094e251619916e2dea8822fe0869ec33844e83480032ef306860b50147dfbd10",
+      "lower_recall": 0.9694555112881806,
+      "research_gate_passed": false,
+      "failures": [
+        "general accuracy below frozen reference",
+        "general precision below frozen reference",
+        "lower-stratum recall did not improve"
+      ],
+      "strata": {
+        "general": {
+          "counts": {
+            "tp": 1460,
+            "fp": 71,
+            "fn": 46,
+            "excerpts": 5582,
+            "exact_excerpts": 5500,
+            "positive_excerpts": 1094,
+            "exact_positive_excerpts": 1046,
+            "negative_excerpts": 4488,
+            "false_positive_negative_excerpts": 34,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.953625081645983,
+            "recall": 0.9694555112881806,
+            "f1": 0.961475139940731,
+            "accuracy": 0.9853099247581512,
+            "positive_excerpt_accuracy": 0.9561243144424132,
+            "negative_excerpt_false_positive_rate": 0.007575757575757576,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": -0.00035829451809387314,
+            "recall": -0.0006640106241699867,
+            "precision": -0.0019014062546056025
+          },
+          "point_targets_met": false
+        },
+        "domain": {
+          "counts": {
+            "tp": 476,
+            "fp": 1,
+            "fn": 4,
+            "excerpts": 256,
+            "exact_excerpts": 252,
+            "positive_excerpts": 192,
+            "exact_positive_excerpts": 188,
+            "negative_excerpts": 64,
+            "false_positive_negative_excerpts": 0,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.9979035639412998,
+            "recall": 0.9916666666666667,
+            "f1": 0.9947753396029259,
+            "accuracy": 0.984375,
+            "positive_excerpt_accuracy": 0.9791666666666666,
+            "negative_excerpt_false_positive_rate": 0.0,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": 0.0078125,
+            "recall": 0.004166666666666667,
+            "precision": 0.0041928721174004195
+          },
+          "point_targets_met": false
+        }
+      },
+      "both_strata_point_targets_met": false
+    }
+  ],
+  "decision": "retain frozen reference",
+  "selected_research_checkpoint": null,
+  "reference_checkpoint": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+  "independent_final_evaluation": false,
+  "browser_promotion_approved": false,
+  "limitations": "Development selection only. Export, browser parity, full-entity evaluation and independent labels remain separate gates.",
+  "input_hashes": [
+    {
+      "file": "training.json",
+      "sha256": "6becb1f40754fdf6e9a7ca105166cab97d56a82773fc9a45f203775c04beaddd"
+    },
+    {
+      "file": "selected-candidate.json",
+      "sha256": "1d14c10d0670dcfeec6c456fec3f63f51eadebde8ac317f3ed62f636fe845c9b"
+    },
+    {
+      "file": "general-frozen.json",
+      "sha256": "e4c1db8c4cde31d2b9c42eeecaba844db69061ac5781fbac216b88b039a5bbbf"
+    },
+    {
+      "file": "domain-frozen.json",
+      "sha256": "25bce258f9f38c3de6158061c70ca0514a0445390d8b6c43b07d81784fb0a9ea"
+    },
+    {
+      "file": "epoch-1-general.json",
+      "sha256": "f4375b5db922cbc0ccb143adc7061a523e21afc4248027eaff0c616480e03ec5"
+    },
+    {
+      "file": "epoch-1-domain.json",
+      "sha256": "a9303691a383da1ef7d40dcf02f32536c3d9f87bf06249b0d906f16aa390ccc0"
+    },
+    {
+      "file": "epoch-2-general.json",
+      "sha256": "81d9fe0c58fe5a8c4f725d70cbcefd980f2143c7b6b586df903acf1fa8878072"
+    },
+    {
+      "file": "epoch-2-domain.json",
+      "sha256": "c35e5730716e0a181fd417b7a145867c3efdf9448c4dbf3f3beef56232bb730a"
+    }
+  ]
+}

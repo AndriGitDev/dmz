@@ -65,6 +65,46 @@ python bench/contextual/compare_quality.py \
              bench/results/quality-99-v1/domain-frozen.json
 ```
 
+## Completed result — 5 October 2026
+
+**Retain the frozen reference.** Both epochs completed, and both were evaluated
+once on each declared development set. Neither passes the unchanged research
+gate. The second epoch improves domain recall and precision, but general
+accuracy, recall and precision remain below the reference.
+
+| Checkpoint | Stratum | Exact excerpts | Accuracy | TP / FP / FN | Recall | Precision |
+| --- | --- | --- | --- | --- | --- | --- |
+| Frozen reference | General | 5502/5582 | 98.5668% | 1461 / 68 / 45 | 97.0120% | 95.5526% |
+| Epoch 1 | General | 5498/5582 | 98.4952% | 1459 / 72 / 47 | 96.8792% | 95.2972% |
+| Epoch 2 | General | 5500/5582 | 98.5310% | 1460 / 71 / 46 | 96.9456% | 95.3625% |
+| Frozen reference | Domain | 250/256 | 97.6563% | 474 / 3 / 6 | 98.7500% | 99.3711% |
+| Epoch 1 | Domain | 250/256 | 97.6563% | 474 / 1 / 6 | 98.7500% | 99.7895% |
+| Epoch 2 | Domain | 252/256 | 98.4375% | 476 / 1 / 4 | 99.1667% | 99.7904% |
+
+The [comparison record](../results/quality-99-v1/entity-comparison.json) retains
+integer counts, deltas, failed criteria and source hashes for both candidates.
+The [training manifest](../results/quality-99-v1/entity-training.json) records
+complete checkpoint identities and settings. Training took 13,855.85 seconds
+(about 3 h 51 min), below the 16,200-second cap. Each epoch saw 824,869 labelled
+tokens; the checkpoints are 495,834,836 bytes each and remain outside Git.
+
+Separate aggregate evaluations preserve neural-only and combined results:
+[epoch 1 general](../results/quality-99-v1/epoch-1-general.json),
+[epoch 1 domain](../results/quality-99-v1/epoch-1-domain.json),
+[epoch 2 general](../results/quality-99-v1/epoch-2-general.json) and
+[epoch 2 domain](../results/quality-99-v1/epoch-2-domain.json).
+The legacy `scores.*.target_met` field checks the older 95.5% precision/recall
+criterion; only `quality.*` implements the owner's 99% exact-accuracy/recall
+contract. Neither checkpoint meets both current targets on either stratum.
+
+Epoch 1's general evaluation was deliberately suspended to give timed training
+priority, then the same process resumed. Its elapsed time includes that pause
+and must not be used as a latency measurement. The remaining evaluations ran
+sequentially. No thresholds were tuned, no blind review data were scored, and no
+candidate was exported or substituted into the extension. These results test
+this specific training recipe on reused Person-scoped data; they do not rule
+out other multi-entity training approaches or establish all-entity quality.
+
 ## Independent evidence
 
 The existing general corpus is sentence-split, not document-disjoint, and the

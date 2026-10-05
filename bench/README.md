@@ -96,6 +96,11 @@ See [the offline contextual experiment](contextual/README.md) for local CRF trai
 the separate 95.5% precision-and-recall check, and the frozen synthetic legal/financial
 probe. These research results do not change the shipped Shield detector.
 
+The [October nine-label trial](contextual/quality-99-protocol.md#completed-result--5-october-2026)
+completed both epochs and all four evaluations. Neither candidate passes the
+frozen comparison; the reference model remains selected. Aggregate results
+preserve both successful domain changes and the general-text regressions.
+
 ## Browser deployment benchmark
 
 See [the private browser harness](browser-detector/README.md) for frozen ONNX
