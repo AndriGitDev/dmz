@@ -135,3 +135,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [Marker resubmission robustness](marker-roundtrip.md) records a fuzz-discovered credential-context bug, its correction, and exact restoration/idempotency checks.
 
 [Long-prompt boundary controls](contextual/long-context-result.md) retain four separate frozen synthetic groups. The trained path passes; CRF-only coverage explains why these cases do not isolate neural boundary behavior.
+
+[Verified private preview](private-preview-20261005.md) ties the clean `78a558b` archive to exact package hashes, 16 browser scanner workflows and 19 separate synthetic corpus results.
