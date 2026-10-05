@@ -1,0 +1,30 @@
+{"id": "mixed-is-en-english-person", "stratum": "mixed-is-en", "family": "english-person", "text": "Vinsamlegast sendu svarið til Leah Whitfield.", "entities": [{"kind": "name_demo", "value": "Leah Whitfield"}]}
+{"id": "mixed-is-en-icelandic-person", "stratum": "mixed-is-en", "family": "icelandic-person", "text": "Please send the invoice to Katrín Guðmundsdóttir.", "entities": [{"kind": "name_demo", "value": "Katrín Guðmundsdóttir"}]}
+{"id": "mixed-is-en-both", "stratum": "mixed-is-en", "family": "both", "text": "Ólafur Einarsson met Freya Ashford yesterday.", "entities": [{"kind": "name_demo", "value": "Ólafur Einarsson"}, {"kind": "name_demo", "value": "Freya Ashford"}]}
+{"id": "mixed-is-en-inflected", "stratum": "mixed-is-en", "family": "inflected", "text": "Ég ræddi við Katrínu Guðmundsdóttur. Please follow up.", "entities": [{"kind": "name_demo", "value": "Katrínu Guðmundsdóttur"}]}
+{"id": "mixed-is-en-english-address", "stratum": "mixed-is-en", "family": "english-address", "text": "Sendu pakkann á 68 Copperfield Crescent.", "entities": [{"kind": "address", "value": "68 Copperfield Crescent"}]}
+{"id": "mixed-is-en-icelandic-address", "stratum": "mixed-is-en", "family": "icelandic-address", "text": "Please deliver to Laugavegur 24.", "entities": [{"kind": "address", "value": "Laugavegur 24"}]}
+{"id": "mixed-is-en-address-flat", "stratum": "mixed-is-en", "family": "address-flat", "text": "Nýtt heimilisfang: Flat 4, 35 Poplar Avenue.", "entities": [{"kind": "address", "value": "Flat 4, 35 Poplar Avenue"}]}
+{"id": "mixed-is-en-address-line", "stratum": "mixed-is-en", "family": "address-line", "text": "Heimilisfang / Address:\n9 Sycamore Terrace\nBristol BS1 4ST", "entities": [{"kind": "address", "value": "9 Sycamore Terrace\nBristol BS1 4ST"}]}
+{"id": "mixed-is-en-english-phone", "stratum": "mixed-is-en", "family": "english-phone", "text": "Hringdu í +1 303-555-0126 eftir hádegi.", "entities": [{"kind": "phone", "value": "+1 303-555-0126"}]}
+{"id": "mixed-is-en-british-phone", "stratum": "mixed-is-en", "family": "british-phone", "text": "Sími / Phone: +44 20 7946 0632.", "entities": [{"kind": "phone", "value": "+44 20 7946 0632"}]}
+{"id": "mixed-is-en-icelandic-phone", "stratum": "mixed-is-en", "family": "icelandic-phone", "text": "Please call +354 555 4321.", "entities": [{"kind": "phone", "value": "+354 555 4321"}]}
+{"id": "mixed-is-en-local-is-phone", "stratum": "mixed-is-en", "family": "local-is-phone", "text": "Phone: 555-4321.", "entities": [{"kind": "phone", "value": "555-4321"}]}
+{"id": "mixed-is-en-email", "stratum": "mixed-is-en", "family": "email", "text": "Senda á katrín@example.invalid. Please confirm receipt.", "entities": [{"kind": "email", "value": "katrín@example.invalid"}]}
+{"id": "mixed-is-en-nfd", "stratum": "mixed-is-en", "family": "nfd", "text": "Viðtakandi: René Laurent. Delivery tomorrow.", "entities": [{"kind": "name_demo", "value": "René Laurent"}]}
+{"id": "mixed-is-en-legal", "stratum": "mixed-is-en", "family": "legal", "text": "Lögmaður Callum Reeves asks for the document.", "entities": [{"kind": "name_demo", "value": "Callum Reeves"}]}
+{"id": "mixed-is-en-health", "stratum": "mixed-is-en", "family": "health", "text": "Sjúklingur Elena Marlowe needs a copy of the summary.", "entities": [{"kind": "name_demo", "value": "Elena Marlowe"}]}
+{"id": "mixed-is-en-signature", "stratum": "mixed-is-en", "family": "signature", "text": "Með kveðju / Regards,\nTobias Hale", "entities": [{"kind": "name_demo", "value": "Tobias Hale"}]}
+{"id": "mixed-is-en-iban", "stratum": "mixed-is-en", "family": "iban", "text": "Please use test account IS140159260076545510730339. Takk.", "entities": [{"kind": "iban", "value": "IS140159260076545510730339"}]}
+{"id": "mixed-is-en-tenant", "stratum": "mixed-is-en", "family": "tenant", "text": "Please summarize Verkefni Gervi á íslensku.", "entities": [{"kind": "tenant_dictionary", "value": "Verkefni Gervi"}]}
+{"id": "mixed-is-en-fields", "stratum": "mixed-is-en", "family": "fields", "text": "Miriam Ellison: miriam@example.invalid. Svara á ensku.", "entities": [{"kind": "name_demo", "value": "Miriam Ellison"}, {"kind": "email", "value": "miriam@example.invalid"}]}
+{"id": "mixed-is-en-negative-roles", "stratum": "mixed-is-en", "family": "negative-roles", "text": "Læknirinn and the nurse reviewed the chart.", "entities": []}
+{"id": "mixed-is-en-negative-place", "stratum": "mixed-is-en", "family": "negative-place", "text": "Við fórum til London and returned through Reykjavík.", "entities": []}
+{"id": "mixed-is-en-negative-fields", "stratum": "mixed-is-en", "family": "negative-fields", "text": "Skráðu nafn, heimilisfang and phone number in the form.", "entities": []}
+{"id": "mixed-is-en-negative-translation", "stratum": "mixed-is-en", "family": "negative-translation", "text": "Translate the words person, address and telephone into Icelandic.", "entities": []}
+{"id": "mixed-is-en-negative-code", "stratum": "mixed-is-en", "family": "negative-code", "text": "const heimilisfang = customer.address; // shipping field", "entities": []}
+{"id": "mixed-is-en-negative-organization", "stratum": "mixed-is-en", "family": "negative-organization", "text": "Willow Systems og Rowan Logistics birtu skýrslu.", "entities": []}
+{"id": "mixed-is-en-negative-numbers", "stratum": "mixed-is-en", "family": "negative-numbers", "text": "Það eru 24 pages and 68 rows in the document.", "entities": []}
+{"id": "mixed-is-en-negative-placeholders", "stratum": "mixed-is-en", "family": "negative-placeholders", "text": "Nafn: [NAME]. Heimilisfang: [ADDRESS]. Sími: [PHONE].", "entities": []}
+{"id": "mixed-is-en-negative-calendar", "stratum": "mixed-is-en", "family": "negative-calendar", "text": "Fundurinn er í apríl. The next meeting is in May.", "entities": []}
+{"id": "mixed-is-en-negative-road", "stratum": "mixed-is-en", "family": "negative-road", "text": "Gatan var lokuð. The road is open again.", "entities": []}

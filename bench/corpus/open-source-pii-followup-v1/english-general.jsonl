@@ -1,0 +1,30 @@
+{"id": "english-general-new-full", "stratum": "english-general", "family": "new-full", "text": "Please send the receipt to Leah Whitfield.", "entities": [{"kind": "name_demo", "value": "Leah Whitfield"}]}
+{"id": "english-general-title", "stratum": "english-general", "family": "title", "text": "Professor Nathaniel Rowan approved the draft.", "entities": [{"kind": "name_demo", "value": "Nathaniel Rowan"}]}
+{"id": "english-general-initial", "stratum": "english-general", "family": "initial", "text": "The applicant is J. A. Prescott.", "entities": [{"kind": "name_demo", "value": "J. A. Prescott"}]}
+{"id": "english-general-hyphen", "stratum": "english-general", "family": "hyphen", "text": "Meet Mary-Jane Calloway at the entrance.", "entities": [{"kind": "name_demo", "value": "Mary-Jane Calloway"}]}
+{"id": "english-general-apostrophe", "stratum": "english-general", "family": "apostrophe", "text": "The customer is Fionn O’Rourke.", "entities": [{"kind": "name_demo", "value": "Fionn O’Rourke"}]}
+{"id": "english-general-nfd", "stratum": "english-general", "family": "nfd", "text": "Please contact René Laurent.", "entities": [{"kind": "name_demo", "value": "René Laurent"}]}
+{"id": "english-general-single", "stratum": "english-general", "family": "single", "text": "Hello, my name is Priya.", "entities": [{"kind": "name_demo", "value": "Priya"}]}
+{"id": "english-general-nonwestern", "stratum": "english-general", "family": "nonwestern", "text": "The package belongs to Min Seo Kim.", "entities": [{"kind": "name_demo", "value": "Min Seo Kim"}]}
+{"id": "english-general-surname", "stratum": "english-general", "family": "surname", "text": "The caller introduced herself as Ms. Hargreaves.", "entities": [{"kind": "name_demo", "value": "Hargreaves"}]}
+{"id": "english-general-possessive", "stratum": "english-general", "family": "possessive", "text": "Aiden Lockwood's appointment was moved.", "entities": [{"kind": "name_demo", "value": "Aiden Lockwood"}]}
+{"id": "english-general-address-number", "stratum": "english-general", "family": "address-number", "text": "Delivery address: 68 Copperfield Crescent.", "entities": [{"kind": "address", "value": "68 Copperfield Crescent"}]}
+{"id": "english-general-address-apartment", "stratum": "english-general", "family": "address-apartment", "text": "Send it to 23 Juniper Court, Apartment 9.", "entities": [{"kind": "address", "value": "23 Juniper Court, Apartment 9"}]}
+{"id": "english-general-address-direction", "stratum": "english-general", "family": "address-direction", "text": "Shipping: 142 West Beech Street.", "entities": [{"kind": "address", "value": "142 West Beech Street"}]}
+{"id": "english-general-address-two-lines", "stratum": "english-general", "family": "address-two-lines", "text": "Address:\n9 Sycamore Terrace\nBristol BS1 4ST", "entities": [{"kind": "address", "value": "9 Sycamore Terrace\nBristol BS1 4ST"}]}
+{"id": "english-general-address-us", "stratum": "english-general", "family": "address-us", "text": "The customer lives at 74 Aspen Road, Denver, CO 80202.", "entities": [{"kind": "address", "value": "74 Aspen Road, Denver, CO 80202"}]}
+{"id": "english-general-address-uk", "stratum": "english-general", "family": "address-uk", "text": "Mail it to 16 Hazel Mews, London, SW1A 2AA.", "entities": [{"kind": "address", "value": "16 Hazel Mews, London, SW1A 2AA"}]}
+{"id": "english-general-address-unit-first", "stratum": "english-general", "family": "address-unit-first", "text": "Deliver to Flat 4, 35 Poplar Avenue.", "entities": [{"kind": "address", "value": "Flat 4, 35 Poplar Avenue"}]}
+{"id": "english-general-phone", "stratum": "english-general", "family": "phone", "text": "Telephone: +1 303-555-0126.", "entities": [{"kind": "phone", "value": "+1 303-555-0126"}]}
+{"id": "english-general-local-phone", "stratum": "english-general", "family": "local-phone", "text": "Call (415) 555-0173.", "entities": [{"kind": "phone", "value": "(415) 555-0173"}]}
+{"id": "english-general-email", "stratum": "english-general", "family": "email", "text": "Contact leah.whitfield+case@example.invalid.", "entities": [{"kind": "email", "value": "leah.whitfield+case@example.invalid"}]}
+{"id": "english-general-city-negative", "stratum": "english-general", "family": "city-negative", "text": "The train runs between Bristol and London.", "entities": []}
+{"id": "english-general-role-negative", "stratum": "english-general", "family": "role-negative", "text": "Ask the applicant to contact the receptionist.", "entities": []}
+{"id": "english-general-street-negative", "stratum": "english-general", "family": "street-negative", "text": "The avenue has a footpath and the road has a cycle lane.", "entities": []}
+{"id": "english-general-title-negative", "stratum": "english-general", "family": "title-negative", "text": "The professor published a textbook on grammar.", "entities": []}
+{"id": "english-general-number-negative", "stratum": "english-general", "family": "number-negative", "text": "There are 68 shelves and 23 storage boxes.", "entities": []}
+{"id": "english-general-month-negative", "stratum": "english-general", "family": "month-negative", "text": "April is followed by May, then June.", "entities": []}
+{"id": "english-general-nameword-negative", "stratum": "english-general", "family": "nameword-negative", "text": "A rose grew beside the hazel tree.", "entities": []}
+{"id": "english-general-org-negative", "stratum": "english-general", "family": "org-negative", "text": "Rowan Logistics is a fictional company in this exercise.", "entities": []}
+{"id": "english-general-address-field-negative", "stratum": "english-general", "family": "address-field-negative", "text": "The form requires an address, postcode and telephone number.", "entities": []}
+{"id": "english-general-placeholder-negative", "stratum": "english-general", "family": "placeholder-negative", "text": "Recipient: [FULL NAME]. Address: [STREET ADDRESS].", "entities": []}
