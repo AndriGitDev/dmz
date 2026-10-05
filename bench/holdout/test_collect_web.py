@@ -5,6 +5,19 @@ from collect_web import canonical, extract, segments, Fetcher
 
 
 class WebCollectionTests(unittest.TestCase):
+    def test_tax_ruling_viewer_is_bounded_and_host_specific(self):
+        body = ('<nav>OUTSIDE</nav><div id="resultviewer"><h1>Tilbúin úrlausn</h1><p>' +
+                'Þetta er tilbúinn íslenskur texti um málsmeðferð og úrlausnir. ' * 12 +
+                '</p></div><div>UNRELATED</div><footer>FOOTER</footer>').encode()
+        text, selector, _ = extract(body, 'yskn.is')
+        self.assertEqual(selector, 'yskn-resultviewer')
+        self.assertIn('Tilbúin úrlausn', text)
+        for value in ['OUTSIDE', 'UNRELATED', 'FOOTER']:
+            self.assertNotIn(value, text)
+        for host in [None, 'example.invalid']:
+            with self.assertRaisesRegex(ValueError, 'no bounded'):
+                extract(body, host)
+
     def test_prose_excludes_navigation_and_keeps_unicode(self):
         body = ('<meta property="og:title" content="Íslensk prófun"><main><nav>OUTSIDE</nav><h1>Íslensk prófun</h1><article><p>' +
                 'Þetta er tilbúinn íslenskur texti um rannsóknir og samfélag. ' * 12 +

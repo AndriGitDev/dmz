@@ -1,0 +1,618 @@
+{
+  "schema": 1,
+  "seed": "dmz-domain-review-pool-20261005-v1",
+  "indexes": [
+    {
+      "key": "yskn-2026",
+      "links_sha256": "8a98d76ec8299f10ad22708834030512d3a22c93e6f9d51283740d58618f6ebb"
+    },
+    {
+      "key": "yskn-2025",
+      "links_sha256": "307b6c23b0a77d12e5e9a875dc058dca705608e716dc2a88f0d4463c9c5f86e4"
+    },
+    {
+      "key": "islandssjodir-news",
+      "links_sha256": "8c0f50edd5569b22f4391997f031de34234d1d11b0d24376f98cb0e72a15b233"
+    }
+  ],
+  "documents": [
+    {
+      "id": "yskn-09c318b1515a",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7744",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-6e09167b15a6",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7835",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-37f9c4f95e07",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7840",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-f9a599513b37",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7818",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-c6fcfa0bb324",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7772",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-945d92c436c6",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7844",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-8aec9e7beb52",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7893",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-2ef9c1d1598b",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7876",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-7fef5c7aa0ff",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7757",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-02a159d93d6c",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7743",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-11713f26b90d",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7849",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-5083f83782d4",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7866",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-876f7b0f7a28",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7754",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-a40d4e793099",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7789",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-48b16c0d39c1",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7881",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-b82360c01bf1",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7845",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-93c99ceaaf31",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7891",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-e911938953d4",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7758",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-f29b299e1c88",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7780",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-ad3e7fc0af64",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7781",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-2bd506c65774",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7834",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-60c4426ca500",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7790",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-06aca3e8d66b",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7802",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-1bc8ec61d5d5",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7861",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-e5cdb8ce2442",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7815",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-8df2002c6b3d",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7873",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-338f37df11cb",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7852",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-dfcc0d67a1d0",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7808",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-775bb2088ff5",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7773",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-16cd9e610d33",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7888",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-fc27a397e4d4",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7783",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-231755966c17",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7803",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-75f0c8643b2d",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7762",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-1ca6cc92201a",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7819",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-3e19935a2df9",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7741",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-64bab72c3452",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7856",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-cffbceafa23c",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7813",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-29224e80c735",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7875",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "yskn-b7456107e732",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7763",
+      "discovery_keys": [
+        "yskn-2025"
+      ]
+    },
+    {
+      "id": "yskn-38e303658f39",
+      "publisher": "yskn",
+      "stratum": "legal",
+      "genre": "tax-ruling",
+      "url": "https://yskn.is/urskurdir/skoda-urskurd/?nr=7884",
+      "discovery_keys": [
+        "yskn-2026"
+      ]
+    },
+    {
+      "id": "islandssjodir-7093f6a70ae4",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/afkoma-islandssjoda-hf-arid-2025/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-3be8b129c534",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/arshlutauppgjor-islandssjoda-2023/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-787a375aa78c",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/islandssjodum-veitt-vidurkenning-fyrir-goda-stjornarhaetti-2023/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-69a0aaede5a4",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/sjodfelogum-graena-sjodsins-fjolgar-um-10/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-12421063838d",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/arshlutauppgjor-islandssjoda-2020/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-9b0e6ea72c1c",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/arshlutauppgjor-islandssjoda-2021/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-27538c316196",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/fjarmagnadur-utblastur-islandssjoda/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-9c9f00b6e8ea",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/arshlutauppgjor-islandssjoda-2022/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-fda36550a88c",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/nafnabreyting-is-rikissafn/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-bbaa9b4c02d0",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/islandssjodum-veitt-vidurkenning-fyrir-goda-stjorn/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-1a0507741733",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/afkoma-islandssjoda-2020/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-90b110b88ca5",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/skuli-hrafn-radinn-framkvaemdastjori-islandssjoda/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-e7f3375c1167",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/ert-thu-medalmadurinn/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-bbc051028998",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/afkoma-islandssjoda-hf-arid-2024/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-f1543fac1aac",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/vidurkenning-fyrir-goda-stjornarhaetti-2025/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-af176ca3f566",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/afkoma-islandssjoda-hf-arid-2022/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-d1574be566f4",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/breytingar-hja-islandssjodum/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-4cef60a8432b",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/hagnadur-af-rekstri-islandssjoda-var-514-milljonir/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    },
+    {
+      "id": "islandssjodir-b1adc1247444",
+      "publisher": "islandssjodir",
+      "stratum": "financial",
+      "genre": "fund-manager-news",
+      "url": "https://islandssjodir.is/frett/afkoma-islandssjoda-hf-arid-2021/",
+      "discovery_keys": [
+        "islandssjodir-news"
+      ]
+    }
+  ],
+  "purpose": "Unassigned model-blind review pool; no training labels or final-test designation",
+  "selection": "Unused article-shaped URLs from 5 October 2026 explicit index snapshots, SHA256(seed+URL) order, at most 40 per publisher; before inference.",
+  "limitations": "Availability sample; collection date does not imply new publication; clustering, extraction and source-use review remain required.",
+  "exclusions_sha256": [
+    "694738478c6d6dda1efd03a1f25ca9fc52f94bf38769ef056ef3f14546dfae7b",
+    "f812efb593a927914cd941581d23722e4750e63023f78c7fd9d4a690f7c001e6",
+    "8de17e89267314d1f75273f5555497b22fbe6f60897eca999d9d2c5769c128fe"
+  ]
+}

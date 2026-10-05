@@ -189,3 +189,5 @@ requirements are established separately. It must not be used to claim the 99% ta
 has been met.
 
 Reviewer archives now include a [self-contained offline annotation editor](editor/README.md). It supports text selection, explicit review/exclusion, private progress downloads and the existing JSONL submission format without model predictions or network access. The original blank packets and frozen rubric remain unchanged.
+
+The [5 October legal/financial pool](domain-pool-20261005.md) adds privately collected tax rulings and fund-manager articles. After conservative overlap screening, 58 unlabelled excerpts across 27 documents have frozen review allocations and separate offline reviewer packets. The development split remains too small and lacks legal coverage; these materials do not establish acceptance.

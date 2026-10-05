@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "collector_sha256": "d6d96cc75a8b4318c419c649ef89e95ba889363d600dcb11d9c16a905be05edc",
+  "sources_sha256": "2d9f96a220379ce44c64a471c258067432f7dfb8813612fc7868d89796eac128",
+  "cached_manifest_sha256": "5ba9392cb418e71901e7a7546410bf29f9221ce402b2e2410e155f6f6bf13168",
+  "review_sha256": "3e28f6d84267c1f2b84d51c7126d47868aa25ecc2a1d3c1a5836dd8680afc1e9",
+  "excerpts": 145,
+  "excerpt_words": 32004,
+  "strata": {
+    "legal": 117,
+    "financial": 28
+  },
+  "flagged_overlap_excerpts": 16,
+  "model_evaluated": false,
+  "training_use": false,
+  "human_review_complete": false,
+  "independence_limits": "Checked normalized exact 12-grams and document near duplicates; semantic copying and base-model pretraining exposure not ruled out.",
+  "source_documents": 59,
+  "downloaded_and_extracted": 59,
+  "collection_duplicates": 3,
+  "reference_files": 38,
+  "prior_full_documents": 234,
+  "collection_manifest_sha256": "9630593448156497d3db0447eb1c0c8cb0a793b804294a35f0d613eb3306e550",
+  "raw_content_committed": false,
+  "source_use_review": "pending; private storage only",
+  "discovery_indexes_attempted": 10,
+  "discovery_indexes_fetched": 7,
+  "discovery_failures": {
+    "robots_disallowed": 2,
+    "HTTP_403": 1
+  }
+}

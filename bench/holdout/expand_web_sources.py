@@ -30,7 +30,7 @@ def canonical(url):
     return urlunsplit(('https', p.hostname.lower(), p.path or '/', p.query, ''))
 
 
-def select(indexes, previous, limit=40):
+def select(indexes, previous, limit=40, *, specs=SPECS, seed=SEED, snapshot='30 September snapshots', query_patterns=None):
     if type(limit) is not int or not 1 <= limit <= 100:
         raise ValueError('bounded publisher limit required')
     excluded = set()
@@ -40,7 +40,7 @@ def select(indexes, previous, limit=40):
                 if doc.get(key):
                     excluded.add(canonical(doc[key]))
     documents, evidence = [], []
-    for publisher, names, host, pattern, stratum, genre in SPECS:
+    for publisher, names, host, pattern, stratum, genre in specs:
         candidates = {}
         for name in names:
             raw = indexes[name]
@@ -51,19 +51,21 @@ def select(indexes, previous, limit=40):
             for url in urls:
                 url = canonical(url)
                 parsed = urlsplit(url)
-                if parsed.hostname != host or parsed.query or not re.fullmatch(pattern, parsed.path) or url in excluded:
+                query_pattern = (query_patterns or {}).get(publisher, '')
+                if (parsed.hostname != host or not re.fullmatch(query_pattern, parsed.query)
+                        or not re.fullmatch(pattern, parsed.path) or url in excluded):
                     continue
                 candidates.setdefault(url, set()).add(name)
-        ordered = sorted(candidates, key=lambda url: sha((SEED + url).encode()))[:limit]
+        ordered = sorted(candidates, key=lambda url: sha((seed + url).encode()))[:limit]
         for url in ordered:
             documents.append(dict(id=publisher+'-'+sha(url.encode())[:12], publisher=publisher,
                                   stratum=stratum, genre=genre, url=url,
                                   discovery_keys=sorted(candidates[url])))
     if not documents:
         raise ValueError('no unused article candidates')
-    return dict(schema=1, seed=SEED, indexes=evidence, documents=documents,
+    return dict(schema=1, seed=seed, indexes=evidence, documents=documents,
                 purpose='Unassigned model-blind review pool; no training labels or final-test designation',
-                selection=f'Unused article-shaped URLs from 30 September snapshots, SHA256(seed+URL) order, at most {limit} per publisher; before inference.',
+                selection=f'Unused article-shaped URLs from {snapshot}, SHA256(seed+URL) order, at most {limit} per publisher; before inference.',
                 limitations='Availability sample; collection date does not imply new publication; clustering, extraction and source-use review remain required.')
 
 
