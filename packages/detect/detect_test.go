@@ -130,7 +130,7 @@ func TestCardAndSecret(t *testing.T) {
 func TestJWTAndBearerTokenBlockSpans(t *testing.T) {
 	for _, tc := range []struct{ text, value, reason string }{
 		{"JWT eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl.", "eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl", "jwt-shape"},
-		{"Authorization: Bearer test_token_abcdefghijklmnop.", "test_token_abcdefghijklmnop", "bearer-token"},
+		{"Authorization: Bearer test_token_abcdefghijklmnop.", "test_token_abcdefghijklmnop.", "bearer-token"},
 	} {
 		matches := Detect(tc.text)
 		if len(matches) != 1 || matches[0].Kind != Secret || matches[0].Reason != tc.reason || tc.text[matches[0].Start:matches[0].End] != tc.value {

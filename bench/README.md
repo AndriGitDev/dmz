@@ -108,3 +108,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [Private-key block regression cases](private-key-v3.md) distinguish precise Secret spans from the existing whole-prompt protection for malformed or incomplete blocks. Their fabricated payloads are nonfunctional, and the development cases do not establish independent secret-detection quality.
 
 [Database URI regression cases](database-url-v3.md) separate embedded credentials from non-secret connection references and verify full-span masking and restoration on synthetic examples.
+
+[Bearer credential regression cases](bearer-v3.md) check complete opaque-token characters, explicit header context, response challenges and exact restoration while documenting the remaining prose heuristics.

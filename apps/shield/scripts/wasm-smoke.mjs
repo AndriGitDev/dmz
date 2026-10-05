@@ -14,6 +14,19 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 
+for (const value of ['synthetic_token/with+padding==', 'a/b+c~d==', 'synthetic.token.', 'Q']) {
+  globalThis.dmzReset();
+  const prefix = 'Prófun 🙂\r\nAuthorization: Bearer ', input = prefix + value + '\r\n';
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  assert.deepEqual(result.detected_spans, [{ start: Buffer.byteLength(prefix),
+    end: Buffer.byteLength(prefix + value), kind: 'secret' }]);
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  assert.ok(!result.transformed.includes('Bearer ' + value));
+  assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
+}
+globalThis.dmzReset();
+
 for (const value of [
   'postgresql://demo:placeholder@invalid.invalid/db',
   'mysql://invalid.invalid/db?password=synthetic)==',
