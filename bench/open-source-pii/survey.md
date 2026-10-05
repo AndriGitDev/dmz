@@ -34,3 +34,43 @@ A more suitable integration may preserve structured validators and Icelandic
 names while using a carefully bounded supplemental model. Schema selection,
 normalization and any confidence calibration are model-selection work and must
 be recorded as such, followed by separate probes and regression guards.
+
+## Integration findings after runtime and public-English checks
+
+Two narrow rule integrations are implemented in the research branch: pinned
+libphonenumber metadata for explicit international phone numbers, and 17 pinned
+[Gitleaks](https://github.com/gitleaks/gitleaks) MIT rules covering 18 vendor-token
+families. Both run locally in the existing Go/TinyGo core. The full Go phone
+library's protobuf initialization failed in TinyGo, so the adapter imports only
+public numbering metadata at build time. Gitleaks runtime, network verification,
+archive decoding and repository scanning are not part of Shield.
+
+The current TinyGo regex implementation needs a larger reserved stack for these
+rules: the rules-only smoke test hung with the default 64 KiB stack. Equivalent
+bounded PyPI matching, lazy allowlist checks and a tested 256 KiB stack fix that
+runtime path. This is why native accuracy checks alone were insufficient.
+
+On 4,996 public synthetic English excerpts, the original trained composition
+scores 2,414 exact excerpts. GLiNER alone scores 3,098, but adding it while keeping
+existing core/name matches scores only 2,268. Post-evaluation attribution finds
+2,714 retained false core spans and 1,945 newly added false spans. Existing core
+matches block 920 correct GLiNER spans; incorrect name/address overlap is a major
+source. These counts explain a composition failure, not a validated replacement
+policy. Public annotations and unknown training overlap limit all these results.
+
+Both GLiNER and GLiNER2 have working offline browser research prototypes, but
+quantization changes predictions and loses quality; their graphs also remain
+large. Neither is enabled in Shield. A fixed confidence-only address selection
+on 4,995 validation excerpts rejected every declared GLiNER QUInt8 threshold.
+The selected GLiNER2 address-only path remains experimental because its fresh
+90-excerpt diagnostic added six false spans along with 14 true spans.
+
+[usaddress](https://github.com/datamade/usaddress), a small MIT-licensed US address
+parser, was also evaluated as a specialist. Its complete public-test address
+diagnostic found 128 true spans, 197 false spans and 1,301 missed spans. It does
+not justify a default address integration or browser port on this evidence.
+
+Detailed retained trials, runtime differences and aggregate provenance are in
+[the result record](../results/open-source-pii-v1/README.md). Further English work
+should evaluate overlap arbitration on separately annotated data, including
+mixed-language regression guards; a broad additive model is not sufficient.
