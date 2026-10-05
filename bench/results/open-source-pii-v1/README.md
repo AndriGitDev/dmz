@@ -77,6 +77,22 @@ token IDs, word masks and original word offsets match Python on all 190 reused
 synthetic inputs. Input parity does not imply inference parity or acceptable
 quality. Neither prototype is imported by the Shield product.
 
+## Validation-only address confidence selection
+
+The published GLiNER QUInt8 model was separately evaluated on 4,995 public
+synthetic validation excerpts. The threshold grid and decision rule were fixed
+before inference: address-only detections needed at least 50 true positives and
+a two-sided 95% Wilson lower precision bound of at least 0.99. No threshold
+qualified. At 0.7 there were 1,027 true and 52 false spans; at 0.9 there were
+83 true and five false spans; at 0.95 only one true span remained. All three
+higher thresholds produced no address detections.
+
+This rejects the declared confidence-only route; the guard was not relaxed and
+no new default or follow-up was selected from it. The Wilson statistic on this
+correlated synthetic data is a selection guard, not certified field precision
+or evidence of the user's exact-excerpt/recall target. All fixed trials and
+source hashes are retained in `address-confidence-selection.json`.
+
 See the [survey](../../open-source-pii/survey.md),
 [GLiNER2 runtime record](../../open-source-pii/runtime-feasibility.md) and
 [GLiNER runtime protocol](../../open-source-pii/gliner-runtime-protocol.md) for

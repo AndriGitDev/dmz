@@ -8,3 +8,4 @@ cd "$root_dir/tools/phone-metadata"
 "$go_bin" run . "$task_temp/phone-plans.json"
 cmp "$task_temp/phone-plans.json" "$root_dir/packages/detect/phone-plans.json"
 "$go_bin" run ./audit
+"$go_bin" run ./audit --nongeographic-only

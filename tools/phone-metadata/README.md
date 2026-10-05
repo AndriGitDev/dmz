@@ -16,6 +16,14 @@ records or model weights. Review the generated diff, run the international phone
 probe and Go/WASM checks, and update provenance when advancing the upstream pin.
 Do not silently download fresh metadata at runtime.
 
+`scripts/check-phone-metadata.sh` checks deterministic regeneration and compares
+the adapter with pinned upstream examples and seeded random geographic numbers.
+It also checks the nine supported global-network examples separately with
+`go run ./audit --nongeographic-only`. Existing higher-priority entity types are
+reported separately from unexpected misses. These are rule-parity checks, not
+PII accuracy measurements. `--wasm-fixtures` can export either audit into a new
+private experiment file for native/WASM span and exact-restoration checks.
+
 The runtime adapter is narrower than libphonenumber: explicit `+` country codes,
 complete national numbers, supported numeric separators and optional numeric
 extensions. It does not infer a domestic region, parse vanity numbers, or remove

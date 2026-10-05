@@ -22,6 +22,7 @@ import (
 
 func main() {
 	fixturePath := flag.String("wasm-fixtures", "", "optional new private experiment JSONL for WASM parity")
+	nonGeoOnly := flag.Bool("nongeographic-only", false, "check global-network examples separately from geographic/random cases")
 	flag.Parse()
 	var fixture *os.File
 	if *fixturePath != "" {
@@ -93,27 +94,43 @@ func main() {
 		regions = append(regions, region)
 	}
 	sort.Strings(regions)
-	for _, region := range regions {
-		for _, kind := range []phonenumbers.PhoneNumberType{phonenumbers.FIXED_LINE, phonenumbers.MOBILE, phonenumbers.TOLL_FREE, phonenumbers.PREMIUM_RATE, phonenumbers.SHARED_COST, phonenumbers.VOIP, phonenumbers.PERSONAL_NUMBER, phonenumbers.PAGER, phonenumbers.UAN, phonenumbers.VOICEMAIL} {
-			if n := phonenumbers.GetExampleNumberForTypeInRegion(region, kind); n != nil {
+	if *nonGeoOnly {
+		codes := []int{}
+		for code := range phonenumbers.GetSupportedGlobalNetworkCallingCodes() {
+			codes = append(codes, code)
+		}
+		sort.Ints(codes)
+		for _, code := range codes {
+			if n := phonenumbers.GetExampleNumberForNonGeoEntity(code); n != nil {
 				check(phonenumbers.Format(n, phonenumbers.E164))
 			}
 		}
-	}
-	rng := rand.New(rand.NewSource(20261005))
-	for i := 0; i < 50000; i++ {
-		region := regions[rng.Intn(len(regions))]
-		code := phonenumbers.GetCountryCodeForRegion(region)
-		var b strings.Builder
-		b.WriteByte('+')
-		b.WriteString(strconv.Itoa(code))
-		n := 4 + rng.Intn(14)
-		for j := 0; j < n; j++ {
-			b.WriteByte(byte('0' + rng.Intn(10)))
+	} else {
+		for _, region := range regions {
+			for _, kind := range []phonenumbers.PhoneNumberType{phonenumbers.FIXED_LINE, phonenumbers.MOBILE, phonenumbers.TOLL_FREE, phonenumbers.PREMIUM_RATE, phonenumbers.SHARED_COST, phonenumbers.VOIP, phonenumbers.PERSONAL_NUMBER, phonenumbers.PAGER, phonenumbers.UAN, phonenumbers.VOICEMAIL} {
+				if n := phonenumbers.GetExampleNumberForTypeInRegion(region, kind); n != nil {
+					check(phonenumbers.Format(n, phonenumbers.E164))
+				}
+			}
 		}
-		check(b.String())
+		rng := rand.New(rand.NewSource(20261005))
+		for i := 0; i < 50000; i++ {
+			region := regions[rng.Intn(len(regions))]
+			code := phonenumbers.GetCountryCodeForRegion(region)
+			var b strings.Builder
+			b.WriteByte('+')
+			b.WriteString(strconv.Itoa(code))
+			n := 4 + rng.Intn(14)
+			for j := 0; j < n; j++ {
+				b.WriteByte(byte('0' + rng.Intn(10)))
+			}
+			check(b.String())
+		}
 	}
 	result := map[string]any{"schema": 1, "source": "nyaruka/phonenumbers/v2 v2.0.14, libphonenumber metadata v9.0.40", "scope": "canonical explicit-country-code validation parity; generated rule checks, not a PII accuracy corpus", "counts": counts, "protected_type_counts": conflicts}
+	if *nonGeoOnly {
+		result["scope"] = "canonical global-network examples; separate nongeographic numbering-rule check, not PII accuracy"
+	}
 	if fixture != nil {
 		if err := fixture.Close(); err != nil {
 			panic("closing private fixtures failed")
