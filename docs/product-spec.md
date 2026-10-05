@@ -53,7 +53,7 @@ Current implementation includes a device-local, exact, case-sensitive dictionary
 of up to 32 user-entered terms. It is cleared on reset and does not provide the
 planned tenant-admin workflow, inflection or per-tenant distribution. Selected
 API-key, documented GitHub-prefix, JWT, bearer-token, complete private-key-block and database-URL patterns are detected. GitHub token shapes include longer stateless installation values; detection does not validate issuer credentials. Incomplete or mismatched private-key fences keep Shield’s whole-prompt masking fallback; complete blocks preserve surrounding prose.
-Database URI detection requires embedded password or credential-query material; plain connection references are not Secret signals. General high-entropy-token and log-line detection remain unimplemented. Strict
+Database URI detection requires embedded password or credential-query material; plain connection references are not Secret signals. A [bounded assignment-context heuristic](../bench/credential-context-v3.md) also recognises selected credential fields with complete, high-entropy token-shaped values. It misses short, low-entropy and other unsupported values; arbitrary high-entropy-string and log-line detection remain unimplemented. Strict
 core callers block secrets and most uncertain findings; Shield's owner-approved
 best-effort policy masks them locally instead.
 

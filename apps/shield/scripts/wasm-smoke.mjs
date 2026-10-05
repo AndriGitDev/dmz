@@ -275,6 +275,22 @@ for (const value of [
   assert.equal(globalThis.dmzRestore(result.transformed), input);
   assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
 }
+for (const input of [
+  'api_key=X7a9/Q2b8+N4c6~R3d5.T1e0V==',
+  '🙂\r\n{"client_secret":"X7a9/Q2b8+N4c6~R3d5.T1e0V=="}',
+]) {
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(result.allowed, true);
+  assert.equal(result.spans_available, true);
+  assert.equal(result.detected_spans.length, 1);
+  const span = result.detected_spans[0];
+  assert.equal(span.kind, 'secret');
+  assert.equal(Buffer.from(input).subarray(span.start, span.end).toString(), 'X7a9/Q2b8+N4c6~R3d5.T1e0V==');
+  assert.ok(!result.transformed.includes('X7a9/Q2b8+N4c6~R3d5.T1e0V=='));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
+}
 const jwtBlocked = JSON.parse(globalThis.dmzProcess('eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl'));
 assert.equal(jwtBlocked.allowed, false);
 assert.equal(jwtBlocked.transformed, undefined);

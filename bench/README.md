@@ -117,3 +117,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [Bearer credential regression cases](bearer-v3.md) check complete opaque-token characters, explicit header context, response challenges and exact restoration while documenting the remaining prose heuristics.
 
 [GitHub token regression cases](github-token-v3.md) cover documented provider prefixes and longer stateless installation-token shapes, with complete masking and restoration checks.
+
+[Credential assignment cases](credential-context-v3.md) test a bounded context/entropy heuristic against benign configuration and code. Unsupported credential values remain labelled positives and visible misses.

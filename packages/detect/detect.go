@@ -129,6 +129,7 @@ func detectWithLexicon(input string, terms []string, lexicon *Lexicon) []Match {
 	candidates = append(candidates, databaseURLs(input)...)
 	add(jwtRE, Secret, simple("jwt-shape"))
 	candidates = append(candidates, bearerTokens(input)...)
+	candidates = append(candidates, credentialAssignments(input)...)
 	add(ibanRE, IBAN, validateIBAN)
 	add(emailRE, Email, validateEmail)
 	add(kennitalaRE, Kennitala, validateKennitala)
