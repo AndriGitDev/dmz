@@ -1,7 +1,7 @@
 // Capture a checksum-pinned trained candidate on synthetic probes or one hash-pinned
 // public synthetic English projection. Never accepts arbitrary private corpora.
 // No texts, transformed values, or session mappings are persisted.
-import {readFile,writeFile,mkdtemp,rm,realpath,stat} from 'node:fs/promises';
+import {readFile,writeFile,appendFile,rename,mkdtemp,rm,realpath,stat} from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {resolve,join,relative,dirname} from 'node:path';
@@ -10,8 +10,9 @@ import {fileURLToPath} from 'node:url';
 import {chromium} from '../../apps/shield/node_modules/playwright/index.mjs';
 import {annotationSpans,restoredMaskSpans,coverage,markers} from '../../apps/shield/scripts/coverage.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
-const [outArg,corpusArg,extensionArg,buildHash]=process.argv.slice(2);
+const [outArg,corpusArg,extensionArg,buildHash,resumeArg]=process.argv.slice(2);
 if(!outArg||!corpusArg||!extensionArg||!/^[a-f0-9]{64}$/.test(buildHash||''))throw Error('Usage: candidate-browser.mjs PRIVATE_OUTPUT CORPUS EXTENSION BUILD_SHA256');
+if(resumeArg&&resumeArg!=='--resume')throw Error('Only --resume is accepted after the build checksum');
 const out=resolve(outArg),parent=await realpath(dirname(out));
 if(!relative(root,parent).startsWith('../'))throw Error('Output must be private');
 try {await stat(out);throw Error('Output already exists');}catch(e){if(e.code!=='ENOENT')throw e;}
@@ -51,8 +52,34 @@ if(extensionManifest.version_name!==`${extensionManifest.version} preview ${buil
 async function checkAssets(){for(const[name,sha]of Object.entries(build.sha256)){if(await fileDigest(join(extension,name))!==sha)throw Error('Candidate asset changed: '+name);}}
 await checkAssets();
 const sourceHash=await fileDigest(fileURLToPath(import.meta.url));
+const partial=out+'.partial.jsonl',statePath=out+'.checkpoint.json';
+const identity={schema:1,build_manifest_sha256:buildHash,corpus_manifest_sha256:await fileDigest(join(corpus,'manifest.json')),measurement_sha256:sourceHash,expected_excerpts:rows.length};
+const records=[];let priorSeconds=0;const partialHash=createHash('sha256');
+if(resumeArg){
+ const state=JSON.parse(await readFile(statePath,'utf8'));
+ if(JSON.stringify(state.identity)!==JSON.stringify(identity)||state.external_requests!==0||!Number.isInteger(state.completed)||state.completed<0||state.completed>rows.length)throw Error('Incompatible checkpoint');
+ const lines=(await readFile(partial,'utf8')).split('\n');
+ if(lines.length<=state.completed)throw Error('Truncated checkpoint prefix');
+ const prefix=lines.slice(0,state.completed).map(line=>line+'\n').join('');
+ if(digest(prefix)!==state.partial_sha256)throw Error('Checkpoint digest differs');
+ for(const [i,line]of lines.slice(0,state.completed).entries()){
+  const r=JSON.parse(line);
+  if(r.id!==rows[i].id||r.text_sha256!==digest(rows[i].text)||r.stratum!==rows[i].stratum||!Array.isArray(r.names)||!r.basic?.exact_restoration||!r.trained?.exact_restoration)throw Error('Invalid checkpoint record');
+  records.push(r);
+ }
+ // Only the atomically committed prefix is reusable after an interrupted write.
+ await writeFile(partial,prefix);partialHash.update(prefix);priorSeconds=state.seconds;
+}else{
+ await writeFile(partial,'',{flag:'wx',mode:0o600});
+}
+const resumedExcerpts=records.length;
 const profile=await mkdtemp(join(tmpdir(),'dmz-oss-reference-'));
-let browser;let requests=0;const records=[];const started=Date.now();
+let browser;let requests=0;const started=Date.now();
+async function checkpoint(){
+ const state={identity,completed:records.length,partial_sha256:partialHash.copy().digest('hex'),external_requests:requests,seconds:priorSeconds+(Date.now()-started)/1000};
+ await writeFile(statePath+'.tmp',JSON.stringify(state)+'\n',{mode:0o600});await rename(statePath+'.tmp',statePath);
+}
+await checkpoint();
 try{
  browser=await chromium.launchPersistentContext(profile,{headless:true,channel:'chromium',args:[`--disable-extensions-except=${extension}`,`--load-extension=${extension}`]});
  browser.on('request',r=>{if(!r.url().startsWith('chrome-extension://'))requests++;});
@@ -65,7 +92,7 @@ try{
  await core.waitForFunction(()=>typeof globalThis.dmzProcessBestEffort==='function');
  await worker.evaluate(()=>{globalThis.__probeKeepalive=setInterval(()=>chrome.runtime.getPlatformInfo(),15000);});
  await worker.evaluate(()=>chrome.offscreen.createDocument({url:'scanner.html',reasons:[chrome.offscreen.Reason.WORKERS],justification:'Local synthetic integration comparison'}));
- for(const row of rows){
+ for(const row of rows.slice(resumedExcerpts)){
   const t=Date.now();const scan=await worker.evaluate(text=>chrome.runtime.sendMessage({type:'dmz:scanner-run',text}),row.text);
   if((scan?.error&&(committed||scan.code!=='unsupported_input'))||(!scan?.error&&!Array.isArray(scan?.spans)))throw Error('Candidate trained scanner failed; refuse a basic-only result');
   const record={id:row.id,text_sha256:digest(row.text),stratum:row.stratum,names:scan.spans||[],scanner_code:scan.code||null,scan_seconds:(Date.now()-t)/1000};
@@ -77,10 +104,11 @@ try{
    const restored=await core.evaluate(ms=>ms.map(m=>globalThis.dmzRestore(m)),ms);
    record[mode]={predicted:(result.result.detected_spans||[]).map(s=>[s.start,s.end,s.kind]),abstained:!result.result.spans_available,coverage:coverage(goldFor(row),restoredMaskSpans(row.text,result.result.transformed,restored)),exact_restoration:true,altered:row.text!==result.result.transformed};
   }
-  records.push(record);if(records.length%(committed?20:100)===0)console.log(JSON.stringify({completed:records.length}));
+  const line=JSON.stringify(record)+'\n';await appendFile(partial,line);partialHash.update(line);records.push(record);await checkpoint();
+  if(records.length%(committed?20:100)===0)console.log(JSON.stringify({completed:records.length}));
  }
  await checkAssets();if(await fileDigest(fileURLToPath(import.meta.url))!==sourceHash)throw Error('Measurement changed');
  if(requests)throw Error('External request observed');
- await writeFile(out,JSON.stringify({schema:1,status:'complete',execution:'Fresh trained Chromium inference and WASM masking/restoration',build_manifest_sha256:buildHash,build,corpus:manifest,measurement_sha256:sourceHash,external_requests:requests,seconds:(Date.now()-started)/1000,records},null,2)+'\n',{flag:'wx'});
+ await writeFile(out,JSON.stringify({schema:1,status:'complete',execution:'Fresh trained Chromium inference and WASM masking/restoration',build_manifest_sha256:buildHash,build,corpus:manifest,measurement_sha256:sourceHash,external_requests:requests,seconds:priorSeconds+(Date.now()-started)/1000,resumed_excerpts:resumedExcerpts,partial_sha256:partialHash.copy().digest('hex'),records},null,2)+'\n',{flag:'wx'});
  console.log(JSON.stringify({status:'complete',excerpts:records.length,external_requests:requests}));
 }finally{if(browser)await browser.close();await rm(profile,{recursive:true,force:true});}
