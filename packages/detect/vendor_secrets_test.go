@@ -126,3 +126,31 @@ func TestVendorSecretCoversContainedNumericFragments(t *testing.T) {
 		t.Fatalf("separate numeric entity was displaced: %#v", got)
 	}
 }
+
+// Compare the isolated vendor recognizer with the complete detector pipeline.
+// This guards masking coverage when another recognizer finds an inner fragment;
+// it is not an independent oracle for token validity or precision.
+func FuzzOpaqueVendorTokenCoverage(f *testing.F) {
+	for _, seed := range []string{"", "-555-0148-", "-4111111111111111-", "-140182-8858-", "-IS460000000000000000000000-"} {
+		f.Add(seed)
+	}
+	f.Fuzz(func(t *testing.T, suffix string) {
+		if len(suffix) > 512 {
+			t.Skip()
+		}
+		value := "pypi-AgEIcHlwaS5vcmc" + strings.Repeat("aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL", 3) + suffix
+		complete := false
+		for _, match := range vendorSecrets(value, nil) {
+			if match.Start == 0 && match.End == len(value) {
+				complete = true
+			}
+		}
+		if !complete {
+			t.Skip()
+		}
+		got := Detect(value)
+		if len(got) != 1 || got[0].Kind != Secret || got[0].Start != 0 || got[0].End != len(value) {
+			t.Fatal("complete recognized token lost coverage during detector composition")
+		}
+	})
+}
