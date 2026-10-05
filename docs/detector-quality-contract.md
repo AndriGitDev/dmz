@@ -166,3 +166,5 @@ The [email shape and context probes](../bench/email-shape-v3.md) measure complet
 A separate [exact other-type veto experiment](../bench/contextual/entity-veto-result.md) reduces general false names but loses true names and fails the unchanged recall guard for both complete checkpoints. It also retains the frozen reference; higher excerpt accuracy alone does not satisfy the joint accuracy/recall target.
 
 The [bounded entity-aware family](../bench/contextual/entity-family-result.md) evaluates all 36 predeclared threshold/priority configurations from verified caches. None passes the unchanged research criterion; the family is closed without model promotion.
+
+The [reused split audit](../bench/contextual/split-overlap.md) finds no exact or NFC token-sequence matches across training and either development set, but seven case-folded general matches, all Person-negative. It does not establish document independence or alter frozen scores; no matching rows are removed.

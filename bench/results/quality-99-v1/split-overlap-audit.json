@@ -1,0 +1,88 @@
+{
+  "train_rows": 46196,
+  "comparisons": {
+    "exact_tokens": {
+      "unique_training_sequences": 46195,
+      "training_duplicate_sequences": 1,
+      "training_sequences_with_multiple_full_labelings": 1,
+      "strata": {
+        "general": {
+          "rows": 5582,
+          "overlapping_rows": 0,
+          "overlapping_rows_at_least_five_tokens": 0,
+          "overlapping_person_positive_rows": 0,
+          "overlap_label_sequence_not_seen_in_training": 0
+        },
+        "domain": {
+          "rows": 256,
+          "overlapping_rows": 0,
+          "overlapping_rows_at_least_five_tokens": 0,
+          "overlapping_person_positive_rows": 0,
+          "overlap_label_sequence_not_seen_in_training": 0
+        }
+      }
+    },
+    "nfc_tokens": {
+      "unique_training_sequences": 46195,
+      "training_duplicate_sequences": 1,
+      "training_sequences_with_multiple_full_labelings": 1,
+      "strata": {
+        "general": {
+          "rows": 5582,
+          "overlapping_rows": 0,
+          "overlapping_rows_at_least_five_tokens": 0,
+          "overlapping_person_positive_rows": 0,
+          "overlap_label_sequence_not_seen_in_training": 0
+        },
+        "domain": {
+          "rows": 256,
+          "overlapping_rows": 0,
+          "overlapping_rows_at_least_five_tokens": 0,
+          "overlapping_person_positive_rows": 0,
+          "overlap_label_sequence_not_seen_in_training": 0
+        }
+      }
+    },
+    "nfc_casefold_tokens": {
+      "unique_training_sequences": 46005,
+      "training_duplicate_sequences": 190,
+      "training_sequences_with_multiple_full_labelings": 1,
+      "strata": {
+        "general": {
+          "rows": 5582,
+          "overlapping_rows": 7,
+          "overlapping_rows_at_least_five_tokens": 1,
+          "overlapping_person_positive_rows": 0,
+          "overlap_label_sequence_not_seen_in_training": 0
+        },
+        "domain": {
+          "rows": 256,
+          "overlapping_rows": 0,
+          "overlapping_rows_at_least_five_tokens": 0,
+          "overlapping_person_positive_rows": 0,
+          "overlap_label_sequence_not_seen_in_training": 0
+        }
+      }
+    }
+  },
+  "schema": 1,
+  "scope": "Read-only canonical token overlap audit of reused training/development; no inference or blind data",
+  "input_sha256": {
+    "train": "9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a",
+    "general": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+    "domain": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87"
+  },
+  "label_scope": [
+    "Location",
+    "Miscellaneous",
+    "Organization",
+    "Person"
+  ],
+  "label_projection": "O plus B/I for the four modelled entity types; other annotated kinds become background",
+  "code_sha256": {
+    "split_overlap.py": "a1b57ba02ca74eeae438742a2cba6c41d9fb01f1a4758d37f299ffe2560df35e",
+    "ner.py": "9838796e31106789b9716d188e6b40418411eabfa14a2473f0db14ccd794c699"
+  },
+  "independent_validation": false,
+  "limitations": "Sequence matching does not establish document disjointness, exclude paraphrases, adjudicate labels or make reused development independent. Case changes may legitimately change labels. No inputs, labels, splits, thresholds or model decisions are changed."
+}
