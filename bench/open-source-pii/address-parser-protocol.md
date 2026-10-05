@@ -20,6 +20,13 @@ Before predictions, fix two diagnostic paths on the already reused initial
    place/state/ZIP tail only when it includes an explicit US state abbreviation
    and a 5- or 9-digit ZIP. This is an experimental grammar, not postal validation.
 
+For the extraction path, strip trailing comma/semicolon/closing parenthesis and
+line endings. Retain a terminal period only on the fixed common abbreviation
+list `st rd ave blvd ln ct dr pl pkwy hwy sq ter trl cir`; otherwise treat it as
+sentence punctuation. These span rules are part of the trial, not supplied by
+the parser's API. Keep the fixed grammar for the broader pinned public synthetic
+English diagnostic; do not tune it on that diagnostic.
+
 Keep original text and offsets. Any parser/token alignment failure abstains for
 the whole candidate. No HTML entity rewriting, fuzzy substring search, clipping,
 network call or runtime training. Keep raw parser predictions transient. Both

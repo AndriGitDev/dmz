@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/AndriGitDev/dmz/packages/detect"
 	"github.com/AndriGitDev/dmz/packages/surrogates"
@@ -21,10 +22,12 @@ type entity struct {
 	Value string      `json:"value"`
 }
 type sample struct {
-	ID       string   `json:"id"`
-	Stratum  string   `json:"stratum"`
-	Text     string   `json:"text"`
-	Entities []entity `json:"entities"`
+	ID       string               `json:"id"`
+	Stratum  string               `json:"stratum"`
+	Text     string               `json:"text"`
+	Entities []entity             `json:"entities"`
+	Gold     [][3]json.RawMessage `json:"gold"`
+	TextSHA  string               `json:"text_sha256"`
 }
 type record struct {
 	ID               string   `json:"id"`
@@ -51,8 +54,19 @@ func run() error {
 		if err != nil {
 			return err
 		}
-		if !strings.HasPrefix(path, base+string(filepath.Separator)) || !strings.HasSuffix(path, ".jsonl") {
-			return fmt.Errorf("synthetic corpus required")
+		publicProjection := !strings.HasPrefix(path, base+string(filepath.Separator))
+		if !strings.HasSuffix(path, ".jsonl") {
+			return fmt.Errorf("synthetic JSONL corpus required")
+		}
+		if publicProjection {
+			data, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			h := sha256.Sum256(data)
+			if hex.EncodeToString(h[:]) != "6b70350932be463af6b53fc79bee5e53be2e66cc4133ae9bd0ff672d2237ad29" {
+				return fmt.Errorf("only the pinned public synthetic English projection is permitted outside bench/corpus")
+			}
 		}
 		f, err := os.Open(path)
 		if err != nil {
@@ -68,6 +82,26 @@ func run() error {
 			}
 			h := sha256.Sum256([]byte(row.Text))
 			r := record{ID: row.ID, Stratum: row.Stratum, TextSHA: hex.EncodeToString(h[:]), Gold: make([][3]any, 0), Predicted: make([][3]any, 0)}
+			if publicProjection {
+				if row.TextSHA != r.TextSHA || row.Gold == nil || !utf8.ValidString(row.Text) {
+					return fmt.Errorf("invalid public projection row")
+				}
+				previous := 0
+				for _, gold := range row.Gold {
+					var start, end int
+					var kind detect.Kind
+					if json.Unmarshal(gold[0], &start) != nil || json.Unmarshal(gold[1], &end) != nil || json.Unmarshal(gold[2], &kind) != nil || start < previous || end <= start || end > len(row.Text) || !utf8.ValidString(row.Text[start:end]) || !utf8.ValidString(row.Text[:start]) {
+						return fmt.Errorf("invalid projected gold span")
+					}
+					switch kind {
+					case detect.Name, detect.Address, detect.Phone, detect.Email, detect.Card, detect.Secret:
+					default:
+						return fmt.Errorf("invalid projected entity scope")
+					}
+					r.Gold = append(r.Gold, [3]any{start, end, kind})
+					previous = end
+				}
+			}
 			for _, e := range row.Entities {
 				if e.Value == "" || strings.Count(row.Text, e.Value) != 1 {
 					f.Close()
