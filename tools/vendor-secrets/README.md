@@ -34,6 +34,14 @@ vendor tokens start with a letter, so those inapplicable patterns never compile
 in detection. Other patterns retain their original semantics. Caches contain
 public rules only, never submitted values.
 
+Those reductions alone did not make the rules-only callback stack reliable:
+the first accepted PyPI fixture still hung with TinyGo 0.42.0's 64 KiB WASM
+default. The build now sets `-stack-size=256kb`; the identical fixture and full
+WASM smoke suite pass with that setting. TinyGo uses fixed-size goroutine stacks
+when it cannot infer a size; see its [datatype/runtime documentation](https://tinygo.org/docs/concepts/compiler-internals/datatypes/).
+Keep tests for both rules-only and trained builds, since success in one binary
+layout did not establish safety in the other.
+
 This is a limited adapter, not behavioral equivalence with all of Gitleaks.
 It excludes generic/contextual rules, client IDs, repository/path policy,
 suppression comments, decoding, archives and verification. Low-entropy tokens,
