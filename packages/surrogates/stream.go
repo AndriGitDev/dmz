@@ -23,14 +23,16 @@ func (s *Session) NewStreamRestorer() *StreamRestorer {
 	return &StreamRestorer{session: s, generation: s.generation, markers: markers}
 }
 
-// Write returns text that can safely be shown now. Unknown or changed markers
-// remain visible and are never guessed into a real value.
+// Write returns currently available bytes. Incomplete UTF-8 runes are held;
+// already-invalid bytes are emitted unchanged. Unknown or changed markers remain
+// visible and are never guessed into a real value. After reset, this old stream
+// only passes bytes through, including on subsequent writes and Flush.
 func (r *StreamRestorer) Write(chunk string) string {
 	if r.session.generation != r.generation {
 		out := r.buffer + chunk
 		r.buffer = ""
 		r.markers = nil
-		r.generation = r.session.generation
+		// Never bind an old response stream to a later mapping session.
 		return out
 	}
 	r.buffer += chunk
@@ -38,16 +40,26 @@ func (r *StreamRestorer) Write(chunk string) string {
 	cut := len(r.buffer) - hold
 	// A network chunk may divide a UTF-8 rune even when it divides no marker.
 	// Keep those bytes until the next chunk, too.
-	for cut > 0 && !utf8.ValidString(r.buffer[:cut]) {
-		cut--
+	complete := 0
+	for complete < cut && utf8.FullRuneInString(r.buffer[complete:cut]) {
+		_, size := utf8.DecodeRuneInString(r.buffer[complete:cut])
+		complete += size
 	}
+	// Invalid interior bytes are already complete decoding errors: preserve and
+	// emit them unchanged instead of retaining all subsequent response text.
+	cut = complete
 	out := r.session.Restore(r.buffer[:cut])
 	r.buffer = r.buffer[cut:]
 	return out
 }
 
 func (r *StreamRestorer) Flush() string {
-	out := r.session.Restore(r.buffer)
+	out := r.buffer
+	if r.session.generation == r.generation {
+		out = r.session.Restore(out)
+	} else {
+		r.markers = nil
+	}
 	r.buffer = ""
 	return out
 }
