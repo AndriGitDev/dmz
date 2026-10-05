@@ -334,6 +334,22 @@ for (const input of ["EMAIL=demo@example.invalid", "const recipient='demo@exampl
   assert.equal(Buffer.from(input).subarray(span.start, span.end).toString(), value);
   assert.equal(globalThis.dmzRestore(result.transformed), input);
 }
+for (const access of ['ASIAA1B2C3D4E5F6G7H8', 'ASIAaB_7cD9eF2gH', 'ASIA' + 'aB_7'.repeat(31)]) {
+  globalThis.dmzReset();
+  const values = [access, 'X7a9Q2b8N4c6R3d5T1e0V8g6H4j2K9m7P5s3U1w0',
+    'IQoJb3JpZ2luX2VjEA7b8/C9d0+E1f2G3h4I5j6=='];
+  const input = JSON.stringify({ AccessKeyId: values[0], SecretAccessKey: values[1], SessionToken: values[2] });
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(input, '[]'));
+  assert.equal(result.allowed, true);
+  assert.equal(result.spans_available, true);
+  assert.deepEqual(result.detected_spans.map(span => {
+    assert.equal(span.kind, 'secret');
+    return Buffer.from(input).subarray(span.start, span.end).toString();
+  }), values);
+  for (const value of values) assert.ok(!result.transformed.includes(value));
+  assert.equal(globalThis.dmzRestore(result.transformed), input);
+  assert.equal(JSON.parse(globalThis.dmzProcess(input)).allowed, false);
+}
 const jwtBlocked = JSON.parse(globalThis.dmzProcess('eyJ0ZXN0Ijp0cnVlfQ.eyJhdWQiOiJ0ZXN0In0.c2lnbmF0dXJl'));
 assert.equal(jwtBlocked.allowed, false);
 assert.equal(jwtBlocked.transformed, undefined);

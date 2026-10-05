@@ -52,7 +52,7 @@ var (
 	ibanRE      = regexp.MustCompile(`(?i)IS(?:[ \t\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]){24}`)
 	cardRE      = regexp.MustCompile(`[0-9](?:[0-9 \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]{11,25})[0-9]`)
 	phoneRE     = regexp.MustCompile(`(?:(?:\(\+354\)|\+354|00354)[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?)?[0-9]{3}[ \t.\-\x{00A0}\x{202F}\x{2011}\x{2013}]?[0-9]{4}`)
-	secretRE    = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----)`)
+	secretRE    = regexp.MustCompile(`(?:sk-[A-Za-z0-9_\-]{12,}|(?:AKIA|ASIA)[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----)`)
 	// Provider-prefixed values are opaque, not fixed-length credentials. The
 	// 36-byte body minimum is a shape heuristic; dots include stateless ghs JWTs.
 	// Final prose periods are excluded, while internal token separators remain.

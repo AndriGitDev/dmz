@@ -27,7 +27,7 @@ func credentialField(key string) bool {
 	for _, field := range []string{
 		"api_key", "access_key", "secret_key", "secret_access_key", "private_key",
 		"access_token", "auth_token", "bearer_token", "refresh_token",
-		"client_secret", "api_secret", "password", "passwd", "pwd", "token", "secret",
+		"client_secret", "api_secret", "session_token", "password", "passwd", "pwd", "token", "secret",
 	} {
 		if key == field || key == strings.ReplaceAll(field, "_", "") || strings.HasSuffix(key, "_"+field) {
 			return true
@@ -80,7 +80,10 @@ func credentialAssignments(input string) []Match {
 	codeRanges := credentialCodeRanges(input)
 	codeIndex := 0
 	for _, loc := range assignments {
-		if input[loc[4]:loc[5]] != input[loc[8]:loc[9]] || !credentialField(input[loc[6]:loc[7]]) {
+		key := input[loc[6]:loc[7]]
+		awsID := awsAccessKeyField(key)
+		generic := credentialField(key)
+		if input[loc[4]:loc[5]] != input[loc[8]:loc[9]] || (!awsID && !generic) {
 			continue
 		}
 		start, end := loc[1], loc[1]
@@ -123,9 +126,34 @@ func credentialAssignments(input string) []Match {
 				end += size
 			}
 		}
-		if contextualCredentialShape(input[start:end]) {
+		if awsID && contextualAWSAccessKey(input[start:end]) {
+			result = append(result, Match{start, end, Secret, Uncertain, "aws-access-key-field-shape"})
+		} else if generic && contextualCredentialShape(input[start:end]) {
 			result = append(result, Match{start, end, Secret, Uncertain, "credential-assignment-entropy"})
 		}
 	}
 	return result
+}
+
+// The broad AWS API length/alphabet envelope needs explicit field context.
+// Bare provider detection retains the existing 20-uppercase-character shape.
+func awsAccessKeyField(key string) bool {
+	switch strings.ReplaceAll(strings.ToLower(key), "-", "_") {
+	case "accesskeyid", "access_key_id", "aws_access_key_id":
+		return true
+	}
+	return false
+}
+
+func contextualAWSAccessKey(value string) bool {
+	if len(value) < 16 || len(value) > 128 || !(strings.HasPrefix(value, "AKIA") || strings.HasPrefix(value, "ASIA")) {
+		return false
+	}
+	for i := 4; i < len(value); i++ {
+		c := value[i]
+		if !(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '_') {
+			return false
+		}
+	}
+	return true
 }

@@ -127,3 +127,5 @@ The [address vocabulary format audit](address-audit/README.md) checks complete s
 [The exact other-type veto result](contextual/entity-veto-result.md) preserves the rejected comparison: fewer false names also meant fewer true names. All four replays match their original Person caches exactly; no browser model was replaced.
 
 [The bounded entity-aware family](contextual/entity-family-result.md) retains all 36 threshold/priority comparisons. None improves the lower recall enough to pass the research gate; the frozen model is retained and the grid is closed.
+
+[The AWS credential component probe](aws-credentials-v3.md) covers temporary access-key IDs and session-token fields alongside public-identifier negatives. Two unsupported positives and one ambiguous code-reference false positive remain in its pinned results.

@@ -164,3 +164,5 @@ Schema 4 adds aggregate `scanner_fallback_reasons` for each path and corpus. The
 The [email shape and context probes](../bench/email-shape-v3.md) measure complete mailbox spans rather than suffix-only matches. Their selected synthetic improvements preserve preceding corpus results but do not establish representative email accuracy, deliverability, or full RFC/IDNA validation.
 
 A separate [exact other-type veto experiment](../bench/contextual/entity-veto-result.md) reduces general false names but loses true names and fails the unchanged recall guard for both complete checkpoints. It also retains the frozen reference; higher excerpt accuracy alone does not satisfy the joint accuracy/recall target.
+
+The [bounded entity-aware family](../bench/contextual/entity-family-result.md) evaluates all 36 predeclared threshold/priority configurations from verified caches. None passes the unchanged research criterion; the family is closed without model promotion.
