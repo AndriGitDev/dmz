@@ -33,6 +33,12 @@ the sample design and uncertainty procedure, accounting for excerpts clustered
 within documents and related articles. Report sample sizes and uncertainty with
 any quality claim. Existing per-entity synthetic recall floors remain unchanged.
 
+The [cluster uncertainty diagnostic](../bench/contextual/quality-clusters.md)
+fixes a whole-cluster, within-stratum bootstrap procedure before blind-packet
+predictions. It reports approximate descriptive intervals and explicitly withholds
+bounds for insufficient, undefined or degenerate resamples. This tooling does not
+freeze the still-outstanding acceptance sampling design or establish independence.
+
 ## Scope and sampling
 
 The complete Shield target covers names, postal/street addresses, kennitölur,
