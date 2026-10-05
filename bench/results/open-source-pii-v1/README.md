@@ -60,6 +60,21 @@ Gitleaks is a specialist secret comparator. Its initial comparison uses the
 separate from the original-baseline model table. The aggregate exporter rejects
 mixed baseline hashes rather than merging incompatible comparisons.
 
+## Icelandic regression guard
+
+The final trained WASM core was replayed with the same cached contextual-name
+predictions on the two previously used Icelandic development sets. All 5,838
+Person prediction/abstention sets are unchanged and every masked input restores
+exactly. General development remains 5,503/5,582 exact (1,462 TP, 67 FP, 44 FN);
+domain development remains 250/256 exact (474 TP, three FP, six FN).
+
+This comparison isolates the core integration: it is Person-only, reused
+development evidence, not independent validation, full-entity accuracy or a
+fresh browser neural-inference run. The model-only reference has a different
+general score because the existing core already adds one correct name. See
+`icelandic-core-replay.json` for the paired aggregate and private-source hashes.
+Blind Icelandic evaluation files were not opened for this comparison.
+
 ## Runtime constraints
 
 GLiNER2's FP32 ONNX export reproduces all original predictions on the reused
