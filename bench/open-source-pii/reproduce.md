@@ -97,3 +97,12 @@ new scoring rather than reusing the old quality table. A resumed run is retained
 as such; the fresh-run confirmation specifically requires zero resumed excerpts.
 Neither runtime equality nor reproducibility makes these synthetic/development
 scores independent validation.
+
+## Aggregate figure
+
+`plot_public_comparisons.py` reads only the four published model aggregates and
+checks both denominators and metric arithmetic. It emits PNG/SVG artwork plus
+input/output hashes, refusing existing artifacts. The figure used a separate
+reporting virtual environment with `report-requirements.txt`; these packages
+were not installed into the model-inference environment or the Shield product.
+The plot is a presentation of the same diagnostic scores, not new evaluation.

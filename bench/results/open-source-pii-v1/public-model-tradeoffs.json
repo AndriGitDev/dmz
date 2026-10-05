@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "independent_validation": false,
+  "matplotlib": "3.10.7",
+  "input_sha256": {
+    "public-original-core-full-models.json": "30d4496c6df870759a77ac45fd7c9f36ec40c2de49a77951de9db8e1d21ce667",
+    "public-current-core-full-models.json": "c8b4a7fbeab621ee74cbb32dc34aa092bfd76cac6823fb0dfaffda62ca649026",
+    "public-original-core-sample-models.json": "add4dbd9548096f7f59374f98d6f02aae317a61eb9dee10f4894601ab32a2694",
+    "public-current-core-sample-models.json": "5f524b7ee2744f8597b4e23e5b7c9af947a37ed29b8a7c974fc90737f9beda72"
+  },
+  "measurement_sha256": "87f006478b6befd50dab2a94056434a1c499ead5bd8da77810727c00d9824fc0",
+  "output_sha256": {
+    "public-model-tradeoffs.svg": "2066b75f3aabea532725d6a55c9251f5443a83aba0d6c46be84d8897de1d0a05",
+    "public-model-tradeoffs.png": "d71aa26f57a647fb9a15aef860055f51eae28a5f6e8d7397d32fdabce4b84edc"
+  }
+}

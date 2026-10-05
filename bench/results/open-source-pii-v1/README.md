@@ -98,6 +98,13 @@ excerpts mean no projected in-scope labels, not an absence of all PII. See
 
 ## Completed public model comparisons
 
+![Exact entity-set accuracy and recall on the full projection and separate fixed sample](public-model-tradeoffs.png)
+
+The [SVG figure](public-model-tradeoffs.svg) and `public-model-tradeoffs.json`
+retain exportable artwork and input/output hashes. It plots additive compositions
+against the updated core; Privacy Filter has no full-set bar because only its
+fixed sample completed.
+
 The following compositions use the updated phone/vendor core and the original
 cached contextual-name predictions on the same 4,996 test excerpts. Existing
 core matches retain precedence over overlapping model additions. These are
