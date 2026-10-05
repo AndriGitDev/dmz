@@ -91,6 +91,7 @@ jobs:
       - run: npm run build
         working-directory: apps/shield
       - run: node scripts/wasm-smoke.mjs
+        timeout-minutes: 2
         working-directory: apps/shield
       - run: npx playwright install --with-deps chromium
         working-directory: apps/shield

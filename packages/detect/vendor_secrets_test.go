@@ -2,9 +2,45 @@ package detect
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 )
+
+func TestVendorRepeatedAllowMatchesASCIIUpstream(t *testing.T) {
+	upstream := regexp.MustCompile(repeatedVendorAllowPattern)
+	for a := 0; a < 128; a++ {
+		for b := 0; b < 128; b++ {
+			value := string([]byte{byte(a), byte(b)})
+			if repeatedVendorAllow(value) != upstream.MatchString(value) {
+				t.Fatalf("ASCII allowlist mismatch for bytes %d, %d", a, b)
+			}
+		}
+	}
+	for _, value := range []string{"", "aAaAa", "ZZzzZ", "***", "...", "abab", "a\n", "\\n"} {
+		if repeatedVendorAllow(value) != upstream.MatchString(value) {
+			t.Fatal("allowlist sequence mismatch")
+		}
+	}
+}
+
+func TestVendorPathAllowPrefilterPreservesMatching(t *testing.T) {
+	for _, pattern := range []string{`^/Users/(?i)[a-z0-9]+/[\w .-/]+$`, `^/(?:bin|etc|home|opt|tmp|usr|var)/[\w ./-]+$`} {
+		rule := &vendorSecretAllowRule{pattern: pattern, first: vendorAllowFirstByte(pattern)}
+		if rule.matches("npm_aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL3oR6") || rule.regex != nil {
+			t.Fatal("alphabetic vendor token reached an inapplicable path expression")
+		}
+		upstream := regexp.MustCompile(pattern)
+		for _, value := range []string{"", "/Users/demo/file.txt", "/home/demo/file.txt", "/tmp/a-b", "/other/a", "npm_demo", "/Users/demo/a\n"} {
+			if rule.matches(value) != upstream.MatchString(value) {
+				t.Fatal("path allowlist semantics changed")
+			}
+		}
+	}
+	if vendorAllowFirstByte(`^/foo|bar$`) != 0 {
+		t.Fatal("unreviewed alternation received a prefix optimization")
+	}
+}
 
 func TestVendorPyPILengthBounds(t *testing.T) {
 	for _, n := range []int{49, 50, 51, 999, 1000, 1001, 4096} {

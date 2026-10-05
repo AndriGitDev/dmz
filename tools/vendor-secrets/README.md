@@ -25,6 +25,15 @@ boundary check, this preserves the accepted token language. Native and WASM
 checks cover 49, 50, 1000 and 1001 bytes; the generated source pattern remains
 unchanged for provenance.
 
+The rules-only WASM build also exposed stack limits when compiling the global
+uniform-letter allowlist and path allowlists. Uniform ASCII letter/star/period
+runs are checked directly (including case folding); exhaustive native parity
+covers all 16,384 two-byte ASCII strings. The two exact pinned path patterns
+have a literal `/` prefilter and compile only if that prefix is present. Selected
+vendor tokens start with a letter, so those inapplicable patterns never compile
+in detection. Other patterns retain their original semantics. Caches contain
+public rules only, never submitted values.
+
 This is a limited adapter, not behavioral equivalence with all of Gitleaks.
 It excludes generic/contextual rules, client IDs, repository/path policy,
 suppression comments, decoding, archives and verification. Low-entropy tokens,
