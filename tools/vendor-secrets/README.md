@@ -18,6 +18,13 @@ replaced with DMZ's whole-token boundary checks so sentence punctuation is
 supported. Original non-secret matches retain precedence. The runtime does not
 import Gitleaks or any new Go module dependency.
 
+The PyPI rule's `{50,1000}` repetition overflows the TinyGo WASM regexp
+compiler stack. Its runtime adapter uses the same ASCII character class with
+`+` and explicit 50–1000 body-byte bounds. Together with the whole-token
+boundary check, this preserves the accepted token language. Native and WASM
+checks cover 49, 50, 1000 and 1001 bytes; the generated source pattern remains
+unchanged for provenance.
+
 This is a limited adapter, not behavioral equivalence with all of Gitleaks.
 It excludes generic/contextual rules, client IDs, repository/path policy,
 suppression comments, decoding, archives and verification. Low-entropy tokens,

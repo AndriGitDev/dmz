@@ -21,6 +21,8 @@ type vendorSecretRule struct {
 	pattern  *regexp.Regexp
 	entropy  float64
 	keywords []string
+	minBytes int
+	maxBytes int
 }
 
 var vendorSecretRules struct {
@@ -47,7 +49,21 @@ func loadVendorSecretRules() {
 			panic("invalid bundled vendor secret rules")
 		}
 		for _, raw := range data.Rules {
-			vendorSecretRules.rules = append(vendorSecretRules.rules, vendorSecretRule{raw.ID, regexp.MustCompile(raw.Pattern), raw.Entropy, raw.Keywords})
+			rule := vendorSecretRule{id: raw.ID, entropy: raw.Entropy, keywords: raw.Keywords}
+			pattern := raw.Pattern
+			if raw.ID == "pypi-upload-token" {
+				// Expanding {50,1000} exhausts TinyGo's WASM regexp compiler
+				// stack. Match the same ASCII run iteratively, then enforce its
+				// length. Whole-token boundaries already reject longer runs.
+				if pattern != `pypi-AgEIcHlwaS5vcmc[\w-]{50,1000}` {
+					panic("unexpected bundled PyPI pattern")
+				}
+				pattern = `pypi-AgEIcHlwaS5vcmc[\w-]+`
+				rule.minBytes = len("pypi-AgEIcHlwaS5vcmc") + 50
+				rule.maxBytes = len("pypi-AgEIcHlwaS5vcmc") + 1000
+			}
+			rule.pattern = regexp.MustCompile(pattern)
+			vendorSecretRules.rules = append(vendorSecretRules.rules, rule)
 		}
 		for _, pattern := range data.Allow {
 			vendorSecretRules.allow = append(vendorSecretRules.allow, regexp.MustCompile(pattern))
@@ -131,6 +147,9 @@ func vendorSecrets(input string, existing []Match) []Match {
 				continue
 			}
 			value := input[start:end]
+			if rule.minBytes > 0 && (len(value) < rule.minBytes || len(value) > rule.maxBytes) {
+				continue
+			}
 			ascii := true
 			for i := range value {
 				if value[i] >= utf8.RuneSelf {

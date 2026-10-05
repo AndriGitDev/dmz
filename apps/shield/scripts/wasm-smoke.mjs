@@ -14,6 +14,21 @@ for (let i = 0; i < 100 && typeof globalThis.dmzProcess !== 'function'; i++) {
 }
 assert.equal(typeof globalThis.dmzProcess, 'function', 'WASM exports not ready');
 assert.equal(typeof globalThis.dmzProcessBestEffortWithEntities, 'function');
+// The upstream PyPI bounded repetition overflowed TinyGo's regexp compiler
+// stack. Exercise cold initialization and both explicit length boundaries.
+for (const n of [49, 50, 1000, 1001]) {
+  const body = 'aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL'.repeat(Math.ceil(n / 32)).slice(0, n);
+  const value = 'pypi-AgEIcHlwaS5vcmc' + body;
+  const text = `🙂 [${value}].`;
+  globalThis.dmzReset();
+  const result = JSON.parse(globalThis.dmzProcessBestEffort(text, '[]'));
+  assert.ok(result.allowed && result.spans_available);
+  const spans = result.detected_spans.filter(s => s.kind === 'secret');
+  assert.equal(spans.length, n >= 50 && n <= 1000 ? 1 : 0);
+  if (spans.length) assert.deepEqual(spans[0], { start: Buffer.byteLength('🙂 ['), end: Buffer.byteLength('🙂 [' + value), kind: 'secret' });
+  assert.equal(globalThis.dmzRestore(result.transformed), text);
+}
+globalThis.dmzReset();
 // The optional typed adapter retains byte offsets, exact inverses and existing
 // structured matches. It does not enable a supplemental model by itself.
 {

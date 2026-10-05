@@ -1,9 +1,27 @@
 package detect
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
+
+func TestVendorPyPILengthBounds(t *testing.T) {
+	for _, n := range []int{49, 50, 51, 999, 1000, 1001, 4096} {
+		t.Run(fmt.Sprint(n), func(t *testing.T) {
+			body := strings.Repeat("aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL", n/32+1)[:n]
+			value := "pypi-AgEIcHlwaS5vcmc" + body
+			matches := vendorSecrets("🙂 ["+value+"].", nil)
+			want := n >= 50 && n <= 1000
+			if (len(matches) == 1) != want || len(matches) > 1 {
+				t.Fatalf("length %d: got %d matches, accepted=%v", n, len(matches), want)
+			}
+			if want && (matches[0].Start != len("🙂 [") || matches[0].End != len("🙂 [")+len(value)) {
+				t.Fatal("incorrect original byte span")
+			}
+		})
+	}
+}
 
 func TestVendorSecretOriginalSpansAndPunctuation(t *testing.T) {
 	value := "npm_aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL3oR6"
