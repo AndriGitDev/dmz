@@ -49,3 +49,11 @@ eight true positives without adding false positives; its deployment size remains
 a concern. All full-model outputs can be retained diagnostically, but do not
 select a different threshold or type subset on the fresh set and call that
 validation. The portable phone adapter is evaluated separately and combined.
+
+Browser-size trial, fixed before quantized inference: compare exported FP32
+GLiNER2 against dynamic QUInt8 weights for MatMul/Gemm/Gather with per-channel
+linear weights (ORT 1.23.2). Variant A quantizes only the encoder; variant B also
+quantizes the classifier, span representation and count embedding. Preserve
+original seven-label schema and 0.5 address-only selection. Score quantization
+changes and verify browser parity; a smaller file is not evidence of equal
+quality. No calibration or threshold tuning on the fresh 90 excerpts.
