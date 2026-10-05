@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "scope": "Reused development; Person only",
+  "candidates": [
+    {
+      "epoch": 1,
+      "model_sha256": "fbdc472abe1cb41afd37d7c4be2ed7cf5c9b5c0dcb4a3f189a399ae124b12989",
+      "lower_recall": 0.9628154050464808,
+      "research_gate_passed": false,
+      "failures": [
+        "lower-stratum recall did not improve"
+      ],
+      "strata": {
+        "general": {
+          "counts": {
+            "tp": 1450,
+            "fp": 58,
+            "fn": 56,
+            "excerpts": 5582,
+            "exact_excerpts": 5502,
+            "positive_excerpts": 1094,
+            "exact_positive_excerpts": 1039,
+            "negative_excerpts": 4488,
+            "false_positive_negative_excerpts": 25,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.9615384615384616,
+            "recall": 0.9628154050464808,
+            "f1": 0.962176509621765,
+            "accuracy": 0.985668219276245,
+            "positive_excerpt_accuracy": 0.9497257769652651,
+            "negative_excerpt_false_positive_rate": 0.005570409982174688,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": 0.0,
+            "recall": -0.0073041168658698535,
+            "precision": 0.006011973637872919
+          },
+          "point_targets_met": false
+        },
+        "domain": {
+          "counts": {
+            "tp": 474,
+            "fp": 1,
+            "fn": 6,
+            "excerpts": 256,
+            "exact_excerpts": 250,
+            "positive_excerpts": 192,
+            "exact_positive_excerpts": 186,
+            "negative_excerpts": 64,
+            "false_positive_negative_excerpts": 0,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.9978947368421053,
+            "recall": 0.9875,
+            "f1": 0.9926701570680628,
+            "accuracy": 0.9765625,
+            "positive_excerpt_accuracy": 0.96875,
+            "negative_excerpt_false_positive_rate": 0.0,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": 0.0,
+            "recall": 0.0,
+            "precision": 0.0041840450182058925
+          },
+          "point_targets_met": false
+        }
+      },
+      "both_strata_point_targets_met": false
+    },
+    {
+      "epoch": 2,
+      "model_sha256": "094e251619916e2dea8822fe0869ec33844e83480032ef306860b50147dfbd10",
+      "lower_recall": 0.9654714475431607,
+      "research_gate_passed": false,
+      "failures": [
+        "lower-stratum recall did not improve"
+      ],
+      "strata": {
+        "general": {
+          "counts": {
+            "tp": 1454,
+            "fp": 56,
+            "fn": 52,
+            "excerpts": 5582,
+            "exact_excerpts": 5508,
+            "positive_excerpts": 1094,
+            "exact_positive_excerpts": 1044,
+            "negative_excerpts": 4488,
+            "false_positive_negative_excerpts": 24,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.9629139072847682,
+            "recall": 0.9654714475431607,
+            "f1": 0.9641909814323607,
+            "accuracy": 0.9867431028305267,
+            "positive_excerpt_accuracy": 0.9542961608775137,
+            "negative_excerpt_false_positive_rate": 0.0053475935828877,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": 0.0010748835542816195,
+            "recall": -0.004648074369189907,
+            "precision": 0.007387419384179592
+          },
+          "point_targets_met": false
+        },
+        "domain": {
+          "counts": {
+            "tp": 476,
+            "fp": 1,
+            "fn": 4,
+            "excerpts": 256,
+            "exact_excerpts": 252,
+            "positive_excerpts": 192,
+            "exact_positive_excerpts": 188,
+            "negative_excerpts": 64,
+            "false_positive_negative_excerpts": 0,
+            "abstained_excerpts": 0,
+            "abstained_negative_excerpts": 0,
+            "precision": 0.9979035639412998,
+            "recall": 0.9916666666666667,
+            "f1": 0.9947753396029259,
+            "accuracy": 0.984375,
+            "positive_excerpt_accuracy": 0.9791666666666666,
+            "negative_excerpt_false_positive_rate": 0.0,
+            "point_targets_met": false
+          },
+          "delta": {
+            "accuracy": 0.0078125,
+            "recall": 0.004166666666666667,
+            "precision": 0.0041928721174004195
+          },
+          "point_targets_met": false
+        }
+      },
+      "both_strata_point_targets_met": false
+    }
+  ],
+  "decision": "retain frozen reference",
+  "selected_research_checkpoint": null,
+  "reference_checkpoint": "ec2ecc9579816fe059b83cc76cd61a18c7a6aad74253565fa98d0654536d8e9a",
+  "independent_final_evaluation": false,
+  "browser_promotion_approved": false,
+  "limitations": "Development selection only. Export, browser parity, full-entity evaluation and independent labels remain separate gates.",
+  "method": "exact non-Person argmax span veto before CRF-priority merge; CRF=.75 neural=0",
+  "protocol_sha256": "8b4a21bf06bdc852b3f2272c680f0877464cee428695e8303d7a43a460ea6431",
+  "original_trial_decision_unchanged": true
+}

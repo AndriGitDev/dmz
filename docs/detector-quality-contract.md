@@ -162,3 +162,5 @@ The schema-3 address-hyphen replay preserves all five corpora’s typed quality,
 Schema 4 adds aggregate `scanner_fallback_reasons` for each path and corpus. The counter uses only fixed reason codes; it never saves exception messages or input text. Input rejection, asset/inference failures, worker failures, busy responses and deadlines remain operational diagnostics rather than alternate detection metrics.
 
 The [email shape and context probes](../bench/email-shape-v3.md) measure complete mailbox spans rather than suffix-only matches. Their selected synthetic improvements preserve preceding corpus results but do not establish representative email accuracy, deliverability, or full RFC/IDNA validation.
+
+A separate [exact other-type veto experiment](../bench/contextual/entity-veto-result.md) reduces general false names but loses true names and fails the unchanged recall guard for both complete checkpoints. It also retains the frozen reference; higher excerpt accuracy alone does not satisfy the joint accuracy/recall target.

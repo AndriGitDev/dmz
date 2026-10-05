@@ -1,0 +1,31 @@
+{
+  "scope": "Reused Person development; mechanical tokenizer boundary audit, no inference",
+  "strata": {
+    "general": {
+      "input_sha256": "ddf057b278e1a143da7d1667872cf0c5d66d7a94e63aeebc57fd8b1753f3a2a0",
+      "text_mode": "canonical",
+      "counts": {
+        "records": 5582,
+        "chunks": 5582,
+        "split_records": 0,
+        "gold_person": 1506,
+        "crossing_person": 0,
+        "near_boundary_person": 0
+      }
+    },
+    "domain": {
+      "input_sha256": "6246db44f8ba0b2a0f33228c6c6deac2c4937fe442b2e17351292baf3cbd6b87",
+      "text_mode": "original",
+      "counts": {
+        "records": 256,
+        "chunks": 256,
+        "split_records": 0,
+        "gold_person": 480,
+        "crossing_person": 0,
+        "near_boundary_person": 0
+      }
+    }
+  },
+  "script_sha256": "7d69503f00e681bc3935b6dcada61364944be5ee29c1fe736b95acecfe034dd5",
+  "independent_validation": false
+}
