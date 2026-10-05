@@ -84,13 +84,22 @@ def runner(name,config,model_dir):
         model=AutoModelForTokenClassification.from_pretrained(str(model_dir),local_files_only=True).eval()
         pipe=pipeline('token-classification',model=model,tokenizer=tok,aggregation_strategy=config['aggregation'],device=-1)
         def predict(text):return [{'start':r['start'],'end':r['end'],'label':r['entity_group'],'score':float(r['score'])} for r in pipe(text)]
+    elif name=='opf':
+        from opf import OPF
+        model=OPF(model=str(model_dir/'original'),device='cpu',context_window_length=config['context_window_length'],decode_mode=config['decode'])
+        model.get_prediction_components()
+        def predict(text):
+            result=model.redact(text)
+            if result.text!=text or result.warning or result.summary.get('decoded_mismatch'):
+                raise ValueError('Privacy Filter changed the original text')
+            return [{'start':r.start,'end':r.end,'label':r.label,'score':1.0} for r in result.detected_spans]
     else:raise ValueError('unknown candidate')
     return predict
 
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument('--candidate',required=True,choices=['presidio','gliner','gliner2','bert'])
+    parser.add_argument('--candidate',required=True,choices=['presidio','gliner','gliner2','bert','opf'])
     parser.add_argument('--models',type=Path,required=True)
     parser.add_argument('--output',required=True)
     parser.add_argument('--corpus',type=Path,default=ROOT/'bench/corpus/open-source-pii-v1')

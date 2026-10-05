@@ -1,11 +1,90 @@
 {
   "schema": 1,
-  "scope": ["name_demo", "address", "phone", "email", "iban", "card", "kennitala", "secret", "tenant_dictionary"],
-  "compositions": ["candidate-alone", "frozen-trained-first-add-nonoverlapping", "frozen-basic-first-add-nonoverlapping"],
+  "scope": [
+    "name_demo",
+    "address",
+    "phone",
+    "email",
+    "iban",
+    "card",
+    "kennitala",
+    "secret",
+    "tenant_dictionary"
+  ],
+  "compositions": [
+    "candidate-alone",
+    "frozen-trained-first-add-nonoverlapping",
+    "frozen-basic-first-add-nonoverlapping"
+  ],
   "candidates": {
-    "presidio": {"package": "presidio-analyzer==2.2.364", "model": "en_core_web_lg==3.8.0", "threshold": 0.0, "mapping": {"PERSON": "name_demo", "EMAIL_ADDRESS": "email", "PHONE_NUMBER": "phone", "CREDIT_CARD": "card", "IBAN_CODE": "iban"}},
-    "gliner": {"package": "gliner==0.2.29", "model": "knowledgator/gliner-pii-base-v1.0", "revision": "61726e0ad791dcab3e29339bbec3ad42ded65641", "runtime": "onnx-fp32", "threshold": 0.3, "mapping": {"name": "name_demo", "location address": "address", "phone number": "phone", "email address": "email", "iban": "iban", "credit card": "card", "password": "secret", "api key": "secret"}},
-    "gliner2": {"package": "gliner2==2.0.0", "model": "fastino/gliner2-privacy-filter-PII-multi", "revision": "1cb4166094dc58fa8d836429f060d6c95f62b495", "threshold": 0.5, "mapping": {"person": "name_demo", "address": "address", "phone_number": "phone", "email": "email", "iban": "iban", "payment_card": "card", "secret": "secret"}},
-    "bert": {"package": "transformers==4.57.6", "model": "dslim/bert-base-NER", "revision": "d1a3e8f13f8c3566299d95fcfc9a8d2382a9affc", "aggregation": "simple", "mapping": {"PER": "name_demo"}}
+    "presidio": {
+      "package": "presidio-analyzer==2.2.364",
+      "model": "en_core_web_lg==3.8.0",
+      "threshold": 0.0,
+      "mapping": {
+        "PERSON": "name_demo",
+        "EMAIL_ADDRESS": "email",
+        "PHONE_NUMBER": "phone",
+        "CREDIT_CARD": "card",
+        "IBAN_CODE": "iban"
+      }
+    },
+    "gliner": {
+      "package": "gliner==0.2.29",
+      "model": "knowledgator/gliner-pii-base-v1.0",
+      "revision": "61726e0ad791dcab3e29339bbec3ad42ded65641",
+      "runtime": "onnx-fp32",
+      "threshold": 0.3,
+      "mapping": {
+        "name": "name_demo",
+        "location address": "address",
+        "phone number": "phone",
+        "email address": "email",
+        "iban": "iban",
+        "credit card": "card",
+        "password": "secret",
+        "api key": "secret"
+      }
+    },
+    "gliner2": {
+      "package": "gliner2==2.0.0",
+      "model": "fastino/gliner2-privacy-filter-PII-multi",
+      "revision": "1cb4166094dc58fa8d836429f060d6c95f62b495",
+      "threshold": 0.5,
+      "mapping": {
+        "person": "name_demo",
+        "address": "address",
+        "phone_number": "phone",
+        "email": "email",
+        "iban": "iban",
+        "payment_card": "card",
+        "secret": "secret"
+      }
+    },
+    "bert": {
+      "package": "transformers==4.57.6",
+      "model": "dslim/bert-base-NER",
+      "revision": "d1a3e8f13f8c3566299d95fcfc9a8d2382a9affc",
+      "aggregation": "simple",
+      "mapping": {
+        "PER": "name_demo"
+      }
+    },
+    "opf": {
+      "package": "opf==0.1.0",
+      "source_commit": "f7f00ca7fb869683eb732c010299d901457f19c3",
+      "model": "openai/privacy-filter",
+      "revision": "7ffa9a043d54d1be65afb281eddf0ffbe629385b",
+      "runtime": "native-cpu-bfloat16",
+      "decode": "viterbi",
+      "context_window_length": 4096,
+      "mapping": {
+        "private_person": "name_demo",
+        "private_address": "address",
+        "private_email": "email",
+        "private_phone": "phone",
+        "secret": "secret"
+      }
+    }
   }
 }
