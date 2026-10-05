@@ -57,3 +57,10 @@ quantizes the classifier, span representation and count embedding. Preserve
 original seven-label schema and 0.5 address-only selection. Score quantization
 changes and verify browser parity; a smaller file is not evidence of equal
 quality. No calibration or threshold tuning on the fresh 90 excerpts.
+
+The first quantization attempt stopped at the host-memory guard before producing
+an artifact. A bounded-array retry may split ORT's scalar-scale UINT8 conversion
+into chunks, applying the same original elementwise operation to each chunk.
+Record this implementation choice and require bit-for-bit primitive parity on
+random inputs, clipping limits and half ties before quantizing. This changes
+temporary allocation size, not quantization scales, rounding or thresholds.
