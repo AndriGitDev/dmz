@@ -1,0 +1,14 @@
+{
+ "schema":1,
+ "declared_before_inference":true,
+ "model":"gravitee-io/bert-small-pii-detection",
+ "revision":"f8c27a85c51c0168f07b9dcf00265bf0a4097939",
+ "licence":"Apache-2.0 per pinned model card",
+ "variants":{"gravitee-fp32":"model.onnx","gravitee-int8":"model.quant.onnx"},
+ "mapping":{"PERSON":"name_demo","PHONE_NUMBER":"phone","EMAIL_ADDRESS":"email","IBAN_CODE":"iban","CREDIT_CARD":"card","PASSWORD":"secret"},
+ "excluded":"LOCATION is not equivalent to a street address; all other labels are outside the declared nine-type mapping",
+ "decoder":"argmax BIO, mean token probability per span, simple aggregation; 512-token windows with 64-token overlap; duplicates removed",
+ "thresholds":[0.0,0.9,0.99],
+ "compositions":["candidate alone","frozen trained first; non-overlapping additions","frozen trained first; Person-only additions","frozen trained first; phone-only additions"],
+ "selection":"Synthetic v1 is calibration. Retain all configurations. No default promotion without a fresh diagnostic and Icelandic regression guard."
+}
