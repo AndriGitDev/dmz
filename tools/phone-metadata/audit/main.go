@@ -1,5 +1,6 @@
-// Differential check against the pinned upstream library. Only aggregate counts
-// are emitted; public example numbers and generated digit strings stay in RAM.
+// Differential check against the pinned upstream library. Default output is
+// aggregate-only; --wasm-fixtures explicitly writes a new private experiment
+// file of public examples/generated digits for cross-runtime parity checks.
 package main
 
 import (

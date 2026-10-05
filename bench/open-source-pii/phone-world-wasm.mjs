@@ -25,7 +25,9 @@ assert.equal(typeof globalThis.dmzProcessBestEffort,'function');
 let completed=0;const began=performance.now(),times=[];
 for(const row of rows){
  assert.match(row.input,/^Tel: \+[0-9]+$/);
- globalThis.dmzReset();
+ // These constrained inputs cannot contain issued markers. Reusing a bounded
+ // session also tests restoration across different canonical numeric values.
+ if(completed%128===0)globalThis.dmzReset();
  const start=performance.now(),result=JSON.parse(globalThis.dmzProcessBestEffort(row.input,'[]'));
  times.push(performance.now()-start);
  assert.ok(result.allowed&&result.spans_available,`case ${completed} rejected`);
@@ -36,6 +38,6 @@ for(const row of rows){
 assert.equal(hash(readFileSync(wasmArg)),hash(wasm));times.sort((a,b)=>a-b);
 const result={schema:1,status:'complete',cases:completed,source:manifest.source,fixture_sha256:hash(raw),
  wasm_sha256:hash(wasm),runtime_sha256:hash(runtime),measurement_sha256:hash(readFileSync(fileURLToPath(import.meta.url))),
- seconds:(performance.now()-began)/1000,p50_ms:times[Math.floor(times.length*.5)],p95_ms:times[Math.floor(times.length*.95)],max_ms:times.at(-1),
+ seconds:(performance.now()-began)/1000,cases_per_session:128,p50_ms:times[Math.floor(times.length*.5)],p95_ms:times[Math.floor(times.length*.95)],max_ms:times.at(-1),
  exact_restoration:true,native_span_mismatches:0,scope:'Canonical phone-rule runtime parity, not PII accuracy or independent field evidence'};
 writeFileSync(out,JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result));
