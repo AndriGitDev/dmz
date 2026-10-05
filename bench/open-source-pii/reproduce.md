@@ -7,7 +7,7 @@ Only aggregate exporters write reviewed reports under `bench/results`.
 
 ## Recorded environment
 
-The 5 October run used Go 1.27, TinyGo 0.42.0 and ONNX Runtime Web 1.23.2.
+The 5 October run used Go 1.27.1, TinyGo 0.42.0 and ONNX Runtime Web 1.23.2.
 Python package metadata was checked from the research virtual environment:
 
 | Package | Version |
