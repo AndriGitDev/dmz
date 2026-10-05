@@ -1,7 +1,7 @@
 from copy import deepcopy
 import unittest
 
-from compare_quality import compare
+from compare_quality import compare, TRAINING_INPUT, TRAINING_LABELS, TRAINING_SETTINGS
 from quality import score
 
 
@@ -19,6 +19,9 @@ class ComparisonTests(unittest.TestCase):
                          composition=dict(neural_sha256='frozen', crf_sha256='crf'),
                          evaluation_inputs=dict(general='general-source', domain='domain-source'))
         training = dict(label_mode='entities', split='train', base_weights_sha256='base',
+                        schema=1, input_sha256=TRAINING_INPUT, rows=46196,
+                        labels=list(TRAINING_LABELS), settings=dict(TRAINING_SETTINGS),
+                        initial_head_sha256=None, independent_final_evaluation=False,
                         warm_start=dict(checkpoint_sha256='frozen'),
                         checkpoints=[dict(sha256='candidate', epoch=1, complete_epoch=True)])
         baselines, candidate = {}, {}
@@ -56,6 +59,25 @@ class ComparisonTests(unittest.TestCase):
         args = self.fixture()
         args[1][0]['general']['quality']['combined'] = result(4)
         self.assertIsNone(compare(*args)['selected_research_checkpoint'])
+
+    def test_changed_training_recipe_cannot_enter_frozen_comparison(self):
+        changes = [
+            lambda a: a[0].update(input_sha256='different'),
+            lambda a: a[0].update(rows=100),
+            lambda a: a[0].update(labels=['O', 'B', 'I']),
+            lambda a: a[0].update(initial_head_sha256='different'),
+            lambda a: a[0].update(independent_final_evaluation=True),
+            lambda a: a[0].update(settings=dict(seed=45)),
+            lambda a: a[0]['settings'].update(encoder_lr=1e-5),
+            lambda a: a[0]['settings'].update(max_steps=100),
+            lambda a: a[0]['settings'].update(probe=0),
+            lambda a: a[0]['checkpoints'][0].update(epoch=3),
+            lambda a: a[0]['checkpoints'].append(dict(sha256='duplicate-epoch',epoch=1,complete_epoch=True)),
+        ]
+        for change in changes:
+            with self.subTest(change=change):
+                args = self.fixture(); change(args)
+                with self.assertRaises(ValueError): compare(*args)
 
     def test_missing_incomplete_mismatched_or_changed_population_rejected(self):
         changes = [

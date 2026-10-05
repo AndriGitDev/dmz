@@ -13,6 +13,32 @@ from pathlib import Path
 from ner import external, sha
 
 DATASETS = ('general', 'domain')
+TRAINING_INPUT = '9f5020c0ea357b6f85fca5162aa6d01d6328669c189ae67ddf9e27731a22387a'
+TRAINING_LABELS = ['O', 'B-Person', 'I-Person', 'B-Organization', 'I-Organization',
+                   'B-Location', 'I-Location', 'B-Miscellaneous', 'I-Miscellaneous']
+TRAINING_SETTINGS = dict(command='train', epochs=2, seed=44, label_mode='entities',
+                         encoder_lr=5e-6, head_lr=5e-5, accumulation=4,
+                         max_seconds=16200.0, max_steps=0, probe=False,
+                         batch_size=8, threads=3)
+
+
+def validate_training_recipe(training):
+    if (training.get('schema') != 1 or training.get('input_sha256') != TRAINING_INPUT or
+            training.get('rows') != 46196 or training.get('labels') != TRAINING_LABELS or
+            training.get('initial_head_sha256') is not None or
+            training.get('independent_final_evaluation') is not False):
+        raise ValueError('training source, label schema or initialization differs from protocol')
+    settings = training.get('settings', {})
+    if any(settings.get(key) != value or isinstance(settings.get(key), bool) != isinstance(value, bool)
+           for key, value in TRAINING_SETTINGS.items()):
+        raise ValueError('training settings differ from protocol')
+    epochs = set()
+    for item in training['checkpoints']:
+        epoch = item.get('epoch')
+        if (type(epoch) is not int or epoch not in (1, 2) or epoch in epochs or
+                type(item.get('complete_epoch')) is not bool):
+            raise ValueError('invalid or duplicate training epoch')
+        epochs.add(epoch)
 
 
 def metrics(report):
@@ -44,6 +70,7 @@ def metrics(report):
 
 
 def compare(training, candidates, baselines, reference):
+    validate_training_recipe(training)
     if reference.get('frozen') is not True or reference.get('thresholds') != dict(crf=.75, neural=0):
         raise ValueError('requires unchanged frozen reference')
     if (training.get('label_mode') != 'entities' or training.get('split') != 'train' or

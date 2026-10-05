@@ -47,6 +47,10 @@ three-label package must remain unchanged until that work passes.
 `compare_quality.py` applies this gate to the saved aggregate evaluations. It
 checks complete checkpoint identities, fixed input/CRF hashes, text modes,
 thresholds, annotation population, and ratios against integer counts. All
+training manifests must also match the predeclared training-source hash, row
+count, nine-label order, initialization mode and recorded hyperparameters;
+duplicate or out-of-range epoch numbers fail. This verifies manifest claims,
+not an independent attestation of how weights were produced. All
 complete epochs in the supplied training manifest must be compared. A passing
 result qualifies only for further research checks; it never approves browser
 promotion or independent performance claims.
