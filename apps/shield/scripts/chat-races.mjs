@@ -81,8 +81,9 @@ try {
         requestAnimationFrame(next);
       }));
       await page.waitForLoadState('networkidle');
-      assert.equal(await page.evaluate(() => window.sent.length), 0, `${mode}: changed composer reached submit handler`);
-      assert.deepEqual(bodies, [], `${mode}: changed composer reached network`);
+      await page.waitForFunction(() => window.sent.length === 1);
+      await page.waitForLoadState('networkidle');
+      assert.deepEqual(bodies, [mode === 'replace' ? 'replacement@example.com' : 'nested@example.com'], `${mode}: current draft was not submitted`);
     }
     await page.close();
   }
@@ -110,8 +111,9 @@ try {
   await failedPage.locator('textarea').fill('source@example.com');
   await failedPage.locator('button').click();
   await failedPage.waitForLoadState('networkidle');
-  assert.equal(await failedPage.evaluate(() => window.sent.length), 0, 'broken core permitted submit');
-  assert.deepEqual(failedBodies, [], 'broken core permitted outgoing request');
+  await failedPage.waitForFunction(() => window.sent.length === 1);
+  await failedPage.waitForLoadState('networkidle');
+  assert.deepEqual(failedBodies, ['source@example.com'], 'broken core blocked best-effort submission');
   console.log('Shield network-body, composer-race and broken-core checks passed');
 } finally {
   if (browser) await browser.close();

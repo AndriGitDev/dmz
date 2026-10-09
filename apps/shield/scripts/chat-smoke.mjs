@@ -175,24 +175,24 @@ try {
   await page.locator('#prompt-textarea').evaluate(element => element.removeAttribute('id'));
   await page.locator('textarea').fill('demo@example.com');
   await page.locator('[data-testid="send-button"]').click();
-  assert.equal(await page.evaluate(() => window.sent.length), 4, 'unknown composer was submitted');
+  assert.equal(await page.evaluate(() => window.sent.length), 5, 'unknown composer blocked best-effort submission');
   await page.locator('#upload').setInputFiles({ name: 'synthetic.txt', mimeType: 'text/plain', buffer: Buffer.from('fabricated') });
-  assert.equal(await page.evaluate(() => window.uploads), 0, 'file selection reached page handler');
-  assert.equal(await page.locator('#upload').evaluate(element => element.files.length), 0, 'selected file was retained');
+  assert.equal(await page.evaluate(() => window.uploads), 2, 'file selection was blocked');
+  assert.equal(await page.locator('#upload').evaluate(element => element.files.length), 1, 'selected file was cleared');
   await page.locator('#attach').click();
-  assert.equal(await page.evaluate(() => window.uploads), 0, 'attach action reached page handler');
+  assert.equal(await page.evaluate(() => window.uploads), 3, 'attach action was blocked');
   await page.locator('body').evaluate(element => {
     const transfer = new DataTransfer();
     transfer.items.add(new File(['fabricated'], 'synthetic.txt', { type: 'text/plain' }));
     element.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: transfer }));
   });
-  assert.equal(await page.evaluate(() => window.uploads), 0, 'file drop reached page handler');
+  assert.equal(await page.evaluate(() => window.uploads), 4, 'file drop was blocked');
   await page.locator('textarea').evaluate(element => {
     const transfer = new DataTransfer();
     transfer.items.add(new File(['fabricated'], 'synthetic.txt', { type: 'text/plain' }));
     element.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, cancelable: true, clipboardData: transfer }));
   });
-  assert.equal(await page.evaluate(() => window.uploads), 0, 'file paste reached page handler');
+  assert.equal(await page.evaluate(() => window.uploads), 5, 'file paste was blocked');
   assert.match(await page.locator('#dmz-shield-status').getAttribute('style'), /position:\s*fixed/);
 
   const claude = await browser.newPage();
@@ -356,11 +356,11 @@ try {
     assert.ok(!(await modern.evaluate(() => window.sent[2])).includes('sk-test'));
     await field.evaluate(element => element.after(element.cloneNode(true)));
     await modern.locator('button').click();
-    assert.equal(await modern.evaluate(() => window.sent.length), 3, 'ambiguous editor submitted');
+    assert.equal(await modern.evaluate(() => window.sent.length), 4, 'ambiguous editor blocked submission');
     await modern.locator('[contenteditable]').last().evaluate(element => { element.hidden = true; });
     await modern.locator('[contenteditable]').first().fill('demo@example.com');
     await modern.locator('button').click();
-    await modern.waitForFunction(() => window.sent.length === 4);
+    await modern.waitForFunction(() => window.sent.length === 5);
     await modern.close();
   }
   // Canonically equal identifiers with different original spellings must not
@@ -389,6 +389,7 @@ try {
     assert.ok(sent.every(text => !text.includes('140182') && !text.includes('próf') && !text.includes('pro\u0301f')));
     assert.ok(!(await variants.locator('#responses').textContent()).includes('140182'), 'restored identifier reached host DOM');
     assert.equal(await variants.locator('[data-dmz-restored="true"]').last().evaluate(frame => frame.contentDocument), null);
+    let invalidCount = 3;
     for (const code of [0xd800, 0xdfff]) {
       await variants.locator(editor).evaluate((element, code) => {
         window.invalidDraft = 'demo ' + String.fromCharCode(code) + ' demo@example.invalid';
@@ -397,8 +398,9 @@ try {
         element.dispatchEvent(new InputEvent('input', { bubbles: true, data: window.invalidDraft }));
       }, code);
       await variants.locator(send).click();
-      assert.ok((await shieldStatusHTML(variants)).includes('Sending stöðvuð.'), 'lossy input was not rejected');
-      assert.equal(await variants.evaluate(() => window.sent.length), 3, 'malformed UTF-16 draft was submitted');
+      assert.ok((await shieldStatusHTML(variants)).includes('Viðvörun:'), 'lossy input had no warning');
+      await variants.waitForFunction(count => window.sent.length === count, ++invalidCount);
+      assert.equal(await variants.evaluate(() => window.sent.length), invalidCount, 'best-effort fallback did not submit');
       assert.equal(await variants.locator(editor).evaluate(element =>
         (element instanceof HTMLTextAreaElement ? element.value : element.innerText) === window.invalidDraft), true,
       'rejection changed the original draft');
@@ -406,12 +408,12 @@ try {
     const recovered = '🙂 demo@example.invalid';
     await variants.locator(editor).fill(recovered);
     await variants.locator(send).click();
-    await variants.waitForFunction(() => window.sent.length === 4);
+    await variants.waitForFunction(() => window.sent.length === 6);
     await variants.frameLocator('[data-dmz-restored="true"]').last().getByText(recovered, { exact: true }).waitFor();
     await variants.close();
   }
   assert.deepEqual(errors, []);
-  console.log('ChatGPT and Claude synthetic interception, block and restore smoke tests passed');
+  console.log('ChatGPT and Claude synthetic interception, best-effort submission and restore smoke tests passed');
 } finally {
   if (browser) await browser.close();
   await rm(profile, { recursive: true, force: true });

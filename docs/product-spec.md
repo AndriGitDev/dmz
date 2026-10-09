@@ -1,5 +1,14 @@
 # Product and architecture specification, working v0.1
 
+## Owner policy update — 9 October 2026
+
+Shield attempts device-local text masking on a best-effort basis and continues
+submission even when its core, scanner or composer update fails, with a visible
+warning. Changed drafts remain current; stale scanner results never overwrite
+them. Files, images and attachments are allowed with a warning and are sent
+unchanged. This supersedes earlier Shield submission and attachment blockers
+described below; strict server-side core policy is unchanged.
+
 Source: 27 September 2026 business plan, with prototype decisions recorded in ADR 0002 and 0003. Planned behaviour is marked as a requirement; Shield's manual side panel, experimental ChatGPT/Claude content script and small Go/WASM detector are now implemented. The content script has synthetic browser-fixture coverage and owner-reported live masking on both sites and restoration on Claude; full authenticated verification remains pending.
 
 Portal/Gateway direction was revised with owner approval in [ADR 0004](adr/0004-portal-hosting-and-pii-policy.md): initial Hetzner EU hosting and customer policy selecting masking or approved original-PII processing. See the [first preview plan](portal-gateway-plan.md). These are planned capabilities.
