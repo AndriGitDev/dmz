@@ -30,10 +30,7 @@ export default defineContentScript({
   main() {
     let ready = false;
     let processing = false;
-    let replayPermit: {
-      field: HTMLElement; text: string; url: string; target: HTMLElement; type: string;
-      rootSeen: boolean; submitSeen: boolean; cancelled: boolean;
-    } | undefined;
+    let replaying = false;
     let message = 'Shield hleður staðbundnum kjarna…';
     let toast: HTMLElement | undefined;
     let resetButton: HTMLButtonElement | undefined;
@@ -181,7 +178,7 @@ export default defineContentScript({
       const available = composer() !== null;
       if (composerAvailable !== available) {
         composerAvailable = available;
-        inform(available ? 'Shield virkur fyrir texta á þessari síðu.' : 'Shield finnur ekki studdan textareit. Ekki senda gögn.');
+        inform(available ? 'Shield virkur fyrir texta á þessari síðu.' : 'Viðvörun: Shield finnur ekki studdan textareit. Sending heldur áfram án Shield-möskunar.');
       }
       const core = globalThis as unknown as Core;
       for (const response of responses) {
@@ -245,7 +242,6 @@ export default defineContentScript({
     function resetSession(): boolean {
       if (!ready) return false;
       sessionEpoch++;
-      if (replayPermit) replayPermit.cancelled = true;
       for (const entry of restoredMessages.values()) {
         removeRestored(entry);
       }
@@ -302,24 +298,6 @@ export default defineContentScript({
       if (reviewButton) reviewButton.hidden = !review;
     }
 
-    function reviewSummary(findings: Finding[]): string {
-      // Show categories and counts only; never echo values or arbitrary reason text
-      // into the host page, including the closed status shadow root.
-      const labels: Record<string, string> = {
-        secret: 'leyndarmál', name_demo: 'nafn', name_review: 'ósamræmi í nafngreiningu', address: 'heimilisfang',
-        phone: 'símanúmer', email: 'netfang', unicode_review: 'Unicode-tákn',
-        marker_review: 'óþekktur eða breyttur Shield-merkimiði; byrjaðu með upprunalegan prófunartexta',
-      };
-      const counts = new Map<string, number>();
-      for (const finding of findings) {
-        if (finding.action !== 'review' && finding.action !== 'block') continue;
-        const label = labels[finding.kind] ?? 'óviss gögn';
-        counts.set(label, (counts.get(label) ?? 0) + 1);
-      }
-      const summary = [...counts].map(([label, count]) => `${label} (${count})`).join(', ');
-      return `Sending stöðvuð: ${summary || 'óviss eða óstudd gögn'}. Fjarlægðu eða breyttu þessum atriðum og sendu aftur til yfirferðar.`;
-    }
-
     function composer(): HTMLElement | null {
       const candidates = new Set<HTMLElement>();
       for (const selector of composers) {
@@ -333,10 +311,33 @@ export default defineContentScript({
     }
 
     function read(element: HTMLElement): string {
-      return element instanceof HTMLTextAreaElement ? element.value : element.innerText;
+      if (element instanceof HTMLTextAreaElement) return element.value;
+      // innerText adds layout-dependent blank lines between editor paragraphs.
+      // Read logical editor lines instead, including empty paragraphs, without
+      // treating ProseMirror's caret-only trailing break as prompt text.
+      const block = /^(P|DIV|LI|H[1-6]|PRE|BLOCKQUOTE)$/;
+      function text(node: Node): string {
+        if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
+        if (!(node instanceof HTMLElement)) return '';
+        if (node.tagName === 'BR') return node.classList.contains('ProseMirror-trailingBreak') ? '' : '\n';
+        const children = [...node.childNodes];
+        if ((node === element || block.test(node.tagName)) && children.length === 1
+          && children[0] instanceof HTMLBRElement) return '';
+        let result = '';
+        let previousBlock = false;
+        children.forEach((child, index) => {
+          const currentBlock = child instanceof HTMLElement && block.test(child.tagName);
+          if (index && (previousBlock || currentBlock)) result += '\n';
+          result += text(child);
+          previousBlock = currentBlock;
+        });
+        return result;
+      }
+      return text(element);
     }
 
     function write(element: HTMLElement, value: string): boolean {
+      if (read(element) === value) return true;
       if (element instanceof HTMLTextAreaElement) {
         const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
         setter?.call(element, value);
@@ -348,10 +349,13 @@ export default defineContentScript({
         const selection = window.getSelection();
         selection?.removeAllRanges();
         selection?.addRange(range);
-        document.execCommand('insertText', false, value);
-        element.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: value }));
+        // Native insertion already emits input; a second synthetic event can
+        // make a framework process the replacement twice.
+        if (!document.execCommand('insertText', false, value)) return false;
       }
-      return read(element) === value;
+      // Rich editors reconcile their document after the native input event.
+      // The gate verifies the exact logical text after that reconciliation.
+      return true;
     }
 
     function cancel(event: Event) {
@@ -360,36 +364,18 @@ export default defineContentScript({
     }
 
     async function gate(event: Event, replay: () => void, action: HTMLElement) {
-      if (replayPermit) {
-        const permit = replayPermit;
-        const sameInput = permit.field.isConnected && composer() === permit.field
-          && read(permit.field) === permit.text && location.href === permit.url;
-        const root = !permit.rootSeen && event.type === permit.type && event.target === permit.target;
-        const submit = permit.rootSeen && permit.type !== 'submit' && !permit.submitSeen
-          && event.type === 'submit' && event.target === permit.field.closest('form');
-        if (permit.cancelled || !sameInput || (!root && !submit)) {
-          permit.cancelled = true;
-          cancel(event);
-          inform('Textareitur eða sending breyttist eftir möskun. Sending stöðvuð.');
-        } else if (root) {
-          permit.rootSeen = true;
-        } else {
-          permit.submitSeen = true;
-        }
-        return;
-      }
+      if (replaying) return;
       if (processing) { cancel(event); return; }
       const field = composer();
       if (!field || !read(field).trim()) {
-        cancel(event);
-        inform('Shield fann ekki studdan textareit. Sending stöðvuð.');
+        inform('Viðvörun: Shield fann ekki studdan textareit. Sent án Shield-möskunar.');
+        return;
+      }
+      if (!ready) {
+        inform('Viðvörun: Shield-kjarninn er ekki tiltækur. Sent án Shield-möskunar.');
         return;
       }
       cancel(event);
-      if (!ready) {
-        inform(message);
-        return;
-      }
       processing = true;
       try {
         const url = location.href;
@@ -399,7 +385,7 @@ export default defineContentScript({
         let result = JSON.parse(core.dmzProcessBestEffort!(input, '[]')) as Result;
         let basicOnly = false;
         if (result.error) throw new Error('Core processing failed');
-        if (!result.allowed) { inform(reviewSummary(result.findings ?? []), true); return; }
+        if (!result.allowed) { inform('Viðvörun: Shield gat ekki maskað þennan texta. Sending heldur áfram.'); return; }
         if (trainedScanner) {
           inform('Shield yfirfer nöfn á tækinu… Fyrsta keyrsla getur tekið lengri tíma.');
           try {
@@ -415,39 +401,43 @@ export default defineContentScript({
           // Async inference must not overwrite edits, a new route or a reset session.
           if (sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
             || !action.isConnected || composer() !== field || read(field) !== input) {
-            inform('Textareitur breyttist við yfirferð. Sending stöðvuð.'); return;
+            inform('Viðvörun: Textareitur breyttist við yfirferð. Sent með núverandi texta; möskun getur verið ófullkomin.'); return;
           }
         }
         if (result.error) throw new Error('Core processing failed');
         if (!result.allowed) {
-          inform(reviewSummary(result.findings ?? []), true);
+          inform('Viðvörun: Shield gat ekki maskað þennan texta. Sending heldur áfram.');
           return;
         }
         if (result.transformed === undefined) {
-          inform('Shield gat ekki yfirfarið textann. Sending stöðvuð.');
+          inform('Viðvörun: Shield gat ekki yfirfarið textann. Sending heldur áfram.');
           return;
         }
         if (!write(field, result.transformed)) {
-          inform('Shield gat ekki uppfært textareitinn. Sending stöðvuð.');
+          inform('Viðvörun: Shield gat ekki uppfært textareitinn. Sending heldur áfram; möskun getur verið ófullkomin.');
           return;
         }
         await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
         if (sessionEpoch !== epoch || !field.isConnected || !action.isConnected || composer() !== field
-          || location.href !== url || read(field) !== result.transformed) {
-          inform('Textareitur breyttist eftir möskun. Sending stöðvuð.');
+          || location.href !== url) {
+          inform('Viðvörun: Textareitur breyttist eftir möskun. Sending heldur áfram með núverandi texta.');
           return;
         }
-        const permit = { field, text: result.transformed, url, target: action, type: event.type,
-          rootSeen: false, submitSeen: false, cancelled: false };
-        replayPermit = permit;
-        replay();
-        if (permit.cancelled) return;
+        if (read(field) !== result.transformed) {
+          inform('Viðvörun: Shield gat ekki uppfært textareitinn. Sending heldur áfram; möskun getur verið ófullkomin.');
+          return;
+        }
         inform(basicOnly ? 'Viðvörun: Þjálfaður nafnagreinir var ekki tiltækur. Sent með grunnmöskun; nöfn geta hafa farið ómöskuð.' : result.findings.some((finding) => finding.reason === 'whole-text-coverage') ? 'Shield maskaði allan textann þar sem ekki var hægt að afmarka auðkenni örugglega.' : result.findings.length ? 'Shield maskaði auðkenni áður en sent var.' : 'Shield yfirfór textann áður en sent var.');
       } catch {
-        inform('Shield gat ekki yfirfarið textann. Sending stöðvuð.');
+        inform('Viðvörun: Shield gat ekki yfirfarið textann. Sending heldur áfram; möskun getur verið ófullkomin.');
       } finally {
-        replayPermit = undefined;
-        processing = false;
+        // Owner policy: a failed best-effort pass must still replay the user's
+        // send action. Never overwrite a changed draft with an older scan.
+        // Even synchronous failures must leave the original event stack first:
+        // browsers suppress reentrant button.click() and form.requestSubmit().
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
+        replaying = true;
+        try { replay(); } finally { replaying = false; processing = false; }
       }
     }
 
@@ -457,8 +447,7 @@ export default defineContentScript({
       if (!form.querySelector('textarea,[contenteditable="true"]')) return;
       const field = composer();
       if (!field || !form.contains(field)) {
-        cancel(event);
-        inform('Óþekktur textareitur á studdri síðu. Sending stöðvuð.');
+        inform('Viðvörun: Óþekktur textareitur. Sent án Shield-möskunar.');
         return;
       }
       const submitter = event.submitter;
@@ -471,8 +460,7 @@ export default defineContentScript({
       if (!(target instanceof Element) || !target.closest('textarea,[contenteditable="true"]')) return;
       const field = composer();
       if (!field || !field.contains(target)) {
-        cancel(event);
-        inform('Óþekktur textareitur á studdri síðu. Sending stöðvuð.');
+        inform('Viðvörun: Óþekktur textareitur. Sent án Shield-möskunar.');
         return;
       }
       void gate(event, () => field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })), field);
@@ -482,8 +470,7 @@ export default defineContentScript({
       const target = event.target;
       if (!(target instanceof Element)) return;
       if (target.closest('input[type="file"],button[aria-label*="attach" i],button[aria-label*="upload" i]')) {
-        cancel(event);
-        inform('Shield styður ekki skrár eða viðhengi. Opnun stöðvuð.');
+        inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
         return;
       }
       const button = target.closest('button');
@@ -497,31 +484,27 @@ export default defineContentScript({
     for (const kind of ['input', 'change'] as const) {
       document.addEventListener(kind, (event) => {
         if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'file') return;
-        cancel(event);
-        event.target.value = '';
-        inform('Shield styður ekki skrár eða viðhengi. Val hreinsað.');
+        inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
       }, true);
     }
 
     for (const kind of ['dragenter', 'dragover', 'drop'] as const) {
       document.addEventListener(kind, (event) => {
         if (!(event instanceof DragEvent) || !event.dataTransfer?.types.includes('Files')) return;
-        cancel(event);
-        inform('Shield styður ekki skrár eða viðhengi. Slepping stöðvuð.');
+        inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
       }, true);
     }
 
     document.addEventListener('paste', (event) => {
       if (!event.clipboardData?.files.length) return;
-      cancel(event);
-      inform('Shield styður ekki límdar skrár eða myndir. Líming stöðvuð.');
+      inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
     }, true);
 
     const core = globalThis as unknown as Core;
     function coreFailed() {
       ready = false;
       if (resetButton) resetButton.disabled = true;
-      inform('Shield-kjarni bilaður. Sending stöðvuð.');
+      inform('Viðvörun: Shield-kjarni bilaður. Sending heldur áfram án Shield-möskunar.');
     }
     void (async () => {
       const response = await fetch(chrome.runtime.getURL('dmz.wasm'));

@@ -177,11 +177,12 @@ try {
     }
     metrics.cases.push({ case: 'address-without-postcode-and-unicode-hyphens-mask-and-restore', passed: true });
   }
-  // Editing the draft during asynchronous inference cannot be overwritten or sent.
+  // Editing the draft during asynchronous inference is preserved and submitted with a warning.
   await fill(p, 'Peter kom á fundinn.');
   await p.locator('textarea').fill('Ný útgáfa textans.');
   await status(p, 'breyttist');
-  assert.equal(await p.evaluate(() => window.sent.length), 1);
+  assert.equal(await p.evaluate(() => window.sent.length), 2);
+  assert.equal(await p.evaluate(() => window.sent[1]), 'Ný útgáfa textans.');
   assert.equal(await p.locator('textarea').inputValue(), 'Ný útgáfa textans.');
   metrics.cases.push({ case: 'edit-during-inference', passed: true });
   const second = await page();
@@ -203,7 +204,7 @@ try {
   const queuedSent = await second.evaluate(() => window.sent[1]);
   assert.ok(!queuedSent.includes('Anna'));
   assert.match(queuedSent, /⟦NAME-/);
-  await p.waitForFunction(() => window.sent.length === 2, null, { timeout: 130000 });
+  await p.waitForFunction(() => window.sent.length === 3, null, { timeout: 130000 });
   metrics.cases.push({ case: 'competing-tab-queues-and-masks-name', passed: true });
   // Dispatch together to saturate admission while the real model is running.
   const batch = await sw.evaluate(() => Promise.all(Array.from({ length: 4 }, () =>
@@ -226,15 +227,15 @@ try {
   );
   assert.ok(reset.ok);
   await status(p, 'breyttist');
-  assert.equal(await p.evaluate(() => window.sent.length), 2);
+  assert.equal(await p.evaluate(() => window.sent.length), 4);
   await settings.close();
   metrics.cases.push({ case: 'reset-during-inference', passed: true });
   // Scanner termination still applies the basic detector before sending.
   await fill(p, 'Peter kom á fundinn. '.repeat(200) + 'fallback@example.com');
   await sw.evaluate(() => chrome.offscreen.closeDocument());
   await status(p, 'Sent með grunnmöskun');
-  assert.equal(await p.evaluate(() => window.sent.length), 3);
-  assert.ok(!(await p.evaluate(() => window.sent[2])).includes('fallback@example.com'));
+  assert.equal(await p.evaluate(() => window.sent.length), 5);
+  assert.ok(!(await p.evaluate(() => window.sent[4])).includes('fallback@example.com'));
   metrics.cases.push({ case: 'scanner-termination-warns-and-masks-email', passed: true });
   await close();
   // A corrupt model falls back to basic masking with a visible warning.
@@ -276,7 +277,8 @@ try {
       assert.equal(await queued.evaluate(() => window.sent.length), 1);
       assert.ok(!(await queued.evaluate(() => window.sent[0])).includes('fallback@example.com'));
       await status(edited, 'breyttist', 10000);
-      assert.equal(await edited.evaluate(() => window.sent.length), 0);
+      assert.equal(await edited.evaluate(() => window.sent.length), 1);
+      assert.equal(await edited.evaluate(() => window.sent[0]), 'Ný útgáfa textans.');
       assert.equal(await edited.locator('textarea').inputValue(), 'Ný útgáfa textans.');
       assert.equal(await q.evaluate(() => window.sent.length), 1);
       assert.ok(!(await q.evaluate(() => window.sent[0])).includes('fallback@example.com'));
