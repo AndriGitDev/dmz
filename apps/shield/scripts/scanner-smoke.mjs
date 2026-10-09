@@ -181,6 +181,7 @@ try {
   await fill(p, 'Peter kom á fundinn.');
   await p.locator('textarea').fill('Ný útgáfa textans.');
   await status(p, 'breyttist');
+  await p.waitForFunction(() => window.sent.length === 2);
   assert.equal(await p.evaluate(() => window.sent.length), 2);
   assert.equal(await p.evaluate(() => window.sent[1]), 'Ný útgáfa textans.');
   assert.equal(await p.locator('textarea').inputValue(), 'Ný útgáfa textans.');
@@ -227,6 +228,7 @@ try {
   );
   assert.ok(reset.ok);
   await status(p, 'breyttist');
+  await p.waitForFunction(() => window.sent.length === 4);
   assert.equal(await p.evaluate(() => window.sent.length), 4);
   await settings.close();
   metrics.cases.push({ case: 'reset-during-inference', passed: true });
@@ -234,6 +236,7 @@ try {
   await fill(p, 'Peter kom á fundinn. '.repeat(200) + 'fallback@example.com');
   await sw.evaluate(() => chrome.offscreen.closeDocument());
   await status(p, 'Sent með grunnmöskun');
+  await p.waitForFunction(() => window.sent.length === 5);
   assert.equal(await p.evaluate(() => window.sent.length), 5);
   assert.ok(!(await p.evaluate(() => window.sent[4])).includes('fallback@example.com'));
   metrics.cases.push({ case: 'scanner-termination-warns-and-masks-email', passed: true });
@@ -247,6 +250,7 @@ try {
     const q = await page();
     await fill(q, 'Anna mætti. fallback@example.com sk-test_key_000000000000');
     await status(q, 'Sent með grunnmöskun');
+    await q.waitForFunction(() => window.sent.length === 1);
     assert.equal(await q.evaluate(() => window.sent.length), 1);
     assert.ok(!(await q.evaluate(() => window.sent[0])).includes('fallback@example.com'));
     assert.ok(!(await q.evaluate(() => window.sent[0])).includes('sk-test'));
@@ -270,16 +274,20 @@ try {
       await edited.locator('textarea').fill('Ný útgáfa textans.');
       await fill(overflow, draft);
       await status(overflow, 'Sent með grunnmöskun', 10000);
+      await overflow.waitForFunction(() => window.sent.length === 1);
       assert.equal(await overflow.evaluate(() => window.sent.length), 1);
       assert.ok(!(await overflow.evaluate(() => window.sent[0])).includes('fallback@example.com'));
       await status(q, 'Sent með grunnmöskun', 135000);
       await status(queued, 'Sent með grunnmöskun', 10000);
+      await queued.waitForFunction(() => window.sent.length === 1);
       assert.equal(await queued.evaluate(() => window.sent.length), 1);
       assert.ok(!(await queued.evaluate(() => window.sent[0])).includes('fallback@example.com'));
       await status(edited, 'breyttist', 10000);
+      await edited.waitForFunction(() => window.sent.length === 1);
       assert.equal(await edited.evaluate(() => window.sent.length), 1);
       assert.equal(await edited.evaluate(() => window.sent[0]), 'Ný útgáfa textans.');
       assert.equal(await edited.locator('textarea').inputValue(), 'Ný útgáfa textans.');
+      await q.waitForFunction(() => window.sent.length === 1);
       assert.equal(await q.evaluate(() => window.sent.length), 1);
       assert.ok(!(await q.evaluate(() => window.sent[0])).includes('fallback@example.com'));
       const elapsed = Date.now() - start;

@@ -399,7 +399,8 @@ try {
       }, code);
       await variants.locator(send).click();
       assert.ok((await shieldStatusHTML(variants)).includes('Viðvörun:'), 'lossy input had no warning');
-      assert.equal(await variants.evaluate(() => window.sent.length), ++invalidCount, 'best-effort fallback did not submit');
+      await variants.waitForFunction(count => window.sent.length === count, ++invalidCount);
+      assert.equal(await variants.evaluate(() => window.sent.length), invalidCount, 'best-effort fallback did not submit');
       assert.equal(await variants.locator(editor).evaluate(element =>
         (element instanceof HTMLTextAreaElement ? element.value : element.innerText) === window.invalidDraft), true,
       'rejection changed the original draft');
