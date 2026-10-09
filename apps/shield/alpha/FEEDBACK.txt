@@ -1,0 +1,37 @@
+dmz Shield Alpha 1 / 0.1.1 — Feedback / Athugasemdir
+
+Send this filled-in file to the person who shared the alpha.
+Sendið útfyllta skrá til þess sem deildi alpha-útgáfunni.
+Use fabricated examples only. Do not include real PII, credentials or confidential screenshots.
+Notið aðeins tilbúin dæmi, ekki raunverulegar persónuupplýsingar, lykla eða trúnaðarskjáskot.
+
+Date / Dagsetning:
+Chrome version / Chrome-útgáfa:
+Operating system / Stýrikerfi:
+Site / Síða (ChatGPT / Claude / both-báðar):
+Submit method / Sending (button-hnappur / Enter):
+
+What worked / Hvað virkaði:
+
+What failed or surprised you / Hvað brást eða kom á óvart:
+
+Steps to reproduce / Skref til að endurtaka:
+
+Fabricated example only / Aðeins tilbúið dæmi:
+
+Expected result / Vænt niðurstaða:
+
+Actual result / Raunveruleg niðurstaða:
+
+Did submission continue? / Hélt sending áfram?
+Did PII remain unmasked? / Fóru upplýsingar ómaskaðar?
+Was innocent text masked? / Var saklaus texti maskaður?
+Did reply restoration work? / Virkaði endurheimt svars?
+Was a warning visible? / Sást viðvörun?
+
+First scan time / Bið við fyrstu möskun:
+Later scan time / Bið við síðari möskun:
+Overall usefulness (1–5) / Gagnsemi (1–5):
+Would you keep using it? Why? / Myndir þú halda áfram að nota hana? Af hverju?
+
+Alpha version shown in settings / Alpha-útgáfa í stillingum:
