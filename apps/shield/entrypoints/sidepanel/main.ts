@@ -28,7 +28,10 @@ theme.addEventListener('change', () => {
   catch { actionStatus.textContent = 'Litahamur gildir núna en tókst ekki að vista hann.'; }
 });
 
-document.querySelector('#version')!.textContent = `Shield ${chrome.runtime.getManifest().version}`;
+const manifest = chrome.runtime.getManifest();
+const alpha = manifest.version_name?.match(/^\S+ alpha\.(\d+) /)?.[1];
+if (alpha) document.querySelector('#release-label')!.textContent = `SHIELD / ALPHA ${alpha}`;
+document.querySelector('#version')!.textContent = `Shield ${manifest.version}${alpha ? ` · Alpha ${alpha}` : ''}`;
 function cancelConfirmation() {
   pendingTab = undefined;
   confirmation.hidden = true;

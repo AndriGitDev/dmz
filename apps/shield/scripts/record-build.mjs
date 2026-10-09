@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { version, releaseLabel } from './release-label.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, '.output/chrome-mv3');
@@ -26,7 +27,7 @@ async function hashDirectory(relative = '') {
 await hashDirectory();
 const manifest = JSON.parse(await readFile(path.join(output, 'manifest.json'), 'utf8'));
 const sourceCommit = git('rev-parse', 'HEAD');
-if (manifest.version_name !== `${manifest.version} preview ${sourceCommit}`) {
+if (manifest.version !== version || manifest.version_name !== `${version} ${releaseLabel} ${sourceCommit}`) {
   throw new Error('The built manifest does not match this clean commit. Run npm run build first.');
 }
 const record = {
@@ -34,6 +35,7 @@ const record = {
   sourceCommit,
   extensionVersion: manifest.version,
   extensionName: manifest.name,
+  releaseLabel,
   scannerProfile: manifest.permissions?.includes('offscreen') ? 'trained-fp16storage' : 'rules',
   browser: 'Chrome (Manifest V3)',
   sha256: files,

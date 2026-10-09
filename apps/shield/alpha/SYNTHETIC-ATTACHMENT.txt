@@ -1,0 +1,8 @@
+Synthetic attachment for dmz Shield Alpha evaluation.
+Tilbúið viðhengi fyrir prófun á dmz Shield Alpha.
+
+Shield allows this file unchanged and displays a warning.
+Shield leyfir þessa skrá óbreytta og sýnir viðvörun.
+
+There is no real personal or confidential information in this file.
+Engar raunverulegar persónuupplýsingar eða trúnaðarupplýsingar eru í þessari skrá.

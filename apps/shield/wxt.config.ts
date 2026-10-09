@@ -1,17 +1,18 @@
 import { defineConfig } from 'wxt';
 import { execFileSync } from 'node:child_process';
+import { version, releaseLabel, alphaNumber } from './scripts/release-label.mjs';
 
 const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const dirty = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim() !== '';
 
 export default defineConfig({
   manifest: {
-    name: process.env.VITE_DMZ_TRAINED_SCANNER === '1' ? 'dmz Shield · trained preview' : 'dmz Shield',
+    name: alphaNumber ? `dmz Shield · Alpha ${alphaNumber}` : process.env.VITE_DMZ_TRAINED_SCANNER === '1' ? 'dmz Shield · trained preview' : 'dmz Shield',
     permissions: process.env.VITE_DMZ_TRAINED_SCANNER === '1' ? ['offscreen'] : [],
     minimum_chrome_version: '116',
     description: 'Shield by Kastro. Local masking for supported ChatGPT and Claude chats, with device-local settings.',
-    version: '0.1.0',
-    version_name: `0.1.0 preview ${sourceCommit}${dirty ? '-dirty' : ''}`,
+    version,
+    version_name: `${version} ${releaseLabel} ${sourceCommit}${dirty ? '-dirty' : ''}`,
     action: { default_title: 'dmz Shield · Stillingar' },
     web_accessible_resources: [{ resources: ['dmz.wasm', 'restored.html'], matches: ['https://chatgpt.com/*', 'https://claude.ai/*'] }],
     content_security_policy: {

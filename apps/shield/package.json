@@ -1,6 +1,6 @@
 {
   "name": "dmz-shield-prototype",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,9 @@
     "test:browser": "node scripts/browser-smoke.mjs && node scripts/chat-smoke.mjs && node scripts/chat-races.mjs && node scripts/composer-smoke.mjs",
     "build:scanner": "node scripts/build-scanner.mjs",
     "test:scanner": "node scripts/scanner-unit.mjs && node scripts/scanner-lifecycle-unit.mjs && node scripts/scanner-smoke.mjs",
-    "test:coverage": "node scripts/coverage-unit.mjs && node scripts/typed-quality-unit.mjs"
+    "test:coverage": "node scripts/coverage-unit.mjs && node scripts/typed-quality-unit.mjs",
+    "build:alpha": "DMZ_RELEASE_LABEL=alpha.1 node scripts/build-scanner.mjs",
+    "record:alpha": "DMZ_RELEASE_LABEL=alpha.1 node scripts/record-build.mjs"
   },
   "devDependencies": {
     "@types/chrome": "^0.1.34",
