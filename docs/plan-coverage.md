@@ -1,5 +1,7 @@
 # Business-plan coverage audit
 
+Status — 27 October 2026: historical commercial baseline. The [free community concept](community-project.md) supersedes commercial priorities, pricing and paid-pilot/revenue gates. Retained for provenance; not the active delivery plan or evidence of current availability.
+
 Checked against the user-supplied 27 September 2026 plan. **Captured** means a requirement or assumption has a durable home in this repo. It does **not** mean shipped, verified, approved or legally effective.
 
 | Plan section | Durable record | Implementation state |

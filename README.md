@@ -1,10 +1,14 @@
 # dmz
 
-Private product stack for dmz.is. The public marketing site is a separate repository: `AndriGitDev/dmz-web`.
+DMZ is a free community project and local masking tool from Kastro for reducing accidental sharing of sensitive details with AI, starting with the local Shield extension. Read the [active community concept and release path](docs/community-project.md). There are no planned paid DMZ tiers or seat minimums; Portal/Gateway are deferred.
+
+This product repository remains private; free access does not yet mean open source. The public website is a separate repository: `AndriGitDev/dmz-web`. The public website and Kastro copy follow the community direction; public extension distribution remains subject to the [artifact checklist](docs/community-distribution.md).
 
 dmz is an Icelandic data-minimisation layer for AI. The product is in validation. Shield runs the Go detector compiled to WASM in an experimental ChatGPT/Claude content script, with a WXT settings side panel. It masks selected identifiers with visible markers, e.g. `⟦KT-<session>-1: XXXXX-XXXX⟧`, and restores unchanged markers locally. The content script intercepts selected text submissions and shows a local restored copy of recognized assistant markers. It does not cover every send path or secure file uploads. Portal, Gateway, a production vault, ZDR agreements and ISO certification do not exist yet.
 
 ## Repository map
+
+Shield and the detector are active. Portal, gateway, vault, server audit and tenant-policy scaffolds below are retained for reference and carry no delivery commitment.
 
 | Path | Planned responsibility |
 | --- | --- |
@@ -27,7 +31,7 @@ Empty directories contain `.gitkeep` until the corresponding work starts. Do not
 
 ## Trained scanner preview
 
-A separate local build now integrates the trained Icelandic name detector into Shield's text-submission and masking flow. See [build, installation and evidence](apps/shield/scanner/README.md). It processes text on device and shares one model across tabs. Under the owner-approved best-effort policy, scanner failure produces a visible warning and sends the basic detector’s masked result; unsupported send paths, changed drafts and lost sessions still stop sending. The quality-first model is large; weights remain outside Git and are packaged explicitly from verified local assets. The ordinary CI artifact below still contains the small rule-based scanner. Independent quality and owner-browser validation remain pending.
+A separate local build now integrates the trained Icelandic name detector into Shield's text-submission and masking flow. See [build, installation and evidence](apps/shield/scanner/README.md). It processes text on device and shares one model across tabs. Under the owner-approved best-effort policy, scanner failure produces a visible warning and sends the basic detector’s masked result; failures warn and submission continues. Attachments are sent unchanged with a warning. The quality-first model is large; weights remain outside Git and are packaged explicitly from verified local assets. The ordinary CI artifact below still contains the small rule-based scanner. Independent quality and owner-browser validation remain pending.
 
 ## Try the prototype
 
@@ -55,12 +59,12 @@ The Go core also has a `StreamRestorer` that handles markers split across respon
 
 ## Working source of truth
 
-Start with the [coverage audit](docs/plan-coverage.md). The [business-plan baseline](docs/business-plan.md), [product spec](docs/product-spec.md), [roadmap](docs/roadmap.md), [financial arithmetic check](docs/financial-model.md), [website brief](docs/website-brief.md), [source register](docs/source-register.md) and [open decisions](docs/open-decisions.md) separate requirements from evidence and implementation.
+Start with the [community concept](docs/community-project.md); it supersedes the commercial priorities in the older records. The [coverage audit](docs/plan-coverage.md), [business-plan baseline](docs/business-plan.md), [product spec](docs/product-spec.md), [roadmap](docs/roadmap.md), [financial arithmetic check](docs/financial-model.md), [website brief](docs/website-brief.md), [source register](docs/source-register.md) and [open decisions](docs/open-decisions.md) separate requirements from evidence and implementation.
 
 ## Validation gate
 
-By 18 December 2026, commit to building only if at least 3 of 10 target customers agree to a paid pilot at list price. The [launch checklist](docs/launch-checklist.md) tracks prerequisites.
+Validate installation, useful local masking workflows, understandable warnings, detector quality and sustainable maintenance using the [community release path](docs/community-project.md#first-release-path). The old three-paid-pilot gate is retired. The [launch checklist](docs/launch-checklist.md) tracks the transition.
 
-## Portal and Gateway direction
+## Deferred Portal and Gateway direction
 
-The accepted [hosting and PII policy decision](docs/adr/0004-portal-hosting-and-pii-policy.md) uses existing Hetzner EU infrastructure initially, with an Iceland-hosted option for specific customer requirements. Portal will use a shared Go gateway with either masking or explicitly approved original-PII processing on a verified provider route. See the [preview implementation plan](docs/portal-gateway-plan.md); no Portal/Gateway or Bedrock route is implemented yet.
+Portal and Gateway are outside the initial community scope and carry no delivery commitment. If revisited, the accepted [hosting and PII policy decision](docs/adr/0004-portal-hosting-and-pii-policy.md) uses existing Hetzner EU infrastructure initially, with an Iceland-hosted option for specific customer requirements. Portal will use a shared Go gateway with either masking or explicitly approved original-PII processing on a verified provider route. See the [preview implementation plan](docs/portal-gateway-plan.md); no Portal/Gateway or Bedrock route is implemented yet.

@@ -1,23 +1,20 @@
-# Gate 1 validation protocol
+# Community validation
 
-## Target sample
+Active direction: [ADR 0005](adr/0005-free-community-project.md). The old three-paid-pilot and vendor-count gates are retired.
 
-Ten interviews by 4 December 2026: five vendors delivering to Stafrænt Ísland, three finance/insurance firms and two municipal or health-adjacent organisations. Count the total vendor population; fewer than 40 requires re-running the model. Ask for a paid 30-day pilot at the published list price, not a vague expression of interest.
+## Useful free workflows
 
-## Interview questions
+Evaluate with volunteers using fabricated text, never real prompts or customer records. Record only voluntary outcomes and sanitized reproductions; no mandatory telemetry or lead forms.
 
-1. Which AI tools do staff use, and on business or personal accounts?
-2. How do you demonstrate compliance with Stafrænt Ísland's AI rules now, and has anyone requested proof?
-3. What is actually pasted: kennitölur, customer emails, logs or contracts?
-4. Have you asked a provider for ZDR, and what happened?
-5. Are you on Microsoft 365 E5 or E5 Compliance?
-6. Would staff use a separate tool for sensitive work?
-7. What would a 30-day pilot need to prove, and at what price would you sign?
+1. Can a tester identify the preview, install the supplied build and inspect its version and active-tab status?
+2. Can they send a fabricated example through supported ChatGPT/Claude paths, see markers and recognize the locally restored reply?
+3. Do they understand that the page can see the original draft before submission, detection can miss values, and context can identify people?
+4. Do they understand that failures warn and continue, a trained-scanner fallback reduces coverage, and attachments are sent unchanged?
+5. Can they update, reset and uninstall, and understand the loss of prior restoration mappings?
+6. Would they use the tool again, and which explanations or false positives prevent useful use?
 
-Record sector, size, AI estate, current DLP, compliance pressure, actual data types, pilot success criteria, quote/commitment and follow-up. Do not store real prompt examples in the research notes. Get permission before attributing quotes.
+Treat usability feedback separately from detector acceptance. The [quality contract](detector-quality-contract.md), independent annotation needs and no-regression gates remain unchanged. Enthusiasm, a free price and passing fixture tests do not establish field quality or general-release readiness.
 
-## Gate 1 pass / kill / re-plan
+## Continue, narrow or defer
 
-Proceed only if at least three of ten commit to a paid pilot at list price. Stop or re-plan if vendors say nobody checks the rules and nobody will; most regulated prospects already have Purview DSPM for AI on E5 and see no gap; Bedrock EU fails retention testing and OpenAI refuses ZDR, leaving Portal with local models only; or fewer than 40 firms deliver to Stafrænt Ísland, requiring a revised vendor target and financial model.
-
-Capture a dated decision record with evidence, exception rationale and a named owner. Do not infer a pass from enthusiastic interviews alone.
+Continue when the supported flow provides repeat value and maintenance/distribution costs fit available capacity. Narrow support if site churn, model size or false positives make the experience unreliable. Defer a broader release until artifact rights, package identity, independent-quality limitations, privacy disclosures and contact routes are reviewed. No MRR or paid-pilot commitment is required. Set adoption targets after a real baseline rather than inventing one.

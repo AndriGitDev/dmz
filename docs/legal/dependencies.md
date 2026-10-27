@@ -1,5 +1,13 @@
 # Legal, provider and data dependencies
 
+## Active community boundary — 27 October 2026
+
+Free Shield is the current scope under [ADR 0005](../adr/0005-free-community-project.md). Verify actual operator/privacy disclosures, contact and hosting retention, package rights and store disclosures before general release. No hosted DPA, provider ZDR or certification programme is promised. The historical contract/programme notes below do not establish current legal obligations or a launch requirement for hosted services.
+
+The 9 October owner policy supersedes the old upload-blocking requirement: attachments pass unchanged with a warning and failed processing warns and continues. State the host page’s pre-submit visibility of the original draft. Free distribution does not grant open-source or third-party redistribution rights.
+
+## Historical September legal backlog
+
 Working notes from the 27 September 2026 plan, not legal advice. Counsel must approve executed documents and external claims.
 
 ## Roles and documents

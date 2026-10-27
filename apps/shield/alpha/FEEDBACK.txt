@@ -1,7 +1,9 @@
 dmz Shield Alpha 1 / 0.1.1 — Feedback / Athugasemdir
 
-Send this filled-in file to the person who shared the alpha.
-Sendið útfyllta skrá til þess sem deildi alpha-útgáfunni.
+DMZ is a free community project. Feedback is voluntary.
+Send this file to the person who shared the alpha or use https://www.kastro.is/en/contact.
+DMZ er ókeypis samfélagsverkefni. Athugasemdir eru valfrjálsar.
+Sendið skrána til þess sem deildi alpha-útgáfunni eða notið https://www.kastro.is/is/contact.
 Use fabricated examples only. Do not include real PII, credentials or confidential screenshots.
 Notið aðeins tilbúin dæmi, ekki raunverulegar persónuupplýsingar, lykla eða trúnaðarskjáskot.
 

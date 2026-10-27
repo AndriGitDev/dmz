@@ -1,5 +1,7 @@
 # Portal and Gateway: first preview plan
 
+Status — 27 October 2026: deferred under [ADR 0005](adr/0005-free-community-project.md). This is a historical implementation proposal, not active work or a delivery commitment. ADR 0004 applies only if this scope is revived.
+
 Status: planning only · 28 September 2026. Architecture direction accepted in [ADR 0004](adr/0004-portal-hosting-and-pii-policy.md). Portal/Gateway are not implemented. All initial end-to-end tests use fabricated data.
 
 ## Sequence and acceptance gates
