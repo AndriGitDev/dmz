@@ -1,5 +1,7 @@
 # Financial inputs and arithmetic check
 
+Status — 27 October 2026: historical commercial baseline. The [free community concept](community-project.md) supersedes commercial priorities, pricing and paid-pilot/revenue gates. Retained for provenance; not the active delivery plan or evidence of current availability.
+
 The 27 September 2026 plan refers to an embedded quarterly model that was not included in the supplied text. This document checks the figures derivable from the stated prices and year-end customer counts, and marks those that require the missing model.
 
 ## Recurring account assumptions

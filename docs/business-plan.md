@@ -1,5 +1,7 @@
 # dmz.is business plan baseline
 
+Status — 27 October 2026: historical commercial baseline. The [free community concept](community-project.md) supersedes commercial priorities, pricing and paid-pilot/revenue gates. Retained for provenance; not the active delivery plan or evidence of current availability.
+
 Source: Andri Pétur's plan supplied 27 September 2026. This is a faithful working baseline, not evidence that market, provider, legal or funding claims have been independently verified. Use [source register](source-register.md) and [open decisions](open-decisions.md) before external claims or applications.
 
 Later prototype decisions supersede its realistic-stand-in approach: see [ADR 0002](adr/0002-visible-masks.md). Kennitala check-digit rules changed in February 2026: see [ADR 0003](adr/0003-kennitala-2026.md). This baseline is retained for provenance, not current product copy.

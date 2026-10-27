@@ -1,6 +1,6 @@
 # dmz repository instructions
 
-Read `docs/plan-coverage.md`, `docs/product-spec.md`, `docs/roadmap.md` and `docs/open-decisions.md` before substantive product work. The 27 September 2026 business plan is a hypothesis baseline; distinguish captured requirements from shipped features and independently verified facts.
+Read `docs/community-project.md`, `docs/adr/0005-free-community-project.md`, `docs/plan-coverage.md`, `docs/product-spec.md`, `docs/roadmap.md` and `docs/open-decisions.md` before substantive product work. The active direction is free community Shield with optional separate Kastro help; Portal/Gateway are deferred and source licensing is undecided. The 27 September 2026 business plan is a historical hypothesis baseline; distinguish captured requirements from shipped features and independently verified facts.
 
 - Never commit real customer prompts, identifiers, secrets, logs, licensed BÍN/Mannanafnaskrá data or credentials. Benchmark data is synthetic; generated test kennitölur use century digit `8`.
 - Keep Shield values and mappings on device. For Portal/Gateway, follow ADR 0004: initial hosting is Hetzner Germany/Finland; masking keeps originals and mappings within the approved DMZ boundary, while explicitly approved PII processing may send permitted originals to a verified provider route. Block unapproved routes and mode changes; never silently relax retention or geography. Do not claim anonymity or 100% detection.

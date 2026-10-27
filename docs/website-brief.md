@@ -1,40 +1,34 @@
-# dmz-web information architecture and messaging
+# DMZ community website brief
 
-Public repository: `AndriGitDev/dmz-web`. Icelandic is default (`/`); English mirror lives under `/en/`; every page has canonical and hreflang links. One primary action: discuss a paid pilot. No third-party trackers, embeds, external font requests or form service; fonts may be self-hosted. Cookieless Rybbit may be added only after its configuration and privacy text are reviewed. Pilot form should post to an Iceland-hosted dmz API and collect company, seat count, AI tools and sector; until then use a clearly labelled email contact path and do not claim a working form.
+Active direction: [ADR 0005](adr/0005-free-community-project.md), 27 October 2026. Public source: `AndriGitDev/dmz-web`.
 
-## Page map and planned timing
+## Primary journey
 
-| Icelandic | English | Job | Stage |
-| --- | --- | --- | --- |
-| `/` | `/en/` | Hero, detect/mask/restore illustration, three product cards, pilot CTA | Gate 1 launch |
-| `/stafraent-island` | `/en/stafraent-island` | Vendor wedge, rule-to-control map, audit export example | Gate 1 launch; exact mapping pending verification |
-| `/oryggi` | `/en/trust` | Data flow, retention boundaries, sub-processors, DPA status, ISO roadmap | Gate 1 launch |
-| `/tilraun` | `/en/pilot` | Pilot intake/conversion | Gate 1 launch; email until API exists |
-| `/skilmalar`, `/personuvernd`, `/vinnslusamningur`, `/undirvinnsluadilar` | `/en/terms`, `/en/privacy`, `/en/dpa`, `/en/subprocessors` | Procurement/legal | Gate 1 status pages; final text after counsel |
-| `/profun` | `/en/benchmark` | Per-entity measured recall by release, method, synthetic corpus | With benchmark v0, no placeholder scores |
-| `/skjoldur` | `/en/shield` | Current manual extension prototype and planned interception | Product detail live; automatic interception pending |
-| `/gatt` | `/en/portal` | Sensitive-work lane, routing and retention distinctions | Planned-product detail live; service pending |
-| `/forritarar` | `/en/gateway` | Compatible API path, secret/log detection | Planned-product detail live; service pending |
-| `/verd` | `/en/pricing` | Three plans, onboarding, ten-seat minimum | Indicative dated ISK conversion live; approved price book pending |
-| `/greinar` | `/en/blog` | Benchmark link and planned article topics | Index live; reviewed articles pending |
-| `/um` | `/en/about` | Founder credentials, RunAtlas and Kastro | About page live; partner status qualified |
+Understand free Shield -> inspect availability and installation -> read limits -> participate voluntarily. Until a verified public package/store listing exists, the primary action is **Explore Shield**, with an explicit preview status. Existing testers can follow instructions for the package supplied by the maintainer. No fake download button, waiting-list prerequisite or commercial intake.
 
-Subdomains: `portal.dmz.is` app, `api.dmz.is` Gateway/intake, `docs.dmz.is` Starlight, `status.dmz.is` Uptime Kuma. Do not point public navigation to unavailable subdomains.
+Icelandic is default, with an English mirror for every public route. Preserve canonical and hreflang links, keyboard access, mobile layout and synthetic-only demonstrations. Use existing visual identity, no trackers, third-party fonts, cookies, embeds or external form tools.
 
-## Copy rules
+## Page map
 
-**Heading:** “Gervigreind án persónuupplýsinga” / “AI without the personal data.” **Supporting copy:** replacement of kennitölur, names and account numbers before anything reaches ChatGPT/Claude, with real values restored in the answer. Qualify this by product boundary and direct-identifier scope on nearby pages.
+| Purpose | Icelandic | English |
+| --- | --- | --- |
+| Free community introduction | `/` | `/en/` |
+| Preview, install/update/remove and limits | `/skjoldur/` | `/en/shield/` |
+| Feedback, fabricated examples, translations, private security reporting | `/samfelag/` | `/en/community/` |
+| Free access and separate external costs | `/verd/` | `/en/pricing/` |
+| Local data flow and failure limits | `/oryggi/` | `/en/trust/` |
+| Reviewed summary measurements | `/profun/` | `/en/benchmark/` |
+| Existing guides/results index | `/greinar/` | `/en/blog/` |
+| Kastro maker/community direction | `/um/` | `/en/about/` |
 
-| Say | Avoid |
-| --- | --- |
-| Shield replaces direct identifiers before content leaves the device | “Anonymous” or “no personal data ever” |
-| Portal/Gateway keep real values and mapping key in Iceland | ZDR without signed agreement |
-| Recall by entity type measured on a public benchmark | 100% detection |
-| Helps implement Stafrænt Ísland rules and GDPR data minimisation | “GDPR compliant” or “AI Act compliant” |
-| Providers receive visible masks in the planned paths | “Providers see nothing” |
+Retain `/tilraun/` and `/en/pilot/` as explanations of the transition, without a paid-pilot offer. Retain Portal/Gateway addresses with deferred/unavailable status and no delivery commitment; remove them from active product navigation and indexing. Reframe the old vendor page as workplace-use boundaries without legal-compliance promises. Preserve accurate privacy/terms status and historical hosted DPA/subprocessor addresses; do not invent a contract or legal conclusion.
 
-The line “we cannot leak what we never see” applies to Shield only; Portal/Gateway see real values transiently in Iceland. All demos use synthetic data, with valid 1800s kennitölur. Avoid suggesting that all personal data, including quasi-identifiers, is removed.
+## Claims and contact
 
-## Design and privacy acceptance
+State Shield's on-device masking/mapping scope precisely. The original draft is entered into the AI site's composer, whose scripts can see it before masking. Submitted text can contain misses, failure-path originals and unchanged attachments. Warned best-effort continuation is current policy. No anonymity, 100% detection, encryption of visible markers, compliance, certification or provider-ZDR promise.
 
-Responsive, accessible navigation and text; no external trackers; no cookies unless a documented need arises; security.txt and sitemap; both locales for every public route; internal links and language switch verified. Do not publish a benchmark score, price conversion, legal agreement, partner endorsement, retention mode or certificate that lacks evidence. Production launch additionally requires active mailboxes, final legal controller/privacy details, domain/TLS and working Iceland-hosted intake if the form is shown.
+Free means no DMZ subscription, seat minimum, premium protection tier or mandatory account. The AI service's own account/costs remain separate. Kastro help is optional and quoted separately. Free does not mean open source; code, research and model-disclosure restrictions remain in force.
+
+Use Kastro's established localized contact page and private `andri@kastro.is` security route. Do not advertise unverified `pilot@dmz.is`, `hello@dmz.is` or `security@dmz.is` mailboxes. Do not transmit prompts or real examples as part of feedback. Public feedback template is bilingual and collects only voluntary fabricated-data reports.
+
+Final operator, hosting-log/retention, contact-retention and distribution disclosures still require verification before general release. Cite actual evidence for public measured claims, retaining independent-validation limitations.
