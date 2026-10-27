@@ -525,6 +525,6 @@ const emailName = JSON.parse(globalThis.dmzProcessBestEffort('anna@example.com',
 assert.equal(emailName.allowed, true);
 assert.match(emailName.transformed, /⟦EMAIL-/);
 assert.equal(globalThis.dmzRestore(emailName.transformed), 'anna@example.com');
-console.log('Shield best-effort secret, uncertain PII and email/name overlap checks passed');
+console.log('DMZ best-effort secret, uncertain PII and email/name overlap checks passed');
 
 process.exit(0);

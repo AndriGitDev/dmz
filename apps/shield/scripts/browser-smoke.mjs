@@ -58,7 +58,7 @@ try {
       if (!(await page.locator('#reset').isDisabled())) break;
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    assert.match(await page.locator('#tab-status').textContent(), /Shield er tilbúinn/);
+    assert.match(await page.locator('#tab-status').textContent(), /DMZ er tilbúinn/);
     await click('#reset');
     assert.equal(await page.locator('#confirmation').isVisible(), true);
     await click('#cancel-reset');

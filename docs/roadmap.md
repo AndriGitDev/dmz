@@ -4,7 +4,7 @@ Active direction: [ADR 0005](adr/0005-free-community-project.md), 27 October 202
 
 | Stage | Deliverable | Acceptance |
 | --- | --- | --- |
-| Scope transition | Free Shield positioning across product, website and Kastro | Both locales, old URLs, metadata, instructions and feedback agree; no price/seat/pilot funnel |
+| Scope transition | Free DMZ positioning across product, website and Kastro | Both locales, old URLs, metadata, instructions and feedback agree; no price/seat/pilot funnel |
 | Preview distribution | Identified package and honest installation/update/removal guidance | Asset rights, build identity and existing regression/browser checks verified; no invented store listing |
 | Quality and usability | Fabricated-data testing and independent quality review | Users understand warnings, pre-submit page visibility, unchanged attachments and coverage limits; no regression per entity type |
 | Community maintenance | Feedback triage, reviewed results and release notes | Working private security route, no sensitive-data collection, realistic support and maintenance capacity |

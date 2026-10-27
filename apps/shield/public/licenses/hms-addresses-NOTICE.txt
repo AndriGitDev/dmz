@@ -1,6 +1,6 @@
 DMZ Icelandic address vocabulary
 
-The trained Shield alpha bundles a derived street/address-form vocabulary from
+The trained DMZ alpha bundles a derived street/address-form vocabulary from
 HMS Stadfangaskra (Iceland's address register). It contains address forms rather
 than household or subscriber records. DMZ transforms approved nominative/dative
 forms into a local detection lookup; source address records are not included as
