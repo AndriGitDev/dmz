@@ -4,12 +4,12 @@ Active direction: [ADR 0005](adr/0005-free-community-project.md), 27 October 202
 
 ## Scope transition
 
-- [x] Define free local Shield, optional separate Kastro assistance and deferred Portal/Gateway.
+- [x] Define free local DMZ, optional separate Kastro assistance and deferred Portal/Gateway.
 - [x] Replace paid-pilot/revenue continuation gates with community usability, quality and maintenance checks.
 - [x] Update both website locales, old price/pilot/product URLs, metadata, canonical links and feedback guidance in source.
 - [x] Align extension description/settings, private alpha instructions and Kastro's current free-tools presentation.
 - [x] Preserve security/Coolify updates, privacy baseline and private detector disclosure.
-- [x] Run the 32-route website, mobile, accessibility, privacy and existing Shield browser suites locally.
+- [x] Run the 32-route website, mobile, accessibility, privacy and existing DMZ browser suites locally.
 - [ ] Verify repository CI and deployed website/Kastro visitor flows for the final commits.
 
 ## Before general extension distribution

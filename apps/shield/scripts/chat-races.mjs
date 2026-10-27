@@ -107,14 +107,14 @@ try {
   await failedPage.goto('https://chatgpt.com/');
   await failedPage.locator('#dmz-shield-status').waitFor({ timeout: 10000 });
   const accessibility = await (await browser.newCDPSession(failedPage)).send('Accessibility.getFullAXTree');
-  assert.ok(accessibility.nodes.some(node => node.name?.value?.includes('Shield-kjarni bilaður')), 'broken core had no visible error before sending');
+  assert.ok(accessibility.nodes.some(node => node.name?.value?.includes('DMZ-kjarni bilaður')), 'broken core had no visible error before sending');
   await failedPage.locator('textarea').fill('source@example.com');
   await failedPage.locator('button').click();
   await failedPage.waitForLoadState('networkidle');
   await failedPage.waitForFunction(() => window.sent.length === 1);
   await failedPage.waitForLoadState('networkidle');
   assert.deepEqual(failedBodies, ['source@example.com'], 'broken core blocked best-effort submission');
-  console.log('Shield network-body, composer-race and broken-core checks passed');
+  console.log('DMZ network-body, composer-race and broken-core checks passed');
 } finally {
   if (browser) await browser.close();
   await rm(profile, { recursive: true, force: true });

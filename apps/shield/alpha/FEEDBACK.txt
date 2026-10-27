@@ -1,4 +1,4 @@
-dmz Shield Alpha 1 / 0.1.1 — Feedback / Athugasemdir
+DMZ Chromium extension Alpha 2 / 0.1.2 — Feedback / Athugasemdir
 
 DMZ is a free community project. Feedback is voluntary.
 Send this file to the person who shared the alpha or use https://www.kastro.is/en/contact.

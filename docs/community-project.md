@@ -4,29 +4,29 @@ Direction set: 27 October 2026. This document is the active concept and scope re
 
 ## Purpose
 
-Help people reduce accidental sharing of direct identifiers and secrets when using AI, with a practical tool that works locally and explains its limits. Start with Icelandic text and the existing Shield extension; make the experience understandable in Icelandic and English.
+Help people reduce accidental sharing of direct identifiers and secrets when using AI, with a practical tool that works locally and explains its limits. Start with Icelandic text and the existing DMZ extension; make the experience understandable in Icelandic and English.
 
 Working positioning: **DMZ — a free tool from Kastro for masking sensitive details before sharing text with AI.**
 
-The useful outcome is that someone can install Shield, understand what it changes, and use its supported text workflow without an account, payment or sales conversation. Detection is best effort. DMZ does not guarantee anonymity, complete detection or safe use of confidential material.
+The useful outcome is that someone can install DMZ, understand what it changes, and use its supported text workflow without an account, payment or sales conversation. Detection is best effort. DMZ does not guarantee anonymity, complete detection or safe use of confidential material.
 
 ## What free means
 
 - One free community capability set: no subscriptions, seat minimums, paid security tier or upgrade prompts.
-- No DMZ account requirement for local Shield use. The user's chosen AI service has its own account requirements and costs; DMZ does not supply AI inference or bypass provider subscriptions.
-- No prompt collection, sale of user data, advertising-funded detection or mandatory lead form. Keep prompt text, original values and restoration mappings on the device for Shield processing. The AI service still receives submitted text, including anything missed or sent unchanged.
+- No DMZ account requirement for local DMZ use. The user's chosen AI service has its own account requirements and costs; DMZ does not supply AI inference or bypass provider subscriptions.
+- No prompt collection, sale of user data, advertising-funded detection or mandatory lead form. Keep prompt text, original values and restoration mappings on the device for DMZ processing. The AI service still receives submitted text, including anything missed or sent unchanged.
 - Optional Kastro implementation or training help may be quoted separately. Getting useful protection and guidance must never require buying that help.
 - Free access does not imply open-source code, public model weights, unrestricted dataset redistribution, guaranteed support or indefinite funding. Those require separate decisions and evidence.
 
-This borrows Dmark's free utility and optional assistance model and Lookup's focused, accessible utility model. It does not import their account, storage or server architecture into Shield.
+This borrows Dmark's free utility and optional assistance model and Lookup's focused, accessible utility model. It does not import their account, storage or server architecture into DMZ.
 
-## First product: Shield
+## First product: DMZ Chromium extension
 
-Shield is the product, rather than one tier in a three-product sales funnel. Retain the existing device-local detector, visible masks, restoration, supported ChatGPT/Claude text workflows and honest warnings. Make installation, supported browsers/sites, model download size and fallback behaviour clear before use.
+DMZ is the product, rather than one tier in a three-product sales funnel. Retain the existing device-local detector, visible masks, restoration, supported ChatGPT/Claude text workflows and honest warnings. Make installation, supported browsers/sites, model download size and fallback behaviour clear before use.
 
-Current status: a prototype and colleague alpha exist, including a separately packaged trained scanner. That is not a generally available store release. Independent detector acceptance remains incomplete; the existing research targets and no-regression requirements remain in force. Verify actual packages and store status before changing any availability claim.
+Current status: the owner authorized the renamed trained alpha as a public ZIP for testing under ADR 0006, with versioned artifact and checksum evidence. That is not a generally available store release. Independent detector acceptance remains incomplete; the existing research targets and no-regression requirements remain in force. Verify actual packages and store status before changing any availability claim.
 
-Under the 9 October owner policy, Shield attempts masking and continues submission with a warning when scanning or composer handling fails. Attachments are sent unchanged with a warning. Unsupported paths and site changes can bypass interception. Present those limits near installation and use; never describe Shield as an enforcement boundary. Reducing scope or making the project free does not establish detector quality.
+Under the 9 October owner policy, DMZ attempts masking and continues submission with a warning when scanning or composer handling fails. Attachments are sent unchanged with a warning. Unsupported paths and site changes can bypass interception. Present those limits near installation and use; never describe DMZ as an enforcement boundary. Reducing scope or making the project free does not establish detector quality.
 
 ## Community participation
 
@@ -34,13 +34,13 @@ Start with low-overhead participation: installation feedback, browser compatibil
 
 A maintainer reviews reports, reproduces them privately where appropriate and publishes concise release notes. Keep a private security-reporting route separate from ordinary feedback. Do not invite public uploads until redaction guidance and moderation are ready. No forum, account system or public issue tracker is required for the first release.
 
-Keep reviewed detector summaries public, with method and limitations. Existing private research, training provenance, weights, recipes and complete challenge material stay private under the current disclosure policy. Public contribution scope and licensing must be decided before inviting code or model contributions.
+Keep reviewed detector summaries public, with method and limitations. Private research, training provenance, recipes and complete challenge material stay private. ADR 0006 authorizes the compiled alpha extension, including its bundled local model, for public testing; no standalone research/model release is made. Public contribution scope and licensing must be decided before inviting code or model contributions.
 
 ## Scope boundaries
 
 | Prior direction | Community direction |
 | --- | --- |
-| Shield, Portal and Gateway sold as a product suite | Shield first; Portal/Gateway deferred, with no delivery commitment |
+| DMZ, Portal and Gateway sold as a product suite | DMZ first; Portal/Gateway deferred, with no delivery commitment |
 | Paid pilots, per-seat plans and minimum seats | Free local use and voluntary feedback |
 | Procurement/compliance-led sales funnel | Installation, practical explanation, measured limitations and help |
 | MRR, customer counts and expansion gates | Successful use, understandable warnings, repeat value and maintainability |
@@ -51,11 +51,11 @@ Keep existing code and historical plans for reference. Deferring hosted features
 
 ## Website transformation brief
 
-Reframe dmz.is around one primary action: **Try Shield**, linked only to a verified artifact or published store listing. Until one is ready, show an accurate preview status and installation guidance. A local paste-and-mask demo is a possible later improvement, not a launch promise.
+Reframe dmz.is around one primary action: **Download the DMZ Chromium extension**, linked only to a verified artifact or published store listing. Until one is ready, show an accurate preview status and installation guidance. A local paste-and-mask demo is a possible later improvement, not a launch promise.
 
 The first public copy pass should:
 
-1. Replace the suite/pricing/pilot funnel with free Shield, how it works, current limits, installation and community feedback.
+1. Replace the suite/pricing/pilot funnel with free DMZ, how it works, current limits, installation and community feedback.
 2. Replace pricing content with a free-access explanation and redirect or retain useful old URLs in both languages. Remove indicative prices and seat minimums from navigation, metadata and structured content.
 3. Remove Portal/Gateway from active product navigation; explain their deferred status wherever retained pages remain reachable. Do not imply a hosted service exists.
 4. Update about, contact and privacy text for the actual operator and distribution path. Preserve security contact and applicable privacy/legal information; remove procurement documents from primary navigation only after reviewing their role.

@@ -1,21 +1,21 @@
-# Community preview distribution
+# DMZ Chromium extension: alpha test distribution
 
-A free tool still needs an identified artifact and truthful release status. Existing rule-based CI and separately prepared trained alpha packages are previews, not proof of a store release or independent detector quality.
+Owner direction: [ADR 0006](adr/0006-chromium-name-and-public-test-download.md), 27 October 2026. Publish the current trained scanner as a renamed 0.1.2 alpha.2 test package on dmz.is, without implying a store release or independent quality acceptance. The compiled distribution includes the on-device model; source, raw corpora and research remain private.
 
-## Maintainer process
+## Reproduce the named test build
 
-1. Choose a source commit and scanner profile. Verify every bundled code/model/dataset license for the intended audience; do not infer public redistribution rights from private preview approval.
-2. Build and run the existing Go, WASM and browser gates for the affected artifact. Keep the trained and basic profiles explicit, including download size, first-scan delay and fallback limitations.
-3. Record a clean build using the existing `apps/shield/scripts/record-build.mjs`; verify manifest/source identity and all file checksums. Never call a dirty build a recorded release.
-4. Include bilingual install/update/reset/remove instructions, fabricated examples and a feedback template. State that failures continue with warnings, attachments pass unchanged and host-page scripts can read the original composer draft before masking.
-5. Use the current private alpha packaging workflow only for its intended version/profile. Do not rename an Alpha 1 package to imply a new release or weaken its clean-build/checksum guards for a positioning change.
-6. Link a public download/store listing only after it exists and the selected package and user-data disclosures are verified. Store submission/publication is a distinct action, not implied by a website copy change.
-7. Publish reviewed release notes and supported paths. Feedback is voluntary and synthetic-only; private security reports go through Kastro's established contact. Do not include customer text, model recipes, weights or private research in public release notes.
+1. Retrieve the unchanged private `shield-alpha-0.1.1-alpha.1` release and companion record. Check the original archive SHA-256 and every member hash before extraction. Keep those original assets intact outside the repository.
+2. Run `DMZ_BASELINE_EXTENSION=/absolute/path/to/original/extension npm run build:test-release` in `apps/shield`. The script verifies the recorded baseline, all model/runtime assets and exact equality of the current core/scanner before rebuilding the renamed UI/content script. It refuses a changed detector.
+3. Run type checks, existing browser workflows and trained scanner checks. Test with fabricated examples; no real prompts or confidential screenshots.
+4. Commit the source, rebuild clean, then run `DMZ_RELEASE_LABEL=alpha.2 npm run record:build`. Package using `python3 scripts/package-test-release.py --output /outside/repo/dmz-chromium-extension-0.1.2-alpha.2.zip`. Clean source, manifest/profile identity, all members and ZIP integrity are required. The old Alpha 1 packager retains its original guards.
+5. Retain the bilingual START-HERE, feedback and synthetic attachment kit. Preserve the model attribution and runtime/third-party notices. No raw datasets or research reports are included.
+6. Stage the immutable ZIP and SHA-256 file in the website's managed persistent downloads volume. Verify the remote bytes before linking. Publish only sanitized size/version/checksum metadata in the website repository; never store the binary or host credentials in Git.
+7. Verify the download end to end through www.dmz.is, install the extracted extension in Chromium and check the new name, version, local scanner, warnings and fabricated masking/restoration.
 
-## User guidance
+## Public installation
 
-Public bilingual guidance lives at `dmz.is/skjoldur/` and `dmz.is/en/shield/`. For an already supplied preview: extract the archive, load its manifest folder in Chromium Developer mode, reload supported chat tabs and verify build/version in settings. Test only fabricated text. Install no duplicate Shield copies. Update from a verified replacement package, reload extension/tabs, or remove through the browser's Extensions page. Reset/reload/close loses prior session mappings; uninstalling does not recall text sent to an AI service.
+Use `/vidbot/` or `/en/extension/`. Download, extract and open START-HERE.html. In a Chromium browser's Extensions page, enable Developer mode and Load unpacked the `extension` subfolder. Disable older duplicate extensions and reload chat tabs. Keep the extracted folder. The AI service has its own terms/accounts/costs; no DMZ account is required.
 
-## Outstanding release evidence
+The first scan can take several seconds. Failures warn and continue; attachments are sent unchanged. The host AI page can see the original composer draft before masking. Reset/reload/close loses previous mappings; uninstalling does not recall content already sent. This public alpha is for fabricated-data testing, not approval for confidential material.
 
-Independent quality acceptance, exact public artifact/redistribution approval, final operator/privacy/retention details and store status remain unresolved. Neither this document nor free community positioning closes those gates. No automatic collection of prompts, paid account requirement or premium masking capability is introduced.
+Independent quality acceptance, supervised live-site evidence for the selected build and final store/legal/privacy claims remain separate. Preserve the research targets and all regression gates. Open-source publication is undecided; optional Kastro assistance never gates the free test download.

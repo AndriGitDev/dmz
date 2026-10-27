@@ -30,8 +30,8 @@ theme.addEventListener('change', () => {
 
 const manifest = chrome.runtime.getManifest();
 const alpha = manifest.version_name?.match(/^\S+ alpha\.(\d+) /)?.[1];
-if (alpha) document.querySelector('#release-label')!.textContent = `SHIELD / ALPHA ${alpha}`;
-document.querySelector('#version')!.textContent = `Shield ${manifest.version}${alpha ? ` · Alpha ${alpha}` : ''}`;
+if (alpha) document.querySelector('#release-label')!.textContent = `DMZ / ALPHA ${alpha}`;
+document.querySelector('#version')!.textContent = `DMZ ${manifest.version}${alpha ? ` · Alpha ${alpha}` : ''}`;
 function cancelConfirmation() {
   pendingTab = undefined;
   confirmation.hidden = true;
@@ -50,8 +50,8 @@ async function refresh() {
     currentTab = tab.id;
     const site = state.site === 'chatgpt' ? 'ChatGPT' : 'Claude';
     status.textContent = !state.ready ? `${site}: kjarninn er ekki tilbúinn. Endurhladdu síðuna ef þetta varir.`
-      : state.composer ? `${site}: Shield er tilbúinn í studdum textareit.`
-      : `${site}: Shield finnur ekki studdan textareit.`;
+      : state.composer ? `${site}: DMZ er tilbúinn í studdum textareit.`
+      : `${site}: DMZ finnur ekki studdan textareit.`;
     reset.disabled = !state.ready;
   } catch {
     if (request !== generation) return;
@@ -76,7 +76,7 @@ confirmReset.addEventListener('click', async () => {
     if (active?.id !== target) throw new Error('Tab changed');
     const result = await chrome.tabs.sendMessage(target, { type: 'dmz:settings-reset' });
     if (!result?.ok) throw new Error('Reset unavailable');
-    actionStatus.textContent = 'Shield-lota hreinsuð í valda flipanum.';
+    actionStatus.textContent = 'DMZ-lota hreinsuð í valda flipanum.';
   } catch { actionStatus.textContent = 'Ekki tókst að hreinsa lotuna. Athugaðu virka flipann og reyndu aftur.'; }
   finally { confirmReset.disabled = false; await refresh(); }
 });

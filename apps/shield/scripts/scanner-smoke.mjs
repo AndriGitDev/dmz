@@ -55,7 +55,7 @@ async function status(p, fragment, timeout = 130000) {
 async function page() {
   const p = await browser.newPage();
   await p.goto('https://chatgpt.com/');
-  await status(p, 'Shield virkur');
+  await status(p, 'DMZ virkur');
   return p;
 }
 async function fill(p, text) {

@@ -57,7 +57,7 @@ let browser;
 
 // DevTools can operate extension controls in closed roots without adding a
 // production test bridge that the host page could invoke.
-async function clickShieldControl(page, attribute) {
+async function clickDMZControl(page, attribute) {
   const cdp = await browser.newCDPSession(page);
   try {
     const { root: dom } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
@@ -69,7 +69,7 @@ async function clickShieldControl(page, attribute) {
       }
     }
     const control = find(dom);
-    assert.ok(control, `Shield control missing: ${attribute}`);
+    assert.ok(control, `DMZ control missing: ${attribute}`);
     const { object } = await cdp.send('DOM.resolveNode', { backendNodeId: control.backendNodeId });
     await cdp.send('Runtime.callFunctionOn', { objectId: object.objectId, functionDeclaration: 'function() { this.click(); }' });
     await cdp.send('Runtime.releaseObject', { objectId: object.objectId });
@@ -89,7 +89,7 @@ async function shieldStatusHTML(page) {
       }
     }
     const node = find(dom);
-    assert.ok(node, 'Shield status missing');
+    assert.ok(node, 'DMZ status missing');
     return (await cdp.send('DOM.getOuterHTML', { backendNodeId: node.backendNodeId })).outerHTML;
   } finally { await cdp.detach(); }
 }
@@ -232,7 +232,7 @@ try {
   await claude.waitForTimeout(150);
   assert.equal(await claude.frameLocator('[data-dmz-restored="true"]').locator('#restored-text').innerText(), 'demo@example.com\n\ndemo@example.com');
   const oldMarker = await claude.evaluate(() => window.sent[0]);
-  await clickShieldControl(claude, 'data-dmz-reset');
+  await clickDMZControl(claude, 'data-dmz-reset');
   await claude.locator('[data-dmz-restored="true"]').waitFor({ state: 'detached' });
   assert.equal(await claude.locator('[data-dmz-original]').count(), 0, 'reset left the site reply hidden');
   assert.ok(await claude.locator('[data-testid="assistant-message"] p').first().isVisible(), 'reset failed to reveal masked answer');
@@ -293,7 +293,7 @@ try {
     await modern.waitForFunction(() => document.querySelectorAll('[data-dmz-original="hidden"]').length === 2);
     assert.equal(await modern.locator('#replies p').first().isVisible(), false, 'masked reply was not replaced visually');
     const inline = modern.frameLocator('[data-dmz-restored]').first();
-    assert.equal(await inline.locator('strong').count(), 0, 'extra Shield heading still shown');
+    assert.equal(await inline.locator('strong').count(), 0, 'extra DMZ heading still shown');
     assert.equal(await inline.locator('p').evaluate(p => getComputedStyle(p).fontSize), '18px', 'reply typography lost');
     for (const [mode, background, foreground] of [
       ['dark', 'rgb(21, 21, 21)', 'rgb(240, 239, 236)'],

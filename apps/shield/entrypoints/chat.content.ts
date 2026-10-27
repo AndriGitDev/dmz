@@ -31,7 +31,7 @@ export default defineContentScript({
     let ready = false;
     let processing = false;
     let replaying = false;
-    let message = 'Shield hleður staðbundnum kjarna…';
+    let message = 'DMZ hleður staðbundnum kjarna…';
     let toast: HTMLElement | undefined;
     let resetButton: HTMLButtonElement | undefined;
     let reviewButton: HTMLButtonElement | undefined;
@@ -178,7 +178,7 @@ export default defineContentScript({
       const available = composer() !== null;
       if (composerAvailable !== available) {
         composerAvailable = available;
-        inform(available ? 'Shield virkur fyrir texta á þessari síðu.' : 'Viðvörun: Shield finnur ekki studdan textareit. Sending heldur áfram án Shield-möskunar.');
+        inform(available ? 'DMZ virkur fyrir texta á þessari síðu.' : 'Viðvörun: DMZ finnur ekki studdan textareit. Sending heldur áfram án DMZ-möskunar.');
       }
       const core = globalThis as unknown as Core;
       for (const response of responses) {
@@ -200,7 +200,7 @@ export default defineContentScript({
         if (!entry) {
           const host = document.createElement('iframe');
           host.setAttribute('data-dmz-restored', 'true');
-          host.title = 'Shield · endurheimt aðeins á þessu tæki';
+          host.title = 'DMZ · endurheimt aðeins á þessu tæki';
           host.referrerPolicy = 'no-referrer';
           host.style.cssText = 'display:block;width:100%;height:1px;margin:0;border:0;background:transparent';
           entry = { host, source: '', restored: '', nodes: [], surface, signature: '', nonce: crypto.randomUUID(), loaded: false, originals, presented: false };
@@ -248,7 +248,7 @@ export default defineContentScript({
       restoredMessages.clear();
       try {
         if (!(globalThis as unknown as Core).dmzReset?.()) throw new Error('Reset failed');
-        inform('Shield-lota hreinsuð. Eldri merkimiðar verða ekki endurheimtir.');
+        inform('DMZ-lota hreinsuð. Eldri merkimiðar verða ekki endurheimtir.');
         return true;
       } catch { coreFailed(); return false; }
     }
@@ -278,7 +278,7 @@ export default defineContentScript({
         resetButton = document.createElement('button');
         resetButton.type = 'button';
         resetButton.setAttribute('data-dmz-reset', 'true');
-        resetButton.textContent = 'Hreinsa Shield-lotu';
+        resetButton.textContent = 'Hreinsa DMZ-lotu';
         resetButton.title = 'Eyðir tengitöflu og endurheimtum svörum í þessum flipa.';
         resetButton.style.cssText = 'margin-top:8px;padding:6px 10px;background:#27272a;color:#fff;border:1px solid #71717a;border-radius:4px;cursor:pointer';
         resetButton.disabled = !ready;
@@ -368,11 +368,11 @@ export default defineContentScript({
       if (processing) { cancel(event); return; }
       const field = composer();
       if (!field || !read(field).trim()) {
-        inform('Viðvörun: Shield fann ekki studdan textareit. Sent án Shield-möskunar.');
+        inform('Viðvörun: DMZ fann ekki studdan textareit. Sent án DMZ-möskunar.');
         return;
       }
       if (!ready) {
-        inform('Viðvörun: Shield-kjarninn er ekki tiltækur. Sent án Shield-möskunar.');
+        inform('Viðvörun: DMZ-kjarninn er ekki tiltækur. Sent án DMZ-möskunar.');
         return;
       }
       cancel(event);
@@ -385,9 +385,9 @@ export default defineContentScript({
         let result = JSON.parse(core.dmzProcessBestEffort!(input, '[]')) as Result;
         let basicOnly = false;
         if (result.error) throw new Error('Core processing failed');
-        if (!result.allowed) { inform('Viðvörun: Shield gat ekki maskað þennan texta. Sending heldur áfram.'); return; }
+        if (!result.allowed) { inform('Viðvörun: DMZ gat ekki maskað þennan texta. Sending heldur áfram.'); return; }
         if (trainedScanner) {
-          inform('Shield yfirfer nöfn á tækinu… Fyrsta keyrsla getur tekið lengri tíma.');
+          inform('DMZ yfirfer nöfn á tækinu… Fyrsta keyrsla getur tekið lengri tíma.');
           try {
             const names = await scanNames(input);
             if (sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
@@ -406,15 +406,15 @@ export default defineContentScript({
         }
         if (result.error) throw new Error('Core processing failed');
         if (!result.allowed) {
-          inform('Viðvörun: Shield gat ekki maskað þennan texta. Sending heldur áfram.');
+          inform('Viðvörun: DMZ gat ekki maskað þennan texta. Sending heldur áfram.');
           return;
         }
         if (result.transformed === undefined) {
-          inform('Viðvörun: Shield gat ekki yfirfarið textann. Sending heldur áfram.');
+          inform('Viðvörun: DMZ gat ekki yfirfarið textann. Sending heldur áfram.');
           return;
         }
         if (!write(field, result.transformed)) {
-          inform('Viðvörun: Shield gat ekki uppfært textareitinn. Sending heldur áfram; möskun getur verið ófullkomin.');
+          inform('Viðvörun: DMZ gat ekki uppfært textareitinn. Sending heldur áfram; möskun getur verið ófullkomin.');
           return;
         }
         await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
@@ -424,12 +424,12 @@ export default defineContentScript({
           return;
         }
         if (read(field) !== result.transformed) {
-          inform('Viðvörun: Shield gat ekki uppfært textareitinn. Sending heldur áfram; möskun getur verið ófullkomin.');
+          inform('Viðvörun: DMZ gat ekki uppfært textareitinn. Sending heldur áfram; möskun getur verið ófullkomin.');
           return;
         }
-        inform(basicOnly ? 'Viðvörun: Þjálfaður nafnagreinir var ekki tiltækur. Sent með grunnmöskun; nöfn geta hafa farið ómöskuð.' : result.findings.some((finding) => finding.reason === 'whole-text-coverage') ? 'Shield maskaði allan textann þar sem ekki var hægt að afmarka auðkenni örugglega.' : result.findings.length ? 'Shield maskaði auðkenni áður en sent var.' : 'Shield yfirfór textann áður en sent var.');
+        inform(basicOnly ? 'Viðvörun: Þjálfaður nafnagreinir var ekki tiltækur. Sent með grunnmöskun; nöfn geta hafa farið ómöskuð.' : result.findings.some((finding) => finding.reason === 'whole-text-coverage') ? 'DMZ maskaði allan textann þar sem ekki var hægt að afmarka auðkenni örugglega.' : result.findings.length ? 'DMZ maskaði auðkenni áður en sent var.' : 'DMZ yfirfór textann áður en sent var.');
       } catch {
-        inform('Viðvörun: Shield gat ekki yfirfarið textann. Sending heldur áfram; möskun getur verið ófullkomin.');
+        inform('Viðvörun: DMZ gat ekki yfirfarið textann. Sending heldur áfram; möskun getur verið ófullkomin.');
       } finally {
         // Owner policy: a failed best-effort pass must still replay the user's
         // send action. Never overwrite a changed draft with an older scan.
@@ -447,7 +447,7 @@ export default defineContentScript({
       if (!form.querySelector('textarea,[contenteditable="true"]')) return;
       const field = composer();
       if (!field || !form.contains(field)) {
-        inform('Viðvörun: Óþekktur textareitur. Sent án Shield-möskunar.');
+        inform('Viðvörun: Óþekktur textareitur. Sent án DMZ-möskunar.');
         return;
       }
       const submitter = event.submitter;
@@ -460,7 +460,7 @@ export default defineContentScript({
       if (!(target instanceof Element) || !target.closest('textarea,[contenteditable="true"]')) return;
       const field = composer();
       if (!field || !field.contains(target)) {
-        inform('Viðvörun: Óþekktur textareitur. Sent án Shield-möskunar.');
+        inform('Viðvörun: Óþekktur textareitur. Sent án DMZ-möskunar.');
         return;
       }
       void gate(event, () => field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })), field);
@@ -470,7 +470,7 @@ export default defineContentScript({
       const target = event.target;
       if (!(target instanceof Element)) return;
       if (target.closest('input[type="file"],button[aria-label*="attach" i],button[aria-label*="upload" i]')) {
-        inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
+        inform('Viðvörun: DMZ maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
         return;
       }
       const button = target.closest('button');
@@ -484,27 +484,27 @@ export default defineContentScript({
     for (const kind of ['input', 'change'] as const) {
       document.addEventListener(kind, (event) => {
         if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'file') return;
-        inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
+        inform('Viðvörun: DMZ maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
       }, true);
     }
 
     for (const kind of ['dragenter', 'dragover', 'drop'] as const) {
       document.addEventListener(kind, (event) => {
         if (!(event instanceof DragEvent) || !event.dataTransfer?.types.includes('Files')) return;
-        inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
+        inform('Viðvörun: DMZ maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
       }, true);
     }
 
     document.addEventListener('paste', (event) => {
       if (!event.clipboardData?.files.length) return;
-      inform('Viðvörun: Shield maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
+      inform('Viðvörun: DMZ maskar ekki skrár, myndir eða viðhengi. Þau verða send óbreytt.');
     }, true);
 
     const core = globalThis as unknown as Core;
     function coreFailed() {
       ready = false;
       if (resetButton) resetButton.disabled = true;
-      inform('Viðvörun: Shield-kjarni bilaður. Sending heldur áfram án Shield-möskunar.');
+      inform('Viðvörun: DMZ-kjarni bilaður. Sending heldur áfram án DMZ-möskunar.');
     }
     void (async () => {
       const response = await fetch(chrome.runtime.getURL('dmz.wasm'));
@@ -517,7 +517,7 @@ export default defineContentScript({
       }
       if (typeof core.dmzProcess !== 'function' || typeof core.dmzProcessBestEffort !== 'function') throw new Error('WASM did not start');
       ready = true;
-      message = 'Shield tilbúinn á þessari síðu.';
+      message = 'DMZ tilbúinn á þessari síðu.';
       new MutationObserver(queueResponseScan).observe(document.documentElement, {
         childList: true, characterData: true, subtree: true, attributes: true,
         attributeFilter: ['contenteditable', 'role', 'id', 'class', 'style', 'hidden', 'aria-hidden', 'disabled', 'readonly', 'data-theme', 'data-mode', 'data-composer-markdown', 'data-testid', 'data-placeholder', 'data-message-author-role', 'data-markdown-text-style'],
