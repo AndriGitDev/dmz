@@ -98,6 +98,8 @@ jobs:
       - run: node bench/holdout/editor/test-browser.mjs
       - run: npm run test:browser
         working-directory: apps/shield
+      - run: npm run test:pause
+        working-directory: apps/shield
       - run: npm audit --omit=dev --audit-level=high
         working-directory: apps/shield
       - run: npm run record:build

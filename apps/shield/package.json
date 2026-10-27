@@ -1,6 +1,6 @@
 {
   "name": "dmz-chromium-extension",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,9 +13,10 @@
     "build:scanner": "node scripts/build-scanner.mjs",
     "test:scanner": "node scripts/scanner-unit.mjs && node scripts/scanner-lifecycle-unit.mjs && node scripts/scanner-smoke.mjs",
     "test:coverage": "node scripts/coverage-unit.mjs && node scripts/typed-quality-unit.mjs",
-    "build:alpha": "DMZ_RELEASE_LABEL=alpha.2 node scripts/build-scanner.mjs",
-    "record:alpha": "DMZ_RELEASE_LABEL=alpha.2 node scripts/record-build.mjs",
-    "build:test-release": "DMZ_RELEASE_LABEL=alpha.2 node scripts/build-test-release.mjs"
+    "build:alpha": "DMZ_RELEASE_LABEL=alpha.3 node scripts/build-scanner.mjs",
+    "record:alpha": "DMZ_RELEASE_LABEL=alpha.3 node scripts/record-build.mjs",
+    "build:test-release": "DMZ_RELEASE_LABEL=alpha.3 node scripts/build-test-release.mjs",
+    "test:pause": "node scripts/pause-smoke.mjs"
   },
   "devDependencies": {
     "@types/chrome": "^0.1.34",

@@ -40,3 +40,7 @@ See the [distribution checklist](community-distribution.md), [community validati
 ## Deferred architecture
 
 The Go server, Portal, Gateway, encrypted tenant vault, audit export and model-provider routes are retained as scaffold/research only. ADR 0004's approved-boundary and provider-evidence rules apply if hosted work is revived. No consumer subscription-token proxying, prompt/response-body logging or unapproved provider dispatch is authorized by the community transition.
+
+## Temporary disable — 0.1.3 alpha.3
+
+Settings can pause masking and response restoration for the active chat tab for 15 minutes, or resume immediately. Other tabs stay enabled. The pause is in memory only, ends on expiry/reload, retains the current mapping and adds no permissions. New text is submitted without masking while paused, with a visible status. Pending scans are interrupted for that send and late results cannot overwrite the draft; only this gate's unchanged replacement can be rolled back. Existing edits/composer changes remain authoritative. See the [plan and acceptance scope](temporary-disable-plan.md).

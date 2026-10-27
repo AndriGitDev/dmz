@@ -4,7 +4,7 @@ Active direction: [ADR 0005](adr/0005-free-community-project.md). Free access an
 
 | Priority | Evidence/decision | Current boundary |
 | --- | --- | --- |
-| Test distribution selected | Owner authorized the current trained package, renamed 0.1.2 alpha.2, as a ZIP on dmz.is under ADR 0006 | Verify source/package/checksums and retain alpha status; no store release |
+| Test distribution selected | Owner authorized the current trained package, as a versioned ZIP on dmz.is under ADR 0006 | Verify source/package/checksums and retain alpha status; no store release |
 | Before distributing each asset | Confirm all code/model/dataset licenses and redistribution rights, including approved HMS use and any trained artifacts | Private-use approval is not blanket public redistribution; no BÍN/Mannanafnaskrá rights inferred |
 | Quality | Independent annotations and acceptance against the existing quality contract | Development results and fixture tests are insufficient; targets remain unmet |
 | Usability | Fabricated-data testing on supported authenticated ChatGPT/Claude paths | Site changes may bypass interception; warn and continue remains policy |

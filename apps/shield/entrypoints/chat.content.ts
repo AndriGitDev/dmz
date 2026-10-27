@@ -36,6 +36,39 @@ export default defineContentScript({
     let resetButton: HTMLButtonElement | undefined;
     let reviewButton: HTMLButtonElement | undefined;
     let sessionEpoch = 0;
+    let pauseEpoch = 0;
+    let pausedUntil = 0;
+    let pauseTimer: ReturnType<typeof setTimeout> | undefined;
+    const interruptedScans = new Set<() => void>();
+    const pauseNotice = 'DMZ er í hléi í þessum flipa. Texti er sendur án möskunar. Virkjaðu aftur í stillingum eða bíddu þar til hléinu lýkur.';
+
+    function isPaused(): boolean {
+      if (pausedUntil && pausedUntil <= Date.now()) setPaused(false);
+      return pausedUntil !== 0;
+    }
+    function setPaused(pause: boolean) {
+      pauseEpoch++;
+      pausedUntil = pause ? Date.now() + 15 * 60 * 1000 : 0;
+      if (pauseTimer) clearTimeout(pauseTimer);
+      pauseTimer = undefined;
+      if (pause) {
+        for (const entry of restoredMessages.values()) removeRestored(entry);
+        restoredMessages.clear();
+        for (const interrupt of interruptedScans) interrupt();
+        interruptedScans.clear();
+        pauseTimer = setTimeout(() => setPaused(false), 15 * 60 * 1000);
+      } else queueResponseScan();
+      inform(pause ? pauseNotice : 'DMZ er virkt aftur í þessum flipa.');
+    }
+    async function scanUntilPause(input: string) {
+      let interrupt!: () => void;
+      const interrupted = new Promise<never>((_, reject) => {
+        interrupt = () => reject(new Error('DMZ paused'));
+        interruptedScans.add(interrupt);
+      });
+      try { return await Promise.race([scanNames(input), interrupted]); }
+      finally { interruptedScans.delete(interrupt); }
+    }
     let composerAvailable: boolean | undefined;
     const extensionOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
     type Surface = { background: string; colorScheme: 'dark' | 'light' };
@@ -65,7 +98,7 @@ export default defineContentScript({
     }
 
     function displayRestored(entry: RestoredEntry) {
-      if (!entry.loaded || !entry.host.isConnected) return;
+      if (isPaused() || !entry.loaded || !entry.host.isConnected) return;
       const original = entry.originals[0];
       const style = original ? getComputedStyle(original) : undefined;
       const typography = style ? Object.fromEntries(['color', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'letter-spacing', 'text-align'].map(key => [key, style.getPropertyValue(key)])) : {};
@@ -166,7 +199,7 @@ export default defineContentScript({
 
     function scanResponses() {
       scanQueued = false;
-      if (!ready) return;
+      if (!ready || isPaused()) return;
       if (!originalStyle.isConnected) (document.head ?? document.documentElement).append(originalStyle);
       const responses = [...document.querySelectorAll(assistantMessages)].filter(response => !response.querySelector(assistantMessages));
       for (const [response, entry] of restoredMessages) {
@@ -257,13 +290,18 @@ export default defineContentScript({
       // Only the extension settings page may inspect status or reset this tab.
       if (sender.id !== chrome.runtime.id || sender.url !== chrome.runtime.getURL('sidepanel.html')) return;
       if (request?.type === 'dmz:settings-status') {
-        respond({ ready, composer: Boolean(composer()), site });
+        isPaused();
+        respond({ ready, composer: Boolean(composer()), site, pausedUntil });
+      } else if (request?.type === 'dmz:settings-pause' && typeof request.paused === 'boolean') {
+        setPaused(request.paused);
+        respond({ ok: true, pausedUntil });
       } else if (request?.type === 'dmz:settings-reset') {
         respond({ ok: resetSession() });
       }
     });
 
     function inform(text: string, review = false) {
+      if (pausedUntil > Date.now()) { text = pauseNotice; review = false; }
       message = text;
       if (!document.documentElement) return;
       if (!toast) {
@@ -366,6 +404,7 @@ export default defineContentScript({
     async function gate(event: Event, replay: () => void, action: HTMLElement) {
       if (replaying) return;
       if (processing) { cancel(event); return; }
+      if (isPaused()) { inform(pauseNotice); return; }
       const field = composer();
       if (!field || !read(field).trim()) {
         inform('Viðvörun: DMZ fann ekki studdan textareit. Sent án DMZ-möskunar.');
@@ -377,9 +416,11 @@ export default defineContentScript({
       }
       cancel(event);
       processing = true;
+      let written: { field: HTMLElement; input: string; transformed: string; url: string; pauseEpoch: number } | undefined;
       try {
         const url = location.href;
         const epoch = sessionEpoch;
+        const policyEpoch = pauseEpoch;
         const input = read(field);
         const core = globalThis as unknown as Core;
         let result = JSON.parse(core.dmzProcessBestEffort!(input, '[]')) as Result;
@@ -389,8 +430,8 @@ export default defineContentScript({
         if (trainedScanner) {
           inform('DMZ yfirfer nöfn á tækinu… Fyrsta keyrsla getur tekið lengri tíma.');
           try {
-            const names = await scanNames(input);
-            if (sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
+            const names = await scanUntilPause(input);
+            if (pauseEpoch !== policyEpoch || isPaused() || sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
               || !action.isConnected || composer() !== field || read(field) !== input) throw new Error('Draft changed');
             const enhanced = JSON.parse(core.dmzProcessBestEffort!(input, JSON.stringify(names))) as Result;
             if (enhanced.error || !enhanced.allowed || enhanced.transformed === undefined) throw new Error('Invalid trained result');
@@ -399,7 +440,7 @@ export default defineContentScript({
             basicOnly = true;
           }
           // Async inference must not overwrite edits, a new route or a reset session.
-          if (sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
+          if (pauseEpoch !== policyEpoch || isPaused() || sessionEpoch !== epoch || location.href !== url || !ready || !field.isConnected
             || !action.isConnected || composer() !== field || read(field) !== input) {
             inform('Viðvörun: Textareitur breyttist við yfirferð. Sent með núverandi texta; möskun getur verið ófullkomin.'); return;
           }
@@ -413,12 +454,13 @@ export default defineContentScript({
           inform('Viðvörun: DMZ gat ekki yfirfarið textann. Sending heldur áfram.');
           return;
         }
+        written = { field, input, transformed: result.transformed, url, pauseEpoch: policyEpoch };
         if (!write(field, result.transformed)) {
           inform('Viðvörun: DMZ gat ekki uppfært textareitinn. Sending heldur áfram; möskun getur verið ófullkomin.');
           return;
         }
         await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
-        if (sessionEpoch !== epoch || !field.isConnected || !action.isConnected || composer() !== field
+        if (pauseEpoch !== policyEpoch || isPaused() || sessionEpoch !== epoch || !field.isConnected || !action.isConnected || composer() !== field
           || location.href !== url) {
           inform('Viðvörun: Textareitur breyttist eftir möskun. Sending heldur áfram með núverandi texta.');
           return;
@@ -436,6 +478,16 @@ export default defineContentScript({
         // Even synchronous failures must leave the original event stack first:
         // browsers suppress reentrant button.click() and form.requestSubmit().
         await new Promise<void>((resolve) => setTimeout(resolve, 0));
+        // A pause during editor reconciliation must undo only our unchanged
+        // replacement. Preserve any newer user edit, route or composer.
+        try {
+          if (written && written.pauseEpoch !== pauseEpoch && written.field.isConnected
+            && composer() === written.field && location.href === written.url
+            && read(written.field) === written.transformed) {
+            write(written.field, written.input);
+            await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+          }
+        } catch { inform('Viðvörun: Ekki tókst að endurstilla textann eftir hlé. Sent með núverandi texta.'); }
         replaying = true;
         try { replay(); } finally { replaying = false; processing = false; }
       }

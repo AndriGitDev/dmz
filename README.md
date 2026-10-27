@@ -71,4 +71,6 @@ Portal and Gateway are outside the initial community scope and carry no delivery
 
 ## Public alpha testing
 
-The owner-authorized trained alpha is distributed as **DMZ Chromium extension 0.1.2 alpha.2** at [dmz.is](https://www.dmz.is/vidbot/) and [English installation guide](https://www.dmz.is/en/extension/). It preserves the existing trained scanner and adds the renamed UI/evaluation kit. See [ADR 0006](docs/adr/0006-chromium-name-and-public-test-download.md) and the [distribution process](docs/community-distribution.md). Internal `apps/shield` paths remain for build compatibility; Shield is no longer a public product name.
+The owner-authorized trained alpha is distributed as **DMZ Chromium extension 0.1.3 alpha.3** at [dmz.is](https://www.dmz.is/vidbot/) and [English installation guide](https://www.dmz.is/en/extension/). It preserves the existing trained scanner and adds the renamed UI/evaluation kit. See [ADR 0006](docs/adr/0006-chromium-name-and-public-test-download.md) and the [distribution process](docs/community-distribution.md). Internal `apps/shield` paths remain for build compatibility; Shield is no longer a public product name.
+
+The settings menu can pause the active chat tab for 15 minutes and resume immediately; other tabs stay enabled, the mapping is retained, and reload/expiry re-enables DMZ. See [temporary-disable plan and verification](docs/temporary-disable-plan.md).
