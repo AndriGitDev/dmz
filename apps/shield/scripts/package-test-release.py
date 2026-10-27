@@ -22,16 +22,16 @@ build = json.loads((extension / 'BUILD.json').read_text())
 manifest = json.loads((extension / 'manifest.json').read_text())
 version = json.loads((root / 'package.json').read_text())['version']
 if (manifest['name'] != 'DMZ Chromium extension' or manifest['version'] != version
-        or build['sourceCommit'] != source or build['releaseLabel'] != 'alpha.2'
+        or build['sourceCommit'] != source or build['releaseLabel'] != 'alpha.3'
         or build['scannerProfile'] != 'trained-fp16storage'
-        or manifest['version_name'] != f'{version} alpha.2 {source}'):
-    raise SystemExit('Requires the current clean, recorded trained Alpha 2 build.')
+        or manifest['version_name'] != f'{version} alpha.3 {source}'):
+    raise SystemExit('Requires the current clean, recorded trained Alpha 3 build.')
 expected = set(build['sha256']) | {'BUILD.json'}
 actual = {p.relative_to(extension).as_posix() for p in extension.rglob('*') if p.is_file()}
 if actual != expected:
     raise SystemExit('Unexpected or missing extension files.')
 files = {}
-prefix = f'dmz-chromium-extension-{version}-alpha.2'
+prefix = f'dmz-chromium-extension-{version}-alpha.3'
 for name in sorted(expected):
     path = extension / name
     if path.is_symlink():
