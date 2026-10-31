@@ -29,6 +29,9 @@ try {
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
   await page.goto(`chrome-extension://${id}/sidepanel.html`);
   assert.equal(await page.locator('h1').textContent(), 'Stillingar');
+  assert.equal((await worker.evaluate(() => chrome.runtime.getManifest())).name, 'dmz');
+  assert.equal(await page.locator('a[href="/licenses/dmz-GPL-3.0.txt"]').count(), 1);
+  assert.equal(await page.getByRole('link', { name: 'Frumkóði ↗', exact: true }).getAttribute('href'), 'https://github.com/AndriGitDev/dmz');
   assert.equal(await page.locator('textarea').count(), 0);
   await page.waitForFunction(() => document.querySelector('#tab-status').textContent.includes('Opnaðu'));
   assert.equal(await page.locator('#reset').isDisabled(), true);
@@ -37,7 +40,7 @@ try {
     await page.reload();
     assert.equal(await page.locator('#theme').inputValue(), mode);
     assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme), mode);
-    await page.screenshot({ path: `/tmp/dmz-settings-${mode}.png`, fullPage: true });
+    await page.screenshot({ path: path.join(profile, `dmz-settings-${mode}.png`), fullPage: true });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   }
   await page.locator('#theme').selectOption('system');

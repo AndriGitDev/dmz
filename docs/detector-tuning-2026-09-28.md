@@ -47,7 +47,7 @@ these results.
   shape recognition, not IDNA/DNS validation. Empty labels, edge hyphens and invalid
   local-part dot placement are rejected.
 - All spans refer to original UTF-8 bytes. No normalisation changes the input.
-  Shield's existing mask/block policy and device-local restoration remain in force.
+  dmz's existing mask/block policy and device-local restoration remain in force.
 - Exposure reports now include benign-prompt totals, blocked/altered benign case
   IDs and exposed case IDs. No raw prompt or identifier values are added to reports.
 
@@ -71,10 +71,10 @@ Historical exploratory reports are retained as `exploratory-untuned-*`.
 5. Combining marks still block harmless decomposed prose. Normalisation must retain
    original-byte mapping and preserve protection against hidden-character bypasses.
 
-## Live Shield check after installing this build
+## Live dmz check after installing this build
 
-Use fabricated values only, with a fresh Shield session between rows. Ask each site
-(ChatGPT and Claude in Brave) to repeat the value exactly. Masked rows should send
+Use fabricated values only, with a fresh dmz session between rows. Ask each site
+(supported AI sites in Brave) to repeat the value exactly. Masked rows should send
 markers and restore locally; review rows should stop before sending.
 
 | Input | Expected |
@@ -132,7 +132,7 @@ scraped into a dataset or incorporated into the detector during this pass.
 ## Automated verification
 
 Go unit/regression tests and vet; frozen corpus checksums and recall floors;
-new corpus pins/report snapshots; Shield TypeScript check; TinyGo WASM build
-and mask/block/restore smoke; Chromium extension smoke; synthetic ChatGPT/Claude
+new corpus pins/report snapshots; dmz TypeScript check; TinyGo WASM build
+and mask/block/restore smoke; Chromium extension smoke; synthetic supported AI sites
 interception/restoration; network-body, composer-race and broken-core checks.
 Authenticated live retesting by the owner remains pending.

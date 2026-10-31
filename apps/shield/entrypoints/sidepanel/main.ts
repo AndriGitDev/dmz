@@ -65,7 +65,7 @@ async function refresh() {
       ? `DMZ er í hléi í þessum flipa til ${new Date(currentPausedUntil).toLocaleTimeString('is-IS', { hour: '2-digit', minute: '2-digit' })}. Texti er sendur án möskunar.`
       : 'DMZ er ekki í hléi í þessum flipa. Endurhleðsla eða lokun flipans lýkur einnig hléi.';
     if (currentPausedUntil) pauseRefresh = setTimeout(() => void refresh(), Math.max(1, currentPausedUntil - Date.now() + 20));
-    const site = state.site === 'chatgpt' ? 'ChatGPT' : 'Claude';
+    const site = 'AI-vefur';
     status.textContent = currentPausedUntil ? `${site}: DMZ er í hléi. Texti er sendur án möskunar.`
       : !state.ready ? `${site}: kjarninn er ekki tilbúinn. Endurhladdu síðuna ef þetta varir.`
       : state.composer ? `${site}: DMZ er tilbúinn í studdum textareit.`
@@ -76,7 +76,7 @@ async function refresh() {
     pause.setAttribute('aria-pressed', 'false');
     pause.textContent = 'Setja DMZ í 15 mínútna hlé';
     pauseStatus.textContent = 'Opnaðu studdan samtalsflipa til að breyta þessari stillingu.';
-    status.textContent = 'Opnaðu ChatGPT eða Claude í þessum glugga. Endurhladdu síðuna ef viðbótin var nýlega uppfærð.';
+    status.textContent = 'Opnaðu studdan AI-vef í þessum glugga. Endurhladdu síðuna ef viðbótin var nýlega uppfærð.';
   }
 }
 pause.addEventListener('click', async () => {

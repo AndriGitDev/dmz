@@ -71,7 +71,7 @@ A production extension needs its own tested isolation/runtime loading setup.
 To repeat on the owner's machine, copy the local assets privately, install this
 harness there, and optionally set `DMZ_BROWSER_EXECUTABLE` to the local Brave
 binary. Use a fresh report path. This still benchmarks a clean headless browser,
-not the owner's live ChatGPT/Claude tabs or the installed Shield extension.
+not the owner's live supported AI sites tabs or the installed Shield extension.
 
 ## Full browser accuracy replay
 

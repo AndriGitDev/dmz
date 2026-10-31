@@ -1,41 +1,21 @@
-# Threat model: initial scope
+# dmz threat model
 
 Status: outline, not a completed assessment.
 
-## Assets
+## Assets and boundaries
 
-- Real identifiers in prompts and responses.
-- Per-tenant, per-session stand-in maps and encryption keys.
-- Tenant policies and audit metadata.
+Original text, detected direct identifiers and per-tab restoration mappings are sensitive. dmz processes them on device. The AI site's composer is controlled by the website; its scripts can read the original draft and input events before submission. Local masking does not hide pre-submit text from that site. This describes possible access, not evidence that a specific site sends telemetry.
 
-## Trust boundaries
+Restored replies appear in an extension-origin frame; the host page retains masked text. Reset, reload and tab closure discard the mapping. Source availability allows review but does not establish safety or authenticate a downloaded binary.
 
-1. Shield: device-local detector and vault → third-party AI website.
-2. Portal/Gateway: client → approved dmz deployment (initially Hetzner EU) → approved model route; original PII reaches the provider only under the explicit policy in ADR 0004.
-3. Audit: request metadata → tenant audit store. Prompt and response bodies must never enter this path.
+## Cases requiring regression coverage
 
-The current Shield adapter intercepts recognised submissions from a third-party
-composer. The original draft already exists in that page's DOM, where its scripts
-can read the text and input events. The [page-managed input fixture](../apps/shield/scripts/chat-smoke.mjs)
-models this access before checking that the intercepted chat request contains the
-masked value. Device-local detection and the isolated restored-response frame do
-not hide the original draft from the host page or protect pre-submit telemetry.
-This is an architectural boundary, not a claim that either supported site sends
-such telemetry. A composer controlled by the extension would be a separate design
-and usability decision; the current preview does not provide it.
+- Detection misses, false positives and identifying context left in text.
+- Cross-tab mapping leakage, wrong restoration and stale asynchronous results overwriting edits.
+- Site changes and unsupported send paths bypassing interception.
+- Scanner/core failures continuing with visible warnings and reduced or absent masking.
+- Unchanged attachments and a temporary pause allowing unmasked submission.
+- Prompt contents entering logs, exceptions, reports or support tooling.
+- Tampered dependencies, release packages or misleading forks.
 
-## Initial failure cases to test
-
-- Detector misses an identifier, including inflected Icelandic names.
-- Stand-in mapping leaks across tenants or sessions.
-- Streaming response exposes partial stand-ins or restores the wrong value.
-- Logs, exceptions, traces or support tooling record prompt content.
-- Browser site change bypasses Shield interception or permits file upload.
-- Provider routing violates a tenant policy or retention constraint.
-
-- User bypasses the server-enforced mode or reuses a session under a different policy.
-- An unavailable approved route silently falls back to a retaining or global route.
-- Hosting, backups or provider processing exceed the approved residency boundary.
-- Concurrent requests or retries bypass application spend reservations.
-
-The formal threat model will add abuse cases, controls, test evidence, owners and residual risk before a paid pilot processes live data.
+Use fabricated examples. Preserve browser-origin isolation checks, per-tab state and release/source identity. GPL obligations cannot prevent malicious copies. Independent quality evaluation and a completed security assessment remain separate work.

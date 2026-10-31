@@ -1,12 +1,10 @@
-# Product specification: DMZ Chromium extension
+# Product specification: dmz
 
-Active direction: [ADR 0005](adr/0005-free-community-project.md), 27 October 2026. Detailed prior hosted requirements are retained in the [historical specification](product-spec-commercial-baseline.md); they are not delivery commitments.
+Active direction: [open-source extension](community-project.md), 31 October 2026.
 
 ## Product and availability
 
-DMZ is a free community tool from Kastro for reducing accidental sharing of selected direct identifiers and secrets with AI. DMZ is the initial product, with Icelandic-language detection as a focus. There are no DMZ subscriptions, seat minimums, premium protection tiers or mandatory accounts. Optional Kastro assistance is separate. The AI service retains its own account requirements and costs.
-
-Existing Chromium rule-based previews and a separately packaged trained alpha support selected text submissions on ChatGPT and Claude. They are not general store releases. Free access does not establish source/model publication rights or independent detector quality. Portal/Gateway, tenant services and server audit are deferred.
+dmz is the free, open-source Chromium extension from Kastro, licensed under GPL-3.0-only. Local use requires no dmz account. Basic and separately packaged trained alpha builds support selected text submissions on supported AI sites, with different coverage. Neither is claimed as a general store release. External model/data rights and independent detector validation remain separate from source licensing.
 
 ## Current flow
 
@@ -36,10 +34,6 @@ No release may lower recall for any entity type on the synthetic release benchma
 Use the existing Go/WASM, scanner, composer/race and browser regression suites for relevant changes. Preserve clean source/build identity, checksums and artifact-profile distinction. Keep research and raw corpora outside public assets. ADR 0006 authorizes the compiled trained alpha package, including its bundled local scanner, for public testing. Publish research summaries and limits only.
 
 See the [distribution checklist](community-distribution.md), [community validation](validation.md) and [launch checklist](launch-checklist.md). No store listing or public download may be invented to satisfy a call to action. The current trained alpha is published as a fabricated-data test ZIP under ADR 0006; it is not a store release.
-
-## Deferred architecture
-
-The Go server, Portal, Gateway, encrypted tenant vault, audit export and model-provider routes are retained as scaffold/research only. ADR 0004's approved-boundary and provider-evidence rules apply if hosted work is revived. No consumer subscription-token proxying, prompt/response-body logging or unapproved provider dispatch is authorized by the community transition.
 
 ## Temporary disable — 0.1.3 alpha.3
 

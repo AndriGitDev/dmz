@@ -40,7 +40,7 @@ is retained when recognized. Unknown street forms, unnumbered addresses and
 ambiguous place-name/number mentions remain limitations; synthetic regression
 checks do not establish field precision or recall.
 
-Load `apps/shield/.output/chrome-mv3` using **Load unpacked** on `chrome://extensions` (or Brave's extensions page), then reload supported ChatGPT/Claude tabs. The extension name includes “trained preview” and Settings identifies the active trained scanner. First use loads the model and can take several seconds. A trained-scan failure uses basic masking with a warning. A changed draft remains for retry. Uninstall or reload the extension to discard its worker/model; reset in Settings clears a tab's mappings.
+Load `apps/shield/.output/chrome-mv3` using **Load unpacked** on `chrome://extensions` (or Brave's extensions page), then reload supported supported AI sites tabs. The extension name includes “trained preview” and Settings identifies the active trained scanner. First use loads the model and can take several seconds. A trained-scan failure uses basic masking with a warning. A changed draft remains for retry. Uninstall or reload the extension to discard its worker/model; reset in Settings clears a tab's mappings.
 
 ## Validation scope
 

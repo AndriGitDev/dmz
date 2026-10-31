@@ -28,7 +28,7 @@ reserved for independent annotation.
    Do not map generic locations or organizations to street addresses or people.
 4. Initial candidates: Presidio's pinned English baseline; Knowledgator
    GLiNER-PII base; Fastino GLiNER2-PII; dslim BERT NER as a focused English-name
-   control. Assess OpenAI Privacy Filter as resources and runtime allow.
+   control. Assess external provider Privacy Filter as resources and runtime allow.
    Start with upstream documented defaults, record complete configuration, and
    retain failures. If a bounded calibration is needed, declare it before
    examining those results and keep its selection data separate from follow-up.

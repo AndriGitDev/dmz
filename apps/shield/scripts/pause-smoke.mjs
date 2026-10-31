@@ -92,8 +92,14 @@ async function world(p) {
   const c = await browser.newCDPSession(p),
     contexts = [];
   c.on("Runtime.executionContextCreated", (e) => contexts.push(e.context));
+  const { frameTree } = await c.send("Page.getFrameTree");
   await c.send("Runtime.enable");
-  for (const x of contexts.filter((c) => c.auxData?.isDefault === false)) {
+  // Restored replies create short-lived extension frames. Their contexts can
+  // disappear while probing; only the main frame contains our content script.
+  for (const x of contexts.filter(
+    (context) => context.auxData?.isDefault === false &&
+      context.auxData?.frameId === frameTree.frame.id,
+  )) {
     const v = await c.send("Runtime.evaluate", {
       contextId: x.id,
       expression: 'typeof chrome!=="undefined"&&chrome.runtime?.id',
@@ -119,7 +125,7 @@ try {
     await pause(panel, p, true);
     if (site === "chatgpt")
       await panel.screenshot({
-        path: "/tmp/dmz-pause-active-settings.png",
+        path: join(profile, "dmz-pause-active-settings.png"),
         fullPage: true,
       });
     await p.waitForFunction(
@@ -214,7 +220,7 @@ try {
     ),
   );
   await panel.screenshot({
-    path: "/tmp/dmz-pause-settings.png",
+    path: join(profile, "dmz-pause-settings.png"),
     fullPage: true,
   });
   await close();

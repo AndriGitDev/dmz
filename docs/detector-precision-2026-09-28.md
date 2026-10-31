@@ -2,7 +2,7 @@
 
 Owner requested at least 95% precision. This round targets **exact-span Person/name
 precision** on MIM-GOLD-NER 2.0. It does not establish 95% precision for every PII
-category, field prompts, or all Shield blocking decisions.
+category, field prompts, or all dmz blocking decisions.
 
 ## Results
 
@@ -84,7 +84,7 @@ DMZ_LEXICON_FILE=/root/.local/share/dmz/datasets/lexicon-v3-n2-q0.95.json \
 ```
 
 The regular CI artifact still contains synthetic data only. The owner-local
-Shield preview must be built with this explicit pack and checked through the
+dmz preview must be built with this explicit pack and checked through the
 WASM and Chromium smoke suites. The prior enriched pack remains locally available
 for recall comparisons. No source data or trained pack is uploaded to the PR.
 

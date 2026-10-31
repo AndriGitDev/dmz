@@ -3,7 +3,7 @@
 ## Outcome
 
 The requested **95.5% exact name precision and 95.5% exact name recall** target is
-not achieved. No Shield runtime, local preview artifact, or public website metric
+not achieved. No dmz runtime, local preview artifact, or public website metric
 is changed by this research pass.
 
 | Evaluation | Current lexicon precision | Current lexicon recall | Experimental CRF precision | Experimental CRF recall |
@@ -64,7 +64,7 @@ evaluation corpus. Compute requirements, model license, and any paid training
 route need verification before that experiment. More context features alone did
 not close the gap in this round; a larger model is a hypothesis, not a guarantee.
 
-Before any model enters Shield, implement and test production tokenization and
+Before any model enters dmz, implement and test production tokenization and
 local inference, measure WASM/package size and latency, and run the existing
 per-entity recall and browser regression gates. The offline CRF does not satisfy
 those runtime requirements.

@@ -1,11 +1,11 @@
-# Shield settings and detector runtime assessment
+# dmz settings and detector runtime assessment
 
 ## Settings implementation
 
 The toolbar now opens a settings menu instead of the manual masking demo:
 
 - Charcoal/red dmz branding, with light, dark and system appearance.
-- Live status from the active ChatGPT/Claude tab; unsupported pages do not show
+- Live status from the active supported AI sites tab; unsupported pages do not show
   an active-protection badge.
 - Confirmed reset of that tab's mapping and restored displays. Switching tabs
   cancels confirmation, and the active tab is checked again before reset.
@@ -59,7 +59,7 @@ Use one extension-owned worker if the eventual runtime supports it; retain
 per-tab mapping isolation. Quantization may change predictions, so the frozen
 research candidate and the shipping candidate need separate hashes/evaluations.
 If memory or latency is unsuitable, distill a smaller local model using only
-approved training data. Do not send Shield prompts to a hosted model as fallback.
+approved training data. Do not send dmz prompts to a hosted model as fallback.
 No contextual neural model was added to the shipped extension in this change.
 
 Independent-data preparation is recorded in [the holdout pilot](../bench/holdout/README.md).
