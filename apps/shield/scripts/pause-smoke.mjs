@@ -119,7 +119,7 @@ try {
     await pause(panel, p, true);
     if (site === "chatgpt")
       await panel.screenshot({
-        path: "/tmp/dmz-pause-active-settings.png",
+        path: join(profile, "dmz-pause-active-settings.png"),
         fullPage: true,
       });
     await p.waitForFunction(
@@ -214,7 +214,7 @@ try {
     ),
   );
   await panel.screenshot({
-    path: "/tmp/dmz-pause-settings.png",
+    path: join(profile, "dmz-pause-settings.png"),
     fullPage: true,
   });
   await close();
