@@ -41,7 +41,7 @@ freeze the still-outstanding acceptance sampling design or establish independenc
 
 ## Scope and sampling
 
-The complete Shield target covers names, postal/street addresses, kennitölur,
+The complete dmz target covers names, postal/street addresses, kennitölur,
 email, Icelandic phone, IBAN, payment cards, supported secret patterns and explicitly
 configured tenant terms. Unicode review is a protective policy signal rather than
 a gold entity type. Each dataset must state exactly which types are fully labelled;
@@ -66,7 +66,7 @@ counts and regressions reported separately.
 
 Keep the private 88-document, 142-excerpt web packet unlabelled and model-blind
 until independent review. Its existing annotation instructions cover Person only;
-it cannot establish all-entity Shield accuracy without a separately frozen,
+it cannot establish all-entity dmz accuracy without a separately frozen,
 complete annotation protocol. Require independent annotation, second review and
 adjudication, immutable text and label hashes, document and article-cluster split
 manifests, and overlap screening. Do not train or choose thresholds on final labels.

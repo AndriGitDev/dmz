@@ -1,6 +1,8 @@
 # DMZ Chromium extension: alpha test distribution
 
-Owner direction: [ADR 0006](adr/0006-chromium-name-and-public-test-download.md), 27 October 2026. Publish the current trained scanner as a renamed 0.1.3 alpha.3 test package on dmz.is, without implying a store release or independent quality acceptance. The compiled distribution includes the on-device model; source, raw corpora and research remain private.
+Source licensing update, 31 October 2026: original code is now GPL-3.0-only under the owner’s direction. This supersedes earlier source-privacy restrictions, while research/data/model publication still requires rights review. See [publication readiness](open-source-readiness.md).
+
+Owner direction: [ADR 0006](adr/0006-chromium-name-and-public-test-download.md), 27 October 2026. Publish the current trained scanner as a renamed 0.1.3 alpha.3 test package on dmz.is, without implying a store release or independent quality acceptance. The compiled distribution includes the on-device model; source is GPL-3.0-only; raw corpora and research still require publication-rights review.
 
 ## Reproduce the named test build
 
@@ -18,6 +20,6 @@ Use `/vidbot/` or `/en/extension/`. Download, extract and open START-HERE.html. 
 
 The first scan can take several seconds. Failures warn and continue; attachments are sent unchanged. The host AI page can see the original composer draft before masking. Reset/reload/close loses previous mappings; uninstalling does not recall content already sent. This public alpha is for fabricated-data testing, not approval for confidential material.
 
-Independent quality acceptance, supervised live-site evidence for the selected build and final store/legal/privacy claims remain separate. Preserve the research targets and all regression gates. Open-source publication is undecided; optional Kastro assistance never gates the free test download.
+Independent quality acceptance, supervised live-site evidence for the selected build and final store/legal/privacy claims remain separate. Preserve the research targets and all regression gates. Source publication follows the readiness checklist; optional Kastro assistance never gates the free test download.
 
 Alpha 3 adds active-tab temporary pause. Include `npm run test:pause` in verification alongside existing browser/scanner suites. The initial rename/test publication remains versioned as Alpha 2 and must remain available for existing links.

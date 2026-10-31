@@ -1,14 +1,12 @@
 # dmz repository instructions
 
-Read `docs/adr/0006-chromium-name-and-public-test-download.md`, `docs/community-project.md`, `docs/adr/0005-free-community-project.md`, `docs/plan-coverage.md`, `docs/product-spec.md`, `docs/roadmap.md` and `docs/open-decisions.md` before substantive product work. The active direction is free community DMZ with optional separate Kastro help; Portal/Gateway are deferred and source licensing is undecided. The 27 September 2026 business plan is a historical hypothesis baseline; distinguish captured requirements from shipped features and independently verified facts.
+The product is **dmz**, the open-source Chromium extension. Original project code is GPL-3.0-only. Read the product repository's `docs/product-spec.md`, `docs/community-project.md`, `docs/open-decisions.md` and `docs/open-source-readiness.md` before changing product or publication claims. The active product checkout is `/root/work/dmz`; the website checkout for this work is `/root/work/AndriGitDev/dmz-web`.
 
-- Never commit real customer prompts, identifiers, secrets, logs, licensed BÍN/Mannanafnaskrá data or credentials. Benchmark data is synthetic; generated test kennitölur use century digit `8`.
-- Keep DMZ values and mappings on device. For Portal/Gateway, follow ADR 0004: initial hosting is Hetzner Germany/Finland; masking keeps originals and mappings within the approved DMZ boundary, while explicitly approved PII processing may send permitted originals to a verified provider route. Block unapproved routes and mode changes; never silently relax retention or geography. Do not claim anonymity or 100% detection.
-- Do not add ChatGPT/Claude login pass-through or subscription-token proxying. Do not claim provider ZDR without an applicable signed agreement and tested route.
-- Prompt and response bodies do not belong in gateway logs, traces, audit events or durable storage. Audit is metadata only.
-- A release cannot lower recall for any entity type on the synthetic public benchmark. Gate 2 targets are 99% kennitala and 95% name recall; they are not current results.
-- Legal documents, ISK prices, provider retention and certification claims require evidence/approval listed in `docs/open-decisions.md` before public publication.
-
-The public marketing site is a separate repository at `/root/work/dmz-web` (`AndriGitDev/dmz-web`).
-
-The product is named **DMZ Chromium extension**. The owner authorized publication of the current compiled trained alpha ZIP on dmz.is; this includes its bundled local scanner but no raw corpora, standalone model downloads or private research. Follow ADR 0006 for build identity, unchanged detector assets, notices and checksum evidence.
+- Keep dmz originals and mappings on device. Host-page scripts can see drafts before masking. Failures warn and continue; attachments pass unchanged. Do not claim anonymity, perfect detection, legal compliance, certification or provider retention guarantees.
+- Never commit real prompts, personal data, secrets, credentials or licensed source datasets. Use synthetic examples; test kennitölur use century digit `8`.
+- Preserve existing detector behavior and recall regression gates. Development results are not independent validation.
+- Public detector disclosures remain reviewed summary measurements and honest limitations. Do not expose research recipes, raw corpora, private reports or complete challenge examples. Source licensing does not grant upstream publication rights.
+- Retired `public/benchmark/` downloads stay retired. Never run the legacy sibling sync script. Website `src/data/benchmark/` contains summary counts only.
+- Preserve third-party notices and required functional origins/selectors. Remove vendor/model branding from project copy without corrupting attribution or integration behavior.
+- The website is Icelandic-first with an English mirror, canonical URL and hreflang links per public page. No trackers, embeds, unnecessary cookie banners or external form tools.
+- Keep source licensing distinct from actual public availability. Review repository history and asset rights before changing visibility or publishing binaries.

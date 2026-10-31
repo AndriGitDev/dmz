@@ -10,7 +10,7 @@ Notið aðeins tilbúin dæmi, ekki raunverulegar persónuupplýsingar, lykla e�
 Date / Dagsetning:
 Chrome version / Chrome-útgáfa:
 Operating system / Stýrikerfi:
-Site / Síða (ChatGPT / Claude / both-báðar):
+Site / Síða (ChatGPT / AI site / both-báðar):
 Submit method / Sending (button-hnappur / Enter):
 
 What worked / Hvað virkaði:

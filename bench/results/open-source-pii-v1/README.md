@@ -29,7 +29,7 @@ candidate spans while retaining existing trained-detector matches.
 | + GLiNER FP32 | 31/40 | 27/36 | 12/24 |
 | + GLiNER published QUInt8 | 30/40 | 26/36 | 11/24 |
 | + GLiNER2 original | 32/40 | 26/36 | 21/24 |
-| + OpenAI Privacy Filter | 33/40 | 32/36 | 18/24 |
+| + external provider Privacy Filter | 33/40 | 32/36 | 18/24 |
 | + Gravitee compact INT8 | 26/40 | 30/36 | 15/24 |
 | + Gravitee compact FP32 | 26/40 | 30/36 | 14/24 |
 
@@ -132,7 +132,7 @@ from absent entity-span coverage. It records 736 false-name/address overlap pair
 and 633 partly covered address misses. These post-evaluation diagnostics do not
 change labels, qualify a policy or prove that unlabelled text is benign.
 
-OpenAI Privacy Filter was evaluated on a deterministic, outcome-independent
+external provider Privacy Filter was evaluated on a deterministic, outcome-independent
 512-excerpt selection. All candidates below are rescored on those same IDs;
 these counts must not be compared directly with the full-set counts above.
 
@@ -145,7 +145,7 @@ these counts must not be compared directly with the full-set counts above.
 | + GLiNER2 | 209 | 77.38% | 600 |
 | + GLiNER2 address-only | 268 | 61.69% | 327 |
 | + usaddress standalone parser | 261 | 55.08% | 312 |
-| + OpenAI Privacy Filter | 253 | 71.38% | 509 |
+| + external provider Privacy Filter | 253 | 71.38% | 509 |
 
 Privacy Filter completed this sample without inference failures in about 126
 minutes on the shared CPU host, with roughly 4.1 GiB peak resident memory. Its

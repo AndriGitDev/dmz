@@ -4,7 +4,7 @@
 
 The owner approved an extended detector improvement session, prioritizing legal
 and financial documents and both exact Person precision and recall >=95.5%.
-This round uses development data only. It does not change Shield, publish a new
+This round uses development data only. It does not change dmz, publish a new
 website score, or establish independent final accuracy.
 
 **Final selected development result: MIM 95.92% precision / 95.29% recall;
@@ -175,7 +175,7 @@ against changing the underlying model's results.
 The selected recipe and hashes are frozen in `selected-candidate.json`; this is
 not a release manifest. It still requires the large local Python encoder, and no
 Go/WASM integration, memory budget, browser latency or combined-entity exposure
-claim follows from these results. Shield is unchanged.
+claim follows from these results. dmz is unchanged.
 
 Next evidence should come from human review of the synthetic annotations and a
 new document-disjoint evaluation set, including genuine document structures and
@@ -194,4 +194,4 @@ meet the target; no accuracy/F1 substitution or pooling of datasets is permitted
 New tests cover exclusive error reasons, typed-label projection, exact original
 UTF-8 offsets, reproducible corpus generation and disjointness, candidate selection,
 word-boundary encoder chunking, and private cache/checkpoint integrity. Existing
-Go, dataset and Shield browser CI gates remain unchanged.
+Go, dataset and dmz browser CI gates remain unchanged.

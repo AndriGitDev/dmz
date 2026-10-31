@@ -1,5 +1,7 @@
-# ADR 0001: Separate public site and product stack
+# ADR 0001: Separate website and extension repositories
 
-Status: accepted · 27 September 2026
+Status: updated by owner direction, 31 October 2026.
 
-The marketing site lives in public `dmz-web`; the detector, applications, services, benchmark and deployment configuration live in private `dmz`. This allows transparent public messaging and legal material without exposing operational configuration or unreleased code. The website does not host customer prompts. A future pilot intake API must be hosted in Iceland and integrated only after its privacy and retention controls are reviewed.
+`dmz-web` contains the bilingual website; `dmz` contains the Chromium extension, detector and supporting tools. Original code in both uses GPL-3.0-only. Public visibility is a separate publication step after [history and asset review](../open-source-readiness.md).
+
+The website does not collect prompts. Keep real user data, credentials and licensed source datasets outside both repositories. Public detector content remains limited to reviewed summaries and honest limitations.

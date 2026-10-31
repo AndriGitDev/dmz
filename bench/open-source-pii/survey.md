@@ -12,7 +12,7 @@ session's `sources/` and `models/` directories.
 | [Knowledgator GLiNER-PII base](https://huggingface.co/knowledgator/gliner-pii-base-v1.0) | Model card Apache-2.0; GLiNER code Apache-2.0 | Initial FP32 ONNX is 664,764,803 bytes; tokenizer ~8.6 MB. Existing ONNX/JavaScript path makes a local browser spike feasible. Published quantized variants need their own quality comparisons. |
 | [Fastino GLiNER2-PII](https://huggingface.co/fastino/gliner2-privacy-filter-PII-multi) | Model card and [code](https://github.com/fastino-ai/GLiNER2) Apache-2.0 | Current multilingual model, 42 advertised labels, no Icelandic language claim. Safetensors ~1.23 GB. Evaluate CPU inference; direct browser export requires separate work. The initial `person` label also finds role words, so its ontology needs scrutiny. |
 | [dslim BERT NER](https://huggingface.co/dslim/bert-base-NER) | Model card MIT | English Person control, not a complete PII detector. ~433 MB safetensors; supports ordinary token-classification export. Do not relabel LOC or ORG as addresses or people. |
-| [OpenAI Privacy Filter](https://github.com/openai/privacy-filter) | Code and [model](https://huggingface.co/openai/privacy-filter) Apache-2.0 | Local CPU/runtime support, primarily English, eight privacy categories and a distinct span-decoding contract. Original checkpoint ~2.80 GB; memory and browser cost must be measured. Account numbers, dates and URLs do not map one-to-one to current DMZ types. |
+| [external provider Privacy Filter](https://github.com/openai/privacy-filter) | Code and [model](https://huggingface.co/openai/privacy-filter) Apache-2.0 | Local CPU/runtime support, primarily English, eight privacy categories and a distinct span-decoding contract. Original checkpoint ~2.80 GB; memory and browser cost must be measured. Account numbers, dates and URLs do not map one-to-one to current DMZ types. |
 | [Piiranha](https://huggingface.co/iiiorg/piiranha-v1-detect-personal-information) | Current card CC-BY-NC-ND-4.0 | Excluded from the commercial integration shortlist under these terms. Its token-level headline accuracy is not DMZ's acceptance metric. |
 | [NVIDIA GLiNER-PII](https://huggingface.co/nvidia/gliner-PII) | NVIDIA Open Model License Agreement | Separate model terms; not an Apache substitute. Lower priority than permissively licensed candidates for this bounded session. |
 | [scrubadub](https://github.com/LeapBeyond/scrubadub) | Inspect exact package/license before integration | Python detector/cleanup framework. Does not itself solve browser-compatible English contextual detection. Reviewed as an alternative framework, not assumed superior to Presidio. |
@@ -71,7 +71,7 @@ adds 505 true and 297 false spans, improving exact excerpts from 2,443 to 2,493.
 The larger sample therefore retains the false-positive concern. Full GLiNER2
 addition instead lowers exact excerpts to 2,014 despite increasing recall.
 
-OpenAI Privacy Filter completed a fixed, outcome-independent 512-excerpt public
+external provider Privacy Filter completed a fixed, outcome-independent 512-excerpt public
 sample in about 126 minutes on the shared CPU host. Adding it to the updated
 core raises recall from 53.69% to 71.38%, but lowers exact excerpts from 256 to
 253 and raises false spans from 291 to 509. Its original checkpoint is about

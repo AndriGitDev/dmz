@@ -7,13 +7,13 @@ const dirty = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' 
 
 export default defineConfig({
   manifest: {
-    name: 'DMZ Chromium extension',
+    name: 'dmz',
     permissions: process.env.VITE_DMZ_TRAINED_SCANNER === '1' ? ['offscreen'] : [],
     minimum_chrome_version: '116',
-    description: 'Free community tool by Kastro. Best-effort local masking for supported ChatGPT and Claude chats.',
+    description: 'Open-source Chromium extension by Kastro. Best-effort local masking on supported AI sites.',
     version,
     version_name: `${version} ${releaseLabel} ${sourceCommit}${dirty ? '-dirty' : ''}`,
-    action: { default_title: 'DMZ Chromium extension · Stillingar' },
+    action: { default_title: 'dmz · Stillingar' },
     web_accessible_resources: [{ resources: ['dmz.wasm', 'restored.html'], matches: ['https://chatgpt.com/*', 'https://claude.ai/*'] }],
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self'; worker-src 'self'",

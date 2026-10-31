@@ -1,6 +1,6 @@
-# Detector and Shield handoff — 5 October 2026
+# Detector and dmz handoff — 5 October 2026
 
-The inherited address-without-postcode work and subsequent Shield correctness changes are implemented in private draft PR [#16](https://github.com/AndriGitDev/dmz/pull/16). The clean trained preview is built from `a8a6704`; its 30 archive members, build record and twenty-corpus measurement package match. The frozen name model remains unchanged. This is a reviewable development preview, not a production release or independent ≥99% result.
+The inherited address-without-postcode work and subsequent dmz correctness changes are implemented in private draft PR [#16](https://github.com/AndriGitDev/dmz/pull/16). The clean trained preview is built from `a8a6704`; its 30 archive members, build record and twenty-corpus measurement package match. The frozen name model remains unchanged. This is a reviewable development preview, not a production release or independent ≥99% result.
 
 ## Ready for review
 
@@ -23,5 +23,5 @@ Remaining errors include short/low-entropy/letters-only and unsupported prose cr
 
 1. Arrange independent full-entity annotation, a separate second review and adjudication using the prepared offline packets and [rubric](../bench/holdout/entity-annotation-rubric.md). The original 142-excerpt/88-document packet remains unchanged and model-blind. The additional legal/financial pool also remains unlabelled, with source-use review pending. No reviewer outreach has been sent.
 2. Freeze the acceptance sample design before predictions: separate general Icelandic, legal/financial text and mixed chat; document positive/negative mix, lengths, all entity types and document/article-cluster separation. Apply both ≥99% targets to each declared primary stratum, with uncertainty and per-type diagnostics. Do not train or choose thresholds on final labels.
-3. Check the exact private trained build in the owner's supported ChatGPT/Claude browser workflows. Synthetic interception tests do not establish compatibility with every current site path. The host page can already access an original draft before masking.
+3. Check the exact private trained build in the owner's supported AI sites browser workflows. Synthetic interception tests do not establish compatibility with every current site path. The host page can already access an original draft before masking.
 4. Resolve source/model redistribution and remaining release requirements before any general release. Keep the PR in draft until its implementation review and applicable acceptance gates are satisfied; no merge, store release or production deployment was performed.

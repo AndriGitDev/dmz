@@ -1,18 +1,9 @@
-# Open community decisions and evidence
+# Open decisions and evidence
 
-Active direction: [ADR 0005](adr/0005-free-community-project.md). Free access and DMZ-first scope are accepted; Portal/Gateway are deferred.
+Accepted: dmz is the open-source Chromium extension; original code in both repositories uses GPL-3.0-only, chosen by the owner on 31 October 2026.
 
-| Priority | Evidence/decision | Current boundary |
-| --- | --- | --- |
-| Test distribution selected | Owner authorized the current trained package, as a versioned ZIP on dmz.is under ADR 0006 | Verify source/package/checksums and retain alpha status; no store release |
-| Before distributing each asset | Confirm all code/model/dataset licenses and redistribution rights, including approved HMS use and any trained artifacts | Private-use approval is not blanket public redistribution; no BÍN/Mannanafnaskrá rights inferred |
-| Quality | Independent annotations and acceptance against the existing quality contract | Development results and fixture tests are insufficient; targets remain unmet |
-| Usability | Fabricated-data testing on supported authenticated ChatGPT/Claude paths | Site changes may bypass interception; warn and continue remains policy |
-| Privacy/distribution | Confirm final operator identity, website hosting access-log/retention facts, contact retention, applicable terms and store disclosures | Do not invent retention periods or claim legal review is complete |
-| Community | Verify feedback/security handoff and maintenance capacity | Use established Kastro contacts; no response SLA or mandatory account |
-| Optional later | Source license, public contribution scope and dataset/model publication rights | Repository/research remain private; no open-source promise |
-| Optional later | Donation/sponsorship model | No dependency for free use; no payment integration in current scope |
+Before public source publication, complete [open-source readiness](open-source-readiness.md): inspect all reachable Git history for secrets and data rights, verify upstream licenses and remove material that cannot be published. Current tracked-file cleanup does not remove historical copies.
 
-No price book, vendor population, commercial grant deadline, provider ZDR contract or hosted tenant deployment is a prerequisite for local community DMZ. Historical financial and market assumptions remain in the [business plan](business-plan.md); any grant filing requires its own current evidence and separate authorization. If hosted work resumes, [ADR 0004](adr/0004-portal-hosting-and-pii-policy.md) and its region, provider, retention and isolation checks apply before live processing.
+Before each binary release, verify model/tokenizer/runtime and address-data redistribution rights, retain attribution, record source identity and package hashes, and run relevant detector and browser checks. An approved compiled alpha does not establish unrestricted redistribution of raw source datasets.
 
-Do not convert an unresolved item into a public claim. Legal or provider assertions need current primary evidence; the concept reset supplies no legal conclusion.
+Independent detector validation, representative annotations, final operator identity, website hosting-log facts, message retention and accurate store disclosures remain unresolved. Use existing Kastro contacts, synthetic reports and honest alpha warnings. Do not invent legal conclusions, certification, retention guarantees, store availability or support commitments.

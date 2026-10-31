@@ -51,7 +51,7 @@ An immutable token trie supports at most eight tokens per phrase. Original UTF-8
 byte offsets are retained. Names are case-sensitive; addresses use case-insensitive
 token lookup without lowercasing the original text. Matching does not join lines.
 The existing Unicode-review guard runs first. Both new name and address findings
-are uncertain, so the current Shield policy **blocks the whole prompt for review**.
+are uncertain, so the current dmz policy **blocks the whole prompt for review**.
 They are not automatically masked or approved for sending.
 
 Address lookup requires a known form plus a house number, optional apartment
@@ -104,12 +104,12 @@ CI exercises embedding with a fabricated fixture through `check-lexicon.sh`.
 
 Go unit tests (ordinary and embedded data), Python trainer tests, corpus pins,
 recall gates and vet pass. The local enriched WASM passes its optional pack smoke
-check, existing mask/restore checks, synthetic ChatGPT/Claude interception and
+check, existing mask/restore checks, synthetic supported AI sites interception and
 restoration tests, and network-body/composer-race/broken-core checks.
 Authenticated live-site confirmation remains pending.
 
 After loading the enriched local preview, refresh both AI tabs. Try fictional/test-only
-examples on ChatGPT and Claude:
+examples on supported AI sites:
 
 - `Skálduð persóna: Sherlock Holmes.` → review block from learned name entry.
 - `Tilbúið heimilisfang: Laugavegur 999/2, 000 Prófstaður.` → address review block.

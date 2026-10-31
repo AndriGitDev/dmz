@@ -2,7 +2,7 @@
 
 The 4 October change recognizes canonically decomposed text without changing the
 original prompt or restoring it to a different spelling. Previously, any combining
-mark caused whole-text masking in Shield and prevented the trained scanner from
+mark caused whole-text masking in dmz and prevented the trained scanner from
 running, even for ordinary decomposed Icelandic accents.
 
 ## Detection and restoration
@@ -23,7 +23,7 @@ NFD spellings therefore receive distinct markers when their original bytes diffe
 
 The original text remains guarded when it has invalid encoding, invisible format
 characters, combining marks left after NFC, or an ambiguous mapped boundary. The
-basic detector returns a Unicode review finding; Shield's best-effort policy masks
+basic detector returns a Unicode review finding; dmz's best-effort policy masks
 the whole text. The scanner rejects unsupported input and the existing visible
 fallback warning remains. A supplied model span that splits a base character from
 its combining mark is rejected. None of this establishes complete evasion coverage.
@@ -68,7 +68,7 @@ the preserved pre-change reports record these results. They do not establish the
 At the JavaScript/WASM boundary, a lone UTF-16 surrogate cannot be represented
 losslessly as a Go UTF-8 string. The bridge now checks the original JavaScript
 value before conversion and returns a fixed error for processing requests with
-such input. Shield leaves that malformed draft unchanged and unsent. Valid
+such input. dmz leaves that malformed draft unchanged and unsent. Valid
 surrogate pairs, including emoji, remain supported. A malformed response is
 returned unchanged, retaining any markers rather than guessing a restoration.
 Tenant-term validation also checks decoded JavaScript JSON values so escaped lone
