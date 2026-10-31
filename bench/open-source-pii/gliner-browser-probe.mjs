@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { resolve, join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium } from '../../apps/shield/node_modules/playwright/index.mjs';
+import { chromium } from '../../apps/dmz/node_modules/playwright/index.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const [exportArg, quantArg, packageArg, corpusArg, outArg] = process.argv.slice(2);
 if (!outArg) throw Error('Usage: gliner-browser-probe.mjs ORIGINAL_MODEL QUANTIZED TOKENIZER_PACKAGE SYNTHETIC_CORPUS PRIVATE_OUTPUT');

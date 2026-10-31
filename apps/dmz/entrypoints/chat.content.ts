@@ -306,7 +306,7 @@ export default defineContentScript({
       if (!document.documentElement) return;
       if (!toast) {
         const host = document.createElement('div');
-        host.id = 'dmz-shield-status';
+        host.id = 'dmz-status';
         host.style.cssText = 'position:fixed;z-index:2147483647;right:16px;bottom:16px';
         const root = host.attachShadow({ mode: 'closed' });
         const panel = document.createElement('div');

@@ -1,6 +1,6 @@
 # Private browser detector benchmark
 
-Research harness for contextual name detector exports. **Not wired into Shield**
+Research harness for contextual name detector exports. **Not wired into dmz**
 and not an independent accuracy evaluation. The historical frozen-encoder
 comparison is in [protocol.md](protocol.md) and
 [results](../results/browser-v1/README.md). The later full-encoder training and
@@ -62,7 +62,7 @@ activation ranges and therefore predictions.
   integration's cost. Does not assume a shared extension inference worker.
 - **Failures:** malformed input, corrupt model, inference before readiness,
   request timeout, worker termination and worker crash must reject. This proves
-  behavior of this harness only; it is not Shield's fail-closed release gate.
+  behavior of this harness only; it is not dmz's fail-closed release gate.
 
 All browser requests are restricted to a loopback server. No hosted inference
 fallback exists. Three WASM threads use COOP/COEP; the single-thread cases do not.
@@ -71,7 +71,7 @@ A production extension needs its own tested isolation/runtime loading setup.
 To repeat on the owner's machine, copy the local assets privately, install this
 harness there, and optionally set `DMZ_BROWSER_EXECUTABLE` to the local Brave
 binary. Use a fresh report path. This still benchmarks a clean headless browser,
-not the owner's live supported AI sites tabs or the installed Shield extension.
+not the owner's live supported AI sites tabs or the installed dmz extension.
 
 ## Full browser accuracy replay
 

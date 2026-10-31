@@ -7,9 +7,9 @@ integration has been selected yet. Keep research details in this private repo.
 
 ## Boundaries and decision procedure
 
-Shield must keep all prompt text, values and mappings on device. A Python-only
+dmz must keep all prompt text, values and mappings on device. A Python-only
 candidate can be a server-side comparison or offline research tool, but is not a
-Shield integration. Do not send test text to inference APIs. Download public code
+dmz integration. Do not send test text to inference APIs. Download public code
 and weights into private local paths; perform inference offline. Preserve the
 existing Icelandic model and address vocabulary. Do not read blind evaluation
 text into a detector: the 142-excerpt packet and unlabelled domain pools remain

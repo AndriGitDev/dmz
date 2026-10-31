@@ -43,7 +43,7 @@ libphonenumber metadata for explicit international phone numbers, and 17 pinned
 families. Both run locally in the existing Go/TinyGo core. The full Go phone
 library's protobuf initialization failed in TinyGo, so the adapter imports only
 public numbering metadata at build time. Gitleaks runtime, network verification,
-archive decoding and repository scanning are not part of Shield.
+archive decoding and repository scanning are not part of dmz.
 
 The current TinyGo regex implementation needs a larger reserved stack for these
 rules: the rules-only smoke test hung with the default 64 KiB stack. Equivalent
@@ -62,7 +62,7 @@ policy. Public annotations and unknown training overlap limit all these results.
 
 Both GLiNER and GLiNER2 have working offline browser research prototypes, but
 quantization changes predictions and loses quality; their graphs also remain
-large. Neither is enabled in Shield. A fixed confidence-only address selection
+large. Neither is enabled in dmz. A fixed confidence-only address selection
 on 4,995 validation excerpts rejected every declared GLiNER QUInt8 threshold.
 The selected GLiNER2 address-only path remains experimental because its fresh
 90-excerpt diagnostic added six false spans along with 14 true spans.

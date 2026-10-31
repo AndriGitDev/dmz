@@ -7,7 +7,7 @@ Owner direction: [ADR 0006](adr/0006-chromium-name-and-public-test-download.md),
 ## Reproduce the named test build
 
 1. Retrieve the unchanged private `shield-alpha-0.1.1-alpha.1` release and companion record. Check the original archive SHA-256 and every member hash before extraction. Keep those original assets intact outside the repository.
-2. Run `DMZ_BASELINE_EXTENSION=/absolute/path/to/original/extension npm run build:test-release` in `apps/shield`. The script verifies the recorded baseline, all model/runtime assets and exact equality of the current core/scanner before rebuilding the renamed UI/content script. It refuses a changed detector.
+2. Run `DMZ_BASELINE_EXTENSION=/absolute/path/to/original/extension npm run build:test-release` in `apps/dmz`. The script verifies the recorded baseline, all model/runtime assets and exact equality of the current core/scanner before rebuilding the renamed UI/content script. It refuses a changed detector.
 3. Run type checks, existing browser workflows and trained scanner checks. Test with fabricated examples; no real prompts or confidential screenshots.
 4. Commit the source, rebuild clean, then run `DMZ_RELEASE_LABEL=alpha.3 npm run record:build`. Package using `python3 scripts/package-test-release.py --output /outside/repo/dmz-chromium-extension-0.1.3-alpha.3.zip`. Clean source, manifest/profile identity, all members and ZIP integrity are required. The old Alpha 1 packager retains its original guards.
 5. Retain the bilingual START-HERE, feedback and synthetic attachment kit. Preserve the model attribution and runtime/third-party notices. No raw datasets or research reports are included.

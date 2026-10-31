@@ -1,7 +1,7 @@
 # Multi entity annotation rubric
 
 Version 1 is a proposed evaluation convention for human review, not an assertion
-that Shield already detects every form below. Freeze this rubric, entity scope,
+that dmz already detects every form below. Freeze this rubric, entity scope,
 sample membership and dictionary before predictions. Resolve policy ambiguities
 before accepting final labels; do not change gold labels to make a detector pass.
 

@@ -7,7 +7,7 @@ import { chromium } from 'playwright';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const extension = path.join(root, '.output/chrome-mv3');
-const profile = await mkdtemp(path.join(os.tmpdir(), 'dmz-shield-smoke-'));
+const profile = await mkdtemp(path.join(os.tmpdir(), 'dmz-smoke-'));
 const requests = [];
 const errors = [];
 let browser;

@@ -1,12 +1,12 @@
 # Frozen detector: browser deployment benchmark
 
 Private research evidence, 28 September 2026. No model was retrained, no threshold
-was retuned, and no production Shield code changed. The unreviewed public-document
+was retuned, and no production dmz code changed. The unreviewed public-document
 pilot was not scored. Reproduction: [harness](../../browser-detector/README.md).
 
 **Result:** the full precision export preserves native development predictions;
 the smaller int8 graph loses recall in both native and Chromium execution. Do not
-promote this int8 configuration into Shield.
+promote this int8 configuration into dmz.
 
 ## Accuracy
 
@@ -78,7 +78,7 @@ The 32-word first run is the first inference in each fresh worker; first runs at
 longer sizes follow earlier cases in that worker. Load includes local HTTP model
 transfer, WASM initialization and session construction; it is not a WAN download
 or fresh OS-cache cold start. Timings include worker input/output transfer but
-exclude browser tokenization, CRF, masking and Shield UI/send interception.
+exclude browser tokenization, CRF, masking and dmz UI/send interception.
 
 RSS is the sum across the Chromium process tree sampled every 200 ms, so shared
 pages can be counted multiple times. Baselines were about 0.42–0.43 GiB. This is
@@ -94,7 +94,7 @@ All ten initial fault checks passed: invalid input and deadline termination in
 three runtime configurations, pending-request rejection on worker termination,
 inference before readiness, corrupt model and deliberate worker crash. No
 external page/worker requests were observed; routing allowed loopback only.
-These checks cover the harness, not production Shield's interception or low-RAM
+These checks cover the harness, not production dmz's interception or low-RAM
 OS process killing. No hosted inference fallback exists.
 
 ## Native/browser discrepancy
@@ -117,7 +117,7 @@ quantization or threshold search was performed in this benchmark.
 documents through the int8 graph in WASM (batch 1, three threads). Tokenization
 was performed locally beforehand; the exact frozen CRF merge was scored offline.
 This checks the complete datasets through the browser neural runtime, **not** a
-complete browser tokenizer/CRF/Shield pipeline. No external requests occurred.
+complete browser tokenizer/CRF/dmz pipeline. No external requests occurred.
 
 | Set | Browser combined TP / FP / FN | Precision | Recall | Change in missed names vs frozen |
 | --- | --- | ---: | ---: | ---: |
@@ -138,7 +138,7 @@ and should not replace the dedicated synthetic latency measurements above.
   parity, plus fabricated browser label parity. Its 473 MiB download and large
   browser memory footprint are substantial costs. Full browser corpus parity
   for FP32 has not been established.
-- **Reject this int8 configuration for Shield:** its 119 MiB file and lower
+- **Reject this int8 configuration for dmz:** its 119 MiB file and lower
   latency do not meet the frozen reference's recall in the browser. The user's
   dual 95.5% objective is not met. Preserve the failed evidence; do not retune a
   threshold to disguise the loss.
@@ -157,5 +157,5 @@ and should not replace the dedicated synthetic latency measurements above.
 
 All implementation and detailed evidence stay in the private product repository.
 The legacy public-artifact sync command now fails before copying anything, in
-line with the existing disclosure policy. No website or production Shield change
+line with the existing disclosure policy. No website or production dmz change
 is included in this benchmark.

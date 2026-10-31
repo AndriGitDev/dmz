@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { resolve, join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium } from '../../apps/shield/node_modules/playwright/index.mjs';
+import { chromium } from '../../apps/dmz/node_modules/playwright/index.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const [exportArg, quantArg, packageArg, variant, corpusArg, outArg] = process.argv.slice(2);
 if (!outArg || !['encoder-q8', 'all-q8'].includes(variant)) throw Error('Usage: gliner2-browser-probe.mjs EXPORT QUANTIZED TOKENIZER_PACKAGE encoder-q8|all-q8 SYNTHETIC_CORPUS PRIVATE_OUTPUT');

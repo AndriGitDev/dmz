@@ -29,6 +29,6 @@ complete national numbers, supported numeric separators and optional numeric
 extensions. It does not infer a domestic region, parse vanity numbers, or remove
 international trunk prefixes. Existing Icelandic local-number detection remains.
 
-Upstream licences and attribution are distributed with Shield under
-`apps/shield/public/licenses/`: `libphonenumber-Apache-2.0.txt`,
+Upstream licences and attribution are distributed with dmz under
+`apps/dmz/public/licenses/`: `libphonenumber-Apache-2.0.txt`,
 `phonenumbers-MIT.txt`, and `phone-numbering-NOTICE.txt`.

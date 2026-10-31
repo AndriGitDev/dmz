@@ -27,7 +27,7 @@ targets for each stratum and whether both strata meet them.
 If more than one configuration qualifies, prefer higher lower-stratum recall,
 then higher lower-stratum exact accuracy, then higher lower-stratum precision,
 then a CRF threshold nearer .75, then CRF priority, then the earlier epoch, then the higher CRF threshold.
-This tie-break is fixed before scoring. No result changes the default Shield
+This tie-break is fixed before scoring. No result changes the default dmz
 model; a qualifying research candidate still needs export/runtime parity,
 full-system regression and independent annotation. Retain the reference if none
 qualifies. Do not expand the grid after seeing these results.

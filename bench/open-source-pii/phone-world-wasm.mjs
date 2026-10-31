@@ -16,7 +16,7 @@ assert.equal(manifest.source,'nyaruka/phonenumbers/v2 v2.0.14, libphonenumber me
 assert.equal(hash(raw),manifest.fixture_sha256);assert.equal(manifest.counts.cases,49245);
 assert.equal(manifest.counts.unexpected_miss||0,0);assert.equal(manifest.counts.unexpected_false_positive||0,0);
 const rows=raw.toString().trim().split('\n').map(JSON.parse);assert.equal(rows.length,49245);
-const runtime=readFileSync(join(root,'apps/shield/public/wasm_exec.js'));
+const runtime=readFileSync(join(root,'apps/dmz/public/wasm_exec.js'));
 vm.runInThisContext(runtime.toString());
 const wasm=readFileSync(wasmArg),go=new globalThis.Go();
 const {instance}=await WebAssembly.instantiate(wasm,go.importObject);void go.run(instance);

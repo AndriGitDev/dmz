@@ -17,7 +17,7 @@ publish the source data. BÍN/Mannanafnaskrá are separate and not covered here.
 Source copies and derived text live under `/root/.local/share/dmz/datasets`, outside
 Git. Only tooling, fabricated tests, hashes and aggregate results are committed.
 No source text is sent to model APIs, CI or the public marketing repository.
-The standard CI Shield package omits external data. An explicit local build can
+The standard CI dmz package omits external data. An explicit local build can
 embed the approved lexicon; see [the lexicon tuning report](../../docs/detector-lexicon-2026-09-28.md).
 
 ## Reproduce preparation
@@ -79,7 +79,7 @@ only and refuses records from a split other than the explicitly selected one.
 
 Use only training/development partitions to analyse name-length, inflection,
 foreign-name and context errors. Keep raw error examples local. Compare expanded
-rules or a local NER baseline before choosing what can fit in Shield's WASM budget.
+rules or a local NER baseline before choosing what can fit in dmz's WASM budget.
 Build an address lookup interface using HMS forms and fabricated numbered-address
 fixtures, with price/product-name negatives. Packaging and refresh behaviour need
 an explicit implementation; no detection improvement is claimed from preparation.

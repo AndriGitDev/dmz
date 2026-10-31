@@ -62,5 +62,5 @@ missed. A recognizable shape is not proof of an active credential. Keep fresh
 quality, false-positive and native/WASM evidence alongside changes.
 
 The upstream MIT licence is distributed in
-`apps/shield/public/licenses/gitleaks-MIT.txt`; the accompanying notice describes
+`apps/dmz/public/licenses/gitleaks-MIT.txt`; the accompanying notice describes
 DMZ's changes.

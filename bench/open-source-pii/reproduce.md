@@ -110,5 +110,5 @@ not alter the original run or count resumed records as fresh inference.
 checks both denominators and metric arithmetic. It emits PNG/SVG artwork plus
 input/output hashes, refusing existing artifacts. The figure used a separate
 reporting virtual environment with `report-requirements.txt`; these packages
-were not installed into the model-inference environment or the Shield product.
+were not installed into the model-inference environment or the dmz product.
 The plot is a presentation of the same diagnostic scores, not new evaluation.

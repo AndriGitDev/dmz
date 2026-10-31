@@ -10,7 +10,7 @@ retain these notices alongside the interoperability work:
   [Knowledgator/GLiNER.js cdb10b1](https://github.com/Knowledgator/GLiNER.js/tree/cdb10b122afb45fdb29053d74503018e46b4bb9d).
   That revision's package.json says MIT, while its LICENSE is Apache-2.0. The
   mismatch is retained in the research record; the package is not imported into
-  Shield.
+  dmz.
 
 The DMZ browser adapters add original UTF-8 offset validation, bounded inputs,
 no input-word cache, local-only assets and explicit failure handling. They are
@@ -19,4 +19,4 @@ remain outside Git and retain their separate upstream model terms. ORT Web and
 Hugging Face tokenizer dependencies also retain their own notices.
 
 Product phone/vendor-rule notices are separately bundled under
-`apps/shield/public/licenses`; these research files do not replace them.
+`apps/dmz/public/licenses`; these research files do not replace them.

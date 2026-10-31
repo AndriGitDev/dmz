@@ -41,8 +41,8 @@ async function artifactFiles(relativePath = '', files = {}) {
 }
 const packagedFiles = await artifactFiles();
 const measurementFiles = {};
-for (const name of ['apps/shield/scripts/system-corpus.mjs', 'apps/shield/scripts/coverage.mjs',
-  'apps/shield/scripts/typed-quality.mjs', 'bench/contextual/quality.py']) {
+for (const name of ['apps/dmz/scripts/system-corpus.mjs', 'apps/dmz/scripts/coverage.mjs',
+  'apps/dmz/scripts/typed-quality.mjs', 'bench/contextual/quality.py']) {
   measurementFiles[name] = await fileDigest(join(repo, name));
 }
 const corpus = [];

@@ -20,4 +20,4 @@ node bench/holdout/editor/test-core.cjs
 node bench/holdout/editor/test-browser.mjs
 ```
 
-Install the existing holdout requirements for the Python suite and the Shield Playwright dependencies/browser for the browser test. All editor tests use fabricated excerpts, including hostile-looking markup, emoji, CRLF and decomposed accents. The browser test verifies exports with the Python submission validator and confirms that network attempts are blocked. Do not open protected real excerpts in automated/model-assisted browser verification.
+Install the existing holdout requirements for the Python suite and the dmz Playwright dependencies/browser for the browser test. All editor tests use fabricated excerpts, including hostile-looking markup, emoji, CRLF and decomposed accents. The browser test verifies exports with the Python submission validator and confirms that network attempts are blocked. Do not open protected real excerpts in automated/model-assisted browser verification.

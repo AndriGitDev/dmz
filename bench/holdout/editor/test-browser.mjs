@@ -6,7 +6,7 @@ import {join, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import {createRequire} from 'node:module';
-const require = createRequire(new URL('../../../apps/shield/package.json',import.meta.url));
+const require = createRequire(new URL('../../../apps/dmz/package.json',import.meta.url));
 const {chromium} = require('playwright');
 const repo = fileURLToPath(new URL('../../../',import.meta.url));
 const directory = await mkdtemp(join(tmpdir(),'dmz-review-editor-'));

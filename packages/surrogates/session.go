@@ -128,7 +128,7 @@ func (s *Session) ProcessWithNames(input string, names []NameSpan) Result {
 	return s.process(input, names, nil, false)
 }
 
-// ProcessBestEffort masks uncertain identifiers and secrets for Shield. The
+// ProcessBestEffort masks uncertain identifiers and secrets for dmz. The
 // default policy remains available to other callers and baseline evaluations.
 func (s *Session) ProcessBestEffort(input string, names []NameSpan) Result {
 	return s.process(input, names, nil, true)

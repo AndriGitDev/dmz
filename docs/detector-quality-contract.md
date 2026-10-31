@@ -119,7 +119,7 @@ set exists, not that detection is complete or correct. Whole-text fallbacks and
 invalid model spans leave it false. Findings remain an explanation of processing;
 they may include pre-merge findings and must not substitute for final typed spans.
 
-`apps/shield/scripts/system-corpus.mjs` evaluates both the basic and trained
+`apps/dmz/scripts/system-corpus.mjs` evaluates both the basic and trained
 packaged Chromium paths on committed synthetic corpora. It uses the shared
 `quality.py` scorer for exact final span/type sets, alongside independent
 restoration-based masking coverage. Reports include the package/core hashes and

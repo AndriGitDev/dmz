@@ -13,7 +13,7 @@ if(!corpus.startsWith(join(root,'bench/corpus/'))||!relative(root,realpathSync(d
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const manifest=JSON.parse(readFileSync(join(corpus,'manifest.json')));
 const reference=new Map(readFileSync(nativeArg,'utf8').trim().split('\n').map(JSON.parse).map(r=>[r.id,r]));
-const publicDir=join(root,'apps/shield/public');
+const publicDir=join(root,'apps/dmz/public');
 vm.runInThisContext(readFileSync(join(publicDir,'wasm_exec.js'),'utf8'));
 const go=new globalThis.Go(),bytes=readFileSync(wasmArg||join(publicDir,'dmz.wasm'));
 const {instance}=await WebAssembly.instantiate(bytes,go.importObject);void go.run(instance);

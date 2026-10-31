@@ -25,10 +25,10 @@ versions, model hashes, thread count, process RSS observations and hardware.
 Browser accuracy parity uses synthetic vectors; full development scores initially
 use native ONNX Runtime. Do not call this full browser corpus validation.
 
-No production Shield integration until deployment feasibility and whole-pipeline
+No production dmz integration until deployment feasibility and whole-pipeline
 correctness are demonstrated. The browser harness must reject loading failures,
 invalid inputs, deadlines and worker crashes. It must not contain a fallback
-that sends a raw prompt. Existing Shield interception regression tests remain
+that sends a raw prompt. Existing dmz interception regression tests remain
 separate from this research harness. A headless server is not the owner's Brave
 hardware and does not establish battery/low-memory behavior.
 

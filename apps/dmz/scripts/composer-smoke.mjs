@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const extension = process.env.SHIELD_TEST_EXTENSION || path.join(root, '.output/chrome-mv3');
+const extension = process.env.DMZ_TEST_EXTENSION || path.join(root, '.output/chrome-mv3');
 const profile = await mkdtemp(path.join(os.tmpdir(), 'dmz-composer-'));
 const browser = await chromium.launchPersistentContext(profile, {
   headless: true, channel: 'chromium',
@@ -62,7 +62,7 @@ try {
           return route.fulfill({ status: 204, body: '' });
         });
         await page.goto(`${origin}/new`);
-        await page.locator('#dmz-shield-status').waitFor();
+        await page.locator('#dmz-status').waitFor();
         const input = mode === 'paragraphs' || mode === 'trailing-break'
           ? 'Please email demo@example.com\n\nThanks' : 'demo@example.com';
         await page.locator('[contenteditable]').evaluate((field, input) => {

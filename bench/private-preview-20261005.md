@@ -1,4 +1,4 @@
-# Verified private Shield preview — 5 October 2026
+# Verified private dmz preview — 5 October 2026
 
 The clean trained preview from `a8a6704c7b8b1892ce083424f96ed236bb537f77` passes WASM, synthetic settings/chat/race browser checks, all 16 scanner workflows and the 20-corpus replay. It includes the quoted-credential punctuation and Unicode extension. This is development evidence, not independent acceptance or a production release. The frozen model is unchanged; the separate auxiliary-training experiment is not included.
 

@@ -2,7 +2,7 @@
 
 Status: experimental development build, updated 9 October 2026. Use fabricated data only. This is an installable browser preview, not a safe path for customer or other sensitive information.
 
-The owner's daily testing target is **desktop Chrome with both supported AI sites**; initial live testing is in **Brave with Brave Shields disabled**. Synthetic automated checks use Playwright Chromium. The first live report found unsupported composers on both new-chat pages. Updated selectors cover the reported ChatGPT markdown textbox and an AI site ProseMirror editor with a child placeholder; the owner then confirmed masking on both sites and clean restoration on the second supported site. ChatGPT restoration was missing; supplied reply markup identified its new `data-markdown-text-style="assistant-message"` selector. That fix and inline rendering await live retesting. The full verification checklist remains open.
+The owner's daily testing target is **desktop Chrome with both supported AI sites**; initial live testing is in **Brave with the browser’s built-in site protections disabled**. Synthetic automated checks use Playwright Chromium. The first live report found unsupported composers on both new-chat pages. Updated selectors cover the reported ChatGPT markdown textbox and an AI site ProseMirror editor with a child placeholder; the owner then confirmed masking on both sites and clean restoration on the second supported site. ChatGPT restoration was missing; supplied reply markup identified its new `data-markdown-text-style="assistant-message"` selector. That fix and inline rendering await live retesting. The full verification checklist remains open.
 
 ## Owner policy update — 9 October 2026
 
@@ -22,12 +22,12 @@ fixtures do not establish compatibility with every authenticated live-site path.
 
 ## Install and try
 
-For a build that needs no local compiler, open the fix PR's successful **Prototype** Actions run and download **shield-chromium-prototype**. Extract the archive and load that extracted folder using **Load unpacked** in `chrome://extensions`. Chrome's manifest version name and `BUILD.json` identify the source commit; the record also gives the SHA-256 of each packaged file. Include that commit when reporting a problem. The record command rejects a dirty checkout or a manifest from a different commit. CI creates this record only after the browser tests pass; it does not certify live-site behavior. This CI artifact uses the small rule-based scanner. The separate private trained preview includes the frozen name model and approved address vocabulary; use its supplied archive and build record, or follow the [trained build instructions](../apps/shield/scanner/README.md).
+For a build that needs no local compiler, open the fix PR's successful **Prototype** Actions run and download **dmz-chromium-prototype**. Extract the archive and load that extracted folder using **Load unpacked** in `chrome://extensions`. Chrome's manifest version name and `BUILD.json` identify the source commit; the record also gives the SHA-256 of each packaged file. Include that commit when reporting a problem. The record command rejects a dirty checkout or a manifest from a different commit. CI creates this record only after the browser tests pass; it does not certify live-site behavior. This CI artifact uses the small rule-based scanner. The separate private trained preview includes the frozen name model and approved address vocabulary; use its supplied archive and build record, or follow the [trained build instructions](../apps/dmz/scanner/README.md).
 
 To build locally:
 
-1. Run `./scripts/build-wasm.sh`, then `cd apps/shield && npm ci && npm run check && npm run build && npm run test:browser`.
-2. In Chromium, open `chrome://extensions`, enable developer mode and load `apps/shield/.output/chrome-mv3` as an unpacked extension.
+1. Run `./scripts/build-wasm.sh`, then `cd apps/dmz && npm ci && npm run check && npm run build && npm run test:browser`.
+2. In Chromium, open `chrome://extensions`, enable developer mode and load `apps/dmz/.output/chrome-mv3` as an unpacked extension.
 3. Open a new ChatGPT or AI site web tab. Type a synthetic identifier, such as `demo@example.com`, in the chat composer and send using the supported send button or Enter. dmz should replace it with a visible `⟦EMAIL-…: XXXXX@XXXXX.XXX⟧` marker before the page sends. Detected secrets and uncertain identifiers are also masked under the owner-approved best-effort policy. If the draft changes or masking cannot finish, submission continues with a warning.
 4. When the assistant echoes an unchanged marker, dmz displays the restored answer in place using an isolated extension frame. The site retains its masked text underneath, hidden only after the frame has rendered; prompts stay visibly masked. The toolbar icon opens settings: active-tab status, menu appearance, and confirmed session reset.
 

@@ -12,21 +12,21 @@ Go 1.27, TinyGo 0.42 and Node.js/npm are required by the current toolchain.
 go test ./...
 go run ./bench/scorers -baseline bench/results/v0.json
 GO_BIN=go TINYGO_BIN=tinygo ./scripts/build-wasm.sh
-cd apps/shield
+cd apps/dmz
 npm ci
 npm run check
 npm run build
 ```
 
-Open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose `apps/shield/.output/chrome-mv3`. Reload supported chat tabs after installation or updates. Remove the extension from the same browser page. Resetting a session, reloading or closing its chat tab clears the mapping and prevents restoration of old markers.
+Open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose `apps/dmz/.output/chrome-mv3`. Reload supported chat tabs after installation or updates. Remove the extension from the same browser page. Resetting a session, reloading or closing its chat tab clears the mapping and prevents restoration of old markers.
 
-The ordinary build contains the basic rule-based detector. The [trained build](apps/shield/scanner/README.md) uses separately prepared model and address assets and has different coverage. External assets are not automatically licensed by the GPL grant. Never substitute a basic build for a trained release without identifying that difference. See [third-party materials](THIRD_PARTY.md).
+The ordinary build contains the basic rule-based detector. The [trained build](apps/dmz/scanner/README.md) uses separately prepared model and address assets and has different coverage. External assets are not automatically licensed by the GPL grant. Never substitute a basic build for a trained release without identifying that difference. See [third-party materials](THIRD_PARTY.md).
 
-Run `npm run test:browser` for extension workflows and `npm run test:coverage` for coverage accounting. Browser checks require Playwright Chromium or `CHROMIUM_EXECUTABLE`. Use the existing scanner suites when changing trained inference. The source directory `apps/shield` is retained for build compatibility; the product name is **dmz**.
+Run `npm run test:browser` for extension workflows and `npm run test:coverage` for coverage accounting. Browser checks require Playwright Chromium or `CHROMIUM_EXECUTABLE`. Use the existing scanner suites when changing trained inference. The extension source and its tests live in `apps/dmz`. When updating an existing checkout, install dependencies and build there; Git does not migrate old ignored dependencies or build outputs.
 
 ## Source map
 
-- `apps/shield`: Manifest V3 extension, local scanner integration and browser checks.
+- `apps/dmz`: Manifest V3 extension, local scanner integration and browser checks.
 - `packages/detect`: Go detector and WASM build.
 - `packages/surrogates`: local mappings and visible markers.
 - `bench`: synthetic regression checks and evaluation tooling.

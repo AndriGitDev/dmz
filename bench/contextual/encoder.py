@@ -129,7 +129,7 @@ def train(cache_dir, output, epochs=8, hidden=128, lr=.001, seed=42, threads=3):
         save_file(head.state_dict(),str(output/f'epoch-{epoch}.safetensors'))
     report=dict(schema=1,training_cache_sha256=digest(cache_dir/'metadata.json'),training_input_sha256=meta['input_sha256'],base_weights_sha256=meta['base_weights_sha256'],
                 pooling=meta['pooling'],hidden_size=meta['hidden_size'],classifier_hidden=hidden,epochs=epochs,lr=lr,seed=seed,history=history,
-                weights={f'epoch-{i}.safetensors':digest(output/f'epoch-{i}.safetensors') for i in range(1,epochs+1)},method='Frozen pretrained encoder; train BIO Person classifier only; not Shield')
+                weights={f'epoch-{i}.safetensors':digest(output/f'epoch-{i}.safetensors') for i in range(1,epochs+1)},method='Frozen pretrained encoder; train BIO Person classifier only; not dmz')
     (output/'metadata.json').write_text(json.dumps(report,indent=2)+'\n')
     return report
 

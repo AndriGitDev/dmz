@@ -37,7 +37,7 @@ Committed kennitölur use century digit `8` and cannot belong to living people. 
 ## Formatting tuning v2
 
 See [the tuning report](../docs/detector-tuning-2026-09-28.md) for changes, data
-sources and live Shield checks. Current exploratory exposure is **5** (originally
+sources and live dmz checks. Current exploratory exposure is **5** (originally
 13, then 8 before the 4 October address update); name/generic-secret/case-variant-term gaps remain. Its original
 snapshots are retained as `exploratory-untuned-*`.
 
@@ -66,7 +66,7 @@ reports are preserved under `results/quality-99-v1/*before-numeric.json`; corpus
 content and pins are unchanged. Five identifiers remain exposed under strict-core
 policy, and the existing benign Unicode review remains. This does not establish
 field accuracy. Packaged best-effort coverage is measured separately by the new
-Shield system harness, including partial-mask accounting.
+dmz system harness, including partial-mask accounting.
 
 The subsequent unknown-street shape update accepts lowercase street forms,
 horizontal spacing, and range/apartment notation when a postcode is present.
@@ -94,7 +94,7 @@ regression assertions requires review, as do existing gates.
 
 See [the offline contextual experiment](contextual/README.md) for local CRF training,
 the separate 95.5% precision-and-recall check, and the frozen synthetic legal/financial
-probe. These research results do not change the shipped Shield detector.
+probe. These research results do not change the shipped dmz detector.
 
 The [October nine-label trial](contextual/quality-99-protocol.md#completed-result--5-october-2026)
 completed both epochs and all four evaluations. Neither candidate passes the

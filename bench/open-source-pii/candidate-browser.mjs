@@ -7,8 +7,8 @@ import {createHash} from 'node:crypto';
 import {resolve,join,relative,dirname} from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
-import {chromium} from '../../apps/shield/node_modules/playwright/index.mjs';
-import {annotationSpans,restoredMaskSpans,coverage,markers} from '../../apps/shield/scripts/coverage.mjs';
+import {chromium} from '../../apps/dmz/node_modules/playwright/index.mjs';
+import {annotationSpans,restoredMaskSpans,coverage,markers} from '../../apps/dmz/scripts/coverage.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const [outArg,corpusArg,extensionArg,buildHash,resumeArg]=process.argv.slice(2);
 if(!outArg||!corpusArg||!extensionArg||!/^[a-f0-9]{64}$/.test(buildHash||''))throw Error('Usage: candidate-browser.mjs PRIVATE_OUTPUT CORPUS EXTENSION BUILD_SHA256');
@@ -41,7 +41,7 @@ if(committed){
  }
 }
 const goldFor=row=>committed?annotationSpans(row):row.gold.map(([start,end,kind])=>({start,end,kind}));
-const extension=extensionArg?await realpath(extensionArg):join(root,'apps/shield/.output/chrome-mv3');
+const extension=extensionArg?await realpath(extensionArg):join(root,'apps/dmz/.output/chrome-mv3');
 const buildBytes=await readFile(join(extension,'BUILD.json'));
 if(digest(buildBytes)!==buildHash)throw Error('Candidate BUILD checksum differs');
 const build=JSON.parse(buildBytes);

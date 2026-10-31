@@ -1,6 +1,6 @@
 # GLiNER2 local runtime feasibility
 
-This is a research adapter under `bench/`, not a Shield feature or new remote
+This is a research adapter under `bench/`, not a dmz feature or new remote
 service. Original model, FP32 export, quantized variants and caches stay outside
 Git. The fixed comparison is original seven labels at 0.5, with address-only
 additions selected before the fresh 90-excerpt evaluation.
@@ -13,7 +13,7 @@ pinned Fastino model. The classifier graph is unused for NER. The community
 Node implementation was also reviewed at
 `lmoe/gliner-onnx.js@c1f2937da282ab38dd61c889d1b0d54cb03c23c7` (MIT), but
 its filesystem/download dependencies and persistent cache of input words are
-unsuitable for direct reuse in Shield.
+unsuitable for direct reuse in dmz.
 Pinned reference implementation notices are retained in [licenses/](licenses/README.md).
 
 The browser prototype uses ORT Web 1.23.2 and local assets only. It does not cache
@@ -71,7 +71,7 @@ failures. Four prediction sets differed from native ORT: one address, one phone
 and two person results. Browser standalone exact accuracy was 54/90, versus
 51/90 for native quantized and 66/90 for original FP32. These are runtime
 variants, not interchangeable evaluations. The browser result remains rejected
-for default use; this prototype has not been wired into the Shield extension.
+for default use; this prototype has not been wired into the dmz extension.
 
 Timings come from a contended CPU host and are feasibility observations, not
 representative customer latency guarantees. The prototype's control-character,

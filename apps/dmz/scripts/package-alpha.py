@@ -32,7 +32,7 @@ actual = {p.relative_to(extension).as_posix() for p in extension.rglob('*') if p
 if actual != expected:
     raise SystemExit('Unexpected or missing extension files.')
 files = {}
-prefix = 'dmz-shield-alpha-1'
+prefix = 'dmz-alpha-1'
 for name in sorted(expected):
     path = extension / name
     if path.is_symlink():

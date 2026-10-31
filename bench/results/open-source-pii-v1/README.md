@@ -215,7 +215,7 @@ prototype makes no external requests and completes 90 excerpts without failures,
 but differs from native QUInt8 on six prediction sets and scores 52/90. Its
 token IDs, word masks and original word offsets match Python on all 190 reused
 synthetic inputs. Input parity does not imply inference parity or acceptable
-quality. Neither prototype is imported by the Shield product.
+quality. Neither prototype is imported by the dmz product.
 
 ## Validation-only address confidence selection
 

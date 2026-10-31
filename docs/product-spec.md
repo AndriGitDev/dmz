@@ -25,7 +25,7 @@ Earlier documents describing blocking, a separate manual side-panel map/dictiona
 
 The preview targets selected text paths at `chatgpt.com` and `claude.ai`. Current fixture checks do not establish all authenticated live-site paths. Site changes and unsupported send paths can bypass interception. Other AI sites, mobile/desktop apps, voice, Firefox and document/image redaction are not verified features.
 
-Selected kennitölur, Icelandic names in the trained profile, address forms, email, phone, IS IBAN, card numbers and secret patterns are covered to differing measured degrees. Follow the [quality contract](detector-quality-contract.md) for exact current evidence and the [preview guide](shield-autonomous-preview.md) for workflow limits. Do not imply exhaustive detection, anonymity, encryption of markers, legal compliance, certification or provider zero retention.
+Selected kennitölur, Icelandic names in the trained profile, address forms, email, phone, IS IBAN, card numbers and secret patterns are covered to differing measured degrees. Follow the [quality contract](detector-quality-contract.md) for exact current evidence and the [preview guide](dmz-autonomous-preview.md) for workflow limits. Do not imply exhaustive detection, anonymity, encryption of markers, legal compliance, certification or provider zero retention.
 
 ## Quality and releases
 
