@@ -162,7 +162,7 @@ def train(source, model, iterations, c1, c2, version=1, label_mode="person", pro
                     label_mode=label_mode, feature_version=version, training_sentences=count, iterations=iterations, c1=c1, c2=c2,
                     seconds=round(time.monotonic()-started, 3), bytes=model.stat().st_size,
                     features='word/shape/affixes/patronymic; +/-2 token context; BIO Person; v2 adds neighbor affixes/pairs; v3 adds initial/length/case features',
-                    runtime='python-crfsuite 0.9.12; experimental offline baseline, not Shield')
+                    runtime='python-crfsuite 0.9.12; experimental offline baseline, not dmz')
     model.with_suffix('.metadata.json').write_text(json.dumps(metadata, indent=2)+'\n')
     return metadata
 
@@ -197,7 +197,7 @@ def evaluate(source, model, split, thresholds, text_mode="canonical"):
         score['target_met'] = score['precision'] >= .955 and score['recall'] >= .955
     return dict(input_sha256=sha(source),model_sha256=sha(model),split=split,sentences=count,text_mode=text_mode,
                 seconds=round(time.monotonic()-started,3),scores=scores,
-                method='exact UTF-8 Person spans; confidence=min BIO token marginal; offline CRF only, not full Shield pipeline')
+                method='exact UTF-8 Person spans; confidence=min BIO token marginal; offline CRF only, not full dmz pipeline')
 
 
 def main():

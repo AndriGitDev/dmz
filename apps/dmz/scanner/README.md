@@ -13,13 +13,13 @@ The send gate rechecks draft, URL, composer, target and session after asynchrono
 Run from the repository root, with the already installed local toolchains. `prepare-scanner.py` requires python-crfsuite; the native parity preparation additionally requires transformers. Use existing private paths for `--experiment`, `--base` and `--crf`.
 
 ```sh
-python3 apps/shield/scripts/prepare-scanner.py \
+python3 apps/dmz/scripts/prepare-scanner.py \
   --experiment /private/full-precision-v1 --base /private/icebert-base \
-  --crf /private/initials.crfsuite --output /private/shield-scanner
-cd apps/shield
+  --crf /private/initials.crfsuite --output /private/dmz-scanner
+cd apps/dmz
 npm ci
 npm run check
-DMZ_SCANNER_ASSETS=/private/shield-scanner \
+DMZ_SCANNER_ASSETS=/private/dmz-scanner \
 DMZ_ADDRESS_FORMS=/private/prepared/address-forms.json npm run build:scanner
 npm run test:browser
 npm run test:scanner
@@ -40,7 +40,7 @@ is retained when recognized. Unknown street forms, unnumbered addresses and
 ambiguous place-name/number mentions remain limitations; synthetic regression
 checks do not establish field precision or recall.
 
-Load `apps/shield/.output/chrome-mv3` using **Load unpacked** on `chrome://extensions` (or Brave's extensions page), then reload supported supported AI sites tabs. The extension name includes “trained preview” and Settings identifies the active trained scanner. First use loads the model and can take several seconds. A trained-scan failure uses basic masking with a warning. A changed draft remains for retry. Uninstall or reload the extension to discard its worker/model; reset in Settings clears a tab's mappings.
+Load `apps/dmz/.output/chrome-mv3` using **Load unpacked** on `chrome://extensions` (or Brave's extensions page), then reload supported supported AI sites tabs. The extension name includes “trained preview” and Settings identifies the active trained scanner. First use loads the model and can take several seconds. A trained-scan failure uses basic masking with a warning. A changed draft remains for retry. Uninstall or reload the extension to discard its worker/model; reset in Settings clears a tab's mappings.
 
 ## Validation scope
 

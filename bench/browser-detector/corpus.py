@@ -127,7 +127,7 @@ def main():
             reports[-1]['versus_fp32_browser_neural']=compression_changes(records,reference_records,empty_crf)
             reports[-1]['fp32_browser_neural']=score(reference_records)
     report={k:v for k,v in predictions.items() if k!='sets'}
-    report.update(text_mode=a.text_mode,scope='Selected fixed development sets replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end Shield',independent_validation=False,sets=reports)
+    report.update(text_mode=a.text_mode,scope='Selected fixed development sets replay through Chromium WASM with native pretokenization and cached CRF merge; not end-to-end dmz',independent_validation=False,sets=reports)
     if a.browser_reference:report['fp32_browser_reference_sha256']=digest(a.browser_reference)
     if a.cache_output:
         with external(a.cache_output).open('x') as f:

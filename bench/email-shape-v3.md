@@ -39,7 +39,7 @@ The implementation is a prose detector, not a complete RFC mailbox validator.
 Obsolete comments/folding, single-label domains, percent-encoded addresses and
 unhandled internationalized forms are not established coverage. Existing Unicode
 normalization/review policy remains in force, and non-ASCII mailbox detections
-retain uncertain confidence. Shield masks them under its best-effort policy.
+retain uncertain confidence. dmz masks them under its best-effort policy.
 
 ## Verification
 

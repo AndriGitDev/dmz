@@ -47,7 +47,7 @@ Tests cover complete multi-component JSON and environment records, 16/19/20/21/1
 contextual lengths, long session tokens, invalid lengths/alphabet, non-key IAM
 prefixes, original UTF-8 offsets, embedded identifiers, public fields and code
 references. Strict processing blocks 21 labelled components and one benign
-reference, and leaves the two misses exposed. Shield best-effort masking and exact
+reference, and leaves the two misses exposed. dmz best-effort masking and exact
 restoration are measured separately through the packaged browser.
 
 This is not comprehensive AWS credential support. Other credential families,

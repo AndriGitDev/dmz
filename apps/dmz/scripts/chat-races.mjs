@@ -40,7 +40,7 @@ form.addEventListener('submit', event => {
   event.preventDefault();
   const text = document.querySelector('textarea').value;
   window.sent.push(text);
-  void fetch('/__shield_test_send', { method: 'POST', body: text });
+  void fetch('/__dmz_test_send', { method: 'POST', body: text });
 });
 </script></body></html>`;
 let browser;
@@ -54,18 +54,18 @@ try {
     const page = await browser.newPage();
     const bodies = [];
     await page.route('https://chatgpt.com/**', route => route.fulfill({ contentType: 'text/html', body: html }));
-    await page.route('https://chatgpt.com/__shield_test_send', route => {
+    await page.route('https://chatgpt.com/__dmz_test_send', route => {
       bodies.push(route.request().postData());
       return route.fulfill({ status: 204, body: '' });
     });
     await page.goto('https://chatgpt.com/');
-    await page.locator('#dmz-shield-status').waitFor();
+    await page.locator('#dmz-status').waitFor();
     await page.evaluate(value => { window.mode = value; }, mode);
     await page.locator('textarea').fill('source@example.com');
     // Register before clicking: the previous network-idle state can still be
     // true after the submit handler runs but before its fetch reaches routing.
     const sentResponse = mode === 'normal' ? page.waitForResponse(response =>
-      response.url() === 'https://chatgpt.com/__shield_test_send' && response.request().method() === 'POST') : null;
+      response.url() === 'https://chatgpt.com/__dmz_test_send' && response.request().method() === 'POST') : null;
     await page.locator('button').click();
     if (mode === 'normal') {
       await page.waitForFunction(() => window.sent.length === 1);
@@ -100,12 +100,12 @@ try {
   const failedPage = await browser.newPage();
   const failedBodies = [];
   await failedPage.route('https://chatgpt.com/**', route => route.fulfill({ contentType: 'text/html', body: html }));
-  await failedPage.route('https://chatgpt.com/__shield_test_send', route => {
+  await failedPage.route('https://chatgpt.com/__dmz_test_send', route => {
     failedBodies.push(route.request().postData());
     return route.fulfill({ status: 204, body: '' });
   });
   await failedPage.goto('https://chatgpt.com/');
-  await failedPage.locator('#dmz-shield-status').waitFor({ timeout: 10000 });
+  await failedPage.locator('#dmz-status').waitFor({ timeout: 10000 });
   const accessibility = await (await browser.newCDPSession(failedPage)).send('Accessibility.getFullAXTree');
   assert.ok(accessibility.nodes.some(node => node.name?.value?.includes('DMZ-kjarni bilaður')), 'broken core had no visible error before sending');
   await failedPage.locator('textarea').fill('source@example.com');

@@ -9,7 +9,7 @@ The inherited address-without-postcode work and subsequent dmz correctness chang
 - Complete supported private keys, database URLs, Bearer values, GitHub tokens, temporary AWS components, SigV4 presigned URLs and extended email forms are masked. Quoted credential punctuation and Unicode preserve complete values instead of dropping them at an unsupported suffix.
 - The name scanner keeps a healthy worker, queues two requests behind one active scan, and preserves the admission-based deadline. Overflow/failure uses visible basic fallback; changed drafts remain unsent.
 
-[Preview evidence](../bench/private-preview-20261005.md) records all twenty corpora separately, exact archive identity, WASM/browser checks and all sixteen scanner workflows, including the actual stalled-worker deadline. Both paths restore every evaluated excerpt exactly, with zero external scanner requests. Selected synthetic improvements are not representative acceptance estimates. [Preview instructions](shield-autonomous-preview.md) distinguish the small CI artifact from the private trained archive.
+[Preview evidence](../bench/private-preview-20261005.md) records all twenty corpora separately, exact archive identity, WASM/browser checks and all sixteen scanner workflows, including the actual stalled-worker deadline. Both paths restore every evaluated excerpt exactly, with zero external scanner requests. Selected synthetic improvements are not representative acceptance estimates. [Preview instructions](dmz-autonomous-preview.md) distinguish the small CI artifact from the private trained archive.
 
 ## Research outcome and limits
 

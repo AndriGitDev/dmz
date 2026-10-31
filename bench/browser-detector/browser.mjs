@@ -34,7 +34,7 @@ const multiModel=process.env.DMZ_MULTI_MODEL || (Object.hasOwn(fixtures.models,'
 assert.ok(Object.hasOwn(fixtures.models,multiModel));
 const traffic = [];
 const failures = [];
-const result = { schema: 1, fixtures_sha256: createHash('sha256').update(fixtureBytes).digest('hex'), scope: 'Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and Shield integration', models: fixtures.models, sessions: [], failures, memory: 'Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory', externalRequests: [] };
+const result = { schema: 1, fixtures_sha256: createHash('sha256').update(fixtureBytes).digest('hex'), scope: 'Chromium CPU WASM encoder/pooling/head on fabricated pretokenized inputs; excludes tokenizer, CRF, masking and dmz integration', models: fixtures.models, sessions: [], failures, memory: 'Linux summed RSS of Chromium process tree sampled every 200ms; shared pages may be counted more than once, not unique physical memory', externalRequests: [] };
 function treeRss(rootPid) {
   const rows = [];
   for (const pid of readdirSync('/proc').filter(n => /^\d+$/.test(n))) {

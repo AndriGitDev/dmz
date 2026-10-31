@@ -32,7 +32,7 @@ if (corpus.startsWith(join(root, 'bench/corpus/'))) {
   rows.push(...raw.toString().trim().split('\n').map(JSON.parse));
 }
 assert.equal(new Set(rows.map(r => r.id)).size, byID.size);
-const runtime = readFileSync(join(root, 'apps/shield/public/wasm_exec.js'));
+const runtime = readFileSync(join(root, 'apps/dmz/public/wasm_exec.js'));
 vm.runInThisContext(runtime.toString());
 const wasm = readFileSync(wasmArg), go = new globalThis.Go();
 const { instance } = await WebAssembly.instantiate(wasm, go.importObject);

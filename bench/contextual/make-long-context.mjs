@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import assert from 'node:assert/strict';
-import { Tokenizer, wordsFromText } from '../../apps/shield/scanner/text.mjs';
+import { Tokenizer, wordsFromText } from '../../apps/dmz/scanner/text.mjs';
 const [tokenizerPath] = process.argv.slice(2);
 if (!tokenizerPath) throw Error('Pass the pinned private tokenizer.json');
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -86,7 +86,7 @@ for (const [group, rows] of Object.entries(sets)) {
 await writeFile(resolve(root, 'bench/gates/long-context-v3.sha256'), Object.entries(corpus).map(([name,hash]) => `${hash}  bench/corpus/${name}\n`).join(''), { flag: 'wx' });
 const report = { schema: 1, scope: 'Mechanical construction of reused synthetic long-prompt controls; no inference',
   tokenizer_sha256: sha(bytes), source_sha256: {}, corpus_sha256: corpus, records: metadata, independent_validation: false };
-for (const name of ['bench/contextual/make-long-context.mjs','bench/contextual/long-context-protocol.md','apps/shield/scanner/text.mjs'])
+for (const name of ['bench/contextual/make-long-context.mjs','bench/contextual/long-context-protocol.md','apps/dmz/scanner/text.mjs'])
   report.source_sha256[name] = sha(await readFile(resolve(root,name)));
 await writeFile(resolve(root, 'bench/results/quality-99-v1/long-context-construction.json'), JSON.stringify(report,null,2)+'\n', { flag: 'wx' });
 console.log(JSON.stringify({ corpora: Object.keys(corpus).length, cases: metadata.length,

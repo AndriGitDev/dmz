@@ -28,7 +28,7 @@ same product source and selected after all declared runtime guards passed:
   restoration, network-body, composer-race and broken-core browser checks.
 
 The source trees for `packages/detect`, `packages/surrogates` and
-`apps/shield/wasm` are identical across the two stack candidates. The final
+`apps/dmz/wasm` are identical across the two stack candidates. The final
 build uses `-stack-size=128kb`; imported rules and model thresholds did not
 change during this runtime comparison.
 
@@ -55,4 +55,4 @@ smaller stack but do not identify a GC mechanism or prove universal latency.
 Both earlier failures and successful candidates are retained privately. The
 aggregate runtime record keeps source/artifact hashes and counts without input
 text or prediction records. No model weights or remote verification service are
-added to Shield by these integrations.
+added to dmz by these integrations.

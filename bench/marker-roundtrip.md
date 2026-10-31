@@ -2,7 +2,7 @@
 
 A synthetic coverage-guided fuzz run found a repeat-processing error. For
 `AuthoriZAtion:BeArer 0 0`, the first scan correctly masks the first value and
-leaves the following prose token alone. On a second scan, Shield replaced its
+leaves the following prose token alone. On a second scan, dmz replaced its
 already-issued marker with spaces in an internal scan copy. The Bearer recognizer
 skipped those spaces and incorrectly masked the second token as another value.
 The minimized regression is retained under the Go fuzz test data directory.

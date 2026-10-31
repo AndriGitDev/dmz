@@ -1,7 +1,7 @@
 # Error-driven experiment protocol
 
 Objective: improve exact Person precision and recall toward 95.5% each, keeping
-all prompt data and model inference local. This is research, not a Shield release.
+all prompt data and model inference local. This is research, not a dmz release.
 
 ## Fixed evaluation boundaries
 

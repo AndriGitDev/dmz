@@ -63,7 +63,7 @@ def evaluate(source, crf_path, neural_path, selection_path, dataset):
         records.append(dict(gold=[(a, b, 'Person') for a, b in gold],
                             predicted=[(a, b, 'Person') for a, b in predicted], stratum=dataset))
     report = score(records, ['Person'])
-    report.update(scope='Reused development; Person only, not all-entity or Shield accuracy',
+    report.update(scope='Reused development; Person only, not all-entity or dmz accuracy',
                   text_mode=mode, input_sha256=source_hash,
                   crf_cache_sha256=sha(crf_path), neural_cache_sha256=sha(neural_path),
                   selection_sha256=sha(selection_path), thresholds=thresholds)

@@ -26,7 +26,7 @@ whitespace end the value. Preserve permitted punctuation within the value.
 Equality/compound operators and quoted-literal concatenation are excluded.
 Quoted values must end at the assignment boundary, not at one piece of a
 computed expression. The finding is an uncertain Secret shape; best-effort
-Shield masks it, while strict core processing blocks it.
+dmz masks it, while strict core processing blocks it.
 
 Require at least 20 bytes, both an ASCII letter and digit, an alphabet limited to
 ASCII letters/digits and `_ . / + = ~ -` (without spaces), and empirical Shannon

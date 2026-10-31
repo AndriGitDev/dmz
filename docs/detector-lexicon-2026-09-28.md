@@ -84,7 +84,7 @@ go run ./bench/ner-eval \
 
 DMZ_LEXICON_FILE=/root/.local/share/dmz/datasets/lexicon-v2.json \
   ./scripts/build-wasm.sh
-cd apps/shield
+cd apps/dmz
 npm run build
 DMZ_LEXICON_FILE=/root/.local/share/dmz/datasets/lexicon-v2.json \
   node scripts/wasm-smoke.mjs

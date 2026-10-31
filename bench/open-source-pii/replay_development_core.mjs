@@ -18,7 +18,7 @@ assert.deepEqual(manifest.scope,['name_demo']);
 const raw=readFileSync(join(corpus,'records.jsonl'));assert.equal(hash(raw),manifest.records_sha256);
 const rows=raw.toString().trim().split('\n').map(JSON.parse);assert.equal(rows.length,5838);
 assert.equal(new Set(rows.map(r=>r.id)).size,5838);
-const runtime=readFileSync(join(root,'apps/shield/public/wasm_exec.js'));
+const runtime=readFileSync(join(root,'apps/dmz/public/wasm_exec.js'));
 vm.runInThisContext(runtime.toString());
 const wasm=readFileSync(wasmArg),go=new globalThis.Go();
 const {instance}=await WebAssembly.instantiate(wasm,go.importObject);void go.run(instance);

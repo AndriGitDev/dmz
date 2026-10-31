@@ -17,7 +17,7 @@ The rule requires both strata to preserve frozen exact excerpt accuracy and prec
 
 - lower-stratum recall did not improve.
 
-Both strata meet both separate ≥99% point targets: **no**. These are repeatedly reused Person-only development sets, not independent all-entity Shield acceptance. General text is canonical token-spaced text; domain text retains its original formatting. Thresholds remain CRF 0.75 and neural 0.0 with CRF overlap priority. Raw predictions and weights stay private.
+Both strata meet both separate ≥99% point targets: **no**. These are repeatedly reused Person-only development sets, not independent all-entity dmz acceptance. General text is canonical token-spaced text; domain text retains its original formatting. Thresholds remain CRF 0.75 and neural 0.0 with CRF overlap priority. Raw predictions and weights stay private.
 
 The original orchestration runner completed training and the single general evaluation, then stopped because it requested a training-manifest field absent from Person reports. A guarded finisher retained that evaluation, validated checkpoint/code/source/selection/tokenizer/CRF-cache identities and finite confidences, performed domain evaluation once, and applied the unchanged comparison. No inference was repeated and no frozen training/evaluation code changed during the run.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare an address-only Shield lexicon from locally approved HMS forms."""
+"""Prepare an address-only dmz lexicon from locally approved HMS forms."""
 import argparse
 import hashlib
 import json

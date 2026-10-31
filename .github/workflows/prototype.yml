@@ -11,6 +11,7 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - run: python3 scripts/check-naming.py
       - run: go test ./...
       - run: ./scripts/check-lexicon.sh
       - run: ./scripts/check-phone-metadata.sh
@@ -59,7 +60,7 @@ jobs:
       - run: python -m pip install -r bench/baselines/requirements.txt
       - run: python bench/baselines/presidio.py > /tmp/dmz-presidio-current.json
       - run: diff -u bench/results/presidio-v0.json /tmp/dmz-presidio-current.json
-  shield-browser:
+  dmz-browser:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -70,18 +71,18 @@ jobs:
         with:
           node-version: 22.23.4
           cache: npm
-          cache-dependency-path: apps/shield/package-lock.json
+          cache-dependency-path: apps/dmz/package-lock.json
       - run: npm ci
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: npm run check
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: node scripts/scanner-unit.mjs
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: node scripts/scanner-lifecycle-unit.mjs
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: node bench/holdout/editor/test-core.cjs
       - run: npm run test:coverage
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - name: Install verified TinyGo 0.42.0
         run: |
           curl --fail --location --retry 3 --output /tmp/tinygo.tar.gz https://github.com/tinygo-org/tinygo/releases/download/v0.42.0/tinygo0.42.0.linux-amd64.tar.gz
@@ -89,24 +90,24 @@ jobs:
           tar -xzf /tmp/tinygo.tar.gz -C /tmp
       - run: GO_BIN=go TINYGO_BIN=/tmp/tinygo/bin/tinygo ./scripts/build-wasm.sh
       - run: npm run build
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: node scripts/wasm-smoke.mjs
         timeout-minutes: 2
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: npx playwright install --with-deps chromium
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: node bench/holdout/editor/test-browser.mjs
       - run: npm run test:browser
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: npm run test:pause
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: npm audit --omit=dev --audit-level=high
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - run: npm run record:build
-        working-directory: apps/shield
+        working-directory: apps/dmz
       - uses: actions/upload-artifact@v6
         with:
-          name: shield-chromium-prototype
-          path: apps/shield/.output/chrome-mv3
+          name: dmz-chromium-prototype
+          path: apps/dmz/.output/chrome-mv3
           if-no-files-found: error
           retention-days: 14

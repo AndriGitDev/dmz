@@ -76,7 +76,7 @@ async function clickDMZControl(page, attribute) {
   } finally { await cdp.detach(); }
 }
 
-async function shieldStatusHTML(page) {
+async function dmzStatusHTML(page) {
   const cdp = await browser.newCDPSession(page);
   try {
     const { root: dom } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
@@ -112,7 +112,7 @@ try {
   try {
     await page.waitForFunction(() => window.sent.length === 1, null, { timeout: 15000 });
   } catch (error) {
-    throw new Error(`No replay. field=${await page.locator('#prompt-textarea').inputValue()}; sent=${JSON.stringify(await page.evaluate(() => window.sent))}; status=${await page.locator('#dmz-shield-status').count()}; errors=${errors.join(' | ')}`, { cause: error });
+    throw new Error(`No replay. field=${await page.locator('#prompt-textarea').inputValue()}; sent=${JSON.stringify(await page.evaluate(() => window.sent))}; status=${await page.locator('#dmz-status').count()}; errors=${errors.join(' | ')}`, { cause: error });
   }
   const outbound = await page.evaluate(() => window.sent[0]);
   assert.match(outbound, /⟦KT-[A-F0-9]{16}-\d+: XXXXX-XXXX⟧/);
@@ -137,7 +137,7 @@ try {
   const secretPage = await browser.newPage();
   await secretPage.route('https://chatgpt.com/**', route => route.fulfill({ contentType: 'text/html', body: html }));
   await secretPage.goto('https://chatgpt.com/');
-  await secretPage.locator('#dmz-shield-status').waitFor();
+  await secretPage.locator('#dmz-status').waitFor();
   const structuredValues = [
     'sk-test_key_000000000000',
     'npm_aB3dE6gH9jK2mN5pQ8sT1vW4yZ7cF0iL3oR6',
@@ -193,7 +193,7 @@ try {
     element.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, cancelable: true, clipboardData: transfer }));
   });
   assert.equal(await page.evaluate(() => window.uploads), 5, 'file paste was blocked');
-  assert.match(await page.locator('#dmz-shield-status').getAttribute('style'), /position:\s*fixed/);
+  assert.match(await page.locator('#dmz-status').getAttribute('style'), /position:\s*fixed/);
 
   const claude = await browser.newPage();
   claude.on('pageerror', error => errors.push(error.message));
@@ -309,8 +309,8 @@ try {
       assert.equal(await inline.locator('html').evaluate(element => getComputedStyle(element).colorScheme), mode);
       assert.equal(await inline.locator('p').evaluate(element => getComputedStyle(element).color), foreground);
       assert.equal(await modern.locator('[data-dmz-restored]').first().evaluate(element => getComputedStyle(element).colorScheme), mode);
-      if (process.env.SHIELD_SCREENSHOTS) {
-        await modern.locator('[data-dmz-restored]').first().screenshot({ path: path.join(process.env.SHIELD_SCREENSHOTS, `shield-${new URL(origin).hostname}-${mode}.png`) });
+      if (process.env.DMZ_SCREENSHOTS) {
+        await modern.locator('[data-dmz-restored]').first().screenshot({ path: path.join(process.env.DMZ_SCREENSHOTS, `dmz-${new URL(origin).hostname}-${mode}.png`) });
       }
     }
     // A background-only theme update must refresh an unchanged restored reply.
@@ -398,7 +398,7 @@ try {
         element.dispatchEvent(new InputEvent('input', { bubbles: true, data: window.invalidDraft }));
       }, code);
       await variants.locator(send).click();
-      assert.ok((await shieldStatusHTML(variants)).includes('Viðvörun:'), 'lossy input had no warning');
+      assert.ok((await dmzStatusHTML(variants)).includes('Viðvörun:'), 'lossy input had no warning');
       await variants.waitForFunction(count => window.sent.length === count, ++invalidCount);
       assert.equal(await variants.evaluate(() => window.sent.length), invalidCount, 'best-effort fallback did not submit');
       assert.equal(await variants.locator(editor).evaluate(element =>

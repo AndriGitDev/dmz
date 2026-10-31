@@ -2,7 +2,7 @@
 """Exact entity-set accuracy and entity recall; no text or spans in reports.
 
 These metrics describe the supplied, fully labelled scope. Reused development
-scores cannot establish independent performance or complete Shield coverage.
+scores cannot establish independent performance or complete dmz coverage.
 """
 from collections import Counter, defaultdict
 import math

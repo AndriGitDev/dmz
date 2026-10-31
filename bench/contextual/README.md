@@ -1,7 +1,7 @@
 # Offline contextual name experiments
 
 This trains a local linear-chain CRF on the approved MIM-GOLD-NER training split.
-It is an experimental Person recognizer, **not a shipped Shield detector**.
+It is an experimental Person recognizer, **not a shipped dmz detector**.
 Corpus text, extracted vocabulary, and model weights stay outside Git and are not
 sent to a provider. Only aggregate reports and fabricated examples are committed.
 
@@ -37,7 +37,7 @@ score, not a calibrated probability that a whole name is correct.
 
 Metrics require an exact UTF-8 span match. A partial name counts as one false
 positive and one false negative. Names alone are scored here: this does not measure
-other identifier types, outbound exposure, or the combined Go/Shield pipeline.
+other identifier types, outbound exposure, or the combined Go/dmz pipeline.
 The input assumes the corpus's canonical token-spaced text; production tokenization,
 Go/WASM inference, streaming, package size, and latency still need implementation
 and validation before considering integration.

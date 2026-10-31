@@ -22,4 +22,4 @@ LICENSE is Apache-2.0 while package.json declares MIT; record that mismatch and
 do not silently assert a single package licence. Any prototype must use local
 assets, block external requests, avoid input-word caches, preserve original
 UTF-8 offsets, and measure parity instead of assuming the JS implementation
-matches Python. Keep any prototype under `bench/`; no default Shield wiring.
+matches Python. Keep any prototype under `bench/`; no default dmz wiring.

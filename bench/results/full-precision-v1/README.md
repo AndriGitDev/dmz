@@ -106,7 +106,7 @@ Failure checks: 8/8 passed. All run cases succeeded: True. External requests: 0.
 
 Three independent int8fp16 tab workers, one thread each: peak summed RSS 4017.4 MiB; inference wall times [5603.3, 5090.0, 5425.7] ms. This measures separate model copies, not a shared extension worker.
 
-Memory is sampled Linux Chromium process-tree RSS; shared pages may be counted more than once. Load uses a fresh worker/context and no-store loopback HTTP in one browser process, not a cold OS cache. Accuracy replay uses native pretokenization and cached CRF merging. Timings exclude tokenization, CRF, masking and Shield integration. Failure tests exercise the harness, not an end-to-end Shield release gate. The original four-graph runtime and comparison reports remain preserved.
+Memory is sampled Linux Chromium process-tree RSS; shared pages may be counted more than once. Load uses a fresh worker/context and no-store loopback HTTP in one browser process, not a cold OS cache. Accuracy replay uses native pretokenization and cached CRF merging. Timings exclude tokenization, CRF, masking and dmz integration. Failure tests exercise the harness, not an end-to-end dmz release gate. The original four-graph runtime and comparison reports remain preserved.
 
 ## Original UTF-8 domain checks
 
@@ -122,12 +122,12 @@ These use the same reused synthetic domain examples with original text retained,
 ## Remaining evidence and review
 
 - Independent human labels and document-disjoint real legal/financial validation.
-- End-to-end tokenizer/CRF/Shield integration and owner-hardware validation.
+- End-to-end tokenizer/CRF/dmz integration and owner-hardware validation.
 - No measured sub-100-MiB graph preserving all frozen-reference aggregate precision/recall values.
 
 The private blind-review-v2 annotation pilot contains 42 unlabelled records from nine documents. Source/text hashes are intact; extraction, source-use and human annotation review remain pending. Null labels are not negatives. See [../../holdout/README.md](../../holdout/README.md).
 
-Weights, datasets, token vectors, individual predictions and detailed logs stay outside Git. Aggregate reports pin hashes. Both correction checkpoints and failed exports/experiments are preserved. The commuted ONNX head-bias export bug was fixed and both trained exports passed their training-chunk implementation probes before evaluation. Shield code remains unchanged. Draft PR #11 is stacked on open, unmerged PR #10; no merge or deployment was performed.
+Weights, datasets, token vectors, individual predictions and detailed logs stay outside Git. Aggregate reports pin hashes. Both correction checkpoints and failed exports/experiments are preserved. The commuted ONNX head-bias export bug was fixed and both trained exports passed their training-chunk implementation probes before evaluation. dmz code remains unchanged. Draft PR #11 is stacked on open, unmerged PR #10; no merge or deployment was performed.
 
 The optional `repairhalf` trial was skipped because neither corrected parent preserved every frozen-reference precision/recall value; [followup-decision.json](followup-decision.json) pins the actual guard decisions. [final-integrity.json](final-integrity.json) rechecks 19 baseline, checkpoint, input and tokenizer artifacts, the unchanged freeze, repository boundaries and unlabelled review-packet integrity.
 

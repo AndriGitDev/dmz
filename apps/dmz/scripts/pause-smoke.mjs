@@ -56,7 +56,7 @@ async function chat(site) {
     }),
   );
   await p.goto(`https://${host}/`);
-  await p.locator("#dmz-shield-status").waitFor();
+  await p.locator("#dmz-status").waitFor();
   return p;
 }
 const click = (p, s) => p.locator(s).evaluate((e) => e.click());
@@ -200,7 +200,7 @@ try {
     );
     await pause(panel, p, true);
     await p.reload();
-    await p.locator("#dmz-shield-status").waitFor();
+    await p.locator("#dmz-status").waitFor();
     assert.match(await send(p, "reloaded@example.com"), /⟦EMAIL-/);
     await active(panel, p);
     assert.equal(

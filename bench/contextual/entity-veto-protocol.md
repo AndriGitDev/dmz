@@ -51,4 +51,4 @@ existing frozen references. Full typed caches and any individual predictions
 remain outside Git; commit aggregate counts and provenance only. Do not read or
 score the blind review packets. A successful research gate would still require
 nine-label export, real browser parity, full-entity checks and independent
-labels before any promotion. The current three-label Shield package stays fixed.
+labels before any promotion. The current three-label dmz package stays fixed.

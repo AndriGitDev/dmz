@@ -7,8 +7,8 @@ import {createHash} from 'node:crypto';
 import {resolve,join,relative,dirname} from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
-import {chromium} from '../../apps/shield/node_modules/playwright/index.mjs';
-import {annotationSpans,restoredMaskSpans,coverage,markers} from '../../apps/shield/scripts/coverage.mjs';
+import {chromium} from '../../apps/dmz/node_modules/playwright/index.mjs';
+import {annotationSpans,restoredMaskSpans,coverage,markers} from '../../apps/dmz/scripts/coverage.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const [outArg,corpusArg,extensionArg]=process.argv.slice(2);
 if(!outArg||!corpusArg)throw Error('Usage: frozen-browser.mjs PRIVATE_OUTPUT SYNTHETIC_DIRECTORY');
@@ -40,7 +40,7 @@ if(committed){
  }
 }
 const goldFor=row=>committed?annotationSpans(row):row.gold.map(([start,end,kind])=>({start,end,kind}));
-const extension=extensionArg?await realpath(extensionArg):join(root,'apps/shield/.output/chrome-mv3');
+const extension=extensionArg?await realpath(extensionArg):join(root,'apps/dmz/.output/chrome-mv3');
 const build=JSON.parse(await readFile(join(extension,'BUILD.json'),'utf8'));
 if(build.sourceCommit!=='a8a6704c7b8b1892ce083424f96ed236bb537f77')throw Error('Requires frozen October build');
 async function checkAssets(){for(const[name,sha]of Object.entries(build.sha256)){if(await fileDigest(join(extension,name))!==sha)throw Error('Frozen asset changed: '+name);}}

@@ -6,7 +6,7 @@ Help users reduce accidental sharing of selected direct identifiers in AI text s
 
 The current runtime is best effort: host-page scripts can see the original draft; failures warn and continue; files, images and attachments pass through unchanged. Missed identifiers and context can still identify people. Preserve this behavior and its warnings when changing positioning.
 
-The project consists of the extension, its detector and this supporting website. Internal source paths remain stable for build compatibility. No hosted product or additional service is promised.
+The project consists of the extension, its detector and this supporting website. The extension source lives in `apps/dmz`; active scripts, tests and documentation use the dmz name. No hosted product or additional service is promised.
 
 Source licensing covers original code, not rights belonging to upstream data/model owners. Preserve attribution and verify every asset before redistribution. Research publication remains limited to reviewed summaries until data and publication rights are established. See [readiness](open-source-readiness.md), [contribution guidance](../CONTRIBUTING.md) and [third-party materials](../THIRD_PARTY.md).
 

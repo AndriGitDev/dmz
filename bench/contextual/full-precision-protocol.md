@@ -2,7 +2,7 @@
 
 Started 28 September 2026, from `c6a8b0d`; PR #10 remains open and unmerged.
 The old selected checkpoint, development reports, and browser exports are retained.
-No Shield behavior changes are part of this experiment.
+No dmz behavior changes are part of this experiment.
 
 ## Order and selection
 
@@ -47,7 +47,7 @@ Use the existing local CPU only, no paid services. Reserve time within the owner
 eight-hour limit for browser evaluation, reports, PR and canonical vault checkpoint.
 Record changes to this recipe after the feasibility probe explicitly. Stop jobs at
 the deadline and report missing measurements rather than presenting estimates as
-observations. No automatic merge, deployment, public research sync, or Shield release.
+observations. No automatic merge, deployment, public research sync, or dmz release.
 
 ### Feasibility adjustment before development evaluation
 
