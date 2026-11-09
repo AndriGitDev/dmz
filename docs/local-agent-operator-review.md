@@ -8,7 +8,7 @@ Work began on 9 November 2026 at 11:21 UTC for the operator review window ending
 
 - Local browser control window with Icelandic/English UI, installed-tool discovery, folder selection, optional API key, Start/Stop/Quit and aggregate session status. Local credentials and routing files are handled internally.
 - Separate per-launch gateway ownership; one-use private tickets, server-side connector claims, short-lived browser bootstrap, private app reopening descriptor, heartbeat expiry and terminal-hangup cleanup.
-- Private macOS arm64/amd64, Windows amd64 and Linux amd64 app archives with notices and checksums. They are unsigned and unpublished, with native macOS/Windows behavior still unqualified.
+- A private universal macOS 13+ app (Intel and Apple Silicon), Windows amd64 and Linux amd64 app archives with notices and checksums. They are unsigned and unpublished, with native macOS/Windows behavior still unqualified.
 
 - Native Go reuse of the existing basic detector and best-effort marker core.
 - Separate Responses and Messages adapters, plus model listing, Messages token counting and Responses compaction routes.
@@ -30,11 +30,15 @@ The [companion guide](local-companion.md) documents the intended six/seven-actio
 | Claude Code 2.1.318 on Linux | Basic and Read-tool synthetic roundtrips pass through both launcher and manual API-key service modes |
 | Manual service credentials | Fake provider receives its own fake key; local dmz token does not reach it. Status/reset/auth probes pass |
 | Desktop applications | Configuration fragments generated and parsed; native applications not run. Desktop support is unqualified |
-| macOS ARM64 and Windows AMD64 | Gateway executables cross-compile; native runtime/desktop qualification not performed |
+| macOS first operator target | One universal app archive is built and independently parsed for both CPUs. Both embedded slices declare macOS 13 minimum. Native unit/package checks are prepared for Apple Silicon and Intel CI; not yet run. Finder, Gatekeeper and signing remain unqualified |
+| Windows AMD64 | Gateway and GUI executable cross-compile; native runtime/desktop qualification not performed |
 | Companion controller through actual CLI binaries | 14 scenario runs: 12 pass, Codex default-sandbox roundtrip incomplete, Claude first-folder setup fails the harness's under-eight-step acceptance. Client completion, stable masking, stop/quit/hangup and cleanup work in those measured paths |
 | Interactive client TUIs in a Linux pseudo-terminal | Both clients render final answers in two consecutive sessions. Claude's temporary-key prompt and stored approvals are eliminated; new-folder trust remains a separate required native prompt |
 | Existing-sign-in fixtures | Both clients complete using synthetic native auth files in private client directories; no real account, refresh or actual ChatGPT backend validation |
-| Companion browser UI | 26 local headless Chromium checks pass, including one-use bootstrap, URL cleanup, language, validation, explicit API-environment choice, layout, dark mode and Quit; synthetic tool discovery and no external browser requests observed |
+| Companion browser UI | 32 local headless Chromium checks pass, including one-use bootstrap, URL cleanup, language, validation, explicit API-environment choice, layout, dark mode, blocked browser storage, failed-Quit recovery and Quit; synthetic tool discovery and no external browser requests observed |
+| Production Linux terminal helper under Xvfb | 6/6 cases pass: basic request, app Stop and actual window-manager close protocol for both installed clients. Paths include spaces, quotes, Unicode and shell characters; no owned processes or launch files remain |
+| Native Linux browser opener + UI + xterm | Both clients pass through xdg-open and headed Chromium on the private virtual display. Closing and reopening the browser preserves the existing host and counts; each open/reopen driver reports 7 checks. Print-mode client arguments are supplied only by the fixture |
+| Compressed requests | Bounded gzip/x-gzip and zstd decoding passes gateway tests. Real Codex builtin-provider diagnostic sends a 2 MiB-window zstd frame and completes masked; the actual custom-provider fixture sends identity JSON and remains incomplete for compressed-route evidence |
 | Download-to-first-answer under eight actions | Not qualified. Native trust/signing/install prompts remain, and the new-folder Claude fixture requires eight simulated actions |
 | Go checks | Full module tests, gateway/launcher/core race checks and vet pass locally |
 | JSON transformer fuzzing | A bounded 30-second development run passes; this is not independent validation |
@@ -67,7 +71,9 @@ The default sandbox limitation is retained in both reports. Do not change operat
 
 ## Review fixes already applied
 
-The companion handles SIGHUP, closes running sessions after missing heartbeats, and cancels folder helpers on Quit. Stop does not become a launch-failure warning. Final counters remain available after the gateway closes. Claude API sessions use the local bearer token, so normal terminal launches no longer ask to approve and save each changing local key. An environment API key now requires explicit user selection, and ordinary Claude settings cannot replace that choice. Stopped history is bounded, duplicate connector claims are rejected, busy-window reopen preserves the live descriptor, and Windows console streams are reopened before client launch (native qualification pending).
+The companion catches immediate browser/terminal dispatcher failures and handles SIGHUP, closes running sessions after missing heartbeats, and cancels folder helpers on Quit. Stop does not become a launch-failure warning. Final counters remain available after the gateway closes. Claude API sessions use the local bearer token, so normal terminal launches no longer ask to approve and save each changing local key. An environment API key now requires explicit user selection, and ordinary Claude settings cannot replace that choice. Stopped history is bounded, duplicate connector claims are rejected, busy-window reopen preserves the live descriptor, and Windows console streams are reopened before client launch (native qualification pending).
+
+Supported compressed bodies are decoded inside the worker budget with wire/output/window limits. Unchanged bodies retain encoded bytes; modified JSON is sent uncompressed with corrected length and digests removed. Unsupported, malformed or excessive bodies still warn and continue unchanged. The pinned decoder and required notices are included in native packages.
 
 Short bursts wait up to 30 seconds for a transformation slot; ordinary contention no longer immediately forwards originals. Request-body reads have a deadline. New sessions can evict the least recently used idle map, with a warning about lost history. Whole-field masking now warns about context loss. Launcher warnings are de-duplicated and routine exclusions are summarized after exit.
 
@@ -84,6 +90,8 @@ Responses retain markers. There is no automatic local display or tool-input rest
 The gateway does not cover direct MCP, shell networking, web tools, cloud/SSH execution, desktop synchronization, telemetry or client histories. The local token can be inherited by agent tools. No anonymity, complete detection, compliance, certification or retention guarantee is established. Native Windows cleanup, managed-policy routing and native terminal/window behavior still need qualification. Linux pseudo-terminal flows have been exercised; this does not qualify native platform launchers. API-key modes are distinct from subscription authentication.
 
 ## Operator checks before expanding scope
+
+The owner selected **macOS** for the first download/install review. Use the universal Mac archive and qualify Finder reopen, Terminal launch, folder picker, app relocation, TCC prompts and signing/notarization on that platform first. The app currently has no Developer ID signature or notarization; do not bypass OS protections as a purported finished setup flow.
 
 1. Pin the actual desktop OS/app builds and intended auth route. Use fabricated data to confirm loopback endpoint acceptance, credential delivery, session identity, model discovery, streaming, warning visibility and restore of the previous client configuration.
 2. Qualify the normal Codex sandbox on an appropriate host and verify real automatic compaction, cancellation, resume and subagents. Run each provider/account route separately, including any desired subscription path.

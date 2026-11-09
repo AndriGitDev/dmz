@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Builds PRIVATE REVIEW companion bundles for macOS (arm64, amd64), Windows
+# Builds PRIVATE REVIEW companion bundles for macOS (universal), Windows
 # (amd64) and Linux (amd64). Local review artifacts only: no signing,
 # notarization, upload, installation, release or public download.
 #
@@ -91,7 +91,7 @@ write_info_plist() { # path
 	<key>CFBundleVersion</key>
 	<string>0</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>12.0</string>
+	<string>13.0</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
@@ -139,19 +139,20 @@ PY
 
 archives=()
 
-for arch in arm64 amd64; do
-  name="DMZ-private-prototype-macos-$arch"
-  top="$stage_dir/$name"
-  app="$top/DMZ.app/Contents"
-  mkdir -p "$app/MacOS"
-  build darwin "$arch" "$app/MacOS/DMZ"
-  chmod 0755 "$app/MacOS/DMZ"
-  write_info_plist "$app/Info.plist"
-  printf 'APPL????' > "$app/PkgInfo"
-  copy_docs "$top" "darwin/$arch"
-  zip_dir "$out_dir/$name.zip" "$stage_dir" "$name"
-  archives+=("$name.zip")
+for arch in amd64 arm64; do
+  build darwin "$arch" "$build_dir/dmz-darwin-$arch"
 done
+name="DMZ-private-prototype-macos-universal"
+top="$stage_dir/$name"
+app="$top/DMZ.app/Contents"
+mkdir -p "$app/MacOS"
+"$go_bin" run ./scripts/companion-package "$app/MacOS/DMZ" "$build_dir/dmz-darwin-amd64" "$build_dir/dmz-darwin-arm64"
+chmod 0755 "$app/MacOS/DMZ"
+write_info_plist "$app/Info.plist"
+printf 'APPL????' > "$app/PkgInfo"
+copy_docs "$top" "darwin/universal (amd64, arm64)"
+zip_dir "$out_dir/$name.zip" "$stage_dir" "$name"
+archives+=("$name.zip")
 
 name="DMZ-private-prototype-windows-amd64"
 top="$stage_dir/$name"
@@ -243,10 +244,19 @@ for name in archives:
     if "macos" in name:
         exe = rel.get("DMZ.app/Contents/MacOS/DMZ")
         check(exe is not None and exe[0] & 0o111 == 0o111, f"{name}: DMZ.app/Contents/MacOS/DMZ executable")
-        magic = struct.unpack("<I", exe[1][:4])[0]
-        cpu = struct.unpack("<I", exe[1][4:8])[0]
-        want = 0x0100000C if "arm64" in name else 0x01000007
-        check(magic == 0xFEEDFACF and cpu == want, f"{name}: Mach-O 64-bit for expected CPU")
+        magic, count = struct.unpack(">II", exe[1][:8])
+        check(magic == 0xCAFEBABE and count == 2, f"{name}: universal Mach-O header")
+        cpus = set()
+        for n in range(count):
+            cpu, subtype, offset, size, align = struct.unpack(">IIIII", exe[1][8+n*20:28+n*20])
+            cpus.add(cpu)
+            thin = exe[1][offset:offset+size]
+            valid = offset % (1 << align) == 0 and len(thin) == size and len(thin) >= 12
+            if valid:
+                thin_magic, thin_cpu, thin_subtype = struct.unpack("<III", thin[:12])
+                valid = thin_magic == 0xFEEDFACF and thin_cpu == cpu and thin_subtype == subtype
+            check(valid, f"{name}: aligned complete Mach-O slice {n+1}")
+        check(cpus == {0x01000007,0x0100000C}, f"{name}: Intel and Apple Silicon CPUs")
         info = plistlib.loads(rel["DMZ.app/Contents/Info.plist"][1])
         check(info["CFBundleExecutable"] == "DMZ" and info["CFBundlePackageType"] == "APPL", f"{name}: Info.plist executable/package type")
         check("prototype" in info["CFBundleIdentifier"] and "not a release" in info["NSHumanReadableCopyright"], f"{name}: Info.plist private prototype label")
@@ -317,10 +327,17 @@ assert argv[:2] == ["sh", "-c"] and argv[2] == "set -f; IFS=; cd -- ${1%/*} && e
 subprocess.run(argv, check=True)
 PY
   rm -rf -- "$probe"
+elif [[ "$host_goos" == "darwin" && ( "$host_arch" == "arm64" || "$host_arch" == "amd64" ) ]]; then
+  native="$stage_dir/DMZ-private-prototype-macos-universal/DMZ.app/Contents/MacOS/DMZ"
+  {
+    printf 'native darwin/%s universal version: ' "$host_arch"; "$native" version
+    "$native" help >/dev/null && echo "PASS native universal helper command"
+    /usr/bin/lipo -archs "$native"
+  } >> "$report" 2>&1
 else
   echo "SKIP native helper commands: host is $host_goos/$host_arch (cross-built outputs are compile-only)" >> "$report"
 fi
-echo "NOTE macOS and Windows bundles are cross-compiled and unsigned; they have not been run natively." >> "$report"
+echo "NOTE Bundles lack Developer ID signing/notarization. Native helper checks, if present, do not qualify Finder, Gatekeeper or GUI behavior." >> "$report"
 
 rm -rf -- "$build_dir"
 cat "$report"

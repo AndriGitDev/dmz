@@ -97,7 +97,11 @@ func connect(ctx context.Context, args []string, in io.Reader, out, errOut io.Wr
 	// Native clients keep their own model, permissions and sandbox defaults.
 	code := runInternal(childCtx, clientArgs, in, out, errOut, session)
 	unexpected := code != 0 && childCtx.Err() == nil
-	sessionEvent(ticket, "finished", code)
+	reportedCode := code
+	if childCtx.Err() != nil {
+		reportedCode = 0
+	}
+	sessionEvent(ticket, "finished", reportedCode)
 	cancel()
 	if unexpected {
 		holdTerminalFailure(ctx, in, errOut)

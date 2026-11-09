@@ -534,3 +534,15 @@ func TestErrorsContainNoPlaceholders(t *testing.T) {
 		}
 	}
 }
+
+func TestDispatchRejectsImmediateHelperFailure(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX helper fixture")
+	}
+	if err := startPlatformCommand(platformCommand{Path: "/bin/sh", Args: []string{"-c", "exit 7"}}); err != ErrTerminalLaunchFailed {
+		t.Fatal("immediate terminal dispatcher failure reported as success")
+	}
+	if err := startPlatformCommand(platformCommand{Path: "/bin/sh", Args: []string{"-c", "exit 0"}}); err != nil {
+		t.Fatal("successful terminal dispatcher rejected")
+	}
+}

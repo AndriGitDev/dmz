@@ -151,8 +151,11 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		writeJSON(w, map[string]string{"folder": folder})
 	case r.URL.Path == "/api/quit" && r.Method == "POST":
-		a.quitOnce.Do(func() { close(a.quit) })
 		w.WriteHeader(204)
+		if flush, ok := w.(http.Flusher); ok {
+			flush.Flush()
+		}
+		a.quitOnce.Do(func() { close(a.quit) })
 	default:
 		http.NotFound(w, r)
 	}

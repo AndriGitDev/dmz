@@ -19,6 +19,22 @@ jobs:
         run: |
           CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz-darwin-arm64" ./cmd/dmz
           CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz-windows-amd64.exe" ./cmd/dmz
+  companion-macos:
+    name: Companion macOS native helpers (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go test -race ./internal/agentgateway ./internal/companion ./cmd/dmz ./scripts/companion-package
+      - run: go vet ./internal/agentgateway ./internal/companion ./cmd/dmz ./scripts/companion-package
+      - name: Build private archives and execute the universal binary on the native CPU
+        run: GO_BIN=go scripts/package-companion.sh "$RUNNER_TEMP/dmz-companion-packages"
   core:
     runs-on: ubuntu-latest
     steps:

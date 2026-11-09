@@ -49,6 +49,7 @@ const strings = {
     stop: "Stop session",
     requests: "requests",
     masked: "text parts masked",
+    toolsUnchanged: "Tool results passed unchanged in {count} requests.",
     useEnvironment: "Use the API key available to DMZ (API billing)",
     keyEnv:
       "An API key is available in DMZ’s environment. Select the checkbox to use it, or leave it unselected to keep your account sign-in.",
@@ -132,6 +133,7 @@ const strings = {
     stop: "Stöðva lotu",
     requests: "beiðnir",
     masked: "textahlutar faldir",
+    toolsUnchanged: "Niðurstöður tóla óbreyttar í {count} beiðnum.",
     useEnvironment: "Nota API-lykil úr umhverfi DMZ (API-gjöld)",
     keyEnv:
       "API-lykill er til staðar í umhverfi DMZ. Veldu reitinn til að nota hann; annars er núverandi innskráning notuð.",
@@ -167,11 +169,25 @@ const strings = {
     starting: "Opna tólið þitt…",
   },
 };
-let language = localStorage.getItem("dmz.language") === "en" ? "en" : "is";
+function storageRead(name, key) {
+  try {
+    return window[name].getItem(key);
+  } catch {
+    return null;
+  }
+}
+function storageWrite(name, key, value) {
+  try {
+    if (value === null) window[name].removeItem(key);
+    else window[name].setItem(key, value);
+  } catch {}
+}
+let language =
+  storageRead("localStorage", "dmz.language") === "en" ? "en" : "is";
 let state = { clients: [], sessions: [] };
 const openCode = new URLSearchParams(location.hash.slice(1)).get("open");
 history.replaceState(null, "", location.pathname);
-let token = sessionStorage.getItem("dmz.control") || "";
+let token = storageRead("sessionStorage", "dmz.control") || "";
 const $ = (s) => document.querySelector(s);
 const t = (k) => strings[language][k] || strings.en[k] || k;
 let stopped = false;
@@ -275,6 +291,15 @@ function renderSessions() {
         "session-stats",
       ),
     );
+    const toolsUnchanged = session.warnings?.tool_result_unchanged || 0;
+    if (toolsUnchanged)
+      el.append(
+        text(
+          "p",
+          t("toolsUnchanged").replace("{count}", String(toolsUnchanged)),
+          "hint",
+        ),
+      );
     const warnings = Object.keys(session.warnings || {}).filter(
       (k) =>
         ![
@@ -331,7 +356,7 @@ async function refresh() {
 }
 $("#language").addEventListener("click", () => {
   language = language === "is" ? "en" : "is";
-  localStorage.setItem("dmz.language", language);
+  storageWrite("localStorage", "dmz.language", language);
   translate();
 });
 $("#choose-folder").addEventListener("click", async () => {
@@ -384,11 +409,18 @@ $("#quit").addEventListener("click", async () => {
   )
     return;
   stopped = true;
+  $("#quit").disabled = true;
+  $("#language").disabled = true;
   try {
     await api("quit", {});
-  } catch {}
-  stopped = true;
-  sessionStorage.removeItem("dmz.control");
+  } catch {
+    stopped = false;
+    $("#quit").disabled = false;
+    $("#language").disabled = false;
+    error("unavailable");
+    return;
+  }
+  storageWrite("sessionStorage", "dmz.control", null);
   document.querySelector("main").replaceChildren(text("h1", t("closed")));
 });
 async function initialize() {
@@ -402,10 +434,10 @@ async function initialize() {
       });
       if (!response.ok) throw Error("unavailable");
       token = (await response.json()).token;
-      sessionStorage.setItem("dmz.control", token);
+      storageWrite("sessionStorage", "dmz.control", token);
     } catch {
       token = "";
-      sessionStorage.removeItem("dmz.control");
+      storageWrite("sessionStorage", "dmz.control", null);
     }
   }
   if (!token) {

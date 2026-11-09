@@ -701,10 +701,25 @@ func startPlatformCommand(c platformCommand) error {
 		}
 		return ErrTerminalLaunchFailed
 	}
-	// Reap the helper; its exit status is not meaningful for dispatch
-	// (terminal servers and browser openers commonly return immediately).
-	go func() { _ = cmd.Wait() }()
-	return nil
+	// Catch immediate dispatcher failures (for example, no usable browser or
+	// terminal server) so another known helper can be tried. A successfully
+	// dispatched opener can exit immediately or remain attached to its window.
+	done := make(chan error, 1)
+	go func() { done <- cmd.Wait() }()
+	timer := time.NewTimer(200 * time.Millisecond)
+	defer timer.Stop()
+	select {
+	case err := <-done:
+		if err != nil {
+			if c.ScriptPath != "" {
+				_ = os.Remove(c.ScriptPath)
+			}
+			return ErrTerminalLaunchFailed
+		}
+		return nil
+	case <-timer.C:
+		return nil
+	}
 }
 
 func platformRandomName() string {

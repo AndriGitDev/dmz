@@ -213,6 +213,45 @@ try {
     });
   check(errors.length === 0, "browser_script_error");
   check(external === 0, "unexpected_external_browser_request");
+  const restricted = await context.newPage();
+  const restrictedErrors = [];
+  restricted.on("pageerror", () => restrictedErrors.push(true));
+  await restricted.addInitScript(() => {
+    for (const name of ["localStorage", "sessionStorage"])
+      Object.defineProperty(window, name, {
+        get() {
+          throw Error("storage blocked");
+        },
+      });
+  });
+  const restrictedHandoff = await control("window", {});
+  await restricted.goto(restrictedHandoff.address);
+  await restricted.locator("#clients input").first().waitFor();
+  check(
+    !(await restricted.locator("#error").isVisible()),
+    "blocked_storage_prevented_setup",
+  );
+  await restricted.locator("#language").click();
+  check(
+    (await restricted.locator("html").getAttribute("lang")) === "en",
+    "blocked_storage_prevented_language_switch",
+  );
+  check(restrictedErrors.length === 0, "blocked_storage_script_error");
+  await restricted.close();
+  await page.route("**/api/quit", (route) =>
+    route.fulfill({ status: 503, body: "synthetic failure" }),
+  );
+  await page.locator("#quit").click();
+  await page
+    .locator("#error")
+    .filter({ hasText: "Open DMZ again to reconnect to the app." })
+    .waitFor();
+  check(
+    await page.locator("#quit").isEnabled(),
+    "failed_quit_left_controls_disabled",
+  );
+  check(child.exitCode === null, "failed_quit_closed_app");
+  await page.unroute("**/api/quit");
   await page.locator("#quit").click();
   await page
     .getByRole("heading", { name: "DMZ is closed. You can close this window." })

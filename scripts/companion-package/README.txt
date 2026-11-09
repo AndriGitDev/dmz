@@ -9,6 +9,9 @@ to Codex CLI or Claude Code, on a best-effort basis. Instructions, tool
 results, files, attachments and client history are outside masking coverage.
 Detection is not complete. Use fabricated data while evaluating.
 
+The macOS archive is universal (Apple Silicon and Intel), requires macOS 13
+or newer, and still needs native installation and signing qualification.
+
 Before you start: install Codex CLI or Claude Code and sign in with it the way
 you normally do. DMZ does not read your client authentication store. You can optionally enter
 an API key in the local DMZ window; it stays in memory for that session.

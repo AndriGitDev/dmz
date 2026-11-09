@@ -72,7 +72,7 @@ paths = sorted([*root.glob('cmd/dmz/*.go'), *root.glob('internal/agentgateway/*.
                 *[p for p in (root / 'internal/companion').rglob('*') if p.is_file()],
                 *root.glob('scripts/agent-*-smoke.py'), *root.glob('scripts/agent-*.mjs'),
                 root / 'scripts/check-agent-gateway.sh', root / 'scripts/package-companion.sh',
-                root / 'scripts/companion-package/README.txt', root / 'docs/local-companion.md',
+                *[p for p in (root / 'scripts/companion-package').glob('*') if p.is_file()], root / 'docs/local-companion.md',
                 *root.glob('docs/local-agent-*.md'),root / '.github/workflows/prototype.yml'])
 source = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
 outputs = {str(p.relative_to(artifacts)): hashlib.sha256(p.read_bytes()).hexdigest() for p in artifacts.rglob('*') if p.is_file() and p.name != 'manifest.json'}

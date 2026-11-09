@@ -63,7 +63,7 @@ python3 -I scripts/agent-companion-smoke.py \
 
 The test host replaces terminal launch with a direct owned child and uses fake loopback providers, isolated client directories and synthetic keys/files. Its optional pseudo-terminal scenarios exercise the installed client TUIs; they do not qualify native window opening, download prompts or desktop-app integration. The normal Codex sandbox cannot run in this container, so its tool roundtrip remains incomplete.
 
-Browser checks require operator-supplied development-only Playwright and Chromium paths. They add no application dependency:
+Browser checks require operator-supplied development-only Playwright and Chromium paths. Blocked browser storage uses in-memory controls; reopening DMZ supplies a fresh handoff, and a failed Quit remains visibly open for retry. They add no application dependency:
 
 ```sh
 node scripts/agent-companion-ui-smoke.mjs --dmz /tmp/dmz-companion \
@@ -76,4 +76,20 @@ Create private review archives with notices, source identity and checksums:
 GO_BIN=/path/to/go scripts/package-companion.sh /tmp/new-empty-dmz-packages
 ```
 
-The package script creates macOS arm64/amd64 app bundles, a Windows amd64 GUI executable and a Linux amd64 launcher archive. Cross-compilation and archive checks do not establish native runtime correctness. These packages are unsigned, unnotarized and unpublished. Public distribution requires the repository's history, rights, source-availability and release checks as well as native signing and install qualification. The existing extension's distribution approval does not qualify this companion.
+The package script creates one universal macOS 13+ app bundle (Apple Silicon and Intel), a Windows amd64 GUI executable and a Linux amd64 launcher archive. Cross-compilation and archive checks do not establish native runtime correctness. These packages are unsigned, unnotarized and unpublished. Public distribution requires the repository's history, rights, source-availability and release checks as well as native signing and install qualification. The existing extension's distribution approval does not qualify this companion.
+
+## Linux native-helper fixtures
+
+The optional Linux virtual-display harness exercises the production xterm launcher, window-manager close requests and cleanup with the installed clients in print mode. It uses its own Xvfb display and access cookie, private fake client homes and loopback providers. It does not exercise vendor desktop apps or certify an OS installation flow.
+
+```sh
+go build -o /tmp/dmz-native-fixture ./internal/companion/nativetesthost
+python3 -I scripts/agent-native-terminal-smoke.py --dmz /tmp/dmz-companion \
+  --testhost /tmp/dmz-native-fixture
+```
+
+Test-only tools are Xvfb, xauth, xdotool and xterm. `--x11-root /path/to/extracted/packages` supports a rootless Ubuntu test-tools tree; generate its font directory with `mkfontdir`, and provide `proot` when its xkbcomp helper needs a private path bind. These tools are not app dependencies or bundled in DMZ.
+
+Add `--scenarios window --playwright /path/to/playwright-core --chromium /path/to/chromium` to exercise xdg-open, the actual headed browser setup, native terminal request and no-argument app reopening. It needs xdg-utils. This mode uses an owned Chromium profile and blocking proxy; browser background requests can still be attempted, and the proxy is not a network jail. The application page itself has no external resources.
+
+The separate `agent-compression-smoke.py` fixture needs the test-only `zstd` command. It keeps a custom-provider result incomplete when the installed client sends no zstd. Its `--variant builtin-diagnostic` is explicitly diagnostic and cannot qualify the custom-provider or native desktop route.
