@@ -12,7 +12,7 @@ artifact_dir="$(cd "$artifact_dir" && pwd)"
 cd "$root_dir"
 
 "$go_bin" test ./... > "$artifact_dir/go-test.txt" 2>&1
-"$go_bin" test -race ./internal/agentgateway ./internal/companion ./cmd/dmz ./packages/detect ./packages/surrogates > "$artifact_dir/go-race.txt" 2>&1
+"$go_bin" test -race ./internal/agentgateway ./internal/companion/... ./cmd/dmz ./packages/detect ./packages/surrogates > "$artifact_dir/go-race.txt" 2>&1
 "$go_bin" vet ./... > "$artifact_dir/go-vet.txt" 2>&1
 "$go_bin" test ./internal/agentgateway -run '^$' -fuzz FuzzTransform -fuzztime 10s -parallel 4 > "$artifact_dir/go-fuzz.txt" 2>&1
 CGO_ENABLED=0 "$go_bin" build -trimpath -buildvcs=false -o "$artifact_dir/dmz" ./cmd/dmz

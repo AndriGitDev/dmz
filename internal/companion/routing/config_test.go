@@ -75,3 +75,39 @@ func TestCustomRouteAndStaleEditAreRejected(t *testing.T) {
 		t.Fatal("stale edit installed")
 	}
 }
+
+func TestPreparedJournalRecoversWithoutChangingOriginal(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "settings.json")
+	state := filepath.Join(dir, "journal.json")
+	original := []byte("{\"model\":\"synthetic\"}\n")
+	os.WriteFile(path, original, 0600)
+	prepared, _ := json.Marshal(journal{Path: path, Existed: true, Mode: 0600, Original: original, Applied: digest([]byte("replacement"))})
+	os.WriteFile(state, prepared, 0600)
+	if err := Restore(state); err != nil {
+		t.Fatal(err)
+	}
+	got, _ := os.ReadFile(path)
+	if !bytes.Equal(got, original) {
+		t.Fatal("prepared transaction changed original")
+	}
+	if _, err := os.Stat(state); !os.IsNotExist(err) {
+		t.Fatal("prepared transaction not cleared")
+	}
+}
+func TestSymlinkSettingsAreNotReplaced(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "target.json")
+	path := filepath.Join(dir, "settings.json")
+	os.WriteFile(target, []byte(`{}`), 0600)
+	if err := os.Symlink(target, path); err != nil {
+		t.Skip("symlinks unavailable")
+	}
+	if !errors.Is(Install(path, filepath.Join(dir, "private", "journal"), []byte(`{}`), []byte(`{"new":true}`)), ErrUnavailable) {
+		t.Fatal("symlink settings replaced")
+	}
+	got, _ := os.ReadFile(target)
+	if string(got) != `{}` {
+		t.Fatal("symlink target changed")
+	}
+}
