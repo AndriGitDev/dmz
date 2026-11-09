@@ -170,6 +170,7 @@ class IngressStats:
         self.authorization_present = 0
         self.statuses: dict[str, int] = {}
         self.routes: dict[str, int] = {}
+        self.abandoned_websocket_probes = 0
         self.forward_errors = 0
         self.forward_error_categories: dict[str, int] = {}
 
@@ -257,9 +258,21 @@ class _IngressHandler(BaseHTTPRequestHandler):
             # Fixed aggregate categories only: never error text or request data.
             kind = "client_disconnected" if isinstance(failure, (BrokenPipeError, ConnectionResetError)) else "transport_error"
             category = f"{phase}.{self.command.lower()}.{response_status or 0}.{kind}"
+            abandoned_probe = (
+                phase == "client_response" and self.command == "GET"
+                and self.path.split("?")[0] in ("/v1/responses", "/responses")
+                and response_status == 404
+                and (self.headers.get("Upgrade") or "").lower() == "websocket"
+                and isinstance(failure, (BrokenPipeError, ConnectionResetError))
+            )
             with st.lock:
-                st.forward_errors += 1
-                st.forward_error_categories[category] = st.forward_error_categories.get(category, 0) + 1
+                if abandoned_probe:
+                    # Codex closes rejected optional WebSocket probes. Keep
+                    # them visible without treating them as a failed POST.
+                    st.abandoned_websocket_probes += 1
+                else:
+                    st.forward_errors += 1
+                    st.forward_error_categories[category] = st.forward_error_categories.get(category, 0) + 1
         finally:
             conn.close()
             self.close_connection = True
@@ -444,7 +457,7 @@ def run(args, deadline):
             "chunked_requests": st.chunked, "local_header_requests": st.local_header_present,
             "authorization_requests": st.authorization_present,
             "response_statuses": dict(sorted(st.statuses.items())), "routes": dict(sorted(st.routes.items())),
-            "forward_errors": st.forward_errors, "forward_error_categories": dict(sorted(st.forward_error_categories.items())), "local_header_injected_by_harness": args.variant == "builtin-diagnostic",
+            "abandoned_websocket_probes": st.abandoned_websocket_probes, "forward_errors": st.forward_errors, "forward_error_categories": dict(sorted(st.forward_error_categories.items())), "local_header_injected_by_harness": args.variant == "builtin-diagnostic",
         }
         r["upstream"]["content_encoding"] = dict(sorted(provider.upstream_encodings.items()))
         r["upstream"]["decode_failures"] = provider.upstream_decode_failures
