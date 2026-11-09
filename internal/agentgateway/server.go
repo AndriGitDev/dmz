@@ -501,13 +501,18 @@ func (s *Server) prepare(r *http.Request) (scope *mapping) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	transformed, report := Transform(s.cfg.Protocol, body, func(input string) (output string, err error) {
+		knownMasked := input
 		defer func() {
 			if recover() != nil {
-				output = input
-				err = errors.New("masking unavailable")
+				if knownMasked != input {
+					output, err = knownMasked, nil
+					s.warn("masking_failed_known_values_remasked")
+				} else {
+					output = input
+					err = errors.New("masking unavailable")
+				}
 			}
 		}()
-		knownMasked := input
 		if s.cfg.RestoreReplies {
 			knownMasked = m.remaskRestored(input)
 		}
@@ -542,7 +547,10 @@ func (s *Server) prepare(r *http.Request) (scope *mapping) {
 			m.bytes += int64(len(input))
 			m.seen[digest] = struct{}{}
 		}
-		result := m.core.ProcessBestEffort(knownMasked, nil)
+		// Detection must see the raw boundaries: a known value can be part
+		// of a larger identifier (for example, a kennitala inside an IBAN).
+		// Exact-value replay masking runs on the detected result below.
+		result := m.core.ProcessBestEffort(input, nil)
 		for _, finding := range result.Findings {
 			if finding.Reason == "whole-text-coverage" {
 				if s.cfg.RestoreReplies {

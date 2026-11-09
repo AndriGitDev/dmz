@@ -29,7 +29,7 @@ const strings = {
       "Uses your tool’s existing account sign-in unless you enter an API key. Account routing is still being verified.",
     "scope-title": "Text masking, with limits.",
     scope:
-      "Basic detection has limited name/address coverage. Known answer markers restore locally. Known originals are re-masked in text history and tool results; tools and files are not generally scanned. Failures warn and continue. Unknown markers can remain visible.",
+      "Basic detection has limited name/address coverage. Known answer markers restore locally. Known originals are re-masked in text history and tool results; tools and files are not generally scanned. Review file diffs: markers can appear in edits. Failures warn and continue; unknown markers can remain visible.",
     start: "Start with DMZ →",
     "terminal-hint":
       "Opens your terminal tool. It may ask you to confirm trust in the project folder. DMZ leaves your settings files unchanged.",
@@ -116,7 +116,7 @@ const strings = {
       "Notar núverandi innskráningu tólsins nema þú sláir inn API-lykil. Innskráningarleiðin er enn í prófun.",
     "scope-title": "Textaskilaboð, með takmörkunum.",
     scope:
-      "Grunngreining hefur takmarkaða þekju nafna og heimilisfanga. Þekkt merki í svörum eru afkóðuð staðbundið. Þekkt upprunagildi eru falin aftur í textasögu og niðurstöðum tóla; tól og skrár eru ekki almennt skönnuð. Bilanir vara við og halda áfram. Óþekkt merki geta verið sýnileg.",
+      "Grunngreining hefur takmarkaða þekju nafna og heimilisfanga. Þekkt merki í svörum eru afkóðuð staðbundið. Þekkt upprunagildi eru falin aftur í textasögu og niðurstöðum tóla; tól og skrár eru ekki almennt skönnuð. Skoðaðu skráabreytingar: merki geta borist í þær. Bilanir vara við og halda áfram; óþekkt merki geta verið sýnileg.",
     start: "Ræsa með DMZ →",
     "terminal-hint":
       "Opnar terminal-útgáfu tólsins. Tólið gæti beðið þig um að staðfesta traust á verkefnamöppunni. DMZ breytir ekki stillingaskrám þínum.",

@@ -97,6 +97,10 @@ and exact known originals are re-masked in supported user, assistant and tool-re
 text. Unknown and whole-message fallback markers stay visible. Tool inputs are not restored; masked file names can break
 operations. This basic build still lacks the trained scanner/address vocabulary.
 
+Markers in tool-result text can also be copied into file contents by later
+Write/Edit calls. Review diffs before accepting edits. Whole-body fail-open
+paths, including histories over 8 MiB, can forward restored values unchanged.
+
 Mappings are memory-only and disappear on restart, reset or eviction. Codex
 clients currently share one connection scope. Start a fresh conversation after
 DMZ restarts or mappings reset: older history can contain restored originals

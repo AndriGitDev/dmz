@@ -78,6 +78,16 @@ response bytes are removed when restoration is enabled. Native tool input is
 deliberately unchanged. This does not add the trained name scanner or address
 vocabulary; the basic profile's name/address misses remain separate.
 
+Text detection sees the original user text before exact-value replay masking,
+so a known identifier cannot split a larger detectable entity. Whole-body
+fail-open paths (including more than 8 MiB, invalid JSON, unavailable workers or
+missing session identity) can still forward restored history unchanged, as they
+can forward original user text. Long histories make this limit relevant.
+
+Known values re-masked in tool-result text may later be copied as placeholders
+into files by a coding tool's Write/Edit call. Review file diffs; local answer
+restoration does not restore tool arguments or file contents.
+
 Tool outputs commonly contain file contents. They can reintroduce an identifier that was masked in an earlier prompt. This prototype does not protect an entire coding session or all repository context.
 
 The gateway implements the selected provider's model-request route, optional model listing, Responses compaction and, for Messages, token counting. Compaction applies the same user-text field allowlist and preserves opaque input/output state. This endpoint has synthetic contract tests; automatic compaction in the installed clients still needs qualification. Other routes such as provider file APIs are unsupported. The service is not an arbitrary HTTP proxy. Streaming responses and provider errors pass through; upstream redirects are rejected to avoid sending local credentials to another host. Standard environment proxy settings remain effective for upstream HTTPS connections.

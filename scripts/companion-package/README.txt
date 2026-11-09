@@ -15,6 +15,9 @@ locally; unknown/stale and whole-message fallback markers remain visible.
 Supported user, assistant and tool-result text has exact known originals re-masked
 before forwarding, including sub-agent returns and local compaction summaries.
 Tool arguments are not restored.
+Markers seen by the model can be copied into files by later Write/Edit calls;
+review file diffs. Whole-body fail-open limits can also forward restored history
+unchanged, including when a conversation exceeds the request-size limit.
 Your coding tool keeps its own on-disk history; DMZ does not rewrite it.
 
 Background flow (native Mac or Windows builds)
