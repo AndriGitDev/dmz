@@ -57,7 +57,7 @@ $claude=$menu.Items.Add('Claude Code: checking');$claude.Enabled=$false
 $settings=$menu.Items.Add('Open DMZ settings')
 $quit=$menu.Items.Add('Quit DMZ')
 $icon=New-Object System.Windows.Forms.NotifyIcon
-$icon.Icon=[System.Drawing.SystemIcons]::Shield
+$icon.Icon=[System.Drawing.SystemIcons]::Application
 $icon.Text='DMZ - checking connections'
 $icon.ContextMenuStrip=$menu
 $icon.Visible=$true

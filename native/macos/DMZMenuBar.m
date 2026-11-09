@@ -418,7 +418,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   _item = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
   NSImage *icon = nil;
   if (@available(macOS 11.0, *)) {
-    icon = [NSImage imageWithSystemSymbolName:@"shield.lefthalf.filled" accessibilityDescription:@"DMZ"];
+    icon = [NSImage imageWithSystemSymbolName:@"circle.lefthalf.filled" accessibilityDescription:@"DMZ"];
   }
   if (icon) {
     icon.template = YES;
