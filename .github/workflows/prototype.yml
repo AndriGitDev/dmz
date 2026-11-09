@@ -4,6 +4,21 @@ on:
     branches: [main]
   pull_request:
 jobs:
+  agent-gateway:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go test -race ./internal/agentgateway ./cmd/dmz
+      - run: go vet ./internal/agentgateway ./cmd/dmz
+      - run: go test ./internal/agentgateway -run '^$' -fuzz FuzzTransform -fuzztime 10s -parallel 4
+      - run: go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz" ./cmd/dmz
+      - name: Compile desktop host targets without claiming native qualification
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz-darwin-arm64" ./cmd/dmz
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz-windows-amd64.exe" ./cmd/dmz
   core:
     runs-on: ubuntu-latest
     steps:
