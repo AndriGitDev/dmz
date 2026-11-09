@@ -210,10 +210,9 @@ def with_passive(rules):
 # performs the HTTP calls each step causes; it does not drive a real window.
 UI_STEPS = (
     ("open_dmz_app", None),
-    ("see_detected_tools", "GET /api/state"),
     ("choose_project_folder", "POST /api/folder (fixture: picker unavailable -> typed path)"),
-    ("choose_api_connection_and_paste_key", None),
-    ("press_start", "POST /api/start"),
+    ("optional_key_for_chosen_tool", None),
+    ("open_chosen_tool_button", "POST /api/start"),
     ("work_in_opened_terminal", "dmz connect -> client"),
     ("read_status_or_stop", "GET /api/state | POST /api/stop"),
 )

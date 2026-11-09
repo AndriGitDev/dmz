@@ -171,6 +171,7 @@ class IngressStats:
         self.statuses: dict[str, int] = {}
         self.routes: dict[str, int] = {}
         self.forward_errors = 0
+        self.forward_error_categories: dict[str, int] = {}
 
 
 class _IngressHandler(BaseHTTPRequestHandler):
@@ -216,6 +217,8 @@ class _IngressHandler(BaseHTTPRequestHandler):
         # Forward unchanged (headers and original wire bytes).
         hop = {"connection", "keep-alive", "transfer-encoding", "content-length", "host", "proxy-connection"}
         conn = http.client.HTTPConnection("127.0.0.1", self.server.target_port, timeout=60)  # type: ignore[attr-defined]
+        phase = "gateway_request"
+        response_status = None
         try:
             conn.putrequest(self.command, self.path, skip_host=True, skip_accept_encoding=True)
             conn.putheader("Host", f"127.0.0.1:{self.server.target_port}")  # type: ignore[attr-defined]
@@ -229,6 +232,8 @@ class _IngressHandler(BaseHTTPRequestHandler):
                 conn.putheader("Content-Length", str(len(body)))
             conn.endheaders(body if self.command == "POST" else None)
             resp = conn.getresponse()
+            response_status = resp.status
+            phase = "client_response"
             path = self.path.split("?")[0]
             key = f"{self.command} {path if re.fullmatch(r'/[a-z0-9/_.-]{0,64}', path) else 'other'} {resp.status}"
             with st.lock:
@@ -248,9 +253,13 @@ class _IngressHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b"%x\r\n" % len(chunk) + chunk + b"\r\n")
                 self.wfile.flush()
             self.wfile.write(b"0\r\n\r\n")
-        except OSError:
+        except OSError as failure:
+            # Fixed aggregate categories only: never error text or request data.
+            kind = "client_disconnected" if isinstance(failure, (BrokenPipeError, ConnectionResetError)) else "transport_error"
+            category = f"{phase}.{self.command.lower()}.{response_status or 0}.{kind}"
             with st.lock:
                 st.forward_errors += 1
+                st.forward_error_categories[category] = st.forward_error_categories.get(category, 0) + 1
         finally:
             conn.close()
             self.close_connection = True
@@ -435,7 +444,7 @@ def run(args, deadline):
             "chunked_requests": st.chunked, "local_header_requests": st.local_header_present,
             "authorization_requests": st.authorization_present,
             "response_statuses": dict(sorted(st.statuses.items())), "routes": dict(sorted(st.routes.items())),
-            "forward_errors": st.forward_errors, "local_header_injected_by_harness": args.variant == "builtin-diagnostic",
+            "forward_errors": st.forward_errors, "forward_error_categories": dict(sorted(st.forward_error_categories.items())), "local_header_injected_by_harness": args.variant == "builtin-diagnostic",
         }
         r["upstream"]["content_encoding"] = dict(sorted(provider.upstream_encodings.items()))
         r["upstream"]["decode_failures"] = provider.upstream_decode_failures
