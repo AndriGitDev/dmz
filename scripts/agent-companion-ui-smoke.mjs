@@ -378,6 +378,8 @@ try {
   backgroundRoutes[0].state = "traffic_observed";
   await backgroundCard.locator(".session-warning").waitFor({ state: "detached" });
   check((await backgroundCard.innerText()).includes("Processing warnings recorded since connection: 1."), "old_warning_history_lost");
+  await backgroundCard.locator("details summary").click();
+  check((await backgroundCard.locator("details").innerText()).includes("upstream_unavailable: 1"), "diagnostic_warning_code_missing");
   await connection.click();
   await page.waitForFunction(
     () =>

@@ -239,6 +239,7 @@ Object.assign(strings.en, {
   backgroundWarning:
     "A processing or connection warning occurred in the last two minutes. Check this connection before continuing; some text may have passed unchanged.",
   warningHistory: "Processing warnings recorded since connection: {count}.",
+  warningDetails: "Diagnostic warning codes",
   evictedMappings: "Older session mappings were discarded {count} times. Their markers may be unresolved.",
   confirmBackgroundQuit:
     "Quit DMZ? Its routes will be restored. Tools opened afterwards connect directly without DMZ masking. Open DMZ again after your next login.",
@@ -284,6 +285,7 @@ Object.assign(strings.is, {
   backgroundWarning:
     "Viðvörun kom upp við vinnslu eða tengingu á síðustu tveimur mínútum. Athugaðu tenginguna áður en haldið er áfram; einhver texti gæti hafa farið óbreyttur áfram.",
   warningHistory: "Skráðar vinnsluviðvaranir frá tengingu: {count}.",
+  warningDetails: "Viðvörunarkóðar fyrir bilanagreiningu",
   evictedMappings: "Eldri lotuvörpunum var sleppt {count} sinnum. Merki þeirra gætu verið óþekkt.",
   confirmBackgroundQuit:
     "Loka DMZ? Leiðarstillingar verða teknar til baka. Tól sem opnast síðar tengjast beint án þess að DMZ feli texta. Opnaðu DMZ aftur eftir næstu innskráningu.",
@@ -526,6 +528,13 @@ function renderBackground() {
     if (warnings.length) {
       const count = warnings.reduce((sum, code) => sum + route.warnings[code], 0);
       card.append(text("p", t("warningHistory").replace("{count}", count), "session-stats"));
+      const details = document.createElement("details");
+      details.append(text("summary", t("warningDetails")));
+      const codes = document.createElement("ul");
+      for (const code of warnings.sort())
+        codes.append(text("li", `${code}: ${route.warnings[code]}`));
+      details.append(codes);
+      card.append(details);
     }
     if (route.warnings?.mapping_evicted_history_may_degrade)
       card.append(text("p", t("evictedMappings").replace("{count}", route.warnings.mapping_evicted_history_may_degrade), "hint"));
