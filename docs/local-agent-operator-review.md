@@ -19,7 +19,7 @@ Work began on 9 November 2026 at 11:21 UTC for the operator review window ending
 - Graceful Linux/macOS cancellation and process-group cleanup when none of the client streams uses a terminal. Windows process-tree behavior still needs a native implementation/qualification.
 - A local verification script and CI checks for unit/race/fuzz/vet and cross-compilation.
 
-The [companion guide](local-companion.md) documents the intended six/seven-action setup and its outstanding native acceptance checks. The [usage and architecture guide](local-agent-gateway.md) explains commands, limits, credential modes and recovery.
+The [companion guide](local-companion.md) documents the intended five/six-action setup and its outstanding native acceptance checks. The [usage and architecture guide](local-agent-gateway.md) explains commands, limits, credential modes and recovery.
 
 ## Evidence and limits
 
@@ -30,20 +30,20 @@ The [companion guide](local-companion.md) documents the intended six/seven-actio
 | Claude Code 2.1.318 on Linux | Basic and Read-tool synthetic roundtrips pass through both launcher and manual API-key service modes |
 | Manual service credentials | Fake provider receives its own fake key; local dmz token does not reach it. Status/reset/auth probes pass |
 | Desktop applications | Configuration fragments generated and parsed; native applications not run. Desktop support is unqualified |
-| macOS first operator target | One universal app archive is built and independently parsed for both CPUs. Both embedded slices declare macOS 13 minimum. Native unit/package checks are prepared for Apple Silicon and Intel CI; not yet run. Finder, Gatekeeper and signing remain unqualified |
+| macOS first operator target | One universal app archive is built and independently parsed for both CPUs. Both embedded slices declare macOS 13 minimum. Apple Silicon and Intel CI were run; a native folder-fixture test failed before packaging. The fixture now creates its own real directory, with native recheck pending. Finder, Gatekeeper and signing remain unqualified |
 | Windows AMD64 | Gateway and GUI executable cross-compile; native runtime/desktop qualification not performed |
-| Companion controller through actual CLI binaries | 14 scenario runs: 12 pass, Codex default-sandbox roundtrip incomplete, Claude first-folder setup fails the harness's under-eight-step acceptance. Client completion, stable masking, stop/quit/hangup and cleanup work in those measured paths |
+| Companion controller through actual CLI binaries | 14 scenario runs after the combined tool/launch control: 13 pass, with only the Codex default-sandbox roundtrip incomplete. Claude's new-folder fixture has seven simulated actions including its own trust prompt. This excludes download and OS installation prompts |
 | Interactive client TUIs in a Linux pseudo-terminal | Both clients render final answers in two consecutive sessions. Claude's temporary-key prompt and stored approvals are eliminated; new-folder trust remains a separate required native prompt |
 | Existing-sign-in fixtures | Both clients complete using synthetic native auth files in private client directories; no real account, refresh or actual ChatGPT backend validation |
-| Companion browser UI | 32 local headless Chromium checks pass, including one-use bootstrap, URL cleanup, language, validation, explicit API-environment choice, layout, dark mode, blocked browser storage, failed-Quit recovery and Quit; synthetic tool discovery and no external browser requests observed |
+| Companion browser UI | 34 local headless Chromium checks pass, including one-use bootstrap, URL cleanup, language, validation, explicit API-environment choice, layout, dark mode, blocked browser storage, failed-Quit recovery and Quit; synthetic tool discovery and no external browser requests observed |
 | Production Linux terminal helper under Xvfb | 6/6 cases pass: basic request, app Stop and actual window-manager close protocol for both installed clients. Paths include spaces, quotes, Unicode and shell characters; no owned processes or launch files remain |
 | Native Linux browser opener + UI + xterm | Both clients pass through xdg-open and headed Chromium on the private virtual display. Closing and reopening the browser preserves the existing host and counts; each open/reopen driver reports 7 checks. Print-mode client arguments are supplied only by the fixture |
 | Compressed requests | Bounded gzip/x-gzip and zstd decoding passes gateway tests. Real Codex builtin-provider diagnostic sends a 2 MiB-window zstd frame and completes masked; the actual custom-provider fixture sends identity JSON and remains incomplete for compressed-route evidence |
-| Download-to-first-answer under eight actions | Not qualified. Native trust/signing/install prompts remain, and the new-folder Claude fixture requires eight simulated actions |
+| Download-to-first-answer under eight actions | Not qualified. Native trust/signing/install prompts remain, although the new-folder Claude controller/PTY fixture now meets seven simulated actions. Download, relocation, signing and native OS prompts are outside that fixture |
 | Go checks | Full module tests, gateway/launcher/core race checks and vet pass locally |
 | JSON transformer fuzzing | A bounded 30-second development run passes; this is not independent validation |
 | Existing detector gates | Selected, challenge and exploratory synthetic outputs match the existing baselines byte for byte; per-type recall floors are retained |
-| CI | Workflow checks added; remote CI has not been run by a push in this work session |
+| CI | Public draft PR #27 has run the Linux/core/extension checks successfully. Both Mac jobs exposed a fabricated-folder fixture that needed a real native temp directory; its fix is queued for native recheck. No PR binaries are uploaded |
 
 The fake upstreams use synthetic keys, email addresses and files. Real installed CLI binaries accept their SSE messages and complete the measured loops. This proves local request-shape and forwarding compatibility, not actual provider, account, model or subscription behavior. A refusing proxy assists fixture isolation; it is not a system-wide network firewall.
 

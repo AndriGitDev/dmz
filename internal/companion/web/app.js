@@ -9,6 +9,9 @@ const strings = {
     setup: "Start a session",
     local: "On your device",
     tool: "Choose your tool",
+    openToolTitle: "Open your tool",
+    openTool: "Open {tool} →",
+    apiKeyTool: "API key for {tool} (optional)",
     project: "Choose your project",
     folder: "Project folder",
     choose: "Choose folder",
@@ -93,6 +96,9 @@ const strings = {
     setup: "Byrjaðu nýja lotu",
     local: "Á tækinu þínu",
     tool: "Veldu tól",
+    openToolTitle: "Opnaðu tólið þitt",
+    openTool: "Opna {tool} →",
+    apiKeyTool: "API-lykill fyrir {tool} (valfrjálst)",
     project: "Veldu verkefni",
     folder: "Verkefnamappa",
     choose: "Velja möppu",
@@ -220,49 +226,66 @@ function error(code) {
   );
   $("#error").hidden = false;
 }
-function selectedClient() {
-  return document.querySelector("input[name=client]:checked")?.value || "";
-}
-function connection() {
-  const client = state.clients.find((c) => c.id === selectedClient());
-  $("#api-hint").textContent = t(
-    client?.api_key_available ? "keyEnv" : "keyMemory",
-  );
-  $("#environment-option").hidden = !client?.api_key_available;
-}
 function renderClients() {
-  const selected = selectedClient();
-  $("#clients").replaceChildren();
+  const root = $("#clients");
+  const pending = new Map(
+    state.clients.map((client) => [
+      client.id,
+      {
+        key: $("#api-key-" + client.id)?.value || "",
+        environment: $("#use-environment-" + client.id)?.checked || false,
+      },
+    ]),
+  );
+  root.replaceChildren();
   for (const client of state.clients) {
-    const label = document.createElement("label");
-    label.className = "tool-card";
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "client";
-    input.value = client.id;
-    input.disabled = !client.available;
-    input.required = true;
-    input.checked =
-      client.id === selected ||
-      (!selected && client.available && !$("#clients input:checked"));
-    input.addEventListener("change", () => {
-      $("#api-key").value = "";
-      $("#use-environment").checked = false;
-      connection();
-    });
-    const details = document.createElement("span");
-    details.append(
-      text("strong", client.name),
+    const card = document.createElement("article");
+    card.className = "tool-card";
+    card.dataset.client = client.id;
+    const heading = text("h3", client.name);
+    heading.id = "tool-title-" + client.id;
+    card.setAttribute("aria-labelledby", heading.id);
+    card.append(
+      heading,
       text(
         "small",
         t(client.available ? "installed" : "missing") + " · " + t("terminal"),
       ),
     );
-    label.append(input, details);
-    $("#clients").append(label);
+    const label = text("label", t("apiKeyTool").replace("{tool}", client.name));
+    label.htmlFor = "api-key-" + client.id;
+    const key = document.createElement("input");
+    key.type = "password";
+    key.id = label.htmlFor;
+    key.autocomplete = "off";
+    key.spellcheck = false;
+    key.disabled = !client.available;
+    key.value = pending.get(client.id).key;
+    card.append(label, key);
+    if (client.api_key_available) {
+      const environmentLabel = document.createElement("label");
+      environmentLabel.className = "radio-row";
+      const environment = document.createElement("input");
+      environment.type = "checkbox";
+      environment.id = "use-environment-" + client.id;
+      environment.checked = pending.get(client.id).environment;
+      environment.disabled = !client.available;
+      environmentLabel.append(environment, text("span", t("useEnvironment")));
+      card.append(environmentLabel);
+    }
+    const button = text(
+      "button",
+      t("openTool").replace("{tool}", client.name),
+      "primary tool-start",
+    );
+    button.id = "start-" + client.id;
+    button.type = "submit";
+    button.name = "client";
+    button.value = client.id;
+    button.disabled = !client.available;
+    card.append(button);
+    root.append(card);
   }
-  $("#start").disabled = !state.clients.some((c) => c.available);
-  connection();
 }
 function renderSessions() {
   const root = $("#sessions");
@@ -348,7 +371,7 @@ async function refresh() {
     const changed =
       JSON.stringify(next.clients) !== JSON.stringify(state.clients);
     state = next;
-    if (changed || !$("#clients input")) renderClients();
+    if (changed || !$("#clients .tool-card")) renderClients();
     renderSessions();
   } catch {
     if (!stopped) error("unavailable");
@@ -378,28 +401,39 @@ $("#choose-folder").addEventListener("click", async () => {
     b.disabled = false;
   }
 });
-$("#start-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+$("#start-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const client = state.clients.find(
+    (c) => c.id === event.submitter?.value && c.available,
+  );
+  if (!client || stopped) return;
   $("#error").hidden = true;
-  const button = $("#start");
-  button.disabled = true;
+  const button = event.submitter;
+  document.querySelectorAll(".tool-start").forEach((e) => (e.disabled = true));
   button.textContent = t("starting");
-  const key = $("#api-key").value;
+  const field = $("#api-key-" + client.id);
+  const key = field.value;
   try {
     const result = await api("start", {
-      client: selectedClient(),
+      client: client.id,
       project: $("#project").value,
-      auth: key || $("#use-environment").checked ? "api" : "account",
+      auth:
+        key || $("#use-environment-" + client.id)?.checked ? "api" : "account",
       api_key: key,
     });
     if (result.error) error(result.error);
-    else $("#api-key").value = "";
+    else field.value = "";
     await refresh();
   } catch {
     error("unavailable");
   } finally {
-    button.disabled = false;
-    button.textContent = t("start");
+    for (const c of state.clients) {
+      const b = $("#start-" + c.id);
+      if (b) {
+        b.disabled = !c.available;
+        b.textContent = t("openTool").replace("{tool}", c.name);
+      }
+    }
   }
 });
 $("#quit").addEventListener("click", async () => {

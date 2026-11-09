@@ -403,10 +403,24 @@ func TestParseChooseDirectoryOutput(t *testing.T) {
 	if _, err := parseChooseDirectoryOutput("darwin", nil, 2); err != ErrDialogFailed {
 		t.Fatal(err)
 	}
-	if p, err := parseChooseDirectoryOutput("darwin", []byte("/Users/Jón/My $proj/\n"), 0); err != nil || p != "/Users/Jón/My $proj" {
+	darwinPath := "/Users/Jón/My $proj"
+	if runtime.GOOS == "darwin" {
+		darwinPath = filepath.Join(t.TempDir(), "Jón", "My $proj")
+		if err := os.MkdirAll(darwinPath, 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if p, err := parseChooseDirectoryOutput("darwin", []byte(darwinPath+"/\n"), 0); err != nil || p != darwinPath {
 		t.Fatalf("%q %v", p, err)
 	}
-	if p, err := parseChooseDirectoryOutput("windows", []byte(`D:\verk efni`), 0); err != nil || p != `D:\verk efni` {
+	windowsPath := `D:\verk efni`
+	if runtime.GOOS == "windows" {
+		windowsPath = filepath.Join(t.TempDir(), "verk efni")
+		if err := os.MkdirAll(windowsPath, 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if p, err := parseChooseDirectoryOutput("windows", []byte(windowsPath), 0); err != nil || p != windowsPath {
 		t.Fatalf("%q %v", p, err)
 	}
 	for _, bad := range []string{"relative\n", "/a\n/b\n", "/a\x1b[2J\n"} {

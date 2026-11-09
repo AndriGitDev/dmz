@@ -2,7 +2,7 @@
 
 The companion opens a small device-local setup window and launches the installed Codex CLI or Claude Code in a terminal. It is an experimental companion to the Chromium extension, using the existing **basic** detector. It is not a qualified connection to the Codex desktop app or Claude Desktop, and it is not a public download or signed release.
 
-The intended setup has six core actions with an existing sign-in, or seven with an entered API key. That is a design target, not a measured installation guarantee. Native OS trust prompts, moving a macOS app, client onboarding, sign-in and project-trust screens can add actions. A new Claude project currently requires its own trust confirmation; DMZ does not pre-approve it. Download-to-first-answer qualification remains open.
+The intended setup has five core actions with an existing sign-in, or six with an entered API key. That is a design target, not a measured installation guarantee. Native OS trust prompts, moving a macOS app, client onboarding, sign-in and project-trust screens can add actions. A new Claude project currently requires its own trust confirmation; DMZ does not pre-approve it. Download-to-first-answer qualification remains open.
 
 ## Intended user flow
 
@@ -11,12 +11,11 @@ Prerequisite: the terminal tool is already installed and works with the user's n
 1. Download the private review package for the computer.
 2. Extract it.
 3. Open DMZ. On macOS, first move DMZ.app to Applications; this adds an action to the private prototype flow.
-4. Choose the installed tool in the local DMZ window.
-5. Choose the project folder.
-6. Optionally enter an API key. Otherwise use the tool's existing account sign-in. An API key inherited by DMZ is used only when the user selects its explicit checkbox; API charges are separate.
-7. Press **Start with DMZ** and continue in the terminal.
+4. Choose the project folder.
+5. Optionally enter an API key in the field for the tool you will open. Otherwise use the tool's existing account sign-in. An API key inherited by DMZ is used only when the user selects its explicit checkbox; API charges are separate.
+6. Press **Open Codex CLI** or **Open Claude Code** and continue in the terminal.
 
-Existing-sign-in users skip action 6. Users do not copy a local token, edit a routing file, run a setup command or create a DMZ account. The window offers Stop for each session and Quit DMZ for the app. Closing the browser window leaves the host running; reopening DMZ reopens its window. This prototype has no macOS Dock icon.
+Existing-sign-in users skip action 5. Tool selection and launch share one button; each tool keeps its own optional API key. Users do not copy a local token, edit a routing file, run a setup command or create a DMZ account. The window offers Stop for each session and Quit DMZ for the app. Closing the browser window leaves the host running; reopening DMZ reopens its window. This prototype has no macOS Dock icon.
 
 The tool can still ask for sign-in, onboarding or project trust. Confirm project trust only when appropriate. A failed launch has a visible issue in DMZ; an interactive terminal error stays visible until Enter or a 30-second timeout. Install missing terminal clients through their normal trusted installation process; DMZ does not install or update them.
 

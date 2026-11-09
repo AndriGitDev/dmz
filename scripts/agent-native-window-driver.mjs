@@ -51,22 +51,21 @@ try {
   check(!!page, "native_browser_did_not_open_app");
   const errors = [];
   page.on("pageerror", () => errors.push(true));
-  await page.locator("#clients input").first().waitFor();
+  await page.locator("#clients .tool-card").first().waitFor();
   check(!new URL(page.url()).hash, "native_browser_handoff_not_cleared");
   if ((await page.locator("html").getAttribute("lang")) !== "en")
     await page.locator("#language").click();
+  const client = option("--client");
   if (!args.includes("--reopen")) {
-    const client = option("--client");
-    await page.locator(`input[name=client][value=${client}]`).check();
     await page.locator("#project").fill(option("--project"));
     await page
-      .locator("#api-key")
+      .locator("#api-key-" + client)
       .fill(
         client === "codex"
           ? "sk-dmz-synthetic-fixture-openai-000000000000"
           : "sk-ant-dmz-synthetic-fixture-000000000000",
       );
-    await page.locator("#start").click();
+    await page.locator("#start-" + client).click();
   }
   await page
     .locator(".session .status")
@@ -84,7 +83,7 @@ try {
     "native_browser_setup_error",
   );
   check(
-    (await page.locator("#api-key").inputValue()) === "",
+    (await page.locator("#api-key-" + client).inputValue()) === "",
     "native_browser_retained_key",
   );
   check(errors.length === 0, "native_browser_script_error");
@@ -93,6 +92,7 @@ try {
       checks,
       passed: true,
       reopened: args.includes("--reopen"),
+      setup_form_actions: args.includes("--reopen") ? 0 : 3,
     }),
   );
 } catch (error) {

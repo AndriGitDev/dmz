@@ -438,3 +438,55 @@ footer {
     flex-basis: 100%;
   }
 }
+
+.tool-grid {
+  margin-top: 18px;
+}
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  cursor: default;
+  min-width: 0;
+}
+.tool-card h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.tool-card > label {
+  font-size: 10px;
+  line-height: 1.5;
+  margin-top: 7px;
+}
+.tool-card > small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.tool-card .primary {
+  font-size: 12px;
+  margin-top: auto;
+  padding: 12px 8px;
+}
+.tool-card .radio-row {
+  font-size: 10px;
+  line-height: 1.5;
+}
+.tool-card:has(button:disabled) {
+  opacity: 0.65;
+}
+.tool-card input[type="password"] {
+  font-size: 12px;
+  padding: 9px;
+}
+.scope {
+  margin-top: 0;
+}
+.tool-card:has(input:disabled) {
+  cursor: default;
+}
+@media (max-width: 450px) {
+  .tool-grid {
+    grid-template-columns: 1fr;
+  }
+}

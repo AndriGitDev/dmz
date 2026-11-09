@@ -24,14 +24,13 @@ Start a session
        macOS:   move DMZ.app to Applications, then open it
        Windows: double-click DMZ.exe
        Linux:   double-click DMZ.desktop (or DMZ)
-  4. Choose Codex CLI or Claude Code in the local browser window.
-  5. Choose your project folder.
-  6. If needed, enter an API key. Otherwise DMZ uses the tool's existing
+  4. Choose your project folder in the local DMZ window.
+  5. If needed, enter an API key in the field for your tool. Otherwise DMZ uses the tool's existing
      account sign-in. A key from DMZ's environment requires explicit selection.
-  7. Press Start with DMZ. Continue in the terminal window that opens.
+  6. Press Open Codex CLI or Open Claude Code. Continue in the terminal window that opens.
 
-Existing-sign-in users skip action 6. The core setup has six actions with
-existing sign-in or seven with a pasted key. This counts the intended flow,
+Existing-sign-in users skip action 5. Tool choice and launch share one
+button: five core actions with existing sign-in or six with a pasted key. This counts the intended flow,
 not a native-platform acceptance result: OS trust prompts, moving a macOS app,
 client login and project-trust prompts can add actions in this prototype.
 Nothing has yet established a universal under-eight-action installation.

@@ -421,16 +421,16 @@ class Run:
         steps.append("open_dmz_app")
         st = self.state()
         if any(c.get("id") == self.client and c.get("available") for c in st.get("clients", [])):
-            steps.append("see_detected_tools")
+            self.result["tools_detected_before_launch"] = True
         http(o, "POST", "/api/folder", token=tok, body={})
         steps.append("choose_project_folder")
-        steps.append("choose_api_connection_and_paste_key")
+        steps.append("optional_key_for_chosen_tool")
         body = {"client": self.client, "project": self.p("work"), "auth": "api", "api_key": self.fake_key()}
         if self.scenario == "account":
             body = {"client": self.client, "project": self.p("work"), "auth": "account"}
         code, raw, _ = http(o, "POST", "/api/start", token=tok, body=body)
         view = jbody(raw) or {}
-        steps.append("press_start")
+        steps.append("open_chosen_tool_button")
         sid = view.get("id")
         start = {
             "http_status": code,

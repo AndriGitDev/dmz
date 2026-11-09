@@ -112,14 +112,14 @@ try {
   const errors = [];
   page.on("pageerror", () => errors.push("page_error"));
   await page.goto(handoff.address);
-  await page.locator("#clients input").first().waitFor();
+  await page.locator("#clients .tool-card").first().waitFor();
   check(new URL(page.url()).hash === "", "window_handoff_not_cleared");
   check(
     (await page.locator("html").getAttribute("lang")) === "is",
     "icelandic_default_missing",
   );
   check(
-    (await page.locator("fieldset").count()) === 3,
+    (await page.locator("fieldset").count()) === 2,
     "setup_sections_changed",
   );
   const stored = await page.evaluate(() =>
@@ -138,50 +138,42 @@ try {
     "language_switch_failed",
   );
   check(
-    (await page.locator("#start").innerText()) === "Start with DMZ →",
+    (await page.locator("#start-codex").innerText()) === "Open Codex CLI →",
     "english_action_missing",
   );
-  const detected = await page.locator("#clients input:not(:disabled)").count();
+  const detected = await page.locator(".tool-start:not(:disabled)").count();
   check(detected > 0, "installed_cli_not_detected");
   check(
-    (await page.locator("#environment-option").isVisible()) &&
-      !(await page.locator("#use-environment").isChecked()),
+    (await page.locator("#use-environment-codex").isVisible()) &&
+      !(await page.locator("#use-environment-codex").isChecked()),
     "environment_key_selected_without_consent",
   );
   await page.locator("#project").fill(join(work, "missing"));
-  await page.locator("#api-key").fill("synthetic-ui-key");
-  await page.locator("#start").click();
+  await page.locator("#api-key-codex").fill("synthetic-ui-key");
+  await page.locator("#start-codex").click();
   await page
     .locator("#error")
     .filter({ hasText: "Choose an existing project folder." })
     .waitFor();
   check(
-    (await page.locator("#api-key").inputValue()) === "synthetic-ui-key",
+    (await page.locator("#api-key-codex").inputValue()) === "synthetic-ui-key",
     "validation_lost_key",
   );
-  if (detected > 1) {
-    const selected = await page.locator("#clients input:checked").inputValue();
-    await page
-      .locator("#clients input:not(:disabled)")
-      .filter({ visible: true })
-      .last()
-      .check();
-    if (
-      (await page.locator("#clients input:checked").inputValue()) !== selected
-    )
-      check(
-        (await page.locator("#api-key").inputValue()) === "",
-        "client_change_retained_key",
-      );
-  }
-  await page.locator("#api-key").fill("");
   await page.locator("#project").fill(project);
-  await page.locator("#start").click();
+  await page.locator("#start-claude").click();
   await page
     .locator("#error")
     .filter({ hasText: "DMZ could not open a desktop terminal." })
     .waitFor();
   check(lastStart.auth === "account", "environment_key_forced_api_billing");
+  check(
+    lastStart.client === "claude" && lastStart.api_key === "",
+    "tool_button_used_another_tools_key",
+  );
+  check(
+    (await page.locator("#api-key-codex").inputValue()) === "synthetic-ui-key",
+    "other_tool_changed_pending_key",
+  );
   check(
     (await page.locator(".session .status").innerText()) === "Stopped",
     "failed_launch_left_active_session",
@@ -191,8 +183,21 @@ try {
     state.sessions.length === 1 && state.sessions[0].requests === 0,
     "headless_launch_generated_model_traffic",
   );
+  await page.locator("#api-key-codex").fill("");
+  await page.locator("#use-environment-codex").check();
+  await page.locator("#start-codex").click();
+  await page.locator("#start-codex").waitFor({ state: "visible" });
+  await page.waitForFunction(
+    () => !document.querySelector("#start-codex").disabled,
+  );
+  check(
+    lastStart.client === "codex" &&
+      lastStart.auth === "api" &&
+      lastStart.api_key === "",
+    "environment_key_opt_in_failed",
+  );
   await page.reload();
-  await page.locator("#clients input").first().waitFor();
+  await page.locator("#clients .tool-card").first().waitFor();
   check(
     (await page.locator("html").getAttribute("lang")) === "en",
     "language_preference_not_retained",
@@ -205,7 +210,10 @@ try {
     "mobile_horizontal_overflow",
   );
   await page.emulateMedia({ colorScheme: "dark" });
-  check(await page.locator("#start").isVisible(), "dark_mode_action_missing");
+  check(
+    await page.locator("#start-codex").isVisible(),
+    "dark_mode_action_missing",
+  );
   if (option("--screenshot", null))
     await page.screenshot({
       path: resolve(option("--screenshot")),
@@ -226,7 +234,7 @@ try {
   });
   const restrictedHandoff = await control("window", {});
   await restricted.goto(restrictedHandoff.address);
-  await restricted.locator("#clients input").first().waitFor();
+  await restricted.locator("#clients .tool-card").first().waitFor();
   check(
     !(await restricted.locator("#error").isVisible()),
     "blocked_storage_prevented_setup",
