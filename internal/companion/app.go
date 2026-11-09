@@ -96,7 +96,7 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "method_not_allowed", 405)
 			return
 		}
-		name := map[string]string{"/": "web/index.html", "/app.js": "web/app.js", "/style.css": "web/style.css"}[r.URL.Path]
+		name := map[string]string{"/": "web/index.html", "/app.js": "web/app.js", "/style.css": "web/style.css", "/icon.svg": "web/icon.svg"}[r.URL.Path]
 		if name == "" {
 			http.NotFound(w, r)
 			return
@@ -106,7 +106,7 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.NotFound(w, r)
 			return
 		}
-		w.Header().Set("Content-Type", map[string]string{"/": "text/html; charset=utf-8", "/app.js": "text/javascript; charset=utf-8", "/style.css": "text/css; charset=utf-8"}[r.URL.Path])
+		w.Header().Set("Content-Type", map[string]string{"/": "text/html; charset=utf-8", "/app.js": "text/javascript; charset=utf-8", "/style.css": "text/css; charset=utf-8", "/icon.svg": "image/svg+xml"}[r.URL.Path])
 		w.Write(body)
 		return
 	}

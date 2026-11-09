@@ -8,6 +8,8 @@
 	<string>local.dmz.companion.private-prototype</string>
 	<key>CFBundleName</key>
 	<string>DMZ</string>
+	<key>CFBundleIconFile</key>
+	<string>DMZ</string>
 	<key>CFBundleDisplayName</key>
 	<string>DMZ</string>
 	<key>CFBundlePackageType</key>

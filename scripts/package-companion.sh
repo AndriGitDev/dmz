@@ -91,6 +91,8 @@ write_info_plist() { # path
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>DMZ</string>
+	<key>CFBundleIconFile</key>
+	<string>DMZ</string>
 	<key>CFBundleDisplayName</key>
 	<string>DMZ</string>
 	<key>CFBundlePackageType</key>
@@ -160,7 +162,8 @@ if [[ "$mac_host" == native ]]; then
   "$root_dir/scripts/build-macos-menubar.sh" "$build_dir/native-host" "$build_dir/dmz-darwin-universal"
   cp -R "$build_dir/native-host/DMZ.app" "$top/DMZ.app"
 else
-  mkdir -p "$app/MacOS"
+  mkdir -p "$app/MacOS" "$app/Resources"
+  cp "$root_dir/assets/icons/DMZ.icns" "$app/Resources/DMZ.icns"
   cp "$build_dir/dmz-darwin-universal" "$app/MacOS/DMZ"
   chmod 0755 "$app/MacOS/DMZ"
   write_info_plist "$app/Info.plist"
@@ -177,6 +180,7 @@ name="DMZ-private-prototype-windows-amd64"
 top="$stage_dir/$name"
 mkdir -p "$top"
 build windows amd64 "$top/DMZ.exe" "-H=windowsgui"
+python3 -I "$root_dir/scripts/check-icon-resources.py" "$top/DMZ.exe"
 copy_docs "$top" "windows/amd64"
 zip_dir "$out_dir/$name.zip" "$stage_dir" "$name"
 archives+=("$name.zip")
@@ -287,6 +291,7 @@ for name in archives:
         info = plistlib.loads(rel["DMZ.app/Contents/Info.plist"][1])
         check(info["CFBundleExecutable"] == "DMZ" and info["CFBundlePackageType"] == "APPL", f"{name}: Info.plist executable/package type")
         check("prototype" in info["CFBundleIdentifier"] and "not a release" in info["NSHumanReadableCopyright"], f"{name}: Info.plist private prototype label")
+        check(info.get("CFBundleIconFile") == "DMZ" and rel.get("DMZ.app/Contents/Resources/DMZ.icns", (0,b""))[1].startswith(b"icns"), f"{name}: bundled application icon")
     elif "windows" in name:
         exe = rel.get("DMZ.exe")
         check(exe is not None and exe[1][:2] == b"MZ", f"{name}: DMZ.exe is a PE image")

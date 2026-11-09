@@ -435,8 +435,10 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
 
 - (void)buildMenu {
   _item = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
-  NSImage *icon = nil;
-  if (@available(macOS 11.0, *)) {
+  NSString *iconPath = [[NSBundle mainBundle] pathForResource:@"MenuBar" ofType:@"png"];
+  NSImage *icon = iconPath ? [[NSImage alloc] initWithContentsOfFile:iconPath] : nil;
+  if (icon) icon.size = NSMakeSize(18, 18);
+  if (!icon) {
     icon = [NSImage imageWithSystemSymbolName:@"circle.lefthalf.filled" accessibilityDescription:@"DMZ"];
   }
   if (icon) {

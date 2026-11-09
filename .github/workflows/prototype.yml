@@ -52,6 +52,7 @@ jobs:
         with:
           go-version-file: go.mod
       - run: python3 scripts/check-naming.py
+      - run: python3 scripts/check-icon-resources.py
       - run: go test ./...
       - run: ./scripts/check-lexicon.sh
       - run: ./scripts/check-phone-metadata.sh

@@ -21,12 +21,16 @@ func RunStatusIcon(ctx context.Context, descriptor string) error {
 		return errors.New("tray_unavailable")
 	}
 	defer os.RemoveAll(dir)
+	executable, err := os.Executable()
+	if err != nil || validateLaunchPath("windows", executable) != nil {
+		return errors.New("tray_unavailable")
+	}
 	name := filepath.Join(dir, "status-icon.ps1")
 	if os.WriteFile(name, []byte(windowsStatusIcon), 0600) != nil {
 		return errors.New("tray_unavailable")
 	}
 	program := windowsSystemTool(hostPlatformEnv(), `WindowsPowerShell\v1.0\powershell.exe`)
-	command := exec.CommandContext(ctx, program, "-NoProfile", "-NonInteractive", "-STA", "-ExecutionPolicy", "Bypass", "-File", name, "-ControlFile", descriptor)
+	command := exec.CommandContext(ctx, program, "-NoProfile", "-NonInteractive", "-STA", "-ExecutionPolicy", "Bypass", "-File", name, "-ControlFile", descriptor, "-Executable", executable)
 	applyPlatformProcAttr(command, platformCommand{NoWindow: true})
 	if command.Run() != nil && ctx.Err() == nil {
 		return errors.New("tray_unavailable")
@@ -34,7 +38,7 @@ func RunStatusIcon(ctx context.Context, descriptor string) error {
 	return nil
 }
 
-const windowsStatusIcon = `param([Parameter(Mandatory=$true)][string]$ControlFile)
+const windowsStatusIcon = `param([Parameter(Mandatory=$true)][string]$ControlFile,[Parameter(Mandatory=$true)][string]$Executable)
 $ErrorActionPreference='Stop'
 [System.Net.WebRequest]::DefaultWebProxy=$null
 Add-Type -AssemblyName System.Windows.Forms
@@ -60,7 +64,9 @@ $claude=$menu.Items.Add('Claude Code: checking');$claude.Enabled=$false
 $settings=$menu.Items.Add('Open DMZ settings')
 $quit=$menu.Items.Add('Quit DMZ')
 $icon=New-Object System.Windows.Forms.NotifyIcon
-$icon.Icon=[System.Drawing.SystemIcons]::Application
+$appIcon=[System.Drawing.Icon]::ExtractAssociatedIcon($Executable)
+if($null -eq $appIcon){$appIcon=[System.Drawing.SystemIcons]::Application.Clone()}
+$icon.Icon=$appIcon
 $icon.Text='DMZ - checking connections'
 $icon.ContextMenuStrip=$menu
 $icon.Visible=$true
@@ -105,5 +111,5 @@ $timer.add_Tick({
     if($script:failures -ge 3){[System.Windows.Forms.Application]::ExitThread()}
   }
 })
-try{$timer.Start();[System.Windows.Forms.Application]::Run()}finally{$timer.Stop();$timer.Dispose();$icon.Visible=$false;$icon.Dispose();$menu.Dispose()}
+try{$timer.Start();[System.Windows.Forms.Application]::Run()}finally{$timer.Stop();$timer.Dispose();$icon.Visible=$false;$icon.Dispose();$appIcon.Dispose();$menu.Dispose()}
 `
