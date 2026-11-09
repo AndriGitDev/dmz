@@ -92,6 +92,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   NSMutableArray *_signalSources;
   int _lockFD;
   BOOL _terminating;
+  NSUInteger _restartAttempts;
 }
 
 #pragma mark - Lifecycle
@@ -174,6 +175,8 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
 }
 
 - (void)startCore {
+  if (_corePid != 0 || _terminating) return;
+  [self removePrivateDir];
   [self clearCoreState];
   if (![self makePrivateDir]) {
     [self setStatus:@"DMZ could not create private state"];
@@ -185,7 +188,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
     return;
   }
   NSString *parent = [NSString stringWithFormat:@"%d", getpid()];
-  const char *argv[] = {core.fileSystemRepresentation, "app", "--no-open", "--parent-pid", parent.UTF8String, "--control-file",
+  const char *argv[] = {core.fileSystemRepresentation, "app", "--no-open", "--background", "--parent-pid", parent.UTF8String, "--control-file",
                         _controlFile.fileSystemRepresentation, NULL};
   posix_spawn_file_actions_t fa;
   posix_spawn_file_actions_init(&fa);
@@ -230,7 +233,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   dispatch_source_set_event_handler(s, ^{
     int status = 0;
     waitpid(pid, &status, WNOHANG);
-    [weakSelf coreExited:pid];
+    [weakSelf coreExited:pid normal:(WIFEXITED(status) && WEXITSTATUS(status) == 0)];
   });
   dispatch_resume(s);
   _exitSource = s;
@@ -238,11 +241,11 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   if (kill(pid, 0) != 0 && errno == ESRCH) {
     int status = 0;
     waitpid(pid, &status, WNOHANG);
-    [self coreExited:pid];
+    [self coreExited:pid normal:(WIFEXITED(status) && WEXITSTATUS(status) == 0)];
   }
 }
 
-- (void)coreExited:(pid_t)pid {
+- (void)coreExited:(pid_t)pid normal:(BOOL)normal {
   if (pid != _corePid) return;
   if (_exitSource) {
     dispatch_source_cancel(_exitSource);
@@ -252,6 +255,13 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   [self clearCoreState];
   [self removePrivateDir];
   if (_terminating) return;
+  if (normal) { [NSApp terminate:nil]; return; }
+  if (_restartAttempts < 2) {
+    _restartAttempts++;
+    [self setStatus:@"DMZ is recovering its connection…"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{ if (!_terminating && _corePid == 0) [self startCore]; });
+    return;
+  }
   [self setStatus:@"DMZ core stopped"];
   _restartItem.hidden = NO;
   _openItem.enabled = NO;
@@ -434,6 +444,8 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   _statusLine = [[NSMenuItem alloc] initWithTitle:@"DMZ is starting…" action:NULL keyEquivalent:@""];
   _statusLine.enabled = NO;
   [_menu addItem:_statusLine];
+  NSMenuItem *scope = [[NSMenuItem alloc] initWithTitle:@"User text only; files and tool results unchanged" action:NULL keyEquivalent:@""];
+  scope.enabled = NO; [_menu addItem:scope];
   [_menu addItem:[NSMenuItem separatorItem]];
   _detectedHeader = [[NSMenuItem alloc] initWithTitle:@"Tools" action:NULL keyEquivalent:@""];
   _detectedHeader.enabled = NO;
@@ -443,7 +455,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   _openItem.target = self;
   _openItem.enabled = NO;
   [_menu addItem:_openItem];
-  _restartItem = [[NSMenuItem alloc] initWithTitle:@"Restart DMZ Core" action:@selector(restartCore:) keyEquivalent:@""];
+  _restartItem = [[NSMenuItem alloc] initWithTitle:@"Restart DMZ connection" action:@selector(restartCore:) keyEquivalent:@""];
   _restartItem.target = self;
   _restartItem.hidden = YES;
   [_menu addItem:_restartItem];
@@ -461,6 +473,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
 - (void)restartCore:(id)sender {
   if (_corePid != 0) return;
   _restartItem.hidden = YES;
+  _restartAttempts = 0;
   [self startCore];
 }
 
@@ -496,6 +509,30 @@ static NSString *DMZSafeLabel(id v, NSUInteger max) {
     return;
   }
   [self setStatus:@"DMZ is running"];
+  if ([state[@"background_enabled"] boolValue]) {
+    NSArray *connections = [state[@"background"] isKindOfClass:[NSArray class]] ? state[@"background"] : @[];
+    for (NSDictionary *route in connections) {
+      if (![route isKindOfClass:[NSDictionary class]]) continue;
+      NSString *name = DMZSafeLabel(route[@"name"], 48);
+      NSString *client = DMZSafeLabel(route[@"client"], 24);
+      if (![client isEqualToString:@"codex"] && ![client isEqualToString:@"claude"]) continue;
+      NSString *code = DMZSafeLabel(route[@"state"], 32);
+      NSDictionary *labels = @{@"not_detected":@"not detected", @"restart_required":@"ready — open or restart tool", @"traffic_observed":@"model traffic observed", @"needs_attention":@"needs attention", @"disconnected":@"disconnected"};
+      NSString *label = labels[code] ?: @"checking connection";
+      [self addInfo:[NSString stringWithFormat:@"%@ — %@", name, label]];
+      if ([route[@"detected"] boolValue] || [route[@"routed"] boolValue]) {
+        BOOL routed = [route[@"routed"] boolValue];
+        NSMenuItem *action = [[NSMenuItem alloc] initWithTitle:[NSString stringWithFormat:@"%@ %@", routed ? @"Disconnect" : @"Connect", name] action:@selector(toggleConnection:) keyEquivalent:@""];
+        action.target = self;
+        action.representedObject = @{@"client":client, @"connected":@(!routed)};
+        NSInteger at = [_menu indexOfItem:_detectedHeader] + 1 + (NSInteger)_dynamicItems.count;
+        [_menu insertItem:action atIndex:at]; [_dynamicItems addObject:action];
+      }
+    }
+    for (NSDictionary *route in connections) { if ([route[@"state"] isEqual:@"needs_attention"]) { [self setStatus:@"DMZ — check connection warnings"]; break; } }
+    _detectedHeader.title = @"Background connections";
+    return;
+  }
   NSArray *clients = [state[@"clients"] isKindOfClass:[NSArray class]] ? state[@"clients"] : @[];
   NSArray *sessions = [state[@"sessions"] isKindOfClass:[NSArray class]] ? state[@"sessions"] : @[];
 
@@ -525,6 +562,21 @@ static NSString *DMZSafeLabel(id v, NSUInteger max) {
   }
   for (NSString *cid in byClient) [self addSessionsFor:cid sessions:byClient[cid]];
   _detectedHeader.title = detected ? [NSString stringWithFormat:@"Tools (%lu detected)", (unsigned long)detected] : @"Tools (none detected)";
+}
+
+- (void)toggleConnection:(NSMenuItem *)sender {
+  NSDictionary *value = sender.representedObject;
+  if (![value isKindOfClass:[NSDictionary class]] || _origin == nil) return;
+  NSMutableURLRequest *request = [self requestForPath:@"/api/background" method:@"POST"];
+  request.HTTPBody = [NSJSONSerialization dataWithJSONObject:value options:0 error:NULL];
+  sender.enabled = NO;
+  [[_session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      sender.enabled = YES;
+      if (error || [(NSHTTPURLResponse *)response statusCode] != 204) [self setStatus:@"Connection needs attention — open settings"];
+      [self pollState];
+    });
+  }] resume];
 }
 
 - (void)addSessionsFor:(NSString *)name sessions:(NSArray *)sessions {

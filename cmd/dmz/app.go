@@ -24,6 +24,7 @@ func app(ctx context.Context, args []string, errOut io.Writer) error {
 	f.SetOutput(errOut)
 	noOpen := f.Bool("no-open", false, "development: do not open a graphical window")
 	parentPID := f.Int("parent-pid", 0, "native host supervision PID")
+	background := f.Bool("background", false, "connect installed harnesses through persistent local routes")
 	controlFile := f.String("control-file", "", "development: private control descriptor path")
 	if err := f.Parse(args); err != nil {
 		return err
@@ -52,6 +53,9 @@ func app(ctx context.Context, args []string, errOut io.Writer) error {
 		}()
 	}
 	cfg := companion.Config{}
+	if *background || (runtime.GOOS == "windows" && !*noOpen && *controlFile == "") {
+		cfg.Background = &companion.BackgroundConfig{}
+	}
 	if !*noOpen && *controlFile == "" {
 		name, err := companion.DefaultInstanceFile()
 		if err != nil {

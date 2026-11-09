@@ -196,6 +196,84 @@ history.replaceState(null, "", location.pathname);
 let token = storageRead("sessionStorage", "dmz.control") || "";
 const $ = (s) => document.querySelector(s);
 const t = (k) => strings[language][k] || strings.en[k] || k;
+Object.assign(strings.en, {
+  codex_authentication_required:
+    "Sign in through Codex or configure its API key. No native credential reached this connection.",
+  backgroundTitle: "DMZ runs in the background.",
+  backgroundIntro:
+    "DMZ runs in the background. Open your coding tool normally; supported text passes through your local connection.",
+  backgroundSimple:
+    "No DMZ cloud service or conversation analytics. Mappings stay in memory until DMZ stops. Codex chats currently share a connection scope.",
+  backgroundSetup: "Connections",
+  backgroundHint:
+    "Installed tools are connected automatically when their settings are compatible. If a tool is already open, restart it once to load the route. Detection alone does not establish masking.",
+  backgroundRestore:
+    "Disconnect restores DMZ’s routing changes and keeps your other settings. Already-open tools may need a restart after disconnect. Your tool keeps its own sign-in, model and permissions. Account routes are still being verified.",
+  not_detected: "Not detected",
+  restart_required: "Ready — open or restart the tool",
+  traffic_observed: "Model traffic observed",
+  needs_attention: "Connection needs attention",
+  disconnected: "Disconnected",
+  disconnect: "Disconnect",
+  reconnect: "Connect",
+  backgroundDesktop:
+    "Direct vendor desktop-app connections remain unqualified. Claude Desktop needs a separate one-time gateway setup; its subscription sign-in cannot use that route.",
+  routing_custom_provider_present:
+    "An existing custom gateway is configured. DMZ left it unchanged.",
+  codex_profiles_require_connection_review:
+    "Separate Codex profiles need connection review. Their settings were left unchanged.",
+  routing_recovery_conflict:
+    "Routing recovery needs review. Your edited settings and backup were kept.",
+  routing_restore_conflict:
+    "DMZ could not safely restore the route. Your settings and backup were kept.",
+  routing_settings_changed:
+    "The settings changed while DMZ was connecting. Review them, then try again.",
+  routing_settings_unavailable:
+    "DMZ could not read compatible routing settings. The tool was not connected.",
+  background_state_unavailable:
+    "DMZ could not save its local recovery state. The tool was not connected.",
+  local_service_unavailable:
+    "DMZ could not start the local connection. Try connecting again.",
+});
+Object.assign(strings.is, {
+  codex_authentication_required:
+    "Skráðu þig inn í Codex eða stilltu API-lykil þess. Engin innskráningarupplýsing barst á þessari tengingu.",
+  backgroundTitle: "DMZ keyrir í bakgrunni.",
+  backgroundIntro:
+    "DMZ keyrir í bakgrunni. Opnaðu kóðunartólið eins og venjulega; studdur texti fer um staðbundnu tenginguna.",
+  backgroundSimple:
+    "Engin skýjaþjónusta eða samtalsgreining frá DMZ. Varpanir eru í minni þar til DMZ lokast. Codex-samtöl deila nú sama tengingarsviði.",
+  backgroundSetup: "Tengingar",
+  backgroundHint:
+    "Uppsett tól eru tengd sjálfkrafa þegar stillingar þeirra passa. Ef tólið er þegar opið skaltu endurræsa það einu sinni. Það eitt að tól finnist staðfestir ekki að texti sé falinn.",
+  backgroundRestore:
+    "Aftenging tekur til baka leiðarbreytingar DMZ og heldur öðrum stillingum þínum. Tól sem eru þegar opin gætu þurft endurræsingu eftir aftengingu. Innskráning, líkan og heimildir fylgja tólinu. Innskráningarleiðir eru enn í prófun.",
+  not_detected: "Fannst ekki",
+  restart_required: "Tilbúið — opnaðu eða endurræstu tólið",
+  traffic_observed: "Líkanbeiðnir hafa sést",
+  needs_attention: "Athuga þarf tenginguna",
+  disconnected: "Aftengt",
+  disconnect: "Aftengja",
+  reconnect: "Tengja",
+  backgroundDesktop:
+    "Beinar tengingar við desktop-forrit veitnanna eru enn óstaðfestar. Claude Desktop þarf sérstaka uppsetningu gáttar; áskriftarinnskráning þess virkar ekki á þeirri leið.",
+  routing_custom_provider_present:
+    "Önnur gátt er þegar stillt. DMZ breytti henni ekki.",
+  codex_profiles_require_connection_review:
+    "Skoða þarf tengingu aðskildra Codex-prófíla. Stillingum þeirra var ekki breytt.",
+  routing_recovery_conflict:
+    "Skoða þarf endurheimt leiðarstillinga. Breyttar stillingar og afrit voru varðveitt.",
+  routing_restore_conflict:
+    "Ekki tókst að taka leiðarbreytinguna örugglega til baka. Stillingar og afrit voru varðveitt.",
+  routing_settings_changed:
+    "Stillingarnar breyttust meðan DMZ tengdist. Skoðaðu þær og reyndu aftur.",
+  routing_settings_unavailable:
+    "Ekki tókst að lesa samhæfar leiðarstillingar. Tólið var ekki tengt.",
+  background_state_unavailable:
+    "Ekki tókst að vista staðbundnar endurheimtarupplýsingar. Tólið var ekki tengt.",
+});
+let backgroundRendered = "";
+const pendingConnections = new Set();
 let stopped = false;
 let starting = false;
 let clientsRendered = "";
@@ -379,6 +457,90 @@ function renderSessions() {
     buttons.get(focused)?.isConnected &&
       buttons.get(focused).focus({ preventScroll: true });
 }
+function renderBackground() {
+  const enabled = !!state.background_enabled;
+  $("#background-section").hidden = !enabled;
+  $("#start-form").hidden = enabled;
+  $("#session-panel").hidden = enabled;
+  if (!enabled) return;
+  $("[data-i18n='title']").textContent = t("backgroundTitle");
+  $("[data-i18n='intro']").textContent = t("backgroundIntro");
+  $("#setup-title").textContent = t("backgroundSetup");
+  $("[data-i18n='simple']").textContent = t("backgroundSimple");
+  $("[data-i18n='desktop-hint']").textContent = t("backgroundDesktop");
+  const signature = JSON.stringify([language, state.background]);
+  if (signature === backgroundRendered) return;
+  backgroundRendered = signature;
+  const root = $("#background-connections");
+  const focused = document.activeElement?.dataset.backgroundClient;
+  const previous = new Map(
+    Array.from(root.querySelectorAll("button[data-background-client]"), (b) => [
+      b.dataset.backgroundClient,
+      b,
+    ]),
+  );
+  root.replaceChildren();
+  for (const route of state.background || []) {
+    const card = document.createElement("article");
+    card.className = "session";
+    card.append(text("h3", route.name), text("p", t(route.state), "status"));
+    if (route.requests)
+      card.append(
+        text(
+          "p",
+          `${route.requests} ${t("requests")} · ${route.changed_parts} ${t("masked")}`,
+          "session-stats",
+        ),
+      );
+    if (route.issue) card.append(text("p", t(route.issue), "session-warning"));
+    const warnings = Object.keys(route.warnings || {}).filter(
+      (k) =>
+        ![
+          "instructions_unchanged",
+          "tool_result_unchanged",
+          "no_user_text",
+        ].includes(k),
+    );
+    if (warnings.length)
+      card.append(text("p", t("warning"), "session-warning"));
+    if (route.detected || route.routed) {
+      let button = previous.get(route.client);
+      if (!button) {
+        button = document.createElement("button");
+        button.type = "button";
+        button.dataset.backgroundClient = route.client;
+        button.addEventListener("click", async () => {
+          const client = button.dataset.backgroundClient;
+          if (pendingConnections.has(client)) return;
+          pendingConnections.add(client);
+          button.disabled = true;
+          $("#error").hidden = true;
+          try {
+            const result = await api("background", {
+              client,
+              connected: button.dataset.connect === "true",
+            });
+            if (result?.error) error(result.error);
+            await refresh();
+          } catch {
+            error("unavailable");
+          } finally {
+            pendingConnections.delete(client);
+            button.disabled = false;
+          }
+        });
+      }
+      button.dataset.connect = String(!route.routed);
+      button.textContent = t(route.routed ? "disconnect" : "reconnect");
+      button.disabled = pendingConnections.has(route.client);
+      card.append(button);
+    }
+    root.append(card);
+  }
+  if (focused)
+    previous.get(focused)?.isConnected &&
+      previous.get(focused).focus({ preventScroll: true });
+}
 function translate() {
   document.documentElement.lang = language;
   document
@@ -387,6 +549,8 @@ function translate() {
   $("#language").textContent = language === "is" ? "English" : "Íslenska";
   renderClients();
   renderSessions();
+  backgroundRendered = "";
+  renderBackground();
 }
 async function refresh() {
   if (stopped) return;
@@ -397,6 +561,7 @@ async function refresh() {
     if (JSON.stringify([language, state.clients]) !== clientsRendered)
       renderClients();
     renderSessions();
+    renderBackground();
   } catch {
     if (!stopped) error("unavailable");
   }
@@ -466,7 +631,8 @@ $("#start-form").addEventListener("submit", async (event) => {
 });
 $("#quit").addEventListener("click", async () => {
   if (
-    state.sessions.some((s) => s.state !== "stopped") &&
+    (state.sessions.some((s) => s.state !== "stopped") ||
+      (state.background || []).some((r) => r.routed)) &&
     !confirm(t("confirmQuit"))
   )
     return;

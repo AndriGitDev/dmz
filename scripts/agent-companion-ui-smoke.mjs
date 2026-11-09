@@ -287,6 +287,106 @@ try {
     (await page.locator("html").getAttribute("lang")) === "en",
     "language_preference_not_retained",
   );
+  let backgroundRoutes = [
+    {
+      client: "codex",
+      name: "Codex CLI",
+      detected: true,
+      routed: true,
+      state: "restart_required",
+      requests: 0,
+      changed_parts: 0,
+    },
+    {
+      client: "claude",
+      name: "Claude Code",
+      detected: true,
+      routed: false,
+      state: "needs_attention",
+      issue: "routing_custom_provider_present",
+      requests: 0,
+      changed_parts: 0,
+    },
+  ];
+  const backgroundActions = [];
+  await page.route("**/api/state", async (route) => {
+    const response = await route.fetch();
+    const value = await response.json();
+    value.background_enabled = true;
+    value.background = backgroundRoutes;
+    await route.fulfill({ response, json: value });
+  });
+  await page.route("**/api/background", async (route) => {
+    const body = route.request().postDataJSON();
+    backgroundActions.push(body);
+    const item = backgroundRoutes.find((r) => r.client === body.client);
+    item.routed = body.connected;
+    item.state = body.connected ? "restart_required" : "disconnected";
+    await route.fulfill({ status: 204 });
+  });
+  await page.locator("#background-section").waitFor({ state: "visible" });
+  check(
+    await page.locator("#start-form").isHidden(),
+    "background_requires_project_launch_form",
+  );
+  check(
+    (await page.locator("#background-connections article").count()) === 2,
+    "background_connections_missing",
+  );
+  check(
+    (await page.locator("h1").innerText()) === "DMZ runs in the background.",
+    "background_heading_missing",
+  );
+  const connection = page.locator('[data-background-client="codex"]');
+  check(
+    (await connection.innerText()) === "Disconnect",
+    "routed_connection_cannot_disconnect",
+  );
+  await connection.focus();
+  const originalConnection = await connection.elementHandle();
+  backgroundRoutes[0].requests = 2;
+  backgroundRoutes[0].state = "traffic_observed";
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#background-connections .session-stats")
+      ?.textContent.startsWith("2 "),
+  );
+  check(
+    await originalConnection.evaluate(
+      (el) => el.isConnected && document.activeElement === el,
+    ),
+    "background_poll_lost_keyboard_focus",
+  );
+  check(
+    (await page.locator("#background-connections").innerText()).includes(
+      "DMZ left it unchanged",
+    ),
+    "custom_gateway_warning_missing",
+  );
+  await connection.click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('[data-background-client="codex"]')
+        ?.textContent === "Connect",
+  );
+  check(
+    backgroundActions[0]?.connected === false,
+    "background_disconnect_not_requested",
+  );
+  await connection.click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('[data-background-client="codex"]')
+        ?.textContent === "Disconnect",
+  );
+  check(
+    backgroundActions[1]?.connected === true,
+    "background_reconnect_used_stale_action",
+  );
+  await page.unroute("**/api/background");
+  await page.unroute("**/api/state");
+  await page.reload();
+  await page.locator("#clients .tool-card").first().waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
   check(
     await page.evaluate(

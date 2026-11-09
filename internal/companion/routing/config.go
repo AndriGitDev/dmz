@@ -1,5 +1,6 @@
 // Package routing owns reversible, private changes to harness routing settings.
-// It never reads a harness authentication store or writes provider credentials.
+// It never reads a separate harness authentication store. Recovery snapshots
+// can contain sensitive values already present in user settings.
 package routing
 
 import (
@@ -32,6 +33,7 @@ type journal struct {
 	Mode     uint32 `json:"mode"`
 	Original []byte `json:"original"`
 	Applied  string `json:"applied_sha256"`
+	Written  []byte `json:"written,omitempty"`
 }
 
 func digest(b []byte) string { h := sha256.Sum256(b); return hex.EncodeToString(h[:]) }
@@ -96,7 +98,7 @@ func Install(path, state string, expected, replacement []byte) error {
 	if err != nil {
 		return ErrBackup
 	}
-	record := journal{Path: path, Existed: exists, Mode: uint32(mode), Original: original, Applied: digest(replacement)}
+	record := journal{Path: path, Existed: exists, Mode: uint32(mode), Original: original, Applied: digest(replacement), Written: replacement}
 	err = json.NewEncoder(f).Encode(record)
 	if err == nil {
 		err = f.Sync()
@@ -119,7 +121,10 @@ func Install(path, state string, expected, replacement []byte) error {
 
 // Restore also recovers a crash between journal creation and settings mutation.
 // Drift is never overwritten; the backup remains for a selective adapter merge.
-func Restore(state string) error {
+func Restore(state string) error { return RestoreMerge(state, nil) }
+
+// RestoreMerge removes only owned routing fields when unrelated settings drift.
+func RestoreMerge(state string, merge func([]byte, []byte, []byte) ([]byte, error)) error {
 	info, err := os.Lstat(state)
 	if err != nil || !info.Mode().IsRegular() || (runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0) {
 		return ErrBackup
@@ -130,7 +135,7 @@ func Restore(state string) error {
 	}
 	defer f.Close()
 	var record journal
-	decoder := json.NewDecoder(io.LimitReader(f, 6<<20))
+	decoder := json.NewDecoder(io.LimitReader(f, 12<<20))
 	decoder.DisallowUnknownFields()
 	if decoder.Decode(&record) != nil || decoder.Decode(new(any)) != io.EOF || !filepath.IsAbs(record.Path) || len(record.Original) > maxConfig {
 		return ErrBackup
@@ -142,8 +147,32 @@ func Restore(state string) error {
 	if exists == record.Existed && bytes.Equal(current, record.Original) {
 		return os.Remove(state)
 	}
-	if !exists || digest(current) != record.Applied {
-		return ErrChanged
+	if !exists {
+		return os.Remove(state)
+	} // preserve a user's deletion
+	if digest(current) != record.Applied {
+		if merge == nil {
+			return ErrChanged
+		}
+		if len(record.Written) == 0 || digest(record.Written) != record.Applied {
+			return ErrBackup
+		}
+		result, mergeErr := merge(record.Original, record.Written, current)
+		if mergeErr != nil || len(result) > maxConfig {
+			return ErrChanged
+		}
+		if result == nil {
+			err = os.Remove(record.Path)
+		} else {
+			err = writeAtomic(record.Path, result, os.FileMode(record.Mode).Perm())
+		}
+		if err != nil {
+			return ErrUnavailable
+		}
+		if os.Remove(state) != nil {
+			return ErrBackup
+		}
+		return nil
 	}
 	if record.Existed {
 		err = writeAtomic(record.Path, record.Original, os.FileMode(record.Mode).Perm())

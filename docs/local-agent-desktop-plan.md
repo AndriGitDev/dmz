@@ -1,6 +1,6 @@
 # Desktop app connection plan: Codex and Claude Desktop
 
-Research date: 9 November 2026, sources fetched 13:24–13:30 UTC. Status: **plan only**. No desktop connection is implemented or verified. This document does not change the [gateway guide](local-agent-gateway.md), the [companion guide](local-companion.md) or any public claim.
+Research date: 9 November 2026, sources fetched 13:24–13:30 UTC. Status: **desktop acceptance unqualified**. Background Codex/Claude Code CLI routing and configuration helpers are implemented after the research below; no native vendor desktop connection is verified. This document does not change the [gateway guide](local-agent-gateway.md), the [companion guide](local-companion.md) or any public claim.
 
 The companion currently launches the **terminal** clients (Codex CLI 0.166.0, Claude Code 2.1.318 on this host). Opening a terminal client from a graphical window is not desktop-app support, and this plan does not describe it as such. Native desktop support below means the vendor's own desktop application sends its model requests to a local dmz gateway.
 
@@ -209,3 +209,5 @@ All checked 9 November 2026, 13:24–13:30 UTC. `learn.chatgpt.com/codex/...` li
 - [linux-app] https://learn.chatgpt.com/docs/linux/linux-app
 
 Vendor documentation describes intended behavior for current releases. It does not show that a specific installed build, account or plan works with dmz.
+
+The later background implementation is documented in [background-agent-integration.md](background-agent-integration.md). Its Codex writer shares the documented user config, but synthetic CLI evidence must not be presented as native desktop acceptance. Claude Desktop import/API-key integration remains a separate unfinished path.

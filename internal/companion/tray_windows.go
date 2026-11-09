@@ -46,11 +46,14 @@ for($i=0;$i -lt 100;$i++){
 }
 if(!$state -or $state.origin -notmatch '^http://127\.0\.0\.1:[1-9][0-9]{0,4}$' -or $state.token -notmatch '^[a-f0-9]{64}$'){exit 1}
 $headers=@{Authorization=('Bearer '+$state.token)}
-function Call-Dmz([string]$Path,[string]$Method='GET'){
-  Invoke-RestMethod -Uri ($state.origin+'/api/'+$Path) -Method $Method -Headers $headers -ContentType 'application/json' -TimeoutSec 2
+function Call-Dmz([string]$Path,[string]$Method='GET',$Payload=$null){
+  $options=@{Uri=($state.origin+'/api/'+$Path);Method=$Method;Headers=$headers;ContentType='application/json';TimeoutSec=3}
+  if($null -ne $Payload){$options.Body=($Payload | ConvertTo-Json -Compress)}
+  Invoke-RestMethod @options
 }
 $menu=New-Object System.Windows.Forms.ContextMenuStrip
 $title=$menu.Items.Add('DMZ - text masking');$title.Enabled=$false
+$scope=$menu.Items.Add('User text only; files and tool results unchanged');$scope.Enabled=$false
 $codex=$menu.Items.Add('Codex: checking');$codex.Enabled=$false
 $claude=$menu.Items.Add('Claude Code: checking');$claude.Enabled=$false
 [void]$menu.Items.Add('-')
@@ -64,6 +67,9 @@ $icon.Visible=$true
 $open={try{$window=Call-Dmz 'window' 'POST';if($window.address -match ('^'+[regex]::Escape($state.origin)+'/#open=[a-f0-9]{64}$')){Start-Process -FilePath $window.address}}catch{}}
 $settings.add_Click($open)
 $icon.add_DoubleClick($open)
+$script:routes=@{}
+$codex.add_Click({$r=$script:routes['codex'];if($r){try{Call-Dmz 'background' 'POST' @{client='codex';connected=(!$r.routed)}}catch{}}})
+$claude.add_Click({$r=$script:routes['claude'];if($r){try{Call-Dmz 'background' 'POST' @{client='claude';connected=(!$r.routed)}}catch{}}})
 $quit.add_Click({try{Call-Dmz 'quit' 'POST'}catch{};[System.Windows.Forms.Application]::ExitThread()})
 $timer=New-Object System.Windows.Forms.Timer
 $timer.Interval=2000
@@ -71,12 +77,22 @@ $script:failures=0
 $timer.add_Tick({
   try{
     $view=Call-Dmz 'state';$script:failures=0
+    if($view.background_enabled){
+      foreach($r in $view.background){
+        $script:routes[$r.client]=$r
+        $label=switch($r.state){'not_detected'{'not detected'}'restart_required'{'ready - open or restart tool'}'traffic_observed'{'model traffic observed'}'needs_attention'{'needs attention'}'disconnected'{'disconnected'}default{'checking'}}
+        $action=if($r.routed){'Disconnect'}else{'Connect'}
+        if($r.client -eq 'codex'){$codex.Text='Codex: '+$label+' ('+$action+')';$codex.Enabled=($r.detected -or $r.routed)}
+        if($r.client -eq 'claude'){$claude.Text='Claude Code: '+$label+' ('+$action+')';$claude.Enabled=($r.detected -or $r.routed)}
+      }
+    }else{
     foreach($id in @('codex','claude')){
       $client=@($view.clients | Where-Object {$_.id -eq $id})[0]
       $active=@($view.sessions | Where-Object {$_.client -eq $id -and $_.state -ne 'stopped'})
       $requests=($active | Measure-Object -Property requests -Sum).Sum
       $label=if(!$client.available){'not detected'}elseif($requests -gt 0){'model traffic observed'}elseif($active.Count -gt 0){'waiting for model traffic'}else{'detected; not connected'}
       if($id -eq 'codex'){$codex.Text='Codex: '+$label}else{$claude.Text='Claude Code: '+$label}
+    }
     }
     $icon.Text='DMZ - right-click for connection status'
   }catch{

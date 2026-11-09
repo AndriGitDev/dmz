@@ -61,6 +61,7 @@ done
 for notice in klauspost-compress-LICENSE klauspost-compress-zstd-internal-xxhash-LICENSE.txt klauspost-compress-internal-snapref-LICENSE klauspost-compress-snappy-AUTHORS; do
   cp "internal/agentgateway/licenses/$notice" "$artifact_dir/licenses/"
 done
+cp internal/companion/routing/licenses/pelletier-go-toml-v2-LICENSE "$artifact_dir/licenses/"
 cp "$("$go_bin" env GOROOT)/LICENSE" "$artifact_dir/licenses/Go-LICENSE.txt"
 
 python3 - "$root_dir" "$artifact_dir" <<'PY'

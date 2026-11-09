@@ -46,6 +46,8 @@ if [ -n "$core" ]; then
   cp "$plist" "$app/Info.plist"
   plutil -lint "$app/Info.plist"
   # Ad-hoc signature only so Gatekeeper on the build Mac can run it locally.
-  codesign --force --sign - "$app/MacOS/dmz-core" "$out/DMZ.app" >/dev/null 2>&1 || true
+  codesign --force --sign - "$app/MacOS/dmz-core"
+  codesign --force --sign - "$out/DMZ.app"
+  codesign --verify --deep --strict "$out/DMZ.app"
   echo "build-macos-menubar: assembled $out/DMZ.app (unsigned prototype)"
 fi

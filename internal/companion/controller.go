@@ -30,6 +30,7 @@ type Config struct {
 	FixtureUpstreams map[string]string
 	ClientArguments  map[string][]string // test seam; never accepted from HTTP
 	InstanceFile     string              // private app-only descriptor; no provider keys or maps
+	Background       *BackgroundConfig   // native background integration; nil retains launcher mode
 }
 
 type StartRequest struct {
@@ -75,6 +76,7 @@ type App struct {
 	windowCodes   map[string]time.Time
 	helperCtx     context.Context
 	cancelHelpers context.CancelFunc
+	background    *backgroundManager
 }
 
 func New(cfg Config) (*App, error) {
@@ -301,6 +303,12 @@ func (a *App) Close() {
 }
 func (a *App) close() {
 	a.cancelHelpers()
+	a.mu.Lock()
+	background := a.background
+	a.mu.Unlock()
+	if background != nil {
+		background.Close()
+	}
 	a.mu.Lock()
 	a.closing = true
 	ids := make([]string, 0, len(a.sessions))

@@ -32,8 +32,16 @@ licenses_src="$root_dir/apps/dmz/public/licenses"
 # tokenizer or address vocabulary is bundled.
 notices=(gitleaks-MIT.txt vendor-secrets-NOTICE.txt golang-x-text-LICENSE.txt libphonenumber-Apache-2.0.txt phonenumbers-MIT.txt phone-numbering-NOTICE.txt)
 gateway_notices=(klauspost-compress-LICENSE klauspost-compress-zstd-internal-xxhash-LICENSE.txt klauspost-compress-internal-snapref-LICENSE klauspost-compress-snappy-AUTHORS)
+routing_notices=(pelletier-go-toml-v2-LICENSE)
 go_license="$("$go_bin" env GOROOT)/LICENSE"
 [[ -f "$go_license" ]] || { echo "package-companion: Go LICENSE not found" >&2; exit 2; }
+
+mac_host="${DMZ_MAC_HOST:-}"
+if [[ -z "$mac_host" ]]; then
+  if [[ "$(uname -s)" == Darwin ]]; then mac_host=native; else mac_host=core; fi
+fi
+if [[ "$mac_host" != native && "$mac_host" != core ]]; then echo "package-companion: DMZ_MAC_HOST must be native or core" >&2; exit 2; fi
+if [[ "$mac_host" == native && "$(uname -s)" != Darwin ]]; then echo "package-companion: native Mac host requires a Mac build machine" >&2; exit 2; fi
 
 source_rev="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 source_state="clean"
@@ -55,6 +63,7 @@ copy_docs() { # destination
   cp LICENSE COPYING-NOTICE.md THIRD_PARTY.md "$1/"
   for n in "${notices[@]}"; do cp "$licenses_src/$n" "$1/licenses/"; done
   for n in "${gateway_notices[@]}"; do cp "$root_dir/internal/agentgateway/licenses/$n" "$1/licenses/"; done
+  for n in "${routing_notices[@]}"; do cp "$root_dir/internal/companion/routing/licenses/$n" "$1/licenses/"; done
   cp "$go_license" "$1/licenses/Go-LICENSE.txt"
   {
     echo "DMZ companion private review prototype - NOT A RELEASE"
@@ -142,15 +151,25 @@ archives=()
 for arch in amd64 arm64; do
   build darwin "$arch" "$build_dir/dmz-darwin-$arch"
 done
-name="DMZ-private-prototype-macos-universal"
+if [[ "$mac_host" == native ]]; then name="DMZ-private-prototype-macos-universal"; else name="DMZ-private-prototype-macos-core-only"; fi
 top="$stage_dir/$name"
 app="$top/DMZ.app/Contents"
-mkdir -p "$app/MacOS"
-"$go_bin" run ./scripts/companion-package "$app/MacOS/DMZ" "$build_dir/dmz-darwin-amd64" "$build_dir/dmz-darwin-arm64"
-chmod 0755 "$app/MacOS/DMZ"
-write_info_plist "$app/Info.plist"
-printf 'APPL????' > "$app/PkgInfo"
-copy_docs "$top" "darwin/universal (amd64, arm64)"
+mkdir -p "$top"
+"$go_bin" run ./scripts/companion-package "$build_dir/dmz-darwin-universal" "$build_dir/dmz-darwin-amd64" "$build_dir/dmz-darwin-arm64"
+if [[ "$mac_host" == native ]]; then
+  "$root_dir/scripts/build-macos-menubar.sh" "$build_dir/native-host" "$build_dir/dmz-darwin-universal"
+  cp -R "$build_dir/native-host/DMZ.app" "$top/DMZ.app"
+else
+  mkdir -p "$app/MacOS"
+  cp "$build_dir/dmz-darwin-universal" "$app/MacOS/DMZ"
+  chmod 0755 "$app/MacOS/DMZ"
+  write_info_plist "$app/Info.plist"
+  printf 'APPL????' > "$app/PkgInfo"
+fi
+copy_docs "$top" "darwin/universal (amd64, arm64); host=$mac_host"
+if [[ "$mac_host" == core ]]; then
+  printf '\nCORE-ONLY MAC CHECKPOINT: this archive uses the legacy browser launcher, not the native menu-bar host. Build on macOS for the menu-bar review candidate.\n' >> "$top/README.txt"
+fi
 zip_dir "$out_dir/$name.zip" "$stage_dir" "$name"
 archives+=("$name.zip")
 
@@ -215,7 +234,8 @@ common = {"README.txt", "LICENSE", "COPYING-NOTICE.md", "THIRD_PARTY.md", "MANIF
           "licenses/vendor-secrets-NOTICE.txt", "licenses/libphonenumber-Apache-2.0.txt",
           "licenses/phonenumbers-MIT.txt", "licenses/phone-numbering-NOTICE.txt",
           "licenses/klauspost-compress-LICENSE", "licenses/klauspost-compress-zstd-internal-xxhash-LICENSE.txt",
-          "licenses/klauspost-compress-internal-snapref-LICENSE", "licenses/klauspost-compress-snappy-AUTHORS"}
+          "licenses/klauspost-compress-internal-snapref-LICENSE", "licenses/klauspost-compress-snappy-AUTHORS",
+          "licenses/pelletier-go-toml-v2-LICENSE"}
 forbidden = (".onnx", ".bin", ".safetensors", ".jsonl", ".wasm", "tokenizer", "model")
 ok = True
 def check(cond, msg):
@@ -261,6 +281,9 @@ for name in archives:
                 valid = thin_magic == 0xFEEDFACF and thin_cpu == cpu and thin_subtype == subtype
             check(valid, f"{name}: aligned complete Mach-O slice {n+1}")
         check(cpus == {0x01000007,0x0100000C}, f"{name}: Intel and Apple Silicon CPUs")
+        if "core-only" not in name:
+            core = rel.get("DMZ.app/Contents/MacOS/dmz-core")
+            check(core is not None and core[0] & 0o111 == 0o111 and core[1][:4] == b"\xca\xfe\xba\xbe", f"{name}: supervised universal Go core present")
         info = plistlib.loads(rel["DMZ.app/Contents/Info.plist"][1])
         check(info["CFBundleExecutable"] == "DMZ" and info["CFBundlePackageType"] == "APPL", f"{name}: Info.plist executable/package type")
         check("prototype" in info["CFBundleIdentifier"] and "not a release" in info["NSHumanReadableCopyright"], f"{name}: Info.plist private prototype label")

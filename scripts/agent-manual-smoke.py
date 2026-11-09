@@ -502,7 +502,7 @@ def run_client(args, client, client_bin, scenarios, deadline):
                 sf.append("status_changed_parts_zero")
             if not st1["sessions"]:
                 sf.append("status_sessions_zero_before_reset")
-            if set(st1["keys"]) - {"profile", "coverage", "requests", "text_parts", "changed_parts", "sessions", "warnings"}:
+            if set(st1["keys"]) - {"profile", "coverage", "requests", "model_requests", "native_credential_missing", "text_parts", "changed_parts", "sessions", "warnings"}:
                 sf.append("status_unexpected_fields")
         if rc2 != 0:
             sf.append("reset_failed")

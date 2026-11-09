@@ -1,68 +1,67 @@
 DMZ companion - private review prototype
 ========================================
 
-NOT A RELEASE. This package is for private review only. It is not signed,
-notarized or published, and it is not a supported download.
+NOT A RELEASE. Unsigned, unnotarized, unpublished review build. Use fabricated
+text while evaluating. Native GUI behavior and live account routes still need
+qualification; compilation and synthetic fixtures do not establish them.
 
-DMZ runs on this computer. It masks selected identifiers in the text you type
-to Codex CLI or Claude Code, on a best-effort basis. Instructions, tool
-results, files and attachments are outside masking coverage. The coding tool
-keeps its own on-disk history; DMZ does not rewrite it.
-Detection is not complete. Use fabricated data while evaluating.
+DMZ attempts to mask selected identifiers in user messages. This basic build
+has limited name coverage. Instructions, files, attachments, tool inputs/results
+and other network paths are outside masking coverage. Detection can miss data;
+failures warn and continue and can send originals. Replies keep visible markers.
+Your coding tool keeps its own on-disk history; DMZ does not rewrite it.
 
-The macOS archive is universal (Apple Silicon and Intel), requires macOS 13
-or newer, and still needs native installation and signing qualification.
+Background flow (native Mac or Windows builds)
+-----------------------------------------------
+  1. Extract the private review archive. On Mac, move DMZ.app to Applications.
+  2. Open DMZ. Its icon appears in the Mac menu bar or Windows notification area.
+  3. Open your coding tool normally. If it was already open, restart it once.
 
-Before you start: install Codex CLI or Claude Code and sign in with it the way
-you normally do. DMZ does not read your client authentication store. You can
-optionally enter an API key in the local DMZ window; it stays in memory for
-that session.
+DMZ discovers installed Codex CLI and Claude Code clients and prepares compatible
+local model routes. The icon distinguishes detection, waiting and observed model
+traffic. Open DMZ Settings from the icon for details or Disconnect/Reconnect.
+There is no project picker or separate terminal launch in this background flow.
 
-Start a session
----------------
-  1. Download the package for your computer from the private review handoff.
-  2. Extract the archive.
-  3. Open DMZ:
-       macOS:   move DMZ.app to Applications, then open it
-       Windows: double-click DMZ.exe
-       Linux:   double-click DMZ.desktop (or DMZ)
-  4. Choose your project folder in the local DMZ window.
-  5. If needed, enter an API key in the field for your tool. Otherwise DMZ uses
-     the tool's existing account sign-in. A key from DMZ's environment requires
-     explicit selection.
-  6. Press Open Codex CLI or Open Claude Code. Continue in the terminal
-     window that opens.
+The tool keeps its sign-in, model, sandbox and permission choices. DMZ never
+silently selects an API billing connection. Codex native authentication takes
+precedence; an OPENAI_API_KEY available to Codex is used only if Codex supplies
+no native Authorization. These request credentials are not saved separately
+by DMZ; recovery snapshots can contain sensitive values already in settings.
 
-Existing-sign-in users skip action 5. Tool choice and launch share one
-button: five core actions with existing sign-in or six with a pasted key.
-This counts the intended flow, not a native-platform acceptance result: OS trust prompts, moving a macOS app,
-client login and project-trust prompts can add actions in this prototype.
-Nothing has yet established a universal under-eight-action installation.
+Existing custom gateways and separate Codex profile files are left unchanged
+with a connection-review status. Managed/project settings and command-line
+provider overrides can bypass this route. Detection is not masking coverage.
 
-Stop a session from the DMZ window. Closing only the browser window keeps
-DMZ running; reopen DMZ to reopen its window. Use Quit DMZ to stop all sessions
-and exit. The macOS app has no Dock icon in this prototype.
+Disconnect or Quit restores routing and preserves unrelated settings edits.
+Already-open tools can need a restart after disconnect. DMZ retains a private
+recovery journal while connected and uses it after a crash. That journal can
+contain existing sensitive settings; never include it in a report. Value
+mappings remain in memory only. Their markers change after DMZ restarts.
 
-First-run system prompts
-------------------------
-This prototype is unsigned. Your operating system may block the first launch:
-  macOS:   System Settings > Privacy & Security > Open Anyway.
-  Windows: "Windows protected your PC" > More info > Run anyway.
-  Linux:   right-click DMZ.desktop > Allow Launching.
-Only do this for a package you received directly from the DMZ maintainers.
+The native Mac build requires macOS 13+ and contains Intel and Apple Silicon
+executables. A "macos-core-only" archive is a cross-compiled legacy browser
+launcher checkpoint, not the new menu-bar app. Build on macOS for that app.
+Quit an earlier DMZ build before opening its replacement.
 
-Limits
-------
-- Routes that reuse an existing account sign-in are experimental and not yet
-  qualified. Desktop apps (Codex app, Claude Desktop) are not supported.
-- DMZ needs a desktop session with a web browser and a terminal application.
-- If DMZ stops, the coding client loses its connection. Start it again
-  without DMZ to leave this route.
-- Your coding client keeps its own history and settings as usual.
+First launch and qualification
+-------------------------------
+OS trust, app relocation, sign-in and tool prompts add actions. This prototype
+is not Developer ID signed/notarized; macOS or Windows may block it. Record that
+as a review result. No under-eight-action downloaded installation is verified.
+
+Direct vendor desktop applications are not qualified. Claude Desktop needs
+separate third-party inference setup and that route cannot reuse its Anthropic
+subscription. Real provider/account acceptance, native GUI/recovery, Windows
+ACLs/process cleanup and normal Codex sandbox behavior remain qualification
+work. Other network routes do not pass through DMZ.
+
+The Linux package retains the optional browser/terminal launcher; no Linux tray
+is implemented. Technical usage: run DMZ help. The native background experience
+is the Mac/Windows target.
 
 License
 -------
-DMZ is free software under the GNU GPL version 3 only (see LICENSE and
-COPYING-NOTICE.md). Third-party notices are in the licenses folder; see
-THIRD_PARTY.md. Corresponding source: the dmz repository revision listed in
-MANIFEST.txt.
+Original code is GPL-3.0-only; see LICENSE and COPYING-NOTICE.md. Third-party
+notices are in licenses/ and THIRD_PARTY.md. Corresponding source is the dmz
+repository revision listed in MANIFEST.txt. This package creates no public
+release or distribution approval.

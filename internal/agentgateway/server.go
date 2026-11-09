@@ -41,6 +41,10 @@ type Config struct {
 	// with the provider key held in memory by this service.
 	LocalAuth   string
 	ProviderKey string
+	// NativeOpenAIAuth keeps client-owned credentials and selects only between
+	// the OpenAI API and ChatGPT Codex backend using the native account header.
+	// It is restricted to Responses/header-auth on the standard API origin.
+	NativeOpenAIAuth bool
 	// SessionHeader is an optional, verified client root-session header. A
 	// launcher without one has one explicit mapping scope for its lifetime.
 	SessionHeader         string
@@ -64,13 +68,15 @@ type mapping struct {
 
 // Status contains aggregate operational data, never original text or mappings.
 type Status struct {
-	Profile      string            `json:"profile"`
-	Coverage     string            `json:"coverage"`
-	Requests     uint64            `json:"requests"`
-	TextParts    uint64            `json:"text_parts"`
-	ChangedParts uint64            `json:"changed_parts"`
-	Sessions     int               `json:"sessions"`
-	Warnings     map[string]uint64 `json:"warnings"`
+	Profile                 string            `json:"profile"`
+	Coverage                string            `json:"coverage"`
+	Requests                uint64            `json:"requests"`
+	ModelRequests           uint64            `json:"model_requests"`
+	TextParts               uint64            `json:"text_parts"`
+	ChangedParts            uint64            `json:"changed_parts"`
+	Sessions                int               `json:"sessions"`
+	NativeCredentialMissing bool              `json:"native_credential_missing,omitempty"`
+	Warnings                map[string]uint64 `json:"warnings"`
 }
 
 type Server struct {
@@ -84,7 +90,8 @@ type Server struct {
 }
 
 // NewServer accepts only the intended provider or an explicitly enabled
-// literal loopback fixture. Request headers and paths cannot select a host.
+// literal loopback fixture. NativeOpenAIAuth can choose only the two fixed
+// OpenAI origins; no request can select an arbitrary host.
 func NewServer(cfg Config) (*Server, error) {
 	if cfg.Protocol != Responses && cfg.Protocol != Messages {
 		return nil, errors.New("unsupported protocol")
@@ -117,6 +124,9 @@ func NewServer(cfg Config) (*Server, error) {
 	if cfg.LocalAuth != AuthHeader && u.Host == "chatgpt.com" {
 		return nil, errors.New("provider API key replacement cannot use the ChatGPT backend")
 	}
+	if cfg.NativeOpenAIAuth && (cfg.Protocol != Responses || cfg.LocalAuth != AuthHeader || (cfg.Upstream != "https://api.openai.com/v1" && !(cfg.AllowLoopbackUpstream && u.Hostname() == "127.0.0.1"))) {
+		return nil, errors.New("native OpenAI authentication requires the standard Responses header route")
+	}
 	if cfg.SessionHeader != "" && cfg.SessionHeader != "X-Claude-Code-Session-Id" {
 		return nil, errors.New("unverified session header")
 	}
@@ -142,10 +152,18 @@ func NewServer(cfg Config) (*Server, error) {
 		ErrorLog: log.New(io.Discard, "", 0),
 		Rewrite: func(p *httputil.ProxyRequest) {
 			suffix, _ := endpoint(cfg.Protocol, p.In.URL.Path, p.In.Method)
-			p.SetURL(u)
-			p.Out.URL.Path = strings.TrimRight(u.Path, "/") + suffix
+			target := u
+			fallbackKey := ""
+			if cfg.NativeOpenAIAuth && strings.TrimSpace(p.In.Header.Get("Authorization")) == "" && len(p.In.Header.Values("X-Dmz-OpenAI-Key")) == 1 {
+				fallbackKey = strings.TrimSpace(p.In.Header.Get("X-Dmz-OpenAI-Key"))
+			}
+			if cfg.NativeOpenAIAuth && u.Host == "api.openai.com" && fallbackKey == "" && p.In.Header.Get("ChatGPT-Account-ID") != "" {
+				target = &url.URL{Scheme: "https", Host: "chatgpt.com", Path: "/backend-api/codex"}
+			}
+			p.SetURL(target)
+			p.Out.URL.Path = strings.TrimRight(target.Path, "/") + suffix
 			p.Out.URL.RawPath = ""
-			p.Out.Host = u.Host
+			p.Out.Host = target.Host
 			for key := range p.Out.Header {
 				if strings.HasPrefix(strings.ToLower(key), "x-dmz-") {
 					p.Out.Header.Del(key)
@@ -157,6 +175,10 @@ func NewServer(cfg Config) (*Server, error) {
 			p.Out.Header.Del("X-Forwarded-Proto")
 			p.Out.Header.Del("Proxy-Authorization")
 			p.Out.Header.Del("Cookie")
+			if fallbackKey != "" {
+				p.Out.Header.Set("Authorization", "Bearer "+fallbackKey)
+				p.Out.Header.Del("ChatGPT-Account-ID")
+			}
 			if cfg.LocalAuth != AuthHeader {
 				p.Out.Header.Del("Authorization")
 				p.Out.Header.Del("X-Api-Key")
@@ -306,6 +328,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	s.mu.Lock()
 	s.status.Requests++
+	if r.Method == http.MethodPost {
+		s.status.ModelRequests++
+		if s.cfg.NativeOpenAIAuth {
+			s.status.NativeCredentialMissing = strings.TrimSpace(r.Header.Get("Authorization")) == "" && strings.TrimSpace(r.Header.Get("X-Dmz-OpenAI-Key")) == ""
+		}
+	}
 	s.mu.Unlock()
 	if r.Method == http.MethodPost {
 		s.prepare(r)

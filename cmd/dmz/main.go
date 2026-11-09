@@ -96,7 +96,9 @@ func usage(w io.Writer) {
   dmz config [--address http://127.0.0.1:PORT] codex|claude
   dmz version
 
-Open DMZ without arguments for the local app window.
+Native Mac and Windows builds open a background status icon.
+The Linux build retains the optional local app window.
+app --background enables persistent local routing for compatible installed tools.
 
 run uses temporary process configuration and a random local credential.
 serve requires DMZ_LOCAL_TOKEN (at least 32 characters); it never prints it.

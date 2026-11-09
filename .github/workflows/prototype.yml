@@ -39,7 +39,7 @@ jobs:
         run: GO_BIN=go scripts/package-companion.sh "$RUNNER_TEMP/dmz-companion-packages"
       - name: Compile native menu-bar prototype and verify CLI passthrough
         run: |
-          scripts/build-macos-menubar.sh "$RUNNER_TEMP/dmz-menubar" "$RUNNER_TEMP/dmz-companion-packages/stage/DMZ-private-prototype-macos-universal/DMZ.app/Contents/MacOS/DMZ"
+          scripts/build-macos-menubar.sh "$RUNNER_TEMP/dmz-menubar" "$RUNNER_TEMP/dmz-companion-packages/stage/DMZ-private-prototype-macos-universal/DMZ.app/Contents/MacOS/dmz-core"
           "$RUNNER_TEMP/dmz-menubar/DMZ.app/Contents/MacOS/DMZ" version
           "$RUNNER_TEMP/dmz-menubar/DMZ.app/Contents/MacOS/DMZ" help >/dev/null
   core:

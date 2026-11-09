@@ -1,5 +1,22 @@
 # Local DMZ companion app — private prototype
 
+The native Mac and Windows target is now a background status icon with automatic
+compatible harness routing. It prepares installed Codex CLI and Claude Code
+connections and leaves users to open their tools normally. The optional settings
+window reports connection state and offers Disconnect/Reconnect. See
+[the background integration](background-agent-integration.md) for current scope,
+recovery, authentication and qualification limits.
+
+Real-client loopback fixtures exercise ordinary launches, cached API-key login,
+environment-key modes, synthetic cached accounts, stable local addresses/tokens,
+selective restoration, restart and crash recovery. These are not live provider
+or account validation. Native GUI and direct vendor desktop-app acceptance,
+signing and measured downloaded-install actions remain unqualified.
+
+The material below describes the retained **legacy browser/terminal launcher**,
+which is still the Linux default and available for focused fixtures. Its
+project-picker flow is not the new native Mac/Windows default.
+
 The companion opens a small device-local setup window and launches the installed Codex CLI or Claude Code in a terminal. It is an experimental companion to the Chromium extension, using the existing **basic** detector. It is not a qualified connection to the Codex desktop app or Claude Desktop, and it is not a public download or signed release.
 
 The intended setup has five core actions with an existing sign-in, or six with an entered API key. That is a design target, not a measured installation guarantee. Native OS trust prompts, moving a macOS app, client onboarding, sign-in and project-trust screens can add actions. A new Claude project currently requires its own trust confirmation; DMZ does not pre-approve it. Download-to-first-answer qualification remains open.

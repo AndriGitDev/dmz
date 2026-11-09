@@ -4,7 +4,7 @@ The development branch `feat/local-agent-gateway` contains a runnable local dmz 
 
 Work began on 9 November 2026 at 11:21 UTC for the operator review window ending at 15:21 UTC. Codex implemented the service/launcher and integrated fixes; Opus 5.5 implemented the raw-preserving request transformer, the client and companion fixture harnesses and platform/package helpers, and independently reviewed the integration. The exact source and executable identities belong to the generated review manifest, rather than an assumed release version.
 
-## What is implemented
+## Original checkpoint implementation
 
 - Local browser control window with Icelandic/English UI, installed-tool discovery, folder selection, optional API key, Start/Stop/Quit and aggregate session status. Local credentials and routing files are handled internally.
 - Separate per-launch gateway ownership; one-use private tickets, server-side connector claims, short-lived browser bootstrap, private app reopening descriptor with listener identity verification and stale-port recovery, heartbeat expiry and terminal-hangup cleanup.
@@ -107,3 +107,23 @@ Opus’s last audit found no new operator-review blocker, and identified two foc
 Reopening verifies an HMAC challenge response before sending the cached control credential. Non-DMZ listeners on a reused port cause the stale descriptor to be removed; verified busy apps retain their descriptor. If a listener is unresponsive and the recorded app PID has exited, reopening also recovers. PID reuse or an unknown live process is treated conservatively as busy. Quit the old prototype before replacing it with this revision because older hosts do not implement the identity handshake.
 
 Cancelling a native folder picker now leaves the existing project selection alone, without showing the unavailable-picker fallback. Controller and browser checks cover this distinction.
+
+## Background-flow follow-up after the 15:21 review
+
+The owner tried the app and requested a macOS menu-bar / Windows tray default
+that automatically connects tools opened normally. That change is recorded in
+[the background design](background-agent-integration.md). Persistent gateways,
+automatic compatible settings, native authentication forwarding, environment-key
+fallback, stable local tokens/ports and selective restoration are now implemented.
+The settings view hides project selection in background mode and the native
+icons distinguish ready, traffic observed and warnings.
+
+Real-client synthetic fixtures pass basic routing, disconnect/reconnect, exact
+restoration, user-edit preservation, restart and journal recovery after SIGKILL.
+The normal Codex tool sandbox remains incomplete on this host, and synthetic
+account fixtures count refused background connections. The background settings
+view brings local browser checks to 48. Those checks do not qualify a native Mac
+installation, actual accounts, direct vendor desktop apps or signing.
+
+Mac builds assemble the Cocoa entry point and Go core; non-Mac builds explicitly
+label their Mac artifact core-only. No new public binaries or release are created.

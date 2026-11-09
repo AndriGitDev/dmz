@@ -131,7 +131,28 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			clients = append(clients, map[string]any{"id": c.ID, "name": c.Name, "available": c.Available, "api_key_available": a.cfg.Environment(env) != ""})
 		}
-		writeJSON(w, map[string]any{"app": "dmz-companion", "clients": clients, "sessions": a.Views(), "profile": "basic", "desktop_qualified": false})
+		writeJSON(w, map[string]any{"app": "dmz-companion", "clients": clients, "sessions": a.Views(), "background_enabled": a.cfg.Background != nil, "background": a.BackgroundViews(), "profile": "basic", "desktop_qualified": false})
+	case r.URL.Path == "/api/background" && r.Method == "POST":
+		var req struct {
+			Client    string `json:"client"`
+			Connected bool   `json:"connected"`
+		}
+		if decode(r, &req) != nil {
+			http.Error(w, "invalid_request", 400)
+			return
+		}
+		a.mu.Lock()
+		background := a.background
+		a.mu.Unlock()
+		if background == nil {
+			http.Error(w, "background_unavailable", 409)
+			return
+		}
+		if err := background.SetConnected(req.Client, req.Connected); err != nil {
+			writeJSON(w, map[string]string{"error": err.Error()})
+			return
+		}
+		w.WriteHeader(204)
 	case r.URL.Path == "/api/start" && r.Method == "POST":
 		var req StartRequest
 		if decode(r, &req) != nil {
@@ -219,6 +240,27 @@ func (a *App) Serve(ctx context.Context, open bool, controlFile string) error {
 	done := make(chan error, 1)
 	go func() { done <- server.Serve(listener) }()
 	defer func() { a.Close(); _ = server.Close() }()
+	if a.cfg.Background != nil {
+		background, err := newBackground(*a.cfg.Background)
+		if err != nil {
+			return err
+		}
+		a.mu.Lock()
+		a.background = background
+		a.mu.Unlock()
+		go func() {
+			ticker := time.NewTicker(5 * time.Second)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-a.helperCtx.Done():
+					return
+				case <-ticker.C:
+					background.Refresh()
+				}
+			}
+		}()
+	}
 	if open {
 		address, err := a.windowAddress()
 		if err != nil {

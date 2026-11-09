@@ -41,6 +41,16 @@
               <h2 id="setup-title" data-i18n="setup">Byrjaðu nýja lotu</h2>
               <span class="pill" data-i18n="local">Á tækinu þínu</span>
             </div>
+            <p id="error" class="error" role="alert" hidden></p>
+            <div id="background-section" hidden>
+              <p data-i18n="backgroundHint"></p>
+              <div id="background-connections"></div>
+              <div class="scope">
+                <strong data-i18n="scope-title"></strong>
+                <p data-i18n="scope"></p>
+              </div>
+              <p class="hint" data-i18n="backgroundRestore"></p>
+            </div>
             <form id="start-form">
               <fieldset>
                 <legend>
@@ -77,7 +87,6 @@
                   geta innihaldið sýnileg merki.
                 </p>
               </div>
-              <p id="error" class="error" role="alert" hidden></p>
               <fieldset>
                 <legend>
                   <span class="step">2</span
@@ -101,7 +110,11 @@
             </form>
           </section>
           <aside>
-            <section class="sessions" aria-labelledby="sessions-title">
+            <section
+              id="session-panel"
+              class="sessions"
+              aria-labelledby="sessions-title"
+            >
               <div class="section-top">
                 <h2 id="sessions-title" data-i18n="sessions">Þínar lotur</h2>
                 <span id="live-count" class="live-count" aria-live="polite"
