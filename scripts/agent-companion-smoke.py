@@ -669,12 +669,12 @@ class Run:
                       "gateway_wrong_token_refused", "ticket_consumed", "ticket_dir_removed_after_exit", "connect_group_clean_after_exit"):
                 if not L.get(k):
                     f.append("launch." + k)
-            for k in ("ticket_contains_probe", "probe_in_output", "original_in_client_stdout", "local_token_in_output", "hex64_in_output", "spawn_error",
+            for k in ("ticket_contains_probe", "probe_in_output", "local_token_in_output", "hex64_in_output", "spawn_error",
                       "killed_by_testhost", "gateway_reachable_after_exit"):
-                if k == "original_in_client_stdout" and self.scenario == "tui":
-                    continue  # the person's own typed prompt is echoed on screen
                 if L.get(k):
                     f.append("launch." + k)
+            if self.scenario in ("basic", "roundtrip", "account") and not L.get("original_in_client_stdout"):
+                f.append("launch.local_answer_not_restored")
             if L.get("ticket_ttl_seconds", 0) > 600:
                 f.append("launch.ticket_ttl_over_10m")
             if L.get("reuse_same_path_rejected") is False:

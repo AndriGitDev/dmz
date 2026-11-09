@@ -4,6 +4,7 @@ package agentgateway
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/json"
@@ -19,6 +20,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/AndriGitDev/dmz/packages/surrogates"
@@ -46,6 +48,9 @@ type Config struct {
 	// the OpenAI API and ChatGPT Codex backend using the native account header.
 	// It is restricted to Responses/header-auth on the standard API origin.
 	NativeOpenAIAuth bool
+	// RestoreReplies enables local assistant-text restoration together with
+	// exact-value re-masking of restored assistant history on later requests.
+	RestoreReplies bool
 	// SessionHeader is an optional, verified client root-session header. A
 	// launcher without one has one explicit mapping scope for its lifetime.
 	SessionHeader         string
@@ -59,12 +64,17 @@ type Config struct {
 }
 
 type mapping struct {
-	mu      sync.Mutex
-	core    *surrogates.Session
-	bytes   int64
-	seen    map[[32]byte]struct{}
-	lastUse uint64 // protected by Server.mu
-	inUse   int    // includes callers waiting on this mapping's mutex
+	mu        sync.Mutex
+	core      *surrogates.Session
+	bytes     int64
+	seen      map[[32]byte]struct{}
+	lastUse   uint64 // protected by Server.mu
+	inUse     int    // includes callers waiting on this mapping's mutex
+	invalid   atomic.Bool
+	restored  map[string]string // known originals from this live mapping scope
+	noRestore map[string]bool   // whole-message fallbacks are not safe entity values
+	replay    *strings.Replacer
+	warning   func(string)
 }
 
 // Status contains aggregate operational data, never original text or mappings.
@@ -90,6 +100,7 @@ type Server struct {
 	maps         map[string]*mapping
 	status       Status
 	workers      chan struct{}
+	replySlots   chan struct{}
 	warningTimes map[string]time.Time
 	tick         uint64
 }
@@ -150,7 +161,10 @@ func NewServer(cfg Config) (*Server, error) {
 	if cfg.WorkerWait <= 0 {
 		cfg.WorkerWait = 30 * time.Second
 	}
-	s := &Server{cfg: cfg, maps: make(map[string]*mapping), workers: make(chan struct{}, 4), warningTimes: make(map[string]time.Time), status: Status{Profile: "basic-experimental", Coverage: "supported-user-message-text-only", Warnings: make(map[string]uint64)}}
+	s := &Server{cfg: cfg, maps: make(map[string]*mapping), workers: make(chan struct{}, 4), replySlots: make(chan struct{}, 4), warningTimes: make(map[string]time.Time), status: Status{Profile: "basic-experimental", Coverage: "supported-user-message-text-only", Warnings: make(map[string]uint64)}}
+	if cfg.RestoreReplies {
+		s.status.Coverage = "supported-user-text-and-restored-reply-values"
+	}
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.ResponseHeaderTimeout = 120 * time.Second
 	s.proxy = &httputil.ReverseProxy{
@@ -169,6 +183,9 @@ func NewServer(cfg Config) (*Server, error) {
 			p.Out.URL.Path = strings.TrimRight(target.Path, "/") + suffix
 			p.Out.URL.RawPath = ""
 			p.Out.Host = target.Host
+			if cfg.RestoreReplies && p.In.Context().Value(replyScopeKey{}) != nil {
+				p.Out.Header.Set("Accept-Encoding", "identity")
+			}
 			for key := range p.Out.Header {
 				if strings.HasPrefix(strings.ToLower(key), "x-dmz-") {
 					p.Out.Header.Del(key)
@@ -219,6 +236,9 @@ func NewServer(cfg Config) (*Server, error) {
 			// credential outside loopback. Model endpoints must not redirect.
 			if r.StatusCode >= 300 && r.StatusCode < 400 && r.Header.Get("Location") != "" {
 				return errors.New("upstream redirect unsupported")
+			}
+			if cfg.RestoreReplies {
+				s.restoreResponse(r)
 			}
 			return nil
 		},
@@ -297,7 +317,7 @@ func (s *Server) Snapshot() Status {
 
 func informationalWarning(code string) bool {
 	switch code {
-	case "instructions_unchanged", "tool_result_unchanged", "attachment_unchanged", "no_user_text", "mapping_evicted_history_may_degrade":
+	case "instructions_unchanged", "tool_result_unchanged", WarnToolResultDetectionNotApplied, "attachment_unchanged", "no_user_text", "mapping_evicted_history_may_degrade":
 		return true
 	}
 	return false
@@ -305,7 +325,14 @@ func informationalWarning(code string) bool {
 
 // ClearMappings drops the service's references to live originals. It is used
 // after the owning app session stops; counters remain available for review.
-func (s *Server) ClearMappings() { s.mu.Lock(); s.maps = make(map[string]*mapping); s.mu.Unlock() }
+func (s *Server) ClearMappings() {
+	s.mu.Lock()
+	for _, m := range s.maps {
+		m.invalid.Store(true)
+	}
+	s.maps = make(map[string]*mapping)
+	s.mu.Unlock()
+}
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// DNS rebinding and browser callers are outside this local client API.
@@ -355,7 +382,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	s.mu.Unlock()
 	if r.Method == http.MethodPost {
-		s.prepare(r)
+		if scope := s.prepare(r); scope != nil {
+			defer func() { s.mu.Lock(); scope.inUse--; s.mu.Unlock() }()
+			*r = *r.WithContext(context.WithValue(r.Context(), replyScopeKey{}, scope))
+		}
 	}
 	// A cancelled caller is no longer asking us to submit a draft. In
 	// particular, do not invoke a transport with an unprocessed body after
@@ -366,7 +396,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.proxy.ServeHTTP(w, r)
 }
 
-func (s *Server) prepare(r *http.Request) {
+func (s *Server) prepare(r *http.Request) (scope *mapping) {
 	coding := requestCoding(r.Header)
 	if coding == codingUnsupported {
 		s.warn(warnEncodingUnsupported)
@@ -439,12 +469,13 @@ func (s *Server) prepare(r *http.Request) {
 			}
 		}
 		if oldest != nil {
+			oldest.invalid.Store(true)
 			delete(s.maps, oldestKey)
 			evicted = true
 		}
 	}
 	if m == nil && len(s.maps) < s.cfg.MaxSessions {
-		m = &mapping{core: surrogates.NewSession(), seen: make(map[[32]byte]struct{})}
+		m = &mapping{core: surrogates.NewSession(), seen: make(map[[32]byte]struct{}), warning: s.warn}
 		s.maps[key] = m
 	}
 	if m != nil {
@@ -460,7 +491,13 @@ func (s *Server) prepare(r *http.Request) {
 		s.warn("session_capacity_forwarded_unchanged")
 		return
 	}
-	defer func() { s.mu.Lock(); m.inUse--; s.mu.Unlock() }()
+	defer func() {
+		if scope == nil {
+			s.mu.Lock()
+			m.inUse--
+			s.mu.Unlock()
+		}
+	}()
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	transformed, report := Transform(s.cfg.Protocol, body, func(input string) (output string, err error) {
@@ -470,34 +507,71 @@ func (s *Server) prepare(r *http.Request) {
 				err = errors.New("masking unavailable")
 			}
 		}()
+		knownMasked := input
+		if s.cfg.RestoreReplies {
+			knownMasked = m.remaskRestored(input)
+		}
+		fallback := func(reason error) (string, error) {
+			// Even when new detection is at capacity, keep already-known
+			// originals masked if this supported field can still be rewritten.
+			if knownMasked != input {
+				return knownMasked, nil
+			}
+			return input, reason
+		}
 		if len(input) > s.cfg.MaxTextBytes {
-			s.warn("oversized_text_forwarded_unchanged")
-			return input, errors.New("text capacity reached")
+			if knownMasked != input {
+				s.warn("oversized_text_detection_skipped")
+			} else {
+				s.warn("oversized_text_forwarded_unchanged")
+			}
+			return fallback(errors.New("text capacity reached"))
 		}
 		digest := sha256.Sum256([]byte(input))
 		if _, known := m.seen[digest]; !known {
 			// Count unique text rather than repeated history. The small digest
 			// set stores no text; reverse mappings stay in the core only.
 			if m.bytes+int64(len(input)) > s.cfg.MaxScopeBytes || len(m.seen) >= 32768 {
-				s.warn("scope_capacity_forwarded_unchanged")
-				return input, errors.New("scope capacity reached")
+				if knownMasked != input {
+					s.warn("scope_capacity_detection_skipped")
+				} else {
+					s.warn("scope_capacity_forwarded_unchanged")
+				}
+				return fallback(errors.New("scope capacity reached"))
 			}
 			m.bytes += int64(len(input))
 			m.seen[digest] = struct{}{}
 		}
-		result := m.core.ProcessBestEffort(input, nil)
+		result := m.core.ProcessBestEffort(knownMasked, nil)
 		for _, finding := range result.Findings {
 			if finding.Reason == "whole-text-coverage" {
+				if s.cfg.RestoreReplies {
+					if m.noRestore == nil {
+						m.noRestore = make(map[string]bool)
+					}
+					m.noRestore[result.Transformed] = true
+				}
 				s.warn("whole_text_masked_context_may_degrade")
 				break
 			}
 		}
 		if !result.Allowed {
-			return input, errors.New("masking unavailable")
+			return fallback(errors.New("masking unavailable"))
+		}
+		if s.cfg.RestoreReplies {
+			m.rememberReplyValues(result.Transformed)
+			// Compaction and sub-agent results may re-enter as user text
+			// without the context that originally identified a sensitive value.
+			// Exact known values must stay masked independently of detection.
+			return m.remaskRestored(result.Transformed), nil
 		}
 		return result.Transformed, nil
 	})
-	if report.ChangedParts > 0 {
+	replayReport := TransformReport{}
+	if s.cfg.RestoreReplies {
+		transformed, replayReport = TransformReplyHistory(s.cfg.Protocol, transformed, func(text string) (string, error) { return m.remaskRestored(text), nil })
+	}
+	if report.ChangedParts > 0 || replayReport.ChangedParts > 0 {
 		// A changed decoded body is sent as identity JSON: re-encoding would
 		// add a second compressor implementation for no masking benefit.
 		setBody(r, transformed)
@@ -510,12 +584,25 @@ func (s *Server) prepare(r *http.Request) {
 		}
 	}
 	s.mu.Lock()
-	s.status.TextParts += uint64(report.TextParts)
-	s.status.ChangedParts += uint64(report.ChangedParts)
+	s.status.TextParts += uint64(report.TextParts + replayReport.TextParts)
+	s.status.ChangedParts += uint64(report.ChangedParts + replayReport.ChangedParts)
 	s.mu.Unlock()
-	for _, code := range report.Warnings {
+	codes := append(report.Warnings, replayReport.Warnings...)
+	seenCodes := make(map[string]bool)
+	for _, code := range codes {
+		if s.cfg.RestoreReplies && code == WarnToolResultUnchanged {
+			code = WarnToolResultDetectionNotApplied
+		}
+		if seenCodes[code] {
+			continue
+		}
+		seenCodes[code] = true
 		s.warn(code)
 	}
+	if s.cfg.RestoreReplies {
+		scope = m
+	}
+	return
 }
 
 func setBody(r *http.Request, body []byte) {

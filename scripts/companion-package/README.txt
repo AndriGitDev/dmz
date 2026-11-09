@@ -9,8 +9,12 @@ qualification; compilation and synthetic fixtures do not establish them.
 
 DMZ attempts to mask selected identifiers in user messages. This basic build
 has limited name coverage. Instructions, files, attachments, tool inputs/results
-and other network paths are outside masking coverage. Detection can miss data;
-failures warn and continue and can send originals. Replies keep visible markers.
+and other network paths are outside general detection. Detection can miss data;
+failures warn and continue and can send originals. Known answer markers restore
+locally; unknown/stale and whole-message fallback markers remain visible.
+Supported user, assistant and tool-result text has exact known originals re-masked
+before forwarding, including sub-agent returns and local compaction summaries.
+Tool arguments are not restored.
 Your coding tool keeps its own on-disk history; DMZ does not rewrite it.
 
 Background flow (native Mac or Windows builds)
@@ -39,6 +43,8 @@ Already-open tools can need a restart after disconnect. DMZ retains a private
 recovery journal while connected and uses it after a crash. That journal can
 contain existing sensitive settings; never include it in a report. Value
 mappings remain in memory only. Their markers change after DMZ restarts.
+Start a fresh conversation after restart or mapping reset: old local history can
+contain restored originals that missing mappings cannot reliably protect.
 
 Keep DMZ open while using its routes. After Quit, newly opened tools connect
 directly without DMZ masking. This build does not start at login: open it again

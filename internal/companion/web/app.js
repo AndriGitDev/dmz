@@ -29,7 +29,7 @@ const strings = {
       "Uses your tool’s existing account sign-in unless you enter an API key. Account routing is still being verified.",
     "scope-title": "Text masking, with limits.",
     scope:
-      "Files, attachments and tool results are unchanged. Detection can miss data; failures warn and continue. Replies can contain visible markers.",
+      "Basic detection has limited name/address coverage. Known answer markers restore locally. Known originals are re-masked in text history and tool results; tools and files are not generally scanned. Failures warn and continue. Unknown markers can remain visible.",
     start: "Start with DMZ →",
     "terminal-hint":
       "Opens your terminal tool. It may ask you to confirm trust in the project folder. DMZ leaves your settings files unchanged.",
@@ -52,7 +52,7 @@ const strings = {
     stop: "Stop session",
     requests: "requests",
     masked: "text parts masked",
-    toolsUnchanged: "Tool results passed unchanged in {count} requests.",
+    toolsUnchanged: "Tool results outside general detection in {count} requests; known restored values are re-masked.",
     useEnvironment: "Use the API key available to DMZ (API billing)",
     keyEnv:
       "An API key is available in DMZ’s environment. Select the checkbox to use it, or leave it unselected to keep your account sign-in.",
@@ -116,7 +116,7 @@ const strings = {
       "Notar núverandi innskráningu tólsins nema þú sláir inn API-lykil. Innskráningarleiðin er enn í prófun.",
     "scope-title": "Textaskilaboð, með takmörkunum.",
     scope:
-      "Skrár, viðhengi og niðurstöður tóla eru óbreytt. Greining getur misst af gögnum; bilanir vara við og halda áfram. Svör geta innihaldið sýnileg merki.",
+      "Grunngreining hefur takmarkaða þekju nafna og heimilisfanga. Þekkt merki í svörum eru afkóðuð staðbundið. Þekkt upprunagildi eru falin aftur í textasögu og niðurstöðum tóla; tól og skrár eru ekki almennt skönnuð. Bilanir vara við og halda áfram. Óþekkt merki geta verið sýnileg.",
     start: "Ræsa með DMZ →",
     "terminal-hint":
       "Opnar terminal-útgáfu tólsins. Tólið gæti beðið þig um að staðfesta traust á verkefnamöppunni. DMZ breytir ekki stillingaskrám þínum.",
@@ -139,7 +139,7 @@ const strings = {
     stop: "Stöðva lotu",
     requests: "beiðnir",
     masked: "textahlutar faldir",
-    toolsUnchanged: "Niðurstöður tóla óbreyttar í {count} beiðnum.",
+    toolsUnchanged: "Niðurstöður tóla utan almennrar greiningar í {count} beiðnum; þekkt afkóðuð gildi eru falin aftur.",
     useEnvironment: "Nota API-lykil úr umhverfi DMZ (API-gjöld)",
     keyEnv:
       "API-lykill er til staðar í umhverfi DMZ. Veldu reitinn til að nota hann; annars er núverandi innskráning notuð.",
@@ -203,7 +203,7 @@ Object.assign(strings.en, {
   backgroundIntro:
     "DMZ runs in the background. Open your coding tool normally; supported text passes through your local connection.",
   backgroundSimple:
-    "No DMZ cloud service or conversation analytics. Mappings stay in memory until DMZ stops. Codex chats currently share a connection scope.",
+    "No DMZ cloud service or conversation analytics. Mappings stay in memory until DMZ stops. Codex chats share a connection scope. Start a fresh conversation after DMZ restarts or mappings reset; older history may contain restored originals.",
   backgroundSetup: "Connections",
   backgroundHint:
     "Installed tools are connected automatically when their settings are compatible. If a tool is already open, restart it once to load the route. Detection alone does not establish masking.",
@@ -250,7 +250,7 @@ Object.assign(strings.is, {
   backgroundIntro:
     "DMZ keyrir í bakgrunni. Opnaðu kóðunartólið eins og venjulega; studdur texti fer um staðbundnu tenginguna.",
   backgroundSimple:
-    "Engin skýjaþjónusta eða samtalsgreining frá DMZ. Varpanir eru í minni þar til DMZ lokast. Codex-samtöl deila nú sama tengingarsviði.",
+    "Engin skýjaþjónusta eða samtalsgreining frá DMZ. Varpanir eru í minni þar til DMZ lokast. Codex-samtöl deila tengingarsviði. Byrjaðu nýtt samtal eftir endurræsingu DMZ eða núllstillingu varpana; eldri saga gæti innihaldið afkóðuð upprunagildi.",
   backgroundSetup: "Tengingar",
   backgroundHint:
     "Uppsett tól eru tengd sjálfkrafa þegar stillingar þeirra passa. Ef tólið er þegar opið skaltu endurræsa það einu sinni. Það eitt að tól finnist staðfestir ekki að texti sé falinn.",
@@ -425,7 +425,7 @@ function renderSessions() {
         "session-stats",
       ),
     );
-    const toolsUnchanged = session.warnings?.tool_result_unchanged || 0;
+    const toolsUnchanged = (session.warnings?.tool_result_unchanged || 0) + (session.warnings?.tool_result_detection_not_applied || 0);
     if (toolsUnchanged)
       el.append(
         text(
@@ -439,6 +439,7 @@ function renderSessions() {
         ![
           "instructions_unchanged",
           "tool_result_unchanged",
+          "tool_result_detection_not_applied",
           "no_user_text",
         ].includes(k),
     );
@@ -514,6 +515,7 @@ function renderBackground() {
         ![
           "instructions_unchanged",
           "tool_result_unchanged",
+          "tool_result_detection_not_applied",
           "no_user_text",
           "attachment_unchanged",
           "mapping_evicted_history_may_degrade",

@@ -53,7 +53,7 @@ function Call-Dmz([string]$Path,[string]$Method='GET',$Payload=$null){
 }
 $menu=New-Object System.Windows.Forms.ContextMenuStrip
 $title=$menu.Items.Add('DMZ - text masking');$title.Enabled=$false
-$scope=$menu.Items.Add('User text only; files and tool results unchanged');$scope.Enabled=$false
+$scope=$menu.Items.Add('Basic text masking; tool arguments unchanged');$scope.Enabled=$false
 $codex=$menu.Items.Add('Codex: checking');$codex.Enabled=$false
 $claude=$menu.Items.Add('Claude Code: checking');$claude.Enabled=$false
 [void]$menu.Items.Add('-')

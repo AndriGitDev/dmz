@@ -54,7 +54,7 @@ vendor desktop-app routing is not qualified.
 
 Only selected user text is masked. Instructions, tool inputs/results, files,
 attachments and other network paths remain outside coverage. Misses and
-processing failures can forward originals; replies retain markers. The basic
+processing failures can forward originals; unknown reply markers remain visible. The basic
 detector and its existing recall gates are unchanged.
 
 ## Background implementation update
@@ -92,6 +92,16 @@ configured route from confirmed model traffic. A different shell config home or
 settings override can bypass it. Keep DMZ open and reopen it after login; this
 build has no login item. Quit restores routes, so newly opened tools then connect
 directly without DMZ masking.
+
+Known markers now restore in supported assistant answer text before the native
+client displays it. Exact known original values are re-masked in supported user,
+assistant and tool-result text on later requests, including sub-agent returns and
+local compaction summaries. Whole-message fallback markers remain masked.
+Signed thinking, tool arguments and opaque state remain unchanged. Tool results
+are not generally scanned. The client receives originals locally and may store them; this
+is not an isolated extension-origin display. Start a fresh conversation after
+reset/restart because missing maps and compacted history can defeat replay
+protection. Name/address detector parity remains a separate basic-profile gap.
 
 The real installed Codex 0.166.0 and Claude Code 2.1.318 pass synthetic background
 fixtures while launched independently, with no DMZ terminal/folder/window calls.

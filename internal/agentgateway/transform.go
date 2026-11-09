@@ -56,11 +56,12 @@ const (
 
 	// Coverage codes: the request was valid, but some content is outside
 	// the masking scope and is forwarded unchanged.
-	WarnNoUserText                  = "no_user_text"
-	WarnAttachmentUnchanged         = "attachment_unchanged"
-	WarnToolResultUnchanged         = "tool_result_unchanged"
-	WarnInstructionsUnchanged       = "instructions_unchanged"
-	WarnUnsupportedContentUnchanged = "unsupported_content_unchanged"
+	WarnNoUserText                    = "no_user_text"
+	WarnAttachmentUnchanged           = "attachment_unchanged"
+	WarnToolResultUnchanged           = "tool_result_unchanged"
+	WarnToolResultDetectionNotApplied = "tool_result_detection_not_applied"
+	WarnInstructionsUnchanged         = "instructions_unchanged"
+	WarnUnsupportedContentUnchanged   = "unsupported_content_unchanged"
 )
 
 // IsFailOpenWarning reports whether code means that Transform returned the

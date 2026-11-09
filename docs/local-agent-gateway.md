@@ -48,7 +48,35 @@ The adapter transforms only string values at explicit supported locations:
 
 These locations can contain client-generated user messages as well as typed text. The adapter cannot infer human authorship from a role field alone.
 
-Instructions, system/developer messages, tool definitions, tool arguments, tool results, assistant messages, metadata, images, documents, and other attachments are forwarded unchanged. Signatures, encrypted reasoning, item IDs and bytes outside changed strings are preserved. Responses retain markers; there is no automatic display or tool-input restoration. A filename masked in a user message can therefore lead to an unusable tool argument.
+Instructions, system/developer messages, tool definitions, tool arguments, metadata, images, documents and other attachments are forwarded unchanged. Signatures, encrypted reasoning, item IDs and bytes outside changed strings are preserved. Exact original values known in the live mapping scope are re-masked in supported user, assistant and tool-result text. This does not run general detection on assistant or tool text. Tool arguments are not restored, so a filename masked in a user message can lead to an unusable tool argument.
+
+## Local answer restoration
+
+The app, launcher and service restore exact known markers in supported assistant
+answer text, including JSON and streamed Responses/Messages replies. Whole-message
+fallbacks remain masked because they can hold arbitrary content. Split
+markers are held briefly and restored when complete. Unknown, edited, truncated
+or stale markers stay visible. Reasoning, signatures, encrypted state, tool
+calls/arguments, refusals, metadata and errors are not restored.
+
+Unlike the extension's isolated display, the native client receives the restored
+answer and may save it in local history. Before a supported subsequent request,
+DMZ re-masks exact known originals in supported user, assistant and tool-result
+text. Sub-agent returns and local compaction summaries can use user-text fields,
+so these also receive exact-value protection independently of detection context.
+Original user
+history can re-establish those values after a reset, but missing/compacted history
+cannot recreate lost mappings, including previously compacted summaries and
+sub-agent outputs. Start a fresh conversation after a DMZ restart or
+mapping reset. Do not assume arbitrary resumed history or other network routes
+are protected. Parsing and capacity failures still warn and continue.
+
+Restoration is bounded to four concurrent replies, 8 MiB input frames/queues and
+bounded output expansion. Unsupported content/encoding, malformed data and
+limits warn and leave some or all markers visible. Headers describing the old
+response bytes are removed when restoration is enabled. Native tool input is
+deliberately unchanged. This does not add the trained name scanner or address
+vocabulary; the basic profile's name/address misses remain separate.
 
 Tool outputs commonly contain file contents. They can reintroduce an identifier that was masked in an earlier prompt. This prototype does not protect an entire coding session or all repository context.
 

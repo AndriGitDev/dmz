@@ -15,6 +15,7 @@ cd "$root_dir"
 "$go_bin" test -race ./internal/agentgateway ./internal/companion/... ./cmd/dmz ./packages/detect ./packages/surrogates > "$artifact_dir/go-race.txt" 2>&1
 "$go_bin" vet ./... > "$artifact_dir/go-vet.txt" 2>&1
 "$go_bin" test ./internal/agentgateway -run '^$' -fuzz FuzzTransform -fuzztime 10s -parallel 4 > "$artifact_dir/go-fuzz.txt" 2>&1
+"$go_bin" test ./internal/agentgateway -run '^$' -fuzz FuzzRestoreReply -fuzztime 10s -fuzzminimizetime 2s -parallel 4 > "$artifact_dir/go-reply-fuzz.txt" 2>&1
 "$go_bin" test ./internal/companion/routing -run '^$' -fuzz FuzzCodexRoutingText -fuzztime 10s -parallel 4 > "$artifact_dir/go-routing-fuzz.txt" 2>&1
 codex_config_status=3
 codex_test_bin="$(command -v codex || true)"
@@ -54,6 +55,8 @@ background_status=0
 python3 -I scripts/agent-background-smoke.py --testhost "$artifact_dir/tools/background-testhost" --scenario-timeout 60 > "$artifact_dir/background-synthetic.json" || background_status=$?
 background_env_status=0
 python3 -I scripts/agent-background-smoke.py --testhost "$artifact_dir/tools/background-testhost" --clients codex --no-roundtrip --codex-auth openai_env --scenario-timeout 60 > "$artifact_dir/background-env-synthetic.json" || background_env_status=$?
+restoration_status=0
+python3 -I scripts/agent-restoration-smoke.py --dmz "$artifact_dir/dmz" --scenarios commentary,resume,subagent-probe,compaction-probe --scenario-timeout 90 > "$artifact_dir/restoration-synthetic.json" || restoration_status=$?
 ui_status=3
 if [[ -n "${DMZ_TEST_PLAYWRIGHT:-}" ]]; then
   ui_status=0
@@ -62,7 +65,7 @@ else
   printf '%s\n' '{"status":"not_run","reason":"operator_supplied_playwright_required"}' > "$artifact_dir/companion-browser.json"
 fi
 overall_status=0
-for check_status in "$codex_config_status" "$smoke_status" "$manual_status" "$companion_status" "$background_status" "$background_env_status" "$ui_status"; do
+for check_status in "$codex_config_status" "$smoke_status" "$manual_status" "$companion_status" "$background_status" "$background_env_status" "$restoration_status" "$ui_status"; do
   if [[ "$check_status" -ne 0 && "$check_status" -ne 3 ]]; then overall_status=1; break; fi
   if [[ "$check_status" -eq 3 ]]; then overall_status=3; fi
 done
@@ -90,6 +93,7 @@ paths = sorted([*root.glob('cmd/dmz/*.go'), *root.glob('internal/agentgateway/*.
                 *[p for p in (root / 'scripts/companion-package').glob('*') if p.is_file()], root / 'docs/local-companion.md',
                 *root.glob('docs/local-agent-*.md'),root / '.github/workflows/prototype.yml'])
 paths += [root / 'docs/background-agent-integration.md',
+          *root.glob('packages/surrogates/*.go'), *root.glob('packages/detect/*.go'),
           *[p for p in (root / 'native/macos').glob('*') if p.is_file()]]
 source = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
 outputs = {str(p.relative_to(artifacts)): hashlib.sha256(p.read_bytes()).hexdigest() for p in artifacts.rglob('*') if p.is_file() and p.name != 'manifest.json'}

@@ -453,7 +453,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   _statusLine = [[NSMenuItem alloc] initWithTitle:@"DMZ is starting…" action:NULL keyEquivalent:@""];
   _statusLine.enabled = NO;
   [_menu addItem:_statusLine];
-  NSMenuItem *scope = [[NSMenuItem alloc] initWithTitle:@"User text only; files and tool results unchanged" action:NULL keyEquivalent:@""];
+  NSMenuItem *scope = [[NSMenuItem alloc] initWithTitle:@"Basic text masking; tool arguments unchanged" action:NULL keyEquivalent:@""];
   scope.enabled = NO; [_menu addItem:scope];
   NSMenuItem *running = [[NSMenuItem alloc] initWithTitle:@"Keep DMZ open; reopen it after login" action:NULL keyEquivalent:@""];
   running.enabled = NO; [_menu addItem:running];

@@ -172,7 +172,7 @@ func (a *App) Start(req StartRequest) (SessionView, error) {
 		protocol = agentgateway.Messages
 		upstream = "https://api.anthropic.com/v1"
 	}
-	cfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: gateToken}
+	cfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: gateToken, RestoreReplies: true}
 	if req.Auth == "api" {
 		cfg.LocalAuth = agentgateway.AuthBearer
 		cfg.ProviderKey = key

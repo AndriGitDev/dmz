@@ -236,7 +236,7 @@ func (m *backgroundManager) connectLocked(r *backgroundRoute) {
 		protocol = agentgateway.Messages
 		upstream = "https://api.anthropic.com/v1"
 	}
-	gatewayCfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: token, NativeOpenAIAuth: r.view.Client == "codex"}
+	gatewayCfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: token, NativeOpenAIAuth: r.view.Client == "codex", RestoreReplies: true}
 	if r.view.Client == "claude" {
 		gatewayCfg.SessionHeader = "X-Claude-Code-Session-Id"
 	}

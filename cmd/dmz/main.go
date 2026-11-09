@@ -29,7 +29,7 @@ import (
 	"github.com/AndriGitDev/dmz/internal/companion"
 )
 
-const scopeNotice = "experimental BASIC profile; selected user-message text only. Instructions, tool results, attachments, client history and other network routes are outside masking coverage. Responses retain markers."
+const scopeNotice = "experimental BASIC profile with limited name/address coverage. Selected user text is masked; known answer markers restore locally and known originals are re-masked in supported user/assistant/tool-result text. Tool arguments, instructions, attachments and other network routes are outside coverage. Tool results are not generally scanned. Client history on disk is unchanged."
 
 func main() {
 	args := os.Args[1:]
@@ -170,6 +170,9 @@ func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer
 }
 
 func runInternal(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer, external *connectorSession) int {
+	terminalErrOut := errOut
+	var streamMu sync.Mutex
+	errOut = lockedWriter{mu: &streamMu, out: errOut}
 	f := flag.NewFlagSet("run", flag.ContinueOnError)
 	f.SetOutput(errOut)
 	var opts options
@@ -250,12 +253,12 @@ func runInternal(ctx context.Context, args []string, in io.Reader, out, errOut i
 		}
 		seenWarnings[code] = true
 		switch code {
-		case agentgateway.WarnInstructionsUnchanged, agentgateway.WarnToolResultUnchanged, agentgateway.WarnNoUserText:
+		case agentgateway.WarnInstructionsUnchanged, agentgateway.WarnToolResultUnchanged, agentgateway.WarnToolResultDetectionNotApplied, agentgateway.WarnNoUserText:
 			return
 		}
 		fmt.Fprintln(errOut, "dmz warning:", code)
 	}
-	cfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: token, AllowLoopbackUpstream: opts.allowLoopback, Warning: warning}
+	cfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: token, AllowLoopbackUpstream: opts.allowLoopback, Warning: warning, RestoreReplies: true}
 	if client == "claude" {
 		cfg.SessionHeader = "X-Claude-Code-Session-Id"
 	}
@@ -338,7 +341,7 @@ func runInternal(ctx context.Context, args []string, in io.Reader, out, errOut i
 		bin = client
 	}
 	command := exec.CommandContext(ctx, bin, clientArgs...)
-	cleanupChild := configureChild(command, in, out, errOut)
+	cleanupChild := configureChild(command, in, out, terminalErrOut)
 	command.Env = env
 	if external != nil {
 		command.Dir = external.Project
@@ -347,7 +350,7 @@ func runInternal(ctx context.Context, args []string, in io.Reader, out, errOut i
 	command.Stdout = out
 	command.Stderr = lockedWriter{mu: &outputMu, out: errOut}
 	fmt.Fprintln(errOut, "dmz:", scopeNotice)
-	fmt.Fprintln(errOut, "dmz: local adapter active for this launch; mappings are discarded on exit. No automatic restoration.")
+	fmt.Fprintln(errOut, "dmz: local adapter active for this launch; known answer markers restore locally. Mappings are discarded on exit; use a fresh conversation after reset or restart.")
 	err = command.Run()
 	cleanupChild()
 	var snapshot agentgateway.Status
@@ -466,7 +469,7 @@ func serve(ctx context.Context, args []string, errOut io.Writer) error {
 		}
 	}
 	var warningMu sync.Mutex
-	cfg := agentgateway.Config{Protocol: p, Upstream: *upstream, Token: os.Getenv("DMZ_LOCAL_TOKEN"), AllowLoopbackUpstream: *fixture, Warning: func(code string) {
+	cfg := agentgateway.Config{Protocol: p, Upstream: *upstream, Token: os.Getenv("DMZ_LOCAL_TOKEN"), AllowLoopbackUpstream: *fixture, RestoreReplies: true, Warning: func(code string) {
 		warningMu.Lock()
 		defer warningMu.Unlock()
 		fmt.Fprintln(errOut, "dmz warning:", code)

@@ -712,8 +712,10 @@ def run_scenario(args, client, client_bin, scenario, deadline):
                 fails.append("launcher_missing_session_identity")
         if not result["client_output"]["final_answer_delivered"]:
             fails.append("final_answer_not_delivered")
-        if result["client_output"]["original_email_in_output"]:
-            fails.append("original_email_in_client_output")
+        if not result["client_output"]["original_email_in_output"]:
+            fails.append("local_answer_not_restored")
+        if result["client_output"]["marker_returned_unrestored"]:
+            fails.append("known_reply_marker_left_unrestored")
         if result["client_output"]["fake_key_in_output"] or result["client_output"]["hex64_token_like_in_output"]:
             fails.append("credential_like_value_in_client_output")
         if m is None:

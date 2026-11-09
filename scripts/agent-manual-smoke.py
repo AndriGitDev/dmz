@@ -385,8 +385,10 @@ def evaluate(client, scenario, provider, rc, out, err, timed_out, token, sink):
     co = r["client_output"]
     if not co["final_answer_delivered"]:
         f.append("final_answer_not_delivered_via_sse")
-    if co["original_email_in_output"]:
-        f.append("original_email_in_client_output")
+    if not co["original_email_in_output"]:
+        f.append("local_answer_not_restored")
+    if co["marker_returned_unrestored"]:
+        f.append("known_reply_marker_left_unrestored")
     if co["local_token_in_output"] or co["fake_key_in_output"] or co["hex64_token_like_in_output"]:
         f.append("credential_like_value_in_client_output")
     if scenario == "roundtrip":

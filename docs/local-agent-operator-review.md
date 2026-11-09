@@ -88,14 +88,19 @@ cannot reuse its Anthropic subscription on that route. See the
 ## Coverage the operator must understand
 
 Only selected user-message text is masked with the basic detector. Instructions,
-tool inputs/results, repository files returned by tools, attachments, assistant
-text and other network paths remain outside coverage. Misses and processing or
+tool arguments, repository files, attachments and other network paths remain
+outside coverage. Tool results and assistant text are not generally scanned.
+Exact known originals are re-masked in their supported text fields. Misses and processing or
 capacity failures warn and continue, and can forward original values. Native
-client histories can retain originals. Replies keep markers; there is no local
-display or tool-input restoration. Masked file names can break operations.
+client histories can retain originals. Known answer markers restore locally,
+and exact known originals are re-masked in supported user, assistant and tool-result
+text. Unknown and whole-message fallback markers stay visible. Tool inputs are not restored; masked file names can break
+operations. This basic build still lacks the trained scanner/address vocabulary.
 
 Mappings are memory-only and disappear on restart, reset or eviction. Codex
-clients currently share one connection scope. Old markers in resumed history can
+clients currently share one connection scope. Start a fresh conversation after
+DMZ restarts or mappings reset: older history can contain restored originals
+that lost mappings cannot reliably re-mask. Old markers in resumed history can
 be unresolved or cause conservative whole-field masking. Scope capacity can make
 later requests pass unchanged; start a fresh conversation and reconnect after
 that warning. Other routes such as MCP, shell networking, telemetry and remote
