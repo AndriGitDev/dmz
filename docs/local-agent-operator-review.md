@@ -7,7 +7,7 @@ Work began on 9 November 2026 at 11:21 UTC for the operator review window ending
 ## What is implemented
 
 - Local browser control window with Icelandic/English UI, installed-tool discovery, folder selection, optional API key, Start/Stop/Quit and aggregate session status. Local credentials and routing files are handled internally.
-- Separate per-launch gateway ownership; one-use private tickets, server-side connector claims, short-lived browser bootstrap, private app reopening descriptor, heartbeat expiry and terminal-hangup cleanup.
+- Separate per-launch gateway ownership; one-use private tickets, server-side connector claims, short-lived browser bootstrap, private app reopening descriptor with listener identity verification and stale-port recovery, heartbeat expiry and terminal-hangup cleanup.
 - A private universal macOS 13+ app (Intel and Apple Silicon), Windows amd64 and Linux amd64 app archives with notices and checksums. They are unsigned and unpublished, with native macOS/Windows behavior still unqualified.
 
 - Native Go reuse of the existing basic detector and best-effort marker core.
@@ -30,12 +30,12 @@ The [companion guide](local-companion.md) documents the intended five/six-action
 | Claude Code 2.1.318 on Linux | Basic and Read-tool synthetic roundtrips pass through both launcher and manual API-key service modes |
 | Manual service credentials | Fake provider receives its own fake key; local dmz token does not reach it. Status/reset/auth probes pass |
 | Desktop applications | Configuration fragments generated and parsed; native applications not run. Desktop support is unqualified |
-| macOS first operator target | One universal app archive is built and independently parsed for both CPUs. Both embedded slices declare macOS 13 minimum. Apple Silicon and Intel CI were run; a native folder-fixture test failed before packaging. The fixture now creates its own real directory, with native recheck pending. Finder, Gatekeeper and signing remain unqualified |
+| macOS first operator target | One universal app archive is built and independently parsed for both CPUs. Both embedded slices declare macOS 13 minimum. Apple Silicon and Intel CI both pass at revision `2ef868b`, including native race/vet checks and building/executing the universal app. The earlier native folder-fixture failure was corrected. The final accessibility/recovery revision is queued for the same checks. Finder, Gatekeeper and signing remain unqualified |
 | Windows AMD64 | Gateway and GUI executable cross-compile; native runtime/desktop qualification not performed |
 | Companion controller through actual CLI binaries | 14 scenario runs after the combined tool/launch control: 13 pass, with only the Codex default-sandbox roundtrip incomplete. Claude's new-folder fixture has seven simulated actions including its own trust prompt. This excludes download and OS installation prompts |
 | Interactive client TUIs in a Linux pseudo-terminal | Both clients render final answers in two consecutive sessions. Claude's temporary-key prompt and stored approvals are eliminated; new-folder trust remains a separate required native prompt |
 | Existing-sign-in fixtures | Both clients complete using synthetic native auth files in private client directories; no real account, refresh or actual ChatGPT backend validation |
-| Companion browser UI | 34 local headless Chromium checks pass, including one-use bootstrap, URL cleanup, language, validation, explicit API-environment choice, layout, dark mode, blocked browser storage, failed-Quit recovery and Quit; synthetic tool discovery and no external browser requests observed |
+| Companion browser UI | 38 local headless Chromium checks pass, including one-use bootstrap, URL cleanup, language, validation, explicit API-environment choice, layout, dark mode, blocked browser storage, failed-Quit recovery, stable Stop-button focus, launch locking during discovery updates and Quit; synthetic tool discovery and no external browser requests observed |
 | Production Linux terminal helper under Xvfb | 6/6 cases pass: basic request, app Stop and actual window-manager close protocol for both installed clients. Paths include spaces, quotes, Unicode and shell characters; no owned processes or launch files remain |
 | Native Linux browser opener + UI + xterm | Both clients pass through xdg-open and headed Chromium on the private virtual display. Closing and reopening the browser preserves the existing host and counts; each open/reopen driver reports 7 checks. Print-mode client arguments are supplied only by the fixture |
 | Compressed requests | Bounded gzip/x-gzip and zstd decoding passes gateway tests. Real Codex builtin-provider diagnostic sends a 2 MiB-window zstd frame and completes masked; the actual custom-provider fixture sends identity JSON and remains incomplete for compressed-route evidence |
@@ -43,7 +43,7 @@ The [companion guide](local-companion.md) documents the intended five/six-action
 | Go checks | Full module tests, gateway/launcher/core race checks and vet pass locally |
 | JSON transformer fuzzing | A bounded 30-second development run passes; this is not independent validation |
 | Existing detector gates | Selected, challenge and exploratory synthetic outputs match the existing baselines byte for byte; per-type recall floors are retained |
-| CI | Public draft PR #27 has run the Linux/core/extension checks successfully. Both Mac jobs exposed a fabricated-folder fixture that needed a real native temp directory; its fix is queued for native recheck. No PR binaries are uploaded |
+| CI | Public draft PR #27 has passed all six jobs at `2ef868b`, including both Mac architectures, Linux/core and browser/extension gates. Final focus/recovery changes will rerun these checks. No PR binaries are uploaded |
 
 The fake upstreams use synthetic keys, email addresses and files. Real installed CLI binaries accept their SSE messages and complete the measured loops. This proves local request-shape and forwarding compatibility, not actual provider, account, model or subscription behavior. A refusing proxy assists fixture isolation; it is not a system-wide network firewall.
 
@@ -99,3 +99,9 @@ The owner selected **macOS** for the first download/install review. Use the univ
 4. Design controlled local restoration before masking file/tool content. Preserve approvals; avoid automatic restoration into shell networking, remote MCP or web requests. Require a read/edit/test acceptance flow, not just a masked prompt fixture.
 5. Adapt the trained scanner only as a separate runtime/asset-rights/parity milestone. Keep existing detector quality gates and honest profile distinctions.
 6. Follow the existing repository history, asset rights, source-availability and release checklist before public distribution. This implementation does not change repository visibility or publish binaries.
+
+## Final review fixes
+
+Opus’s last audit found no new operator-review blocker, and identified two focus issues: polling rebuilt the session list and discovery updates could re-enable a pending launch. The window now retains Stop buttons across counter updates, announces only the active count, and defers tool-card rebuilding while a launch is pending. Browser regression checks exercise both cases.
+
+Reopening verifies an HMAC challenge response before sending the cached control credential. Non-DMZ listeners on a reused port cause the stale descriptor to be removed; verified busy apps retain their descriptor. If a listener is unresponsive and the recorded app PID has exited, reopening also recovers. PID reuse or an unknown live process is treated conservatively as busy. Quit the old prototype before replacing it with this revision because older hosts do not implement the identity handshake.

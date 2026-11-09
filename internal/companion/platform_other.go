@@ -18,3 +18,9 @@ func applyPlatformProcAttr(cmd *exec.Cmd, _ platformCommand) {
 // EnsureConsole is a no-op outside Windows: the terminal emulator provides
 // the controlling terminal.
 func EnsureConsole() error { return nil }
+
+// Unknown/permission-denied processes are treated as live, avoiding replacement
+// of an app that may still own active sessions.
+func instanceProcessAlive(pid int) bool {
+	return syscall.Kill(pid, 0) != syscall.ESRCH
+}

@@ -196,6 +196,74 @@ try {
       lastStart.api_key === "",
     "environment_key_opt_in_failed",
   );
+  // Polling must keep the actual Stop button and its keyboard focus, even
+  // when counters change. These are synthetic UI states, not client evidence.
+  let syntheticRequests = 1;
+  let changedClients = false;
+  await page.route("**/api/state", async (route) => {
+    const response = await route.fetch();
+    const value = await response.json();
+    value.sessions = [
+      {
+        id: "synthetic-focus-session",
+        client: "codex",
+        state: "running",
+        requests: syntheticRequests,
+        changed_parts: 1,
+        warnings: {},
+      },
+    ];
+    if (changedClients) value.clients[0].api_key_available = false;
+    await route.fulfill({ response, json: value });
+  });
+  const stop = page.locator('[data-session-stop="synthetic-focus-session"]');
+  await stop.waitFor();
+  await stop.focus();
+  const originalStop = await stop.elementHandle();
+  syntheticRequests = 2;
+  await page.waitForFunction(() =>
+    document.querySelector(".session-stats")?.textContent.startsWith("2 "),
+  );
+  check(
+    await originalStop.evaluate(
+      (el) => el.isConnected && document.activeElement === el,
+    ),
+    "session_poll_lost_keyboard_focus",
+  );
+  check(
+    !(await page.locator("#sessions").getAttribute("aria-live")),
+    "whole_session_list_is_live_region",
+  );
+  let releaseStart;
+  let startHeld;
+  const held = new Promise((resolve) => {
+    startHeld = resolve;
+  });
+  await page.route("**/api/start", async (route) => {
+    startHeld();
+    await new Promise((resolve) => {
+      releaseStart = resolve;
+    });
+    await route.fulfill({ json: { error: "choose_project" } });
+  });
+  await page.locator("#start-codex").click();
+  await held;
+  changedClients = true;
+  await delay(1800);
+  check(
+    (await page.locator(".tool-start:not(:disabled)").count()) === 0,
+    "client_poll_reenabled_pending_launch",
+  );
+  releaseStart();
+  await page.waitForFunction(
+    () => !document.querySelector("#start-codex").disabled,
+  );
+  check(
+    !(await page.locator("#use-environment-codex").count()),
+    "deferred_client_update_missing",
+  );
+  await page.unroute("**/api/start");
+  await page.unroute("**/api/state");
   await page.reload();
   await page.locator("#clients .tool-card").first().waitFor();
   check(

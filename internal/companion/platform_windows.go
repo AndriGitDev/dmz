@@ -71,3 +71,17 @@ func EnsureConsole() error {
 	os.Stdin, os.Stdout, os.Stderr = in, out, out
 	return nil
 }
+
+func instanceProcessAlive(pid int) bool {
+	// PROCESS_QUERY_LIMITED_INFORMATION works for the current user's GUI host.
+	handle, err := syscall.OpenProcess(0x1000, false, uint32(pid))
+	if err != nil {
+		return err != syscall.Errno(87)
+	} // ERROR_INVALID_PARAMETER: absent PID
+	defer syscall.CloseHandle(handle)
+	var code uint32
+	if syscall.GetExitCodeProcess(handle, &code) != nil {
+		return true
+	}
+	return code == 259 // STILL_ACTIVE
+}

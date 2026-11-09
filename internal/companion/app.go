@@ -54,6 +54,21 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "not_allowed", 403)
 		return
 	}
+	if r.URL.Path == "/_dmz/identity" {
+		if r.Method != "POST" || r.Header.Get("Origin") != "" {
+			http.Error(w, "not_allowed", 403)
+			return
+		}
+		var req struct {
+			Challenge string `json:"challenge"`
+		}
+		if decode(r, &req) != nil || len(req.Challenge) != 64 {
+			http.Error(w, "invalid_request", 400)
+			return
+		}
+		writeJSON(w, map[string]string{"proof": instanceProof(a.token, req.Challenge)})
+		return
+	}
 	if a.sessionControl(w, r) {
 		return
 	}
@@ -187,7 +202,7 @@ func (a *App) Serve(ctx context.Context, open bool, controlFile string) error {
 			}
 			return errors.New("control_file_unavailable")
 		}
-		err = json.NewEncoder(f).Encode(map[string]string{"origin": origin, "token": a.token})
+		err = json.NewEncoder(f).Encode(instanceDescriptor{Origin: origin, Token: a.token, PID: os.Getpid()})
 		f.Close()
 		if err != nil {
 			listener.Close()

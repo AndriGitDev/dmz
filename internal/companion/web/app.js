@@ -197,6 +197,9 @@ let token = storageRead("sessionStorage", "dmz.control") || "";
 const $ = (s) => document.querySelector(s);
 const t = (k) => strings[language][k] || strings.en[k] || k;
 let stopped = false;
+let starting = false;
+let clientsRendered = "";
+let sessionsRendered = "";
 async function api(path, body) {
   const response = await fetch("/api/" + path, {
     method: body === undefined ? "GET" : "POST",
@@ -227,6 +230,9 @@ function error(code) {
   $("#error").hidden = false;
 }
 function renderClients() {
+  if (starting) return;
+  clientsRendered = JSON.stringify([language, state.clients]);
+  const focused = document.activeElement?.id;
   const root = $("#clients");
   const pending = new Map(
     state.clients.map((client) => [
@@ -286,9 +292,20 @@ function renderClients() {
     card.append(button);
     root.append(card);
   }
+  if (focused) document.getElementById(focused)?.focus({ preventScroll: true });
 }
 function renderSessions() {
+  const signature = JSON.stringify([language, state.sessions]);
+  if (signature === sessionsRendered) return;
+  sessionsRendered = signature;
   const root = $("#sessions");
+  const focused = document.activeElement?.dataset.sessionStop;
+  const buttons = new Map(
+    Array.from(root.querySelectorAll("button[data-session-stop]"), (b) => [
+      b.dataset.sessionStop,
+      b,
+    ]),
+  );
   root.replaceChildren();
   $("#live-count").textContent = state.sessions.filter(
     (s) => s.state !== "stopped",
@@ -338,21 +355,29 @@ function renderSessions() {
     else if (!session.requests && session.state !== "stopped")
       el.append(text("p", t("noTraffic"), "hint"));
     if (session.state !== "stopped") {
-      const stop = text("button", t("stop"));
+      const previous = buttons.get(session.id);
+      const stop = previous || text("button", t("stop"));
+      stop.textContent = t("stop");
       stop.type = "button";
-      stop.addEventListener("click", async () => {
-        stop.disabled = true;
-        try {
-          await api("stop", { id: session.id });
-          await refresh();
-        } catch {
-          error("unavailable");
-        }
-      });
+      stop.dataset.sessionStop = session.id;
+      if (!previous)
+        stop.addEventListener("click", async () => {
+          stop.disabled = true;
+          try {
+            await api("stop", { id: session.id });
+            await refresh();
+          } catch {
+            stop.disabled = false;
+            error("unavailable");
+          }
+        });
       el.append(stop);
     }
     root.append(el);
   }
+  if (focused)
+    buttons.get(focused)?.isConnected &&
+      buttons.get(focused).focus({ preventScroll: true });
 }
 function translate() {
   document.documentElement.lang = language;
@@ -368,10 +393,9 @@ async function refresh() {
   try {
     const next = await api("state");
     if (stopped) return;
-    const changed =
-      JSON.stringify(next.clients) !== JSON.stringify(state.clients);
     state = next;
-    if (changed || !$("#clients .tool-card")) renderClients();
+    if (JSON.stringify([language, state.clients]) !== clientsRendered)
+      renderClients();
     renderSessions();
   } catch {
     if (!stopped) error("unavailable");
@@ -406,7 +430,8 @@ $("#start-form").addEventListener("submit", async (event) => {
   const client = state.clients.find(
     (c) => c.id === event.submitter?.value && c.available,
   );
-  if (!client || stopped) return;
+  if (!client || stopped || starting) return;
+  starting = true;
   $("#error").hidden = true;
   const button = event.submitter;
   document.querySelectorAll(".tool-start").forEach((e) => (e.disabled = true));
@@ -427,6 +452,9 @@ $("#start-form").addEventListener("submit", async (event) => {
   } catch {
     error("unavailable");
   } finally {
+    starting = false;
+    if (JSON.stringify([language, state.clients]) !== clientsRendered)
+      renderClients();
     for (const c of state.clients) {
       const b = $("#start-" + c.id);
       if (b) {

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -148,5 +150,84 @@ func TestSessionClaimCannotBeReplayedFromCopiedTicket(t *testing.T) {
 		if resp.StatusCode != want {
 			t.Fatalf("claim status %d, want %d", resp.StatusCode, want)
 		}
+	}
+}
+
+func TestReopenDoesNotTrustReusedPort(t *testing.T) {
+	for _, status := range []int{200, 403, 405, 503} {
+		t.Run(http.StatusText(status), func(t *testing.T) {
+			disclosed := false
+			local := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Header.Get("Authorization") != "" {
+					disclosed = true
+				}
+				w.WriteHeader(status)
+				io.WriteString(w, `{"proof":"forged","address":"http://127.0.0.1:1234/#open=forged"}`)
+			}))
+			defer local.Close()
+			name := filepath.Join(t.TempDir(), "instance.json")
+			body, _ := json.Marshal(instanceDescriptor{Origin: local.URL, Token: strings.Repeat("a", 64)})
+			os.WriteFile(name, body, 0600)
+			opened := false
+			ok, err := TryReopen(name, func(string) error { opened = true; return nil })
+			if ok || err != nil || opened || disclosed {
+				t.Fatal("untrusted listener received credential or opened window")
+			}
+			if _, err := os.Stat(name); !os.IsNotExist(err) {
+				t.Fatal("stale descriptor retained")
+			}
+		})
+	}
+}
+
+func TestIdentityRejectsBrowserOriginAndMalformedChallenge(t *testing.T) {
+	a, local := testApp(t, func(string, string, string) error { return nil }, http.NotFoundHandler())
+	for _, probe := range []struct {
+		body, origin string
+		status       int
+	}{
+		{`{"challenge":"short"}`, "", 400},
+		{`{"challenge":"` + strings.Repeat("a", 64) + `"}`, local.URL, 403},
+		{`{"challenge":"` + strings.Repeat("a", 64) + `"}`, "", 200},
+	} {
+		headers := map[string]string{}
+		if probe.origin != "" {
+			headers["Origin"] = probe.origin
+		}
+		response := appRequest(t, a, local, "POST", "/_dmz/identity", probe.body, headers)
+		if response.StatusCode != probe.status {
+			t.Fatal("unexpected identity status")
+		}
+		response.Body.Close()
+	}
+}
+
+func TestDeadInstanceWithUnresponsiveReusedPortRecovers(t *testing.T) {
+	// Use an owned, reaped child PID rather than assuming a large PID is absent.
+	child := exec.Command(os.Args[0], "-test.run=^$")
+	if err := child.Run(); err != nil {
+		t.Fatal("child fixture failed")
+	}
+	pid := child.Process.Pid
+	if instanceProcessAlive(pid) {
+		t.Skip("PID already reused")
+	}
+	local := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		io.Copy(io.Discard, r.Body)
+		select {
+		case <-r.Context().Done():
+		case <-time.After(2 * time.Second):
+		}
+	}))
+	defer local.Close()
+	name := filepath.Join(t.TempDir(), "instance.json")
+	body, _ := json.Marshal(instanceDescriptor{Origin: local.URL, Token: strings.Repeat("a", 64), PID: pid})
+	os.WriteFile(name, body, 0600)
+	ok, err := TryReopen(name, func(string) error { t.Fatal("unresponsive listener opened"); return nil })
+	if ok || err != nil {
+		t.Fatal("dead instance did not recover")
+	}
+	if _, err := os.Stat(name); !os.IsNotExist(err) {
+		t.Fatal("dead instance retained descriptor")
 	}
 }

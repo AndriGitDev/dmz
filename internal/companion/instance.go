@@ -3,6 +3,10 @@ package companion
 import (
 	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -19,6 +23,7 @@ import (
 type instanceDescriptor struct {
 	Origin string `json:"origin"`
 	Token  string `json:"token"`
+	PID    int    `json:"pid,omitempty"`
 }
 
 func DefaultInstanceFile() (string, error) {
@@ -65,14 +70,41 @@ func TryReopen(name string, open func(string) error) (bool, error) {
 		_ = os.Remove(name)
 		return false, nil
 	}
+	client := &http.Client{Timeout: time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("local_redirect_unsupported") }}
+	// Authenticate the listener before disclosing the cached control credential.
+	// A crashed app's port may now belong to a different local program.
+	challenge := make([]byte, 32)
+	if _, err := rand.Read(challenge); err != nil {
+		return false, errors.New("app_state_unavailable")
+	}
+	nonce := hex.EncodeToString(challenge)
+	probe, _ := http.NewRequest("POST", d.Origin+"/_dmz/identity", strings.NewReader(`{"challenge":"`+nonce+`"}`))
+	probe.Header.Set("Content-Type", "application/json")
+	proof, err := client.Do(probe)
+	if err != nil {
+		var network *net.OpError
+		if (errors.As(err, &network) && network.Op == "dial") || (d.PID > 0 && !instanceProcessAlive(d.PID)) {
+			removeOwnInstance(name, d.Token)
+			return false, nil
+		}
+		return false, errors.New("app_is_starting")
+	}
+	var identity struct {
+		Proof string `json:"proof"`
+	}
+	valid := proof.StatusCode == 200 && json.NewDecoder(io.LimitReader(proof.Body, 4096)).Decode(&identity) == nil && hmac.Equal([]byte(identity.Proof), []byte(instanceProof(d.Token, nonce)))
+	proof.Body.Close()
+	if !valid {
+		removeOwnInstance(name, d.Token)
+		return false, nil
+	}
 	r, _ := http.NewRequest("POST", d.Origin+"/api/window", bytes.NewReader([]byte("{}")))
 	r.Header.Set("Authorization", "Bearer "+d.Token)
 	r.Header.Set("Content-Type", "application/json")
-	client := &http.Client{Timeout: time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("local_redirect_unsupported") }}
 	response, err := client.Do(r)
 	if err != nil {
 		var network *net.OpError
-		if errors.As(err, &network) && network.Op == "dial" {
+		if (errors.As(err, &network) && network.Op == "dial") || (d.PID > 0 && !instanceProcessAlive(d.PID)) {
 			removeOwnInstance(name, d.Token)
 			return false, nil
 		}
@@ -129,4 +161,11 @@ func removeOwnInstance(name, token string) {
 	if json.Unmarshal(body, &d) == nil && d.Token == token {
 		_ = os.Remove(name)
 	}
+}
+
+// Domain separation prevents a proof from being useful as another credential.
+func instanceProof(token, challenge string) string {
+	mac := hmac.New(sha256.New, []byte(token))
+	mac.Write([]byte("dmz-companion-instance-v1:" + challenge))
+	return hex.EncodeToString(mac.Sum(nil))
 }
