@@ -4,6 +4,46 @@ on:
     branches: [main]
   pull_request:
 jobs:
+  agent-gateway:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go test -race ./internal/agentgateway ./internal/companion/... ./cmd/dmz
+      - run: go vet ./internal/agentgateway ./internal/companion/... ./cmd/dmz
+      - run: go test ./internal/agentgateway -run '^$' -fuzz FuzzTransform -fuzztime 10s -parallel 4
+      - run: go test ./internal/agentgateway -run '^$' -fuzz FuzzRestoreReply -fuzztime 10s -fuzzminimizetime 2s -parallel 4
+      - run: go test ./internal/companion/routing -run '^$' -fuzz FuzzCodexRoutingText -fuzztime 10s -parallel 4
+      - run: go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz" ./cmd/dmz
+      - name: Compile desktop host targets without claiming native qualification
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz-darwin-arm64" ./cmd/dmz
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/dmz-windows-amd64.exe" ./cmd/dmz
+  companion-macos:
+    name: Companion macOS native helpers (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Compile menu-bar host for both Mac CPUs
+        run: scripts/build-macos-menubar.sh "$RUNNER_TEMP/dmz-menubar-compile"
+      - run: go test -race ./internal/agentgateway ./internal/companion/... ./cmd/dmz ./scripts/companion-package
+      - run: go vet ./internal/agentgateway ./internal/companion/... ./cmd/dmz ./scripts/companion-package
+      - name: Build private archives and execute the universal binary on the native CPU
+        run: GO_BIN=go scripts/package-companion.sh "$RUNNER_TEMP/dmz-companion-packages"
+      - name: Compile native menu-bar prototype and verify CLI passthrough
+        run: |
+          scripts/build-macos-menubar.sh "$RUNNER_TEMP/dmz-menubar" "$RUNNER_TEMP/dmz-companion-packages/stage/DMZ-private-prototype-macos-universal/DMZ.app/Contents/MacOS/dmz-core"
+          "$RUNNER_TEMP/dmz-menubar/DMZ.app/Contents/MacOS/DMZ" version
+          "$RUNNER_TEMP/dmz-menubar/DMZ.app/Contents/MacOS/DMZ" help >/dev/null
   core:
     runs-on: ubuntu-latest
     steps:
@@ -12,6 +52,7 @@ jobs:
         with:
           go-version-file: go.mod
       - run: python3 scripts/check-naming.py
+      - run: python3 scripts/check-icon-resources.py
       - run: go test ./...
       - run: ./scripts/check-lexicon.sh
       - run: ./scripts/check-phone-metadata.sh
@@ -96,6 +137,10 @@ jobs:
         working-directory: apps/dmz
       - run: npx playwright install --with-deps chromium
         working-directory: apps/dmz
+      - name: Check local companion onboarding in Chromium with synthetic tool discovery
+        run: |
+          go build -trimpath -buildvcs=false -o "$RUNNER_TEMP/DMZ" ./cmd/dmz
+          node scripts/agent-companion-ui-smoke.mjs --dmz "$RUNNER_TEMP/DMZ" --playwright "$GITHUB_WORKSPACE/apps/dmz/node_modules/playwright"
       - run: node bench/holdout/editor/test-browser.mjs
       - run: npm run test:browser
         working-directory: apps/dmz
@@ -106,8 +151,49 @@ jobs:
       - run: npm run record:build
         working-directory: apps/dmz
       - uses: actions/upload-artifact@v6
+        if: github.event_name == 'push'
         with:
           name: dmz-chromium-prototype
           path: apps/dmz/.output/chrome-mv3
           if-no-files-found: error
           retention-days: 14
+
+  companion-macos-review-download:
+    name: Unsigned native Mac review download
+    if: github.event_name == 'pull_request' && github.event.pull_request.number == 27 && github.event.pull_request.head.repo.full_name == github.repository
+    needs: [agent-gateway, core, presidio-baseline, dmz-browser, companion-macos]
+    runs-on: macos-15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Verify the exact source used for the review binary
+        run: go test -race ./internal/agentgateway ./internal/companion/... ./cmd/dmz
+      - name: Build the reviewed unsigned menu-bar bundle
+        run: GO_BIN=go scripts/package-companion.sh "$RUNNER_TEMP/dmz-native-review-download"
+      - name: Keep the review checksum specific to the Mac download
+        run: |
+          python3 - "$RUNNER_TEMP/dmz-native-review-download" <<'PYMACSUM'
+          import pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          name = 'DMZ-private-prototype-macos-universal.zip'
+          lines = (root / 'SHA256SUMS.txt').read_text().splitlines()
+          selected = [line for line in lines if line.split()[-1] == name]
+          assert len(selected) == 1
+          (root / 'MAC-SHA256SUMS.txt').write_text(selected[0] + '\n')
+          PYMACSUM
+      - uses: actions/upload-artifact@v6
+        with:
+          name: dmz-native-macos-review-${{ github.event.pull_request.head.sha }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/dmz-native-review-download/DMZ-private-prototype-macos-universal.zip
+            ${{ runner.temp }}/dmz-native-review-download/MAC-SHA256SUMS.txt
+            ${{ runner.temp }}/dmz-native-review-download/validation.txt
+            ${{ runner.temp }}/dmz-native-review-download/stage/DMZ-private-prototype-macos-universal/MANIFEST.txt

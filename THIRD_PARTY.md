@@ -3,6 +3,8 @@
 GPL-3.0-only covers original project code. Existing upstream material retains its own terms; preserve all copyright, license and modification notices. Review compatibility before distributing a combined package.
 
 - `apps/dmz/public/licenses/`: runtime, phone metadata, address vocabulary and secret-pattern notices. These are required attribution, not product endorsements.
+- `internal/agentgateway/licenses/`: pinned `github.com/klauspost/compress` v1.20.4 notices for the native gateway zstd decoder (BSD-3-Clause module/Snappy-Go portions and MIT xxhash). This dependency is not linked into the extension WASM core.
+- `internal/companion/routing/licenses/`: pinned `github.com/pelletier/go-toml/v2` v2.4.3 MIT license for strict parsing and encoding of local Codex settings by the native companion. This dependency is not linked into the extension WASM core.
 - `apps/dmz/scanner/licenses/`: inference runtime license and third-party notices.
 - `bench/open-source-pii/licenses/`: evaluation dependency notices.
 - Model/tokenizer files, prepared address forms and licensed source datasets are not granted by this project's license. Confirm exact upstream versions, attribution, modification notices and redistribution rights before packaging them. No BÍN or Mannanafnaskrá rights are inferred.
