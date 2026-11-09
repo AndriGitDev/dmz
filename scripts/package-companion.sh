@@ -196,7 +196,11 @@ import hashlib, pathlib, sys
 root = pathlib.Path(sys.argv[1])
 with (root / 'SHA256SUMS.txt').open('w', encoding='utf-8') as output:
     for name in sys.argv[2:]:
-        output.write(hashlib.file_digest((root / name).open('rb'), 'sha256').hexdigest() + '  ' + name + '\n')
+        digest = hashlib.sha256()
+        with (root / name).open('rb') as source:
+            for block in iter(lambda: source.read(1024 * 1024), b''):
+                digest.update(block)
+        output.write(digest.hexdigest() + '  ' + name + '\n')
 PYHASH
 
 # ---------------------------------------------------------------------------

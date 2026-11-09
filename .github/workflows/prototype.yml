@@ -141,6 +141,7 @@ jobs:
       - run: npm run record:build
         working-directory: apps/dmz
       - uses: actions/upload-artifact@v6
+        if: github.event_name == 'push'
         with:
           name: dmz-chromium-prototype
           path: apps/dmz/.output/chrome-mv3
