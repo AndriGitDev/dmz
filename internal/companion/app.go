@@ -131,7 +131,27 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			clients = append(clients, map[string]any{"id": c.ID, "name": c.Name, "available": c.Available, "api_key_available": a.cfg.Environment(env) != ""})
 		}
-		writeJSON(w, map[string]any{"app": "dmz-companion", "clients": clients, "sessions": a.Views(), "background_enabled": a.cfg.Background != nil, "background": a.BackgroundViews(), "profile": "basic", "desktop_qualified": false})
+		writeJSON(w, map[string]any{"app": "dmz-companion", "clients": clients, "sessions": a.Views(), "background_enabled": a.cfg.Background != nil, "background": a.BackgroundViews(), "highlight_restored": a.highlightRestored(), "profile": "basic", "desktop_qualified": false})
+	case r.URL.Path == "/api/preferences" && r.Method == "POST":
+		var req struct {
+			HighlightRestored *bool `json:"highlight_restored"`
+		}
+		if decode(r, &req) != nil || req.HighlightRestored == nil {
+			http.Error(w, "invalid_request", 400)
+			return
+		}
+		a.mu.Lock()
+		background := a.background
+		a.mu.Unlock()
+		if background == nil {
+			http.Error(w, "background_unavailable", 409)
+			return
+		}
+		if background.setHighlightRestored(*req.HighlightRestored) != nil {
+			http.Error(w, "preferences_unavailable", 503)
+			return
+		}
+		w.WriteHeader(204)
 	case r.URL.Path == "/api/background" && r.Method == "POST":
 		var req struct {
 			Client    string `json:"client"`

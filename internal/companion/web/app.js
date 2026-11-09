@@ -242,6 +242,8 @@ Object.assign(strings.en, {
   warningDetails: "Diagnostic warning codes",
   redactions: "new values masked",
   activityTitle: "Recent local activity",
+  highlightRestored: "Highlight restored values in bold",
+  highlightHint: "Optional; off by default. Applies to new replies. Uses bold Markdown for single-line restored values; some tool modes show literal **. Formatting becomes part of conversation history. Only values DMZ actually restores are highlighted.",
   activityHint: "Repeated history does not increase the counter. A mapping reset can count a value again; reconnecting resets these totals. Only times, counts and outcomes are kept in memory, never message text. Counts do not prove complete detection or delivery.",
   activity_masked: "Text masked",
   activity_no_changes: "No text changes",
@@ -295,6 +297,8 @@ Object.assign(strings.is, {
   warningDetails: "Viðvörunarkóðar fyrir bilanagreiningu",
   redactions: "ný gildi falin",
   activityTitle: "Nýleg staðbundin virkni",
+  highlightRestored: "Feitletra endurheimt gildi",
+  highlightHint: "Valfrjálst og sjálfgefið óvirkt. Gildir fyrir ný svör. Endurheimt gildi í einni línu eru feitletruð með Markdown; sumar stillingar tólsins sýna **. Sniðið verður hluti af samtalssögunni. Aðeins gildi sem DMZ endurheimtir eru merkt.",
   activityHint: "Endursend samtalssaga hækkar ekki teljarann. Eftir endurstillingu geta sömu gildi talist aftur; endurtenging núllstillir tölurnar. Aðeins tímar, fjöldi og niðurstöður eru geymd í minni, aldrei skilaboðatexti. Tölurnar staðfesta hvorki fullkomna greiningu né afhendingu.",
   activity_masked: "Texti falinn",
   activity_no_changes: "Engar textabreytingar",
@@ -498,6 +502,7 @@ function renderBackground() {
   $("#start-form").hidden = enabled;
   $("#session-panel").hidden = enabled;
   if (!enabled) return;
+  if (!$("#highlight-restored").disabled) $("#highlight-restored").checked = !!state.highlight_restored;
   $("[data-i18n='title']").textContent = t("backgroundTitle");
   $("[data-i18n='intro']").textContent = t("backgroundIntro");
   $("#setup-title").textContent = t("backgroundSetup");
@@ -648,6 +653,18 @@ $("#language").addEventListener("click", () => {
   language = language === "is" ? "en" : "is";
   storageWrite("localStorage", "dmz.language", language);
   translate();
+});
+$("#highlight-restored").addEventListener("change", async (event) => {
+  const checkbox = event.currentTarget;
+  const enabled = checkbox.checked;
+  checkbox.disabled = true;
+  try {
+    await api("preferences", { highlight_restored: enabled });
+    state.highlight_restored = enabled;
+  } catch {
+    checkbox.checked = !!state.highlight_restored;
+    error("unavailable");
+  } finally { checkbox.disabled = false; }
 });
 $("#choose-folder").addEventListener("click", async () => {
   const b = $("#choose-folder");

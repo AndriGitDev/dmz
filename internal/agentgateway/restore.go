@@ -16,6 +16,10 @@ type replyScopeKey struct{}
 var issuedReplyMarker = regexp.MustCompile(`⟦[A-Z]+-[0-9A-F]{16}-[0-9]+: [^⟦⟧\r\n]{1,128}⟧`)
 
 func (m *mapping) restoreAnswer(text string) string {
+	return m.restoreAnswerStyled(text, false)
+}
+
+func (m *mapping) restoreAnswerStyled(text string, highlight bool) string {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if m.invalid.Load() {
@@ -34,6 +38,9 @@ func (m *mapping) restoreAnswer(text string) string {
 		}
 		if original, known := m.core.Original(marker); known {
 			size += int64(len(original) - (span[1] - span[0]))
+			if boldRestoredValue(original, highlight) {
+				size += 4
+			}
 			if size > DefaultReplyMaxBytes {
 				if m.warning != nil {
 					m.warning(WarnReplyExpansionLimit)
@@ -54,7 +61,14 @@ func (m *mapping) restoreAnswer(text string) string {
 			continue
 		}
 		out.WriteString(text[at:span[0]])
+		bold := boldRestoredValue(original, highlight)
+		if bold {
+			out.WriteString("**")
+		}
 		out.WriteString(original)
+		if bold {
+			out.WriteString("**")
+		}
 		at = span[1]
 	}
 	if at == 0 {
@@ -63,6 +77,19 @@ func (m *mapping) restoreAnswer(text string) string {
 	out.WriteString(text[at:])
 	return out.String()
 }
+
+// Keep originals byte-exact for replay masking. Multiline values and Markdown
+// delimiters are restored plainly rather than escaped or reformatted.
+func boldRestoredValue(original string, enabled bool) bool {
+	if !enabled || original == "" || strings.TrimSpace(original) != original || strings.ContainsAny(original, "\r\n*`") {
+		return false
+	}
+	return true
+}
+
+// SetHighlightRestored affects subsequent replies; an in-flight reply keeps its
+// initial setting so deltas and consolidated events use one consistent style.
+func (s *Server) SetHighlightRestored(enabled bool) { s.highlightRestored.Store(enabled) }
 
 // Also remember markers created while re-reading user history: this reestablishes
 // exact-value replay protection when a client sends its original user messages
@@ -156,7 +183,9 @@ func (s *Server) restoreResponse(response *http.Response) {
 		s.warn("reply_busy_unrestored")
 		return
 	}
-	response.Body = &replySlotBody{ReadCloser: RestoreReply(response.Body, response.Header.Get("Content-Type"), ReplyOptions{Protocol: s.cfg.Protocol, Restore: scope.restoreAnswer, Warning: s.warn, InferContentType: true, MaxBytes: min(s.cfg.MaxBodyBytes, DefaultReplyMaxBytes)}), release: func() { <-s.replySlots }}
+	highlight := s.highlightRestored.Load()
+	restore := func(text string) string { return scope.restoreAnswerStyled(text, highlight) }
+	response.Body = &replySlotBody{ReadCloser: RestoreReply(response.Body, response.Header.Get("Content-Type"), ReplyOptions{Protocol: s.cfg.Protocol, Restore: restore, Warning: s.warn, InferContentType: true, MaxBytes: min(s.cfg.MaxBodyBytes, DefaultReplyMaxBytes)}), release: func() { <-s.replySlots }}
 	response.ContentLength = -1
 	response.TransferEncoding = nil
 	// These describe the upstream bytes; restored responses use chunked framing.

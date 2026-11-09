@@ -55,6 +55,8 @@ func TestRestoredContextualValueInUserAndToolResults(t *testing.T) {
 				}
 			}
 			send([]any{map[string]any{"role": "user", "content": initial}})
+			s.SetHighlightRestored(true)
+			send([]any{map[string]any{"role": "user", "content": strings.ReplaceAll(helper, token, "**"+token+"**")}})
 			if marker == "" {
 				t.Fatal("contextual credential was not masked initially")
 			}

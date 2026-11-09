@@ -50,7 +50,8 @@ type Config struct {
 	NativeOpenAIAuth bool
 	// RestoreReplies enables local assistant-text restoration together with
 	// exact-value re-masking of restored assistant history on later requests.
-	RestoreReplies bool
+	RestoreReplies    bool
+	HighlightRestored bool // optional bold Markdown, off by default
 	// SessionHeader is an optional, verified client root-session header. A
 	// launcher without one has one explicit mapping scope for its lifetime.
 	SessionHeader         string
@@ -105,15 +106,16 @@ type Activity struct {
 }
 
 type Server struct {
-	cfg          Config
-	proxy        *httputil.ReverseProxy
-	mu           sync.Mutex
-	maps         map[string]*mapping
-	status       Status
-	workers      chan struct{}
-	replySlots   chan struct{}
-	warningTimes map[string]time.Time
-	tick         uint64
+	highlightRestored atomic.Bool
+	cfg               Config
+	proxy             *httputil.ReverseProxy
+	mu                sync.Mutex
+	maps              map[string]*mapping
+	status            Status
+	workers           chan struct{}
+	replySlots        chan struct{}
+	warningTimes      map[string]time.Time
+	tick              uint64
 }
 
 // NewServer accepts only the intended provider or an explicitly enabled
@@ -173,6 +175,7 @@ func NewServer(cfg Config) (*Server, error) {
 		cfg.WorkerWait = 30 * time.Second
 	}
 	s := &Server{cfg: cfg, maps: make(map[string]*mapping), workers: make(chan struct{}, 4), replySlots: make(chan struct{}, 4), warningTimes: make(map[string]time.Time), status: Status{Profile: "basic-experimental", Coverage: "supported-user-message-text-only", Warnings: make(map[string]uint64)}}
+	s.highlightRestored.Store(cfg.HighlightRestored)
 	if cfg.RestoreReplies {
 		s.status.Coverage = "supported-user-text-and-restored-reply-values"
 	}

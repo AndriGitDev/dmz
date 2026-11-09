@@ -52,6 +52,16 @@ Instructions, system/developer messages, tool definitions, tool arguments, metad
 
 ## Local answer restoration
 
+The background companion has an optional **Highlight restored values in bold**
+setting in Settings, off by default and saved locally as a boolean preference.
+It applies to new replies without reconnecting. Exact known single-line restored
+values are wrapped in Markdown `**`; originals stay byte-exact for replay masking.
+Unknown markers and whole-message fallbacks are not highlighted or restored.
+Multiline values and values containing bold/code delimiters restore plainly.
+Some CLI modes or code blocks can show literal Markdown delimiters. Formatting
+becomes part of client history; turning the setting off does not edit old replies.
+Highlighting indicates a local restoration, not complete detection coverage.
+
 The companion menu and Settings show newly masked values since connection.
 Repeated history reuses mappings and does not increase this count. Scope reset,
 eviction or recreation can count a value again; reconnecting resets the totals.

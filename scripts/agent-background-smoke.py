@@ -414,6 +414,10 @@ class Run:
         if not h.wait_ready():
             self.fail(f"{phase}.host_not_ready")
             return None
+        if self.args.highlight_restored:
+            code, _ = h.api("POST", "/api/preferences", {"highlight_restored": True})
+            if code != 204 or not (h.state_doc() or {}).get("highlight_restored"):
+                self.fail(f"{phase}.highlight_preference_not_applied")
         return h
 
     def secrets(self):
@@ -489,6 +493,25 @@ class Run:
         env = client_env(self.tmp, self.sink.server_address[1], client, self.args.codex_auth)
         rc, out, err, to = base.run_captured(argv, env, work, self.deadline.remaining(self.args.scenario_timeout))
         res = manual.evaluate(client, scenario, p, rc, out, err, to, self.routes[client][1], self.sink)
+        if self.args.highlight_restored:
+            texts = []
+            for line in out.splitlines():
+                try:
+                    event = json.loads(line)
+                except (ValueError, TypeError):
+                    continue
+                if not isinstance(event, dict):
+                    continue
+                if client == "codex":
+                    item = event.get("item") or {}
+                    if event.get("type") == "item.completed" and item.get("type") == "agent_message":
+                        texts.append(item.get("text", ""))
+                elif isinstance(event.get("result"), str):
+                    texts.append(event["result"])
+            bold = any("**" + base.PROMPT_EMAIL + "**" in text for text in texts)
+            res["client_output"]["restored_values_bold"] = bold
+            if not bold:
+                res["failures"].append("restored_value_not_bold_in_assistant_output")
         if client == "codex" and self.args.codex_auth == "account":
             u = res["upstream"]
             u["synthetic_account_auth_requests"] = p.account_auth_requests
@@ -718,6 +741,7 @@ def main(argv=None):
     ap.add_argument("--claude", default=shutil.which("claude"))
     ap.add_argument("--clients", default="codex,claude")
     ap.add_argument("--no-roundtrip", dest="roundtrip", action="store_false")
+    ap.add_argument("--highlight-restored", action="store_true", help="Enable bold restored values through the real preferences API")
     ap.add_argument("--codex-auth", choices=("openai_env", "codex_env", "login", "account"), default="login",
                     help="native Codex authentication: OPENAI_API_KEY, CODEX_API_KEY, a cached API-key login "
                          "or a cached synthetic account")

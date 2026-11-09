@@ -311,10 +311,17 @@ try {
     },
   ];
   const backgroundActions = [];
+  let highlightPreference = false;
+  await page.route("**/api/preferences", async (route) => {
+    const body = route.request().postDataJSON();
+    highlightPreference = body.highlight_restored;
+    await route.fulfill({ status: 204 });
+  });
   await page.route("**/api/state", async (route) => {
     const response = await route.fetch();
     const value = await response.json();
     value.background_enabled = true;
+    value.highlight_restored = highlightPreference;
     value.background = backgroundRoutes;
     await route.fulfill({ response, json: value });
   });
@@ -327,6 +334,14 @@ try {
     await route.fulfill({ status: 204 });
   });
   await page.locator("#background-section").waitFor({ state: "visible" });
+  const highlightToggle = page.locator("#highlight-restored");
+  check(!(await highlightToggle.isChecked()), "highlight_default_not_off");
+  await highlightToggle.check();
+  await page.waitForFunction(() => !document.querySelector("#highlight-restored").disabled);
+  check(highlightPreference === true && await highlightToggle.isChecked(), "highlight_preference_not_saved");
+  await highlightToggle.uncheck();
+  await page.waitForFunction(() => !document.querySelector("#highlight-restored").disabled);
+  check(highlightPreference === false, "highlight_cannot_disable");
   check(
     await page.locator("#start-form").isHidden(),
     "background_requires_project_launch_form",

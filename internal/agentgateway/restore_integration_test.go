@@ -14,12 +14,21 @@ import (
 )
 
 func TestLocalAnswerRestorationAndAssistantReplay(t *testing.T) {
+	for _, highlight := range []bool{false, true} {
+		t.Run(fmt.Sprintf("highlight=%v", highlight), func(t *testing.T) { testLocalAnswerRestorationAndAssistantReplay(t, highlight) })
+	}
+}
+func testLocalAnswerRestorationAndAssistantReplay(t *testing.T, highlight bool) {
 	for _, protocol := range []Protocol{Responses, Messages} {
 		for _, stream := range []bool{false, true} {
 			for _, reset := range []bool{false, true} {
 				for _, compressed := range []bool{false, true} {
 					t.Run(fmt.Sprintf("%s/stream=%v/reset=%v/gzip=%v", protocol, stream, reset, compressed), func(t *testing.T) {
 						const original = "pilot@example.test"
+						wantAnswer := "Contact " + original
+						if highlight {
+							wantAnswer = "Contact **" + original + "**"
+						}
 						var mu sync.Mutex
 						var firstMarker string
 						var observed int
@@ -76,7 +85,7 @@ func TestLocalAnswerRestorationAndAssistantReplay(t *testing.T) {
 							}
 						}))
 						defer provider.Close()
-						s, err := NewServer(Config{Protocol: protocol, Upstream: provider.URL + "/v1", Token: strings.Repeat("a", 64), AllowLoopbackUpstream: true, RestoreReplies: true, SessionHeader: map[Protocol]string{Messages: "X-Claude-Code-Session-Id"}[protocol]})
+						s, err := NewServer(Config{Protocol: protocol, Upstream: provider.URL + "/v1", Token: strings.Repeat("a", 64), AllowLoopbackUpstream: true, RestoreReplies: true, HighlightRestored: highlight, SessionHeader: map[Protocol]string{Messages: "X-Claude-Code-Session-Id"}[protocol]})
 						if err != nil {
 							t.Fatal(err)
 						}
@@ -140,7 +149,7 @@ func TestLocalAnswerRestorationAndAssistantReplay(t *testing.T) {
 								if value["type"] == "content_block_delta" {
 									text.WriteString(value["delta"].(map[string]any)["text"].(string))
 								}
-								if value["type"] == "response.output_text.done" && value["text"] != "Contact "+original {
+								if value["type"] == "response.output_text.done" && value["text"] != wantAnswer {
 									t.Error("done text differs from restored deltas")
 								}
 							}
@@ -148,7 +157,7 @@ func TestLocalAnswerRestorationAndAssistantReplay(t *testing.T) {
 						}
 						user := map[string]any{"role": "user", "content": original}
 						answer := send([]any{user})
-						if answer != "Contact "+original {
+						if answer != wantAnswer {
 							t.Fatal("local answer still masked or corrupted")
 						}
 						if reset {
@@ -162,7 +171,7 @@ func TestLocalAnswerRestorationAndAssistantReplay(t *testing.T) {
 						if protocol == Responses {
 							assistant["type"] = "message"
 						}
-						if send([]any{user, assistant, map[string]any{"role": "user", "content": "Continue the synthetic conversation."}}) != "Contact "+original {
+						if send([]any{user, assistant, map[string]any{"role": "user", "content": "Continue the synthetic conversation."}}) != wantAnswer {
 							t.Fatal("second answer did not restore")
 						}
 						mu.Lock()

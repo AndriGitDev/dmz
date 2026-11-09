@@ -51,14 +51,15 @@ type backgroundRoute struct {
 	server          *http.Server
 }
 type backgroundManager struct {
-	mu       sync.Mutex
-	cfg      BackgroundConfig
-	routes   map[string]*backgroundRoute
-	ports    map[string]int
-	tokens   map[string]string
-	disabled map[string]bool
-	lock     *os.File
-	closed   bool
+	preferences backgroundPreferences
+	mu          sync.Mutex
+	cfg         BackgroundConfig
+	routes      map[string]*backgroundRoute
+	ports       map[string]int
+	tokens      map[string]string
+	disabled    map[string]bool
+	lock        *os.File
+	closed      bool
 }
 
 func newBackground(cfg BackgroundConfig) (*backgroundManager, error) {
@@ -87,6 +88,7 @@ func newBackground(cfg BackgroundConfig) (*backgroundManager, error) {
 		cfg.Planners = map[string]func([]byte, string, string) ([]byte, error){"codex": routing.CodexSettings, "claude": routing.ClaudeSettings}
 	}
 	m := &backgroundManager{cfg: cfg, routes: map[string]*backgroundRoute{}, ports: map[string]int{}, tokens: map[string]string{}, disabled: map[string]bool{}, lock: lock}
+	m.preferences = loadBackgroundPreferences(filepath.Join(cfg.StateDir, "preferences.json"))
 	readStateJSON(filepath.Join(cfg.StateDir, "ports.json"), &m.ports)
 	readStateJSON(filepath.Join(cfg.StateDir, "disabled.json"), &m.disabled)
 	readStateJSON(filepath.Join(cfg.StateDir, "tokens.json"), &m.tokens)
@@ -238,7 +240,7 @@ func (m *backgroundManager) connectLocked(r *backgroundRoute) {
 		protocol = agentgateway.Messages
 		upstream = "https://api.anthropic.com/v1"
 	}
-	gatewayCfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: token, NativeOpenAIAuth: r.view.Client == "codex", RestoreReplies: true}
+	gatewayCfg := agentgateway.Config{Protocol: protocol, Upstream: upstream, Token: token, NativeOpenAIAuth: r.view.Client == "codex", RestoreReplies: true, HighlightRestored: m.preferences.HighlightRestored}
 	if r.view.Client == "claude" {
 		gatewayCfg.SessionHeader = "X-Claude-Code-Session-Id"
 	}
