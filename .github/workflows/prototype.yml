@@ -31,10 +31,17 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - name: Compile menu-bar host for both Mac CPUs
+        run: scripts/build-macos-menubar.sh "$RUNNER_TEMP/dmz-menubar-compile"
       - run: go test -race ./internal/agentgateway ./internal/companion ./cmd/dmz ./scripts/companion-package
       - run: go vet ./internal/agentgateway ./internal/companion ./cmd/dmz ./scripts/companion-package
       - name: Build private archives and execute the universal binary on the native CPU
         run: GO_BIN=go scripts/package-companion.sh "$RUNNER_TEMP/dmz-companion-packages"
+      - name: Compile native menu-bar prototype and verify CLI passthrough
+        run: |
+          scripts/build-macos-menubar.sh "$RUNNER_TEMP/dmz-menubar" "$RUNNER_TEMP/dmz-companion-packages/stage/DMZ-private-prototype-macos-universal/DMZ.app/Contents/MacOS/DMZ"
+          "$RUNNER_TEMP/dmz-menubar/DMZ.app/Contents/MacOS/DMZ" version
+          "$RUNNER_TEMP/dmz-menubar/DMZ.app/Contents/MacOS/DMZ" help >/dev/null
   core:
     runs-on: ubuntu-latest
     steps:

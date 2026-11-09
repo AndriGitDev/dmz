@@ -23,12 +23,33 @@ func app(ctx context.Context, args []string, errOut io.Writer) error {
 	f := flag.NewFlagSet("app", flag.ContinueOnError)
 	f.SetOutput(errOut)
 	noOpen := f.Bool("no-open", false, "development: do not open a graphical window")
+	parentPID := f.Int("parent-pid", 0, "native host supervision PID")
 	controlFile := f.String("control-file", "", "development: private control descriptor path")
 	if err := f.Parse(args); err != nil {
 		return err
 	}
 	if f.NArg() != 0 {
 		return errors.New("unexpected app arguments")
+	}
+	if *parentPID > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithCancel(ctx)
+		defer cancel()
+		go func() {
+			ticker := time.NewTicker(time.Second)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-ticker.C:
+					if os.Getppid() != *parentPID {
+						cancel()
+						return
+					}
+				}
+			}
+		}()
 	}
 	cfg := companion.Config{}
 	if !*noOpen && *controlFile == "" {
@@ -49,7 +70,28 @@ func app(ctx context.Context, args []string, errOut io.Writer) error {
 	if err != nil {
 		return err
 	}
+	if runtime.GOOS == "windows" && !*noOpen && *controlFile == "" {
+		return statusIconApp(ctx, a, cfg.InstanceFile)
+	}
 	return a.Serve(ctx, !*noOpen, *controlFile)
+}
+
+func statusIconApp(ctx context.Context, a *companion.App, descriptor string) error {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	defer a.Close()
+	served := make(chan error, 1)
+	tray := make(chan error, 1)
+	go func() { served <- a.Serve(ctx, false, "") }()
+	go func() { tray <- companion.RunStatusIcon(ctx, descriptor) }()
+	select {
+	case err := <-served:
+		return err
+	case err := <-tray:
+		return err
+	case <-ctx.Done():
+		return nil
+	}
 }
 
 func connect(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer) int {
