@@ -442,6 +442,8 @@ function renderSessions() {
           "instructions_unchanged",
           "tool_result_unchanged",
           "tool_result_detection_not_applied",
+          "reply_content_type_inferred_sse",
+          "reply_content_type_inferred_json",
           "no_user_text",
         ].includes(k),
     );
@@ -521,6 +523,8 @@ function renderBackground() {
           "no_user_text",
           "attachment_unchanged",
           "mapping_evicted_history_may_degrade",
+          "reply_content_type_inferred_sse",
+          "reply_content_type_inferred_json",
         ].includes(k),
     );
     if (route.recent_warnings?.length)
@@ -528,10 +532,12 @@ function renderBackground() {
     if (warnings.length) {
       const count = warnings.reduce((sum, code) => sum + route.warnings[code], 0);
       card.append(text("p", t("warningHistory").replace("{count}", count), "session-stats"));
+    }
+    if (Object.keys(route.warnings || {}).length) {
       const details = document.createElement("details");
       details.append(text("summary", t("warningDetails")));
       const codes = document.createElement("ul");
-      for (const code of warnings.sort())
+      for (const code of Object.keys(route.warnings).sort())
         codes.append(text("li", `${code}: ${route.warnings[code]}`));
       details.append(codes);
       card.append(details);

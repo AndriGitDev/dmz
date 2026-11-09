@@ -52,6 +52,13 @@ Instructions, system/developer messages, tool definitions, tool arguments, metad
 
 ## Local answer restoration
 
+On supported successful model routes, a missing or nonstandard reply MIME label
+no longer disables restoration by itself. The gateway probes at most 4 KiB for
+JSON or SSE framing, then uses the same strict protocol and assistant-field
+checks. Unrecognized content stays unchanged with a warning; plain text and HTML
+are not searched for replacements. Settings exposes diagnostic warning codes and
+counts without conversation content.
+
 The app, launcher and service restore exact known markers in supported assistant
 answer text, including JSON and streamed Responses/Messages replies. Whole-message
 fallbacks remain masked because they can hold arbitrary content. Split

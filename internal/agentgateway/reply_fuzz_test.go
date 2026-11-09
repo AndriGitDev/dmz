@@ -12,6 +12,7 @@ import (
 func FuzzRestoreReply(f *testing.F) {
 	f.Add(responsesStream([]string{"Hæ ⟦EMAIL-t1-1: XX", "XXX@XXXXX.XXX⟧"}, splitText), uint8(7), false)
 	f.Add(messagesStream([]string{"a " + mEmail[:5], mEmail[5:]}), uint8(3), true)
+	f.Add(responsesStream([]string{mEmail}, splitText), uint8(129), false)
 	f.Add([]byte("event: x\r\ndata: {\"type\":\"y\"}\r\r\n\n"), uint8(1), true)
 	f.Fuzz(func(t *testing.T, in []byte, step uint8, messages bool) {
 		proto := Responses
@@ -19,7 +20,12 @@ func FuzzRestoreReply(f *testing.F) {
 			proto = Messages
 		}
 		read := func(sizes []int) []byte {
-			rc := RestoreReply(&chunkBody{data: bytes.Clone(in), sizes: sizes}, sseType, ReplyOptions{Protocol: proto, Restore: testRestore, MaxBytes: 4096})
+			media := sseType
+			infer := step&128 != 0
+			if infer {
+				media = "application/octet-stream"
+			}
+			rc := RestoreReply(&chunkBody{data: bytes.Clone(in), sizes: sizes}, media, ReplyOptions{Protocol: proto, Restore: testRestore, MaxBytes: 4096, InferContentType: infer})
 			out, err := io.ReadAll(rc)
 			if err != nil {
 				t.Fatal(err)

@@ -319,6 +319,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def _send(self, status, ctype, payload, fragment=False):
         self.send_response(status)
+        if self.server.generic_reply_content_type and ctype == "text/event-stream":
+            ctype = "application/octet-stream"
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Cache-Control", "no-store")
@@ -821,6 +823,7 @@ def run_scenario(args, client, client_bin, scenario, deadline):
         threading.Thread(target=sink.serve_forever, daemon=True).start()
         provider = Provider("responses" if client == "codex" else "messages", scenario, workdir,
                             CODEX_MODEL if client == "codex" else CLAUDE_MODEL)
+        provider.generic_reply_content_type = args.generic_reply_content_type
         threading.Thread(target=provider.serve_forever, daemon=True).start()
         env = child_env(tmp, sink.server_address[1], client)
         session_id = str(uuid.uuid4())
@@ -846,8 +849,11 @@ def run_scenario(args, client, client_bin, scenario, deadline):
                 fails.append(f"turn{turn}_client_nonzero_exit")
             if not summary["summary_present"]:
                 fails.append(f"turn{turn}_launcher_summary_missing")
-            if any(code.startswith("reply_") for code in summary["warnings"]):
+            inferred = {"reply_content_type_inferred_sse", "reply_content_type_inferred_json"}
+            if any(code.startswith("reply_") and code not in inferred for code in summary["warnings"]):
                 fails.append(f"turn{turn}_reply_warning")
+            if args.generic_reply_content_type and not any(code in inferred for code in summary["warnings"]):
+                fails.append(f"turn{turn}_content_type_inference_unverified")
             del out, err
         obs = provider.obs
         issued = list(obs.issued)
@@ -1012,10 +1018,13 @@ def main(argv=None):
                          "and compaction-probe")
     ap.add_argument("--total-timeout", type=float, default=600.0)
     ap.add_argument("--scenario-timeout", type=float, default=120.0)
+    ap.add_argument("--generic-reply-content-type", action="store_true",
+                    help="Label synthetic SSE replies application/octet-stream to verify format inference")
     args = ap.parse_args(argv)
     deadline = base.Deadline(args.total_timeout)
     report = {
         "harness": PROG,
+        "generic_reply_content_type": args.generic_reply_content_type,
         "evidence_kind": "installed-cli-binaries-with-synthetic-loopback-upstream",
         "not_evidence_of": ["provider-compatibility", "account-or-auth-validation", "model-behavior",
                             "native-gui-behavior", "detector-recall", "restart-replay-without-user-history"],

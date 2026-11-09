@@ -1,6 +1,8 @@
 package agentgateway
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"io"
 	"mime"
@@ -40,6 +42,10 @@ import (
 
 // ReplyOptions configures RestoreReply.
 type ReplyOptions struct {
+	// InferContentType permits a bounded format probe when the upstream MIME
+	// label is missing or unsupported. Only the existing strict JSON/SSE
+	// schema handlers may rewrite the resulting body; arbitrary text stays raw.
+	InferContentType bool
 	// Protocol selects the reply schema.
 	Protocol Protocol
 	// Restore returns its argument with exact issued markers replaced by
@@ -104,7 +110,8 @@ var errReplyClosed = errors.New("agentgateway: read on closed reply body")
 // RestoreReply wraps a model reply body and restores markers in
 // assistant-visible text as the body is read. contentType is the reply
 // Content-Type; application/json (or +json) and text/event-stream are
-// supported, anything else is returned unchanged with a warning. The
+// supported. Other labels pass unchanged unless InferContentType is set;
+// that option probes a bounded prefix before using the same strict parsers. The
 // caller handles status, headers and content encoding; body must be
 // identity-encoded.
 //
@@ -131,12 +138,16 @@ func RestoreReply(body io.ReadCloser, contentType string, opts ReplyOptions) io.
 	if opts.Restore == nil {
 		return body
 	}
-	r := &replyReader{c: c, body: body}
+	r := &replyReader{c: c, body: body, input: body}
 	switch replyMediaKind(contentType) {
 	case replyJSON:
 	case replySSE:
 		r.sse = newSSEState(c)
 	default:
+		if opts.InferContentType {
+			r.infer = true
+			return r
+		}
 		c.warn(WarnReplyUnsupportedContentType)
 		return body
 	}
@@ -364,6 +375,8 @@ func applyReplyEdits(b []byte, edits []edit) []byte {
 type replyReader struct {
 	c      *replyCore
 	body   io.ReadCloser
+	input  io.Reader // body or a bounded probe prefix joined to body
+	infer  bool
 	closed atomic.Bool
 	sse    *sseState // nil for JSON
 	pass   bool      // forward the remaining upstream bytes unchanged
@@ -394,7 +407,11 @@ func (r *replyReader) Read(p []byte) (int, error) {
 			return 0, r.err
 		}
 		if r.pass {
-			return r.body.Read(p)
+			return r.input.Read(p)
+		}
+		if r.infer {
+			r.inferFormat()
+			continue
 		}
 		if r.sse != nil {
 			r.fillSSE()
@@ -406,7 +423,7 @@ func (r *replyReader) Read(p []byte) (int, error) {
 
 func (r *replyReader) fillJSON() {
 	max := r.c.opts.MaxBytes
-	buf, err := io.ReadAll(io.LimitReader(r.body, max+1))
+	buf, err := io.ReadAll(io.LimitReader(r.input, max+1))
 	switch {
 	case err != nil:
 		// Forward what arrived unchanged, then surface the read error.
@@ -423,7 +440,7 @@ func (r *replyReader) fillSSE() {
 	if r.chunk == nil {
 		r.chunk = make([]byte, replyReadChunk)
 	}
-	n, err := r.body.Read(r.chunk)
+	n, err := r.input.Read(r.chunk)
 	if n > 0 {
 		r.sse.write(r.chunk[:n])
 	}
@@ -443,3 +460,70 @@ func (r *replyReader) Close() error {
 	r.closed.Store(true)
 	return r.body.Close()
 }
+
+// inferFormat reads at most 4 KiB, usually just the first byte or field name.
+// The exact probe bytes are replayed into the regular parser or passed through.
+// It runs inside Read, so Close still cancels the immutable upstream body.
+func (r *replyReader) inferFormat() {
+	r.infer = false
+	br := bufio.NewReaderSize(r.input, 4096)
+	prefix := make([]byte, 0, 32)
+	kind := replyOther
+	start := -1
+	var readErr error
+	for int64(len(prefix)) < min(4096, r.c.opts.MaxBytes) {
+		b, err := br.ReadByte()
+		if err != nil {
+			readErr = err
+			break
+		}
+		prefix = append(prefix, b)
+		if start < 0 {
+			if b == ' ' || b == '\t' || b == '\r' || b == '\n' {
+				continue
+			}
+			start = len(prefix) - 1
+			if b == '{' {
+				kind = replyJSON
+				break
+			}
+			if b == ':' {
+				kind = replySSE
+				break
+			}
+		}
+		field := string(prefix[start:])
+		possible := false
+		for _, name := range []string{"data:", "event:", "id:", "retry:"} {
+			if field == name {
+				kind = replySSE
+				break
+			}
+			if strings.HasPrefix(name, field) {
+				possible = true
+			}
+		}
+		if kind != replyOther || !possible {
+			break
+		}
+	}
+	var tail io.Reader = br
+	if readErr != nil {
+		tail = replyProbeError{readErr}
+	}
+	r.input = io.MultiReader(bytes.NewReader(prefix), tail)
+	switch kind {
+	case replySSE:
+		r.c.warn("reply_content_type_inferred_sse")
+		r.sse = newSSEState(r.c)
+	case replyJSON:
+		r.c.warn("reply_content_type_inferred_json")
+	default:
+		r.c.warn(WarnReplyUnsupportedContentType)
+		r.pass = true
+	}
+}
+
+type replyProbeError struct{ err error }
+
+func (r replyProbeError) Read([]byte) (int, error) { return 0, r.err }

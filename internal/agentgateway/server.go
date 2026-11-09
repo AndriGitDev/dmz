@@ -317,7 +317,7 @@ func (s *Server) Snapshot() Status {
 
 func informationalWarning(code string) bool {
 	switch code {
-	case "instructions_unchanged", "tool_result_unchanged", WarnToolResultDetectionNotApplied, "attachment_unchanged", "no_user_text", "mapping_evicted_history_may_degrade":
+	case "instructions_unchanged", "tool_result_unchanged", WarnToolResultDetectionNotApplied, "attachment_unchanged", "no_user_text", "mapping_evicted_history_may_degrade", "reply_content_type_inferred_sse", "reply_content_type_inferred_json":
 		return true
 	}
 	return false

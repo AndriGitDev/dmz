@@ -150,17 +150,13 @@ func (s *Server) restoreResponse(response *http.Response) {
 		s.warn("reply_encoding_unrestored")
 		return
 	}
-	if replyMediaKind(response.Header.Get("Content-Type")) == replyOther {
-		s.warn(WarnReplyUnsupportedContentType)
-		return
-	}
 	select {
 	case s.replySlots <- struct{}{}:
 	default:
 		s.warn("reply_busy_unrestored")
 		return
 	}
-	response.Body = &replySlotBody{ReadCloser: RestoreReply(response.Body, response.Header.Get("Content-Type"), ReplyOptions{Protocol: s.cfg.Protocol, Restore: scope.restoreAnswer, Warning: s.warn, MaxBytes: min(s.cfg.MaxBodyBytes, DefaultReplyMaxBytes)}), release: func() { <-s.replySlots }}
+	response.Body = &replySlotBody{ReadCloser: RestoreReply(response.Body, response.Header.Get("Content-Type"), ReplyOptions{Protocol: s.cfg.Protocol, Restore: scope.restoreAnswer, Warning: s.warn, InferContentType: true, MaxBytes: min(s.cfg.MaxBodyBytes, DefaultReplyMaxBytes)}), release: func() { <-s.replySlots }}
 	response.ContentLength = -1
 	response.TransferEncoding = nil
 	// These describe the upstream bytes; restored responses use chunked framing.

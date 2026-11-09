@@ -253,7 +253,7 @@ func runInternal(ctx context.Context, args []string, in io.Reader, out, errOut i
 		}
 		seenWarnings[code] = true
 		switch code {
-		case agentgateway.WarnInstructionsUnchanged, agentgateway.WarnToolResultUnchanged, agentgateway.WarnToolResultDetectionNotApplied, agentgateway.WarnNoUserText:
+		case agentgateway.WarnInstructionsUnchanged, agentgateway.WarnToolResultUnchanged, agentgateway.WarnToolResultDetectionNotApplied, agentgateway.WarnNoUserText, "reply_content_type_inferred_sse", "reply_content_type_inferred_json":
 			return
 		}
 		fmt.Fprintln(errOut, "dmz warning:", code)
