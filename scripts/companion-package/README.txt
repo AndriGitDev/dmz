@@ -1,4 +1,4 @@
-DMZ companion - private review prototype
+DMZ companion - operator review prototype
 ========================================
 
 NOT A RELEASE. Unsigned and unnotarized review build. Use fabricated
@@ -15,7 +15,7 @@ Your coding tool keeps its own on-disk history; DMZ does not rewrite it.
 
 Background flow (native Mac or Windows builds)
 -----------------------------------------------
-  1. Extract the private review archive. On Mac, move DMZ.app to Applications.
+  1. Extract the review archive. On Mac, move DMZ.app to Applications.
   2. Open DMZ. Its icon appears in the Mac menu bar or Windows notification area.
   3. Open your coding tool normally. If it was already open, restart it once.
 
@@ -39,6 +39,22 @@ Already-open tools can need a restart after disconnect. DMZ retains a private
 recovery journal while connected and uses it after a crash. That journal can
 contain existing sensitive settings; never include it in a report. Value
 mappings remain in memory only. Their markers change after DMZ restarts.
+
+Keep DMZ open while using its routes. After Quit, newly opened tools connect
+directly without DMZ masking. This build does not start at login: open it again
+after restarting or signing in to your computer. A crash can leave tools using
+a closed local connection until DMZ is reopened and recovers its journal.
+
+"Routing configured, not confirmed" means settings were prepared, not that the
+tool has sent traffic. Alternate shell config directories, environment variables,
+managed/project settings and command-line overrides can bypass them. Traffic
+observed for one tool is not evidence for every concurrent session.
+
+Recent processing/connection warnings affect status for two minutes; lifetime
+counts remain available in Settings. Routine mapping eviction is informational,
+but older markers may then be unresolved. Mappings are bounded; scope-capacity
+warnings mean original text can be forwarded. Start a fresh conversation before
+disconnecting/reconnecting if a mapping capacity warning appears.
 
 The native Mac build requires macOS 13+ and contains Intel and Apple Silicon
 executables. A "macos-core-only" archive is a cross-compiled legacy browser

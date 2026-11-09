@@ -38,22 +38,19 @@ download package and does not qualify the menu UI itself. The native host's
 parent-PID supervision stops its Go core if the host crashes. Windows tray code
 cross-compiles; its actual UI, ACLs and process cleanup are unqualified.
 
-The routing package implements private write-ahead recovery, atomic settings
-replacement, drift rejection and exact restoration. A Claude Code JSON planner
-changes only its local routing environment keys and refuses existing custom
-backends. Synthetic tests cover preserved permissions/model settings, new-file
-cleanup, stale plans and conflicting edits. These primitives are not yet wired
-to automatic connection or to the tray status; no real user settings were
-modified while developing them. Codex TOML adaptation, selective merge after
-user edits, stable background listeners, credential delivery and integrated
-crash/restart fixtures remain unfinished.
+At that earlier checkpoint, routing primitives were separate from the native
+host. The implementation update below supersedes that state: Codex and Claude
+adapters, selective restoration, stable listeners and background status are now
+wired together. Development uses isolated fixture settings, not real user
+configuration.
 
 Claude Desktop has a separate documented third-party inference flow; it cannot
 reuse an Anthropic subscription through that route. Native Codex desktop shares
 configuration with other Codex surfaces. See the dated official-source research
 in [the desktop plan](local-agent-desktop-plan.md). Native desktop qualification,
 provider accounts, signing/notarization and the download-to-first-answer action
-count remain open. Do not describe the tray prototype as automatic hooking.
+count remain open. Automatic compatible CLI routing is implemented; direct
+vendor desktop-app routing is not qualified.
 
 Only selected user text is masked. Instructions, tool inputs/results, files,
 attachments and other network paths remain outside coverage. Misses and
@@ -81,6 +78,20 @@ can contain sensitive values already present in settings, so they remain private
 and are excluded from reports. Invalid or ambiguous settings, existing custom
 providers and separate Codex profile files produce visible review states rather
 than being silently rewritten.
+
+Codex routing edits preserve unrelated bytes, comments and formatting, including
+after ordinary Codex settings writes. Unsupported inline provider layouts are
+refused instead of re-encoded. A complete private recovery journal is published
+atomically before configuration changes; an unresolved journal makes Disconnect
+report a conflict. Saved ports are not silently migrated when occupied.
+
+Attention reflects processing warnings from the last two minutes; lifetime
+counts remain available. Routine session-map eviction is informational, with
+old-marker limitations still disclosed. The icon and settings distinguish a
+configured route from confirmed model traffic. A different shell config home or
+settings override can bypass it. Keep DMZ open and reopen it after login; this
+build has no login item. Quit restores routes, so newly opened tools then connect
+directly without DMZ masking.
 
 The real installed Codex 0.166.0 and Claude Code 2.1.318 pass synthetic background
 fixtures while launched independently, with no DMZ terminal/folder/window calls.

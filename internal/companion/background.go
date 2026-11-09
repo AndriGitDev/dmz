@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -30,15 +31,16 @@ type BackgroundConfig struct {
 	Planners  map[string]func([]byte, string, string) ([]byte, error)
 }
 type BackgroundView struct {
-	Client       string            `json:"client"`
-	Name         string            `json:"name"`
-	Detected     bool              `json:"detected"`
-	State        string            `json:"state"`
-	Routed       bool              `json:"routed"`
-	Issue        string            `json:"issue,omitempty"`
-	Requests     uint64            `json:"requests"`
-	ChangedParts uint64            `json:"changed_parts"`
-	Warnings     map[string]uint64 `json:"warnings"`
+	Client         string            `json:"client"`
+	Name           string            `json:"name"`
+	Detected       bool              `json:"detected"`
+	State          string            `json:"state"`
+	Routed         bool              `json:"routed"`
+	Issue          string            `json:"issue,omitempty"`
+	Requests       uint64            `json:"requests"`
+	ChangedParts   uint64            `json:"changed_parts"`
+	Warnings       map[string]uint64 `json:"warnings"`
+	RecentWarnings []string          `json:"recent_warnings"`
 }
 type backgroundRoute struct {
 	view            BackgroundView
@@ -180,8 +182,15 @@ func (m *backgroundManager) connectLocked(r *backgroundRoute) {
 		return
 	}
 	if r.view.Client == "codex" {
-		profiles, err := filepath.Glob(filepath.Join(filepath.Dir(r.settings), "*.config.toml"))
-		if err != nil || len(profiles) > 0 {
+		entries, err := os.ReadDir(filepath.Dir(r.settings))
+		hasProfiles := false
+		for _, entry := range entries {
+			if strings.HasSuffix(entry.Name(), ".config.toml") {
+				hasProfiles = true
+				break
+			}
+		}
+		if (err != nil && !os.IsNotExist(err)) || hasProfiles {
 			fail("codex_profiles_require_connection_review")
 			return
 		}
@@ -245,11 +254,12 @@ func (m *backgroundManager) connectLocked(r *backgroundRoute) {
 		port = 0
 	}
 	listener, err := net.Listen("tcp4", net.JoinHostPort("127.0.0.1", strconv.Itoa(port)))
-	if err != nil && port != 0 {
-		listener, err = net.Listen("tcp4", "127.0.0.1:0")
-	}
 	if err != nil {
-		fail("local_service_unavailable")
+		if port != 0 {
+			fail("local_port_unavailable")
+		} else {
+			fail("local_service_unavailable")
+		}
 		return
 	}
 	origin := "http://" + listener.Addr().String()
@@ -297,15 +307,11 @@ func (m *backgroundManager) Views() []BackgroundView {
 			view.Requests = status.ModelRequests
 			view.ChangedParts = status.ChangedParts
 			view.Warnings = status.Warnings
+			view.RecentWarnings = status.RecentWarnings
 			if status.NativeCredentialMissing {
 				view.Issue = "codex_authentication_required"
 			}
-			needsAttention := view.Issue != ""
-			for code, count := range status.Warnings {
-				if count > 0 && code != "instructions_unchanged" && code != "tool_result_unchanged" && code != "attachment_unchanged" && code != "no_user_text" {
-					needsAttention = true
-				}
-			}
+			needsAttention := view.Issue != "" || len(status.RecentWarnings) > 0
 			if needsAttention {
 				view.State = "needs_attention"
 			} else if status.ModelRequests > 0 {
@@ -318,14 +324,22 @@ func (m *backgroundManager) Views() []BackgroundView {
 	return views
 }
 func (m *backgroundManager) disconnectLocked(r *backgroundRoute) error {
-	if r.handler == nil {
-		return nil
+	_, stateErr := os.Lstat(r.state)
+	var restoreErr error
+	if stateErr != nil && !os.IsNotExist(stateErr) {
+		restoreErr = stateErr
+	} else if r.handler != nil || stateErr == nil {
+		restoreErr = m.restoreRoute(r)
 	}
-	err := m.restoreRoute(r)
-	if err != nil {
+	if restoreErr != nil {
 		r.view.Issue = "routing_restore_conflict"
 		r.view.State = "needs_attention"
-		return err
+		return errors.New("routing_restore_conflict")
+	}
+	if r.handler == nil {
+		r.view.State = "disconnected"
+		r.view.Issue = ""
+		return nil
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -336,6 +350,7 @@ func (m *backgroundManager) disconnectLocked(r *backgroundRoute) error {
 	r.view.Requests = status.ModelRequests
 	r.view.ChangedParts = status.ChangedParts
 	r.view.Warnings = status.Warnings
+	r.view.RecentWarnings = status.RecentWarnings
 	r.handler = nil
 	r.server = nil
 	r.view.State = "disconnected"

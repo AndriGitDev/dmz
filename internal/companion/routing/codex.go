@@ -4,8 +4,7 @@ import (
 	"encoding/hex"
 	"net/url"
 	"strconv"
-
-	toml "github.com/pelletier/go-toml/v2"
+	"strings"
 )
 
 // codexProvider is the provider ID dmz owns inside the Codex settings file.
@@ -37,20 +36,25 @@ func codexBaseURL(origin, token string) (string, bool) {
 	return "http://127.0.0.1:" + u.Port() + "/v1", true
 }
 
-// CodexSettings returns a complete Codex config.toml that routes the default
-// session through the dmz loopback gateway. A nil original means no file
-// exists. The input is parsed strictly; unrelated values keep their TOML
-// semantics, but comments and formatting are not retained (the journal keeps
-// the original bytes for exact restoration). Authentication stays with Codex:
-// no credential, model, approval, sandbox or feature value is written.
+// CodexSettings returns the Codex config.toml that routes the default session
+// through the dmz loopback gateway. A nil original means no file exists. The
+// input is parsed strictly first. The change is made in place: the top-level
+// model_provider value is replaced (or one line is added before any table) and
+// the owned [model_providers.dmz_background] table is appended, so unrelated
+// bytes, comments and formatting are kept. A layout that cannot be extended
+// that way, such as an inline model_providers table, is refused. Authentication
+// stays with Codex: no credential, model, approval, sandbox or feature value is
+// written.
 func CodexSettings(original []byte, origin, token string) ([]byte, error) {
 	baseURL, ok := codexBaseURL(origin, token)
 	if !ok || len(original) > maxConfig {
 		return nil, ErrUnavailable
 	}
 	root := map[string]any{}
-	if original != nil && (toml.Unmarshal(original, &root) != nil || root == nil) {
-		return nil, ErrUnavailable
+	if original != nil {
+		if root, ok = decodeTOML(original); !ok {
+			return nil, ErrUnavailable
+		}
 	}
 	if err := codexCheckRoute(root, true); err != nil {
 		return nil, err
@@ -92,13 +96,60 @@ func CodexSettings(original []byte, origin, token string) ([]byte, error) {
 	}
 	root["model_providers"] = providers
 	root["model_provider"] = codexProvider
-	// The encoder writes plain key/values before tables, so model_provider is a
-	// top-level key rather than part of the last table.
-	result, err := toml.Marshal(root)
-	if err != nil || len(result) > maxConfig {
+
+	doc, ok := scanTOML(original)
+	if !ok {
+		return nil, ErrUnavailable
+	}
+	for _, e := range doc.exprs {
+		// An inline model_providers table cannot gain a table by header.
+		if !e.header && pathIs(e.path, "model_providers") {
+			return nil, ErrUnavailable
+		}
+	}
+	var edit tomlEdit
+	if e := doc.rootKey("model_provider"); e != nil {
+		edit = tomlEdit{start: e.valStart, end: e.valEnd, text: `"` + codexProvider + `"`}
+	} else {
+		at := doc.rootInsertAt()
+		edit = tomlEdit{start: at, end: at, text: doc.newLineAt(at) + `model_provider = "` + codexProvider + `"` + doc.eol}
+	}
+	result, ok := applyEdits(original, []tomlEdit{edit})
+	if !ok {
+		return nil, ErrUnavailable
+	}
+	// A table header at the end of the document cannot change the scope of
+	// anything before it.
+	if len(result) > 0 {
+		if result[len(result)-1] != '\n' {
+			result = append(result, doc.eol...)
+		}
+		result = append(result, doc.eol...)
+	}
+	result = append(result, codexProviderBlock(baseURL, token, doc.eol)...)
+	if len(result) > maxConfig {
+		return nil, ErrUnavailable
+	}
+	if got, ok := decodeTOML(result); !ok || !sameTOML(got, root) {
 		return nil, ErrUnavailable
 	}
 	return result, nil
+}
+
+// codexProviderBlock is the owned provider table. Its values were validated as
+// a loopback URL and a hex token, so they need no escaping.
+func codexProviderBlock(baseURL, token, eol string) string {
+	lines := []string{
+		"[model_providers." + codexProvider + "]",
+		`name = "dmz background gateway"`,
+		`base_url = "` + baseURL + `"`,
+		`wire_api = "responses"`,
+		`requires_openai_auth = true`,
+		`supports_websockets = false`,
+		`http_headers = { X-Dmz-Token = "` + token + `" }`,
+		`env_http_headers = { X-Dmz-OpenAI-Key = "OPENAI_API_KEY" }`,
+	}
+	return strings.Join(lines, eol) + eol
 }
 
 // codexCheckRoute rejects an active non-default route. At the top level an

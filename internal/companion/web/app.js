@@ -208,9 +208,9 @@ Object.assign(strings.en, {
   backgroundHint:
     "Installed tools are connected automatically when their settings are compatible. If a tool is already open, restart it once to load the route. Detection alone does not establish masking.",
   backgroundRestore:
-    "Disconnect restores DMZ’s routing changes and keeps your other settings. Already-open tools may need a restart after disconnect. Your tool keeps its own sign-in, model and permissions. Account routes are still being verified.",
+    "DMZ must stay open to mask text. Disconnect or Quit restores its routing changes; tools opened afterwards connect directly. Open DMZ again after signing in to your computer. Already-open tools may need a restart. Your tool keeps its sign-in, model and permissions.",
   not_detected: "Not detected",
-  restart_required: "Ready — open or restart the tool",
+  restart_required: "Routing configured — not yet confirmed",
   traffic_observed: "Model traffic observed",
   needs_attention: "Connection needs attention",
   disconnected: "Disconnected",
@@ -234,6 +234,14 @@ Object.assign(strings.en, {
     "DMZ could not save its local recovery state. The tool was not connected.",
   local_service_unavailable:
     "DMZ could not start the local connection. Try connecting again.",
+  local_port_unavailable:
+    "Another program is using DMZ’s saved connection port. Close that program, then reconnect. Restart your coding tool after reconnecting.",
+  backgroundWarning:
+    "A processing or connection warning occurred in the last two minutes. Check this connection before continuing; some text may have passed unchanged.",
+  warningHistory: "Processing warnings recorded since connection: {count}.",
+  evictedMappings: "Older session mappings were discarded {count} times. Their markers may be unresolved.",
+  confirmBackgroundQuit:
+    "Quit DMZ? Its routes will be restored. Tools opened afterwards connect directly without DMZ masking. Open DMZ again after your next login.",
 });
 Object.assign(strings.is, {
   codex_authentication_required:
@@ -247,9 +255,9 @@ Object.assign(strings.is, {
   backgroundHint:
     "Uppsett tól eru tengd sjálfkrafa þegar stillingar þeirra passa. Ef tólið er þegar opið skaltu endurræsa það einu sinni. Það eitt að tól finnist staðfestir ekki að texti sé falinn.",
   backgroundRestore:
-    "Aftenging tekur til baka leiðarbreytingar DMZ og heldur öðrum stillingum þínum. Tól sem eru þegar opin gætu þurft endurræsingu eftir aftengingu. Innskráning, líkan og heimildir fylgja tólinu. Innskráningarleiðir eru enn í prófun.",
+    "DMZ þarf að vera opið til að fela texta. Aftenging eða lokun tekur leiðarbreytingarnar til baka; tól sem opnast síðar tengjast beint. Opnaðu DMZ aftur eftir innskráningu í tölvuna. Tól sem eru þegar opin gætu þurft endurræsingu. Innskráning, líkan og heimildir fylgja tólinu.",
   not_detected: "Fannst ekki",
-  restart_required: "Tilbúið — opnaðu eða endurræstu tólið",
+  restart_required: "Leið stillt — ekki enn staðfest",
   traffic_observed: "Líkanbeiðnir hafa sést",
   needs_attention: "Athuga þarf tenginguna",
   disconnected: "Aftengt",
@@ -271,6 +279,14 @@ Object.assign(strings.is, {
     "Ekki tókst að lesa samhæfar leiðarstillingar. Tólið var ekki tengt.",
   background_state_unavailable:
     "Ekki tókst að vista staðbundnar endurheimtarupplýsingar. Tólið var ekki tengt.",
+  local_port_unavailable:
+    "Annað forrit notar vistað tengi DMZ. Lokaðu því forriti og tengdu aftur. Endurræstu kóðunartólið eftir tengingu.",
+  backgroundWarning:
+    "Viðvörun kom upp við vinnslu eða tengingu á síðustu tveimur mínútum. Athugaðu tenginguna áður en haldið er áfram; einhver texti gæti hafa farið óbreyttur áfram.",
+  warningHistory: "Skráðar vinnsluviðvaranir frá tengingu: {count}.",
+  evictedMappings: "Eldri lotuvörpunum var sleppt {count} sinnum. Merki þeirra gætu verið óþekkt.",
+  confirmBackgroundQuit:
+    "Loka DMZ? Leiðarstillingar verða teknar til baka. Tól sem opnast síðar tengjast beint án þess að DMZ feli texta. Opnaðu DMZ aftur eftir næstu innskráningu.",
 });
 let backgroundRendered = "";
 const pendingConnections = new Set();
@@ -499,10 +515,18 @@ function renderBackground() {
           "instructions_unchanged",
           "tool_result_unchanged",
           "no_user_text",
+          "attachment_unchanged",
+          "mapping_evicted_history_may_degrade",
         ].includes(k),
     );
-    if (warnings.length)
-      card.append(text("p", t("warning"), "session-warning"));
+    if (route.recent_warnings?.length)
+      card.append(text("p", t("backgroundWarning"), "session-warning"));
+    if (warnings.length) {
+      const count = warnings.reduce((sum, code) => sum + route.warnings[code], 0);
+      card.append(text("p", t("warningHistory").replace("{count}", count), "session-stats"));
+    }
+    if (route.warnings?.mapping_evicted_history_may_degrade)
+      card.append(text("p", t("evictedMappings").replace("{count}", route.warnings.mapping_evicted_history_may_degrade), "hint"));
     if (route.detected || route.routed) {
       let button = previous.get(route.client);
       if (!button) {
@@ -633,7 +657,7 @@ $("#quit").addEventListener("click", async () => {
   if (
     (state.sessions.some((s) => s.state !== "stopped") ||
       (state.background || []).some((r) => r.routed)) &&
-    !confirm(t("confirmQuit"))
+    !confirm(t(state.background_enabled ? "confirmBackgroundQuit" : "confirmQuit"))
   )
     return;
   stopped = true;

@@ -70,7 +70,11 @@ $icon.add_DoubleClick($open)
 $script:routes=@{}
 $codex.add_Click({$r=$script:routes['codex'];if($r){try{Call-Dmz 'background' 'POST' @{client='codex';connected=(!$r.routed)}}catch{}}})
 $claude.add_Click({$r=$script:routes['claude'];if($r){try{Call-Dmz 'background' 'POST' @{client='claude';connected=(!$r.routed)}}catch{}}})
-$quit.add_Click({try{Call-Dmz 'quit' 'POST'}catch{};[System.Windows.Forms.Application]::ExitThread()})
+$quit.add_Click({
+  $answer=[System.Windows.Forms.MessageBox]::Show('DMZ restores its routes. Tools opened afterwards connect directly without DMZ masking. Open DMZ again after your next login.','Quit DMZ?',[System.Windows.Forms.MessageBoxButtons]::YesNo,[System.Windows.Forms.MessageBoxIcon]::Warning,[System.Windows.Forms.MessageBoxDefaultButton]::Button2)
+  if($answer -ne [System.Windows.Forms.DialogResult]::Yes){return}
+  try{Call-Dmz 'quit' 'POST'}catch{return};[System.Windows.Forms.Application]::ExitThread()
+})
 $timer=New-Object System.Windows.Forms.Timer
 $timer.Interval=2000
 $script:failures=0
@@ -80,7 +84,7 @@ $timer.add_Tick({
     if($view.background_enabled){
       foreach($r in $view.background){
         $script:routes[$r.client]=$r
-        $label=switch($r.state){'not_detected'{'not detected'}'restart_required'{'ready - open or restart tool'}'traffic_observed'{'model traffic observed'}'needs_attention'{'needs attention'}'disconnected'{'disconnected'}default{'checking'}}
+        $label=switch($r.state){'not_detected'{'not detected'}'restart_required'{'routing configured, not confirmed'}'traffic_observed'{'model traffic observed'}'needs_attention'{'needs attention'}'disconnected'{'disconnected'}default{'checking'}}
         $action=if($r.routed){'Disconnect'}else{'Connect'}
         if($r.client -eq 'codex'){$codex.Text='Codex: '+$label+' ('+$action+')';$codex.Enabled=($r.detected -or $r.routed)}
         if($r.client -eq 'claude'){$claude.Text='Claude Code: '+$label+' ('+$action+')';$claude.Enabled=($r.detected -or $r.routed)}

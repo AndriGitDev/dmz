@@ -93,6 +93,8 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   int _lockFD;
   BOOL _terminating;
   NSUInteger _restartAttempts;
+  NSTimeInterval _coreStartedAt;
+  BOOL _startupTimedOut;
 }
 
 #pragma mark - Lifecycle
@@ -222,6 +224,8 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
     return;
   }
   _corePid = pid;
+  _coreStartedAt = [NSDate timeIntervalSinceReferenceDate];
+  _startupTimedOut = NO;
   [self watchCoreExit:pid];
   [self setStatus:@"DMZ is starting…"];
   [self waitForDescriptorUntil:[NSDate dateWithTimeIntervalSinceNow:kStartTimeout]];
@@ -247,6 +251,10 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
 
 - (void)coreExited:(pid_t)pid normal:(BOOL)normal {
   if (pid != _corePid) return;
+  // Bound a crash loop, rather than counting unrelated crashes for the entire
+  // lifetime of a menu-bar app that may stay open for weeks.
+  if ([NSDate timeIntervalSinceReferenceDate] - _coreStartedAt >= 300) _restartAttempts = 0;
+  BOOL expectedExit = normal && !_startupTimedOut;
   if (_exitSource) {
     dispatch_source_cancel(_exitSource);
     _exitSource = nil;
@@ -255,7 +263,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   [self clearCoreState];
   [self removePrivateDir];
   if (_terminating) return;
-  if (normal) { [NSApp terminate:nil]; return; }
+  if (expectedExit) { [NSApp terminate:nil]; return; }
   if (_restartAttempts < 2) {
     _restartAttempts++;
     [self setStatus:@"DMZ is recovering its connection…"];
@@ -281,6 +289,7 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   }
   if ([deadline timeIntervalSinceNow] <= 0) {
     [self setStatus:@"DMZ core did not become ready"];
+    _startupTimedOut = YES;
     [self terminateCore];
     return;
   }
@@ -446,6 +455,8 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   [_menu addItem:_statusLine];
   NSMenuItem *scope = [[NSMenuItem alloc] initWithTitle:@"User text only; files and tool results unchanged" action:NULL keyEquivalent:@""];
   scope.enabled = NO; [_menu addItem:scope];
+  NSMenuItem *running = [[NSMenuItem alloc] initWithTitle:@"Keep DMZ open; reopen it after login" action:NULL keyEquivalent:@""];
+  running.enabled = NO; [_menu addItem:running];
   [_menu addItem:[NSMenuItem separatorItem]];
   _detectedHeader = [[NSMenuItem alloc] initWithTitle:@"Tools" action:NULL keyEquivalent:@""];
   _detectedHeader.enabled = NO;
@@ -460,10 +471,28 @@ static BOOL waitExit(pid_t pid, NSTimeInterval seconds) {
   _restartItem.hidden = YES;
   [_menu addItem:_restartItem];
   [_menu addItem:[NSMenuItem separatorItem]];
-  NSMenuItem *quit = [[NSMenuItem alloc] initWithTitle:@"Quit DMZ" action:@selector(terminate:) keyEquivalent:@"q"];
-  quit.target = NSApp;
+  NSMenuItem *quit = [[NSMenuItem alloc] initWithTitle:@"Quit DMZ" action:@selector(quitDMZ:) keyEquivalent:@"q"];
+  quit.target = self;
   [_menu addItem:quit];
   _item.menu = _menu;
+}
+
+- (void)quitDMZ:(id)sender {
+  NSAlert *alert = [NSAlert new];
+  alert.messageText = @"Quit DMZ?";
+  alert.informativeText = @"DMZ restores its routing changes. Tools opened afterwards connect directly without DMZ masking. Open DMZ again after your next login. Already-open tools may need a restart.";
+  [alert addButtonWithTitle:@"Keep Running"];
+  [alert addButtonWithTitle:@"Quit DMZ"];
+  if (@available(macOS 14.0, *)) {
+    [NSApp activate];
+  } else {
+    // The deployment target includes macOS 13, before -activate existed.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    [NSApp activateIgnoringOtherApps:YES];
+#pragma clang diagnostic pop
+  }
+  if ([alert runModal] == NSAlertSecondButtonReturn) [NSApp terminate:nil];
 }
 
 - (void)menuWillOpen:(NSMenu *)menu {
@@ -517,7 +546,7 @@ static NSString *DMZSafeLabel(id v, NSUInteger max) {
       NSString *client = DMZSafeLabel(route[@"client"], 24);
       if (![client isEqualToString:@"codex"] && ![client isEqualToString:@"claude"]) continue;
       NSString *code = DMZSafeLabel(route[@"state"], 32);
-      NSDictionary *labels = @{@"not_detected":@"not detected", @"restart_required":@"ready — open or restart tool", @"traffic_observed":@"model traffic observed", @"needs_attention":@"needs attention", @"disconnected":@"disconnected"};
+      NSDictionary *labels = @{@"not_detected":@"not detected", @"restart_required":@"routing configured, not confirmed", @"traffic_observed":@"model traffic observed", @"needs_attention":@"needs attention", @"disconnected":@"disconnected"};
       NSString *label = labels[code] ?: @"checking connection";
       [self addInfo:[NSString stringWithFormat:@"%@ — %@", name, label]];
       if ([route[@"detected"] boolValue] || [route[@"routed"] boolValue]) {

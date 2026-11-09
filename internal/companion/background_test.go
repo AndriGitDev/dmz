@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -216,5 +218,136 @@ func TestBackgroundDetectsLaterInstallAndAllowsDisconnectAfterRemoval(t *testing
 	m.Refresh()
 	if m.SetConnected("codex", false) != nil {
 		t.Fatal("removed client route could not disconnect")
+	}
+}
+
+func TestBackgroundWarningStateMatchesRecentProcessingWarnings(t *testing.T) {
+	cfg, _ := backgroundConfigForTest(t)
+	m, err := newBackground(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer m.Close()
+	connection := readBackgroundConnection(t, "claude", cfg.Settings["claude"])
+	post := func(session, body string) {
+		r, _ := http.NewRequest("POST", connection.origin+"/messages", strings.NewReader(body))
+		r.Header.Set("X-Dmz-Token", connection.token)
+		r.Header.Set("Authorization", "Bearer synthetic-native-credential")
+		r.Header.Set("Content-Type", "application/json")
+		r.Header.Set("X-Claude-Code-Session-Id", session)
+		response, err := http.DefaultClient.Do(r)
+		if err != nil {
+			t.Fatal(err)
+		}
+		response.Body.Close()
+		if response.StatusCode != 200 {
+			t.Fatal("fixture request failed")
+		}
+	}
+	for i := 0; i < 17; i++ {
+		post(strings.Repeat("x", i+1), `{"messages":[{"role":"user","content":"synthetic text"}],"system":"synthetic instruction"}`)
+	}
+	for _, view := range m.Views() {
+		if view.Client == "claude" && (view.State != "traffic_observed" || view.Warnings["mapping_evicted_history_may_degrade"] != 1 || len(view.RecentWarnings) != 0) {
+			t.Fatal("ordinary session eviction stuck in attention state")
+		}
+	}
+	post("synthetic-invalid-request", `{`)
+	for _, view := range m.Views() {
+		if view.Client == "claude" && (view.State != "needs_attention" || len(view.RecentWarnings) == 0) {
+			t.Fatal("current processing failure hidden")
+		}
+	}
+}
+
+func TestBackgroundDisconnectReportsUnresolvedRecovery(t *testing.T) {
+	cfg, original := backgroundConfigForTest(t)
+	if err := os.MkdirAll(cfg.StateDir, 0700); err != nil {
+		t.Fatal(err)
+	}
+	state := filepath.Join(cfg.StateDir, "codex-routing.json")
+	if err := os.WriteFile(state, nil, 0600); err != nil {
+		t.Fatal(err)
+	}
+	m, err := newBackground(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer m.Close()
+	if m.SetConnected("codex", false) == nil {
+		t.Fatal("unresolved recovery reported as successful disconnect")
+	}
+	for _, view := range m.Views() {
+		if view.Client == "codex" && (view.State != "needs_attention" || view.Routed) {
+			t.Fatal("recovery conflict hidden")
+		}
+	}
+	got, _ := os.ReadFile(cfg.Settings["codex"])
+	if !bytes.Equal(got, original["codex"]) {
+		t.Fatal("recovery failure modified settings")
+	}
+	if _, err := os.Stat(state); err != nil {
+		t.Fatal("recovery evidence removed")
+	}
+}
+
+func TestBackgroundKeepsSavedPortWhenOccupied(t *testing.T) {
+	cfg, original := backgroundConfigForTest(t)
+	m, err := newBackground(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	connection := readBackgroundConnection(t, "codex", cfg.Settings["codex"])
+	port := m.ports["codex"]
+	m.Close()
+	occupied, err := net.Listen("tcp4", net.JoinHostPort("127.0.0.1", strconv.Itoa(port)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer occupied.Close()
+	next, err := newBackground(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer next.Close()
+	for _, view := range next.Views() {
+		if view.Client == "codex" && (view.Routed || view.Issue != "local_port_unavailable") {
+			t.Fatal("saved port silently moved")
+		}
+	}
+	got, _ := os.ReadFile(cfg.Settings["codex"])
+	if !bytes.Equal(got, original["codex"]) {
+		t.Fatal("port conflict changed settings")
+	}
+	occupied.Close()
+	if err := next.SetConnected("codex", true); err != nil {
+		t.Fatal(err)
+	}
+	if readBackgroundConnection(t, "codex", cfg.Settings["codex"]) != connection {
+		t.Fatal("reconnect changed saved address or token")
+	}
+}
+
+func TestBackgroundProfileScanUsesLiteralDirectory(t *testing.T) {
+	cfg, original := backgroundConfigForTest(t)
+	cfg.Settings["codex"] = filepath.Join(t.TempDir(), "dotfiles[synthetic]", "config.toml")
+	if err := os.MkdirAll(filepath.Dir(cfg.Settings["codex"]), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(cfg.Settings["codex"], original["codex"], 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(filepath.Dir(cfg.Settings["codex"]), "review.config.toml"), []byte("model_provider='openai'\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	m, err := newBackground(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer m.Close()
+	for _, view := range m.Views() {
+		if view.Client == "codex" && (view.Routed || view.Issue != "codex_profiles_require_connection_review") {
+			t.Fatal("profile hidden by glob characters in directory")
+		}
 	}
 }

@@ -76,6 +76,44 @@ func writeAtomic(path string, data []byte, mode os.FileMode) error {
 	return nil
 }
 
+// Publish a fully persisted journal without replacing an existing recovery
+// record. Linking a private temporary file is atomic and exclusive; a process
+// crash cannot expose a partially encoded journal at the recovery path.
+func writeJournal(state string, record journal) error {
+	f, err := os.CreateTemp(filepath.Dir(state), ".dmz-journal-")
+	if err != nil {
+		return ErrBackup
+	}
+	defer os.Remove(f.Name())
+	if f.Chmod(0600) != nil {
+		f.Close()
+		return ErrBackup
+	}
+	err = json.NewEncoder(f).Encode(record)
+	if err == nil {
+		err = f.Sync()
+	}
+	closeErr := f.Close()
+	if err != nil || closeErr != nil || os.Link(f.Name(), state) != nil {
+		return ErrBackup
+	}
+	// A directory flush makes publication durable before changing settings.
+	// Windows directory handles do not support this operation; its native
+	// filesystem and shutdown recovery remain separately qualified.
+	if runtime.GOOS != "windows" {
+		dir, err := os.Open(filepath.Dir(state))
+		if err != nil {
+			return ErrBackup
+		}
+		err = dir.Sync()
+		closeErr = dir.Close()
+		if err != nil || closeErr != nil {
+			return ErrBackup
+		}
+	}
+	return nil
+}
+
 // Install records recovery state before atomically changing the settings. A nil
 // expected value means the file must not exist; an empty slice means empty file.
 // The journal can contain existing user settings, so it is owner-only and must
@@ -94,18 +132,8 @@ func Install(path, state string, expected, replacement []byte) error {
 	if os.MkdirAll(filepath.Dir(state), 0700) != nil || os.Chmod(filepath.Dir(state), 0700) != nil {
 		return ErrBackup
 	}
-	f, err := os.OpenFile(state, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
-	if err != nil {
-		return ErrBackup
-	}
 	record := journal{Path: path, Existed: exists, Mode: uint32(mode), Original: original, Applied: digest(replacement), Written: replacement}
-	err = json.NewEncoder(f).Encode(record)
-	if err == nil {
-		err = f.Sync()
-	}
-	closeErr := f.Close()
-	if err != nil || closeErr != nil {
-		os.Remove(state)
+	if writeJournal(state, record) != nil {
 		return ErrBackup
 	}
 	if os.MkdirAll(filepath.Dir(path), 0700) != nil {

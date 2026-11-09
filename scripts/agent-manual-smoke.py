@@ -239,6 +239,12 @@ def parse_status(out):
     if not isinstance(st, dict):
         return None
     warns = st.get("warnings") or {}
+    recent = st.get("recent_warnings", [])
+    if not isinstance(recent, list) or len(recent) > 64 or any(
+        not isinstance(code, str) or not re.fullmatch(r"[a-z0-9_]{1,64}", code) or code not in warns
+        for code in recent
+    ):
+        return None
     return {
         "requests": st.get("requests"), "text_parts": st.get("text_parts"), "changed_parts": st.get("changed_parts"),
         "sessions": st.get("sessions"),
@@ -502,7 +508,7 @@ def run_client(args, client, client_bin, scenarios, deadline):
                 sf.append("status_changed_parts_zero")
             if not st1["sessions"]:
                 sf.append("status_sessions_zero_before_reset")
-            if set(st1["keys"]) - {"profile", "coverage", "requests", "model_requests", "native_credential_missing", "text_parts", "changed_parts", "sessions", "warnings"}:
+            if set(st1["keys"]) - {"profile", "coverage", "requests", "model_requests", "native_credential_missing", "text_parts", "changed_parts", "sessions", "warnings", "recent_warnings"}:
                 sf.append("status_unexpected_fields")
         if rc2 != 0:
             sf.append("reset_failed")

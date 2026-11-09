@@ -16,6 +16,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"path"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -77,16 +78,20 @@ type Status struct {
 	Sessions                int               `json:"sessions"`
 	NativeCredentialMissing bool              `json:"native_credential_missing,omitempty"`
 	Warnings                map[string]uint64 `json:"warnings"`
+	// RecentWarnings contains attention codes seen in the last two minutes.
+	// Warnings above retain lifetime counts, including routine scope notices.
+	RecentWarnings []string `json:"recent_warnings"`
 }
 
 type Server struct {
-	cfg     Config
-	proxy   *httputil.ReverseProxy
-	mu      sync.Mutex
-	maps    map[string]*mapping
-	status  Status
-	workers chan struct{}
-	tick    uint64
+	cfg          Config
+	proxy        *httputil.ReverseProxy
+	mu           sync.Mutex
+	maps         map[string]*mapping
+	status       Status
+	workers      chan struct{}
+	warningTimes map[string]time.Time
+	tick         uint64
 }
 
 // NewServer accepts only the intended provider or an explicitly enabled
@@ -145,7 +150,7 @@ func NewServer(cfg Config) (*Server, error) {
 	if cfg.WorkerWait <= 0 {
 		cfg.WorkerWait = 30 * time.Second
 	}
-	s := &Server{cfg: cfg, maps: make(map[string]*mapping), workers: make(chan struct{}, 4), status: Status{Profile: "basic-experimental", Coverage: "supported-user-message-text-only", Warnings: make(map[string]uint64)}}
+	s := &Server{cfg: cfg, maps: make(map[string]*mapping), workers: make(chan struct{}, 4), warningTimes: make(map[string]time.Time), status: Status{Profile: "basic-experimental", Coverage: "supported-user-message-text-only", Warnings: make(map[string]uint64)}}
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.ResponseHeaderTimeout = 120 * time.Second
 	s.proxy = &httputil.ReverseProxy{
@@ -266,6 +271,7 @@ func endpoint(protocol Protocol, p, method string) (string, bool) {
 func (s *Server) warn(code string) {
 	s.mu.Lock()
 	s.status.Warnings[code]++
+	s.warningTimes[code] = time.Now()
 	s.mu.Unlock()
 	if s.cfg.Warning != nil {
 		s.cfg.Warning(code)
@@ -278,10 +284,23 @@ func (s *Server) Snapshot() Status {
 	status := s.status
 	status.Sessions = len(s.maps)
 	status.Warnings = make(map[string]uint64, len(s.status.Warnings))
+	status.RecentWarnings = []string{}
 	for k, v := range s.status.Warnings {
 		status.Warnings[k] = v
+		if !informationalWarning(k) && time.Since(s.warningTimes[k]) < 2*time.Minute {
+			status.RecentWarnings = append(status.RecentWarnings, k)
+		}
 	}
+	sort.Strings(status.RecentWarnings)
 	return status
+}
+
+func informationalWarning(code string) bool {
+	switch code {
+	case "instructions_unchanged", "tool_result_unchanged", "attachment_unchanged", "no_user_text", "mapping_evicted_history_may_degrade":
+		return true
+	}
+	return false
 }
 
 // ClearMappings drops the service's references to live originals. It is used

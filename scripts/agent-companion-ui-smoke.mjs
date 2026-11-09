@@ -363,6 +363,21 @@ try {
     ),
     "custom_gateway_warning_missing",
   );
+  const backgroundCard = page.locator("#background-connections article").first();
+  backgroundRoutes[0].warnings = { attachment_unchanged: 1, mapping_evicted_history_may_degrade: 1 };
+  backgroundRoutes[0].recent_warnings = [];
+  backgroundRoutes[0].requests = 3;
+  await page.waitForFunction(() => document.querySelector("#background-connections .session-stats")?.textContent.startsWith("3 "));
+  check(await backgroundCard.locator(".session-warning").count() === 0, "routine_background_notice_requires_attention");
+  backgroundRoutes[0].warnings.upstream_unavailable = 1;
+  backgroundRoutes[0].recent_warnings = ["upstream_unavailable"];
+  backgroundRoutes[0].state = "needs_attention";
+  await backgroundCard.locator(".session-warning").waitFor();
+  check((await backgroundCard.innerText()).includes("last two minutes"), "recent_warning_not_disclosed");
+  backgroundRoutes[0].recent_warnings = [];
+  backgroundRoutes[0].state = "traffic_observed";
+  await backgroundCard.locator(".session-warning").waitFor({ state: "detached" });
+  check((await backgroundCard.innerText()).includes("Processing warnings recorded since connection: 1."), "old_warning_history_lost");
   await connection.click();
   await page.waitForFunction(
     () =>
@@ -383,6 +398,14 @@ try {
     backgroundActions[1]?.connected === true,
     "background_reconnect_used_stale_action",
   );
+  let backgroundQuitMessage = "";
+  page.once("dialog", async (dialog) => {
+    backgroundQuitMessage = dialog.message();
+    await dialog.dismiss();
+  });
+  await page.locator("#quit").click();
+  check(backgroundQuitMessage.includes("without DMZ masking"), "quit_did_not_explain_direct_connection");
+  check(child.exitCode === null && await page.locator("#quit").isEnabled(), "cancelled_background_quit_stopped_app");
   await page.unroute("**/api/background");
   await page.unroute("**/api/state");
   await page.reload();

@@ -15,9 +15,19 @@ cd "$root_dir"
 "$go_bin" test -race ./internal/agentgateway ./internal/companion/... ./cmd/dmz ./packages/detect ./packages/surrogates > "$artifact_dir/go-race.txt" 2>&1
 "$go_bin" vet ./... > "$artifact_dir/go-vet.txt" 2>&1
 "$go_bin" test ./internal/agentgateway -run '^$' -fuzz FuzzTransform -fuzztime 10s -parallel 4 > "$artifact_dir/go-fuzz.txt" 2>&1
+"$go_bin" test ./internal/companion/routing -run '^$' -fuzz FuzzCodexRoutingText -fuzztime 10s -parallel 4 > "$artifact_dir/go-routing-fuzz.txt" 2>&1
+codex_config_status=3
+codex_test_bin="$(command -v codex || true)"
+if [[ -n "$codex_test_bin" ]]; then
+  codex_config_status=0
+  DMZ_CODEX_BIN="$codex_test_bin" "$go_bin" test -count=1 -run 'TestCodex.*Installed' -v ./internal/companion/routing > "$artifact_dir/codex-config-synthetic.txt" 2>&1 || codex_config_status=$?
+else
+  printf '%s\n' 'not_run: installed_codex_required' > "$artifact_dir/codex-config-synthetic.txt"
+fi
 CGO_ENABLED=0 "$go_bin" build -trimpath -buildvcs=false -o "$artifact_dir/dmz" ./cmd/dmz
 mkdir -p "$artifact_dir/tools"
 CGO_ENABLED=0 "$go_bin" build -trimpath -buildvcs=false -o "$artifact_dir/tools/companion-testhost" ./internal/companion/testhost
+CGO_ENABLED=0 "$go_bin" build -trimpath -buildvcs=false -o "$artifact_dir/tools/background-testhost" ./internal/companion/backgroundtesthost
 CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 "$go_bin" build -trimpath -buildvcs=false -o "$artifact_dir/dmz-darwin-arm64" ./cmd/dmz
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 "$go_bin" build -trimpath -buildvcs=false -o "$artifact_dir/dmz-windows-amd64.exe" ./cmd/dmz
 
@@ -40,6 +50,10 @@ if [[ "$manual_status" -ne 0 && "$manual_status" -ne 3 ]]; then
 fi
 companion_status=0
 python3 -I scripts/agent-companion-smoke.py --dmz "$artifact_dir/dmz" --testhost "$artifact_dir/tools/companion-testhost" --scenario-timeout 60 > "$artifact_dir/companion-synthetic.json" || companion_status=$?
+background_status=0
+python3 -I scripts/agent-background-smoke.py --testhost "$artifact_dir/tools/background-testhost" --scenario-timeout 60 > "$artifact_dir/background-synthetic.json" || background_status=$?
+background_env_status=0
+python3 -I scripts/agent-background-smoke.py --testhost "$artifact_dir/tools/background-testhost" --clients codex --no-roundtrip --codex-auth openai_env --scenario-timeout 60 > "$artifact_dir/background-env-synthetic.json" || background_env_status=$?
 ui_status=3
 if [[ -n "${DMZ_TEST_PLAYWRIGHT:-}" ]]; then
   ui_status=0
@@ -48,7 +62,7 @@ else
   printf '%s\n' '{"status":"not_run","reason":"operator_supplied_playwright_required"}' > "$artifact_dir/companion-browser.json"
 fi
 overall_status=0
-for check_status in "$smoke_status" "$manual_status" "$companion_status" "$ui_status"; do
+for check_status in "$codex_config_status" "$smoke_status" "$manual_status" "$companion_status" "$background_status" "$background_env_status" "$ui_status"; do
   if [[ "$check_status" -ne 0 && "$check_status" -ne 3 ]]; then overall_status=1; break; fi
   if [[ "$check_status" -eq 3 ]]; then overall_status=3; fi
 done
@@ -75,6 +89,8 @@ paths = sorted([*root.glob('cmd/dmz/*.go'), *root.glob('internal/agentgateway/*.
                 root / 'scripts/check-agent-gateway.sh', root / 'scripts/package-companion.sh',
                 *[p for p in (root / 'scripts/companion-package').glob('*') if p.is_file()], root / 'docs/local-companion.md',
                 *root.glob('docs/local-agent-*.md'),root / '.github/workflows/prototype.yml'])
+paths += [root / 'docs/background-agent-integration.md',
+          *[p for p in (root / 'native/macos').glob('*') if p.is_file()]]
 source = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
 outputs = {str(p.relative_to(artifacts)): hashlib.sha256(p.read_bytes()).hexdigest() for p in artifacts.rglob('*') if p.is_file() and p.name != 'manifest.json'}
 report = dict(schema=1, evidence_kind='local-development-synthetic-only',

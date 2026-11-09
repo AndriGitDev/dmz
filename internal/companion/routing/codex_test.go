@@ -179,7 +179,7 @@ func TestCodexSettingsPreservesUnrelatedSemantics(t *testing.T) {
 		line = strings.TrimSpace(line)
 		header = header || strings.HasPrefix(line, "[")
 		if strings.HasPrefix(line, "model_provider ") {
-			if header || line != "model_provider = 'dmz_background'" {
+			if header || line != `model_provider = "dmz_background"` {
 				t.Fatalf("model_provider is not a top-level key before tables:\n%s", out)
 			}
 			break

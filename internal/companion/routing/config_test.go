@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -109,5 +110,60 @@ func TestSymlinkSettingsAreNotReplaced(t *testing.T) {
 	got, _ := os.ReadFile(target)
 	if string(got) != `{}` {
 		t.Fatal("symlink target changed")
+	}
+}
+
+func TestJournalPublicationIsCompleteAndExclusive(t *testing.T) {
+	dir := t.TempDir()
+	state := filepath.Join(dir, "recovery.json")
+	record := journal{Path: filepath.Join(dir, "settings.json"), Original: []byte(strings.Repeat("synthetic", 1<<16)), Written: []byte("synthetic replacement")}
+	record.Applied = digest(record.Written)
+	var wg sync.WaitGroup
+	done := make(chan struct{})
+	var observedErr error
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for {
+			data, err := os.ReadFile(state)
+			if err == nil {
+				var got journal
+				if json.Unmarshal(data, &got) != nil || !bytes.Equal(got.Original, record.Original) || digest(got.Written) != got.Applied {
+					observedErr = errors.New("partially published recovery record")
+				}
+				return
+			}
+			select {
+			case <-done:
+				return
+			default:
+			}
+		}
+	}()
+	err := writeJournal(state, record)
+	close(done)
+	wg.Wait()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if observedErr != nil {
+		t.Fatal(observedErr)
+	}
+	data, err := os.ReadFile(state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if writeJournal(state, journal{Path: record.Path, Original: []byte("different")}) != ErrBackup {
+		t.Fatal("existing journal replaced")
+	}
+	after, _ := os.ReadFile(state)
+	if !bytes.Equal(data, after) {
+		t.Fatal("original recovery evidence overwritten")
+	}
+	entries, _ := os.ReadDir(dir)
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), ".dmz-journal-") {
+			t.Fatal("temporary journal left behind")
+		}
 	}
 }

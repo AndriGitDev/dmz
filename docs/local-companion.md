@@ -17,7 +17,7 @@ The material below describes the retained **legacy browser/terminal launcher**,
 which is still the Linux default and available for focused fixtures. Its
 project-picker flow is not the new native Mac/Windows default.
 
-The companion opens a small device-local setup window and launches the installed Codex CLI or Claude Code in a terminal. It is an experimental companion to the Chromium extension, using the existing **basic** detector. It is not a qualified connection to the Codex desktop app or Claude Desktop, and it is not a public download or signed release.
+The legacy companion opens a small device-local setup window and launches the installed Codex CLI or Claude Code in a terminal. It uses the existing **basic** detector. It is not a qualified connection to the Codex desktop app or Claude Desktop. Public unsigned Mac review artifacts are separately authorized on PR #27; they are not signed releases.
 
 The intended setup has five core actions with an existing sign-in, or six with an entered API key. That is a design target, not a measured installation guarantee. Native OS trust prompts, moving a macOS app, client onboarding, sign-in and project-trust screens can add actions. A new Claude project currently requires its own trust confirmation; DMZ does not pre-approve it. Download-to-first-answer qualification remains open.
 
@@ -92,7 +92,7 @@ Create private review archives with notices, source identity and checksums:
 GO_BIN=/path/to/go scripts/package-companion.sh /tmp/new-empty-dmz-packages
 ```
 
-The package script creates one universal macOS 13+ app bundle (Apple Silicon and Intel), a Windows amd64 GUI executable and a Linux amd64 launcher archive. Cross-compilation and archive checks do not establish native runtime correctness. These packages are unsigned, unnotarized and unpublished. Public distribution requires the repository's history, rights, source-availability and release checks as well as native signing and install qualification. The existing extension's distribution approval does not qualify this companion.
+On macOS, the package script creates a native menu-bar app containing universal Apple Silicon and Intel executables; a non-Mac cross-build labels its Mac archive core-only. It also builds a Windows amd64 GUI executable and Linux amd64 launcher. Archive checks do not establish native runtime correctness. The owner authorized public unsigned Mac review artifacts on PR #27 after all checks pass. General release, signing/notarization and install qualification remain separate; the existing extension's approval does not qualify this companion.
 
 ## Linux native-helper fixtures
 
