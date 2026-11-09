@@ -320,8 +320,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) prepare(r *http.Request) {
-	if encoding := strings.TrimSpace(r.Header.Get("Content-Encoding")); encoding != "" && !strings.EqualFold(encoding, "identity") {
-		s.warn("encoded_body_forwarded_unchanged")
+	coding := requestCoding(r.Header)
+	if coding == codingUnsupported {
+		s.warn(warnEncodingUnsupported)
 		return
 	}
 	if ct := r.Header.Get("Content-Type"); ct != "" {
@@ -342,21 +343,34 @@ func (s *Server) prepare(r *http.Request) {
 		s.warn("masking_busy_forwarded_unchanged")
 		return
 	}
-	body, err := io.ReadAll(io.LimitReader(r.Body, s.cfg.MaxBodyBytes+1))
+	// The wire body is bounded before any decoding; decoded output has the
+	// same bound (decodeBody).
+	wire, err := io.ReadAll(io.LimitReader(r.Body, s.cfg.MaxBodyBytes+1))
 	if err != nil {
 		// Bytes already consumed still belong to the outgoing request. Keep
 		// the underlying reader (and its error) rather than sending a prefix.
-		r.Body = &joinedBody{Reader: io.MultiReader(bytes.NewReader(body), r.Body), closer: r.Body}
+		r.Body = &joinedBody{Reader: io.MultiReader(bytes.NewReader(wire), r.Body), closer: r.Body}
 		s.warn("body_read_failed_forwarded_unchanged")
 		return
 	}
-	if int64(len(body)) > s.cfg.MaxBodyBytes {
-		r.Body = &joinedBody{Reader: io.MultiReader(bytes.NewReader(body), r.Body), closer: r.Body}
+	if int64(len(wire)) > s.cfg.MaxBodyBytes {
+		r.Body = &joinedBody{Reader: io.MultiReader(bytes.NewReader(wire), r.Body), closer: r.Body}
 		s.warn("oversized_body_forwarded_unchanged")
 		return
 	}
 	_ = r.Body.Close()
-	setBody(r, body)
+	// Until a change is made, the original wire bytes and headers (including
+	// Content-Encoding and digests) are what gets forwarded.
+	setBody(r, wire)
+	body := wire
+	if coding != codingIdentity {
+		decoded, code := decodeBody(coding, wire, s.cfg.MaxBodyBytes)
+		if code != "" {
+			s.warn(code)
+			return
+		}
+		body = decoded
+	}
 	key := "launch"
 	if s.cfg.SessionHeader != "" {
 		key = r.Header.Get(s.cfg.SessionHeader)
@@ -436,8 +450,13 @@ func (s *Server) prepare(r *http.Request) {
 		}
 		return result.Transformed, nil
 	})
-	setBody(r, transformed)
 	if report.ChangedParts > 0 {
+		// A changed decoded body is sent as identity JSON: re-encoding would
+		// add a second compressor implementation for no masking benefit.
+		setBody(r, transformed)
+		if coding != codingIdentity {
+			r.Header.Del("Content-Encoding")
+		}
 		// Entity-body digests describe the old bytes and cannot be forwarded.
 		for _, h := range []string{"Content-MD5", "Digest", "Content-Digest", "Repr-Digest"} {
 			r.Header.Del(h)

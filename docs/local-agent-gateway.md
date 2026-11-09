@@ -65,13 +65,13 @@ Mappings are discarded on exit or explicit reset. They are not persisted for res
 Default resource bounds:
 
 - Four concurrent transformation slots, with up to 30 seconds to acquire a slot during a burst. Timeout forwards the request unchanged with a warning; cancellation cancels its upstream request as well.
-- An 8 MiB request parsing limit. Larger requests stream unchanged with a warning.
+- An 8 MiB wire-body and decoded JSON limit. Larger bodies pass unchanged with a warning. Single gzip/x-gzip and zstd codings are decoded inside the four-worker budget; zstd window/memory and decoded output are bounded.
 - A 256 KiB limit per eligible text field.
 - A 60-second request-body read deadline on launcher/manual listeners. Streaming responses are not subject to that body-read deadline.
 - Up to 16 mapping scopes, each admitting up to 8 MiB of unique scanned text or 32,768 distinct text fields. Identical history replay does not spend that text budget again. At scope capacity the least recently used idle mapping is discarded with a warning so new sessions can still be masked. Returning to an evicted conversation loses its old map. These are input-accounting limits, not exact heap-size guarantees.
 - JSON depth at most 256 and at most 100,000 value nodes.
 
-Requests using compressed bodies, malformed/ambiguous JSON, duplicate keys, invalid Unicode or unsupported shapes are forwarded unchanged with fixed warnings. Text/scoping capacity failures and detector-processing failures also warn and continue; other eligible fields may still be masked. A running trained scanner is not part of this profile.
+Supported gzip/x-gzip and zstd requests are decoded before masking. If no text changes, their original compressed bytes and headers are retained. Changed requests are sent as uncompressed JSON with a recomputed length and old digests removed. Unsupported/multiple encodings, malformed compressed data, excessive expansion/windows, malformed/ambiguous JSON, duplicate keys, invalid Unicode and unsupported shapes warn and pass through unchanged. Text/scoping capacity failures and detector-processing failures also warn and continue; other eligible fields may still be masked. A running trained scanner is not part of this profile.
 
 If the gateway process is unreachable, the client gets a connection error. That is a connectivity limitation, distinct from the detector's warn-and-continue policy. There is no silent direct-provider fallback. Exit the launcher and launch the client normally to leave this experimental route.
 
@@ -123,7 +123,7 @@ Use the same `DMZ_LOCAL_TOKEN` in the control-command environment:
 
 `status` returns aggregate counts and warning codes. It exposes neither mappings nor session identifiers. `reset` discards mappings; it cannot retroactively remove data from the client or provider. Start a new conversation after reset when old markers would otherwise remain in history. The HTTP control endpoints require local authentication and reject browser origins.
 
-`instructions_unchanged`, `tool_result_unchanged` and `attachment_unchanged` describe coverage exclusions. Codes such as `mask_error`, `encoded_body_forwarded_unchanged`, `missing_session_identity_forwarded_unchanged` and capacity warnings mean a particular field/request bypassed masking. Once history exceeds a parsing/capacity limit, later requests can repeatedly forward originals; earlier masking does not protect those later requests. `whole_text_masked_context_may_degrade` reports conservative whole-field masking, including unknown-marker cases.
+`instructions_unchanged`, `tool_result_unchanged` and `attachment_unchanged` describe coverage exclusions. Codes such as `mask_error`, `encoded_body_forwarded_unchanged`, `encoded_body_invalid_forwarded_unchanged`, `decoded_body_oversized_forwarded_unchanged`, `missing_session_identity_forwarded_unchanged` and capacity warnings mean a particular field/request bypassed masking. Once history exceeds a parsing/capacity limit, later requests can repeatedly forward originals; earlier masking does not protect those later requests. `whole_text_masked_context_may_degrade` reports conservative whole-field masking, including unknown-marker cases.
 
 During a launcher run, routine instruction/tool-result/no-user-text counts are summary-only; other warning codes appear at most once each to limit disruption to an interactive client. Full per-code counts appear after the client exits and in service status. The launcher also warns if it observes no model-route traffic. A changed-parts count is not a completeness or accuracy score.
 

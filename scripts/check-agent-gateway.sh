@@ -58,14 +58,19 @@ cp LICENSE COPYING-NOTICE.md THIRD_PARTY.md "$artifact_dir/"
 for notice in gitleaks-MIT.txt vendor-secrets-NOTICE.txt golang-x-text-LICENSE.txt libphonenumber-Apache-2.0.txt phonenumbers-MIT.txt phone-numbering-NOTICE.txt; do
   cp "apps/dmz/public/licenses/$notice" "$artifact_dir/licenses/"
 done
+for notice in klauspost-compress-LICENSE klauspost-compress-zstd-internal-xxhash-LICENSE.txt klauspost-compress-internal-snapref-LICENSE klauspost-compress-snappy-AUTHORS; do
+  cp "internal/agentgateway/licenses/$notice" "$artifact_dir/licenses/"
+done
 cp "$("$go_bin" env GOROOT)/LICENSE" "$artifact_dir/licenses/Go-LICENSE.txt"
 
 python3 - "$root_dir" "$artifact_dir" <<'PY'
 import datetime, hashlib, json, pathlib, subprocess, sys
 root, artifacts = map(pathlib.Path, sys.argv[1:])
 paths = sorted([*root.glob('cmd/dmz/*.go'), *root.glob('internal/agentgateway/*.go'),
+                *[p for p in (root / 'internal/agentgateway/licenses').glob('*') if p.is_file()],
+                root / 'go.mod', root / 'go.sum', root / 'THIRD_PARTY.md',
                 *[p for p in (root / 'internal/companion').rglob('*') if p.is_file()],
-                *root.glob('scripts/agent-*-smoke.py'), root / 'scripts/agent-companion-ui-smoke.mjs',
+                *root.glob('scripts/agent-*-smoke.py'), *root.glob('scripts/agent-*.mjs'),
                 root / 'scripts/check-agent-gateway.sh', root / 'scripts/package-companion.sh',
                 root / 'scripts/companion-package/README.txt', root / 'docs/local-companion.md',
                 *root.glob('docs/local-agent-*.md'),root / '.github/workflows/prototype.yml'])

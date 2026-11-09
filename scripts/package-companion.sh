@@ -31,6 +31,7 @@ licenses_src="$root_dir/apps/dmz/public/licenses"
 # metadata, secret patterns, golang.org/x/text). No trained scanner, model,
 # tokenizer or address vocabulary is bundled.
 notices=(gitleaks-MIT.txt vendor-secrets-NOTICE.txt golang-x-text-LICENSE.txt libphonenumber-Apache-2.0.txt phonenumbers-MIT.txt phone-numbering-NOTICE.txt)
+gateway_notices=(klauspost-compress-LICENSE klauspost-compress-zstd-internal-xxhash-LICENSE.txt klauspost-compress-internal-snapref-LICENSE klauspost-compress-snappy-AUTHORS)
 go_license="$("$go_bin" env GOROOT)/LICENSE"
 [[ -f "$go_license" ]] || { echo "package-companion: Go LICENSE not found" >&2; exit 2; }
 
@@ -53,6 +54,7 @@ copy_docs() { # destination
   cp "$template_dir/README.txt" "$1/README.txt"
   cp LICENSE COPYING-NOTICE.md THIRD_PARTY.md "$1/"
   for n in "${notices[@]}"; do cp "$licenses_src/$n" "$1/licenses/"; done
+  for n in "${gateway_notices[@]}"; do cp "$root_dir/internal/agentgateway/licenses/$n" "$1/licenses/"; done
   cp "$go_license" "$1/licenses/Go-LICENSE.txt"
   {
     echo "DMZ companion private review prototype - NOT A RELEASE"
@@ -206,7 +208,9 @@ out, archives = sys.argv[1], sys.argv[2:]
 common = {"README.txt", "LICENSE", "COPYING-NOTICE.md", "THIRD_PARTY.md", "MANIFEST.txt",
           "licenses/Go-LICENSE.txt", "licenses/golang-x-text-LICENSE.txt", "licenses/gitleaks-MIT.txt",
           "licenses/vendor-secrets-NOTICE.txt", "licenses/libphonenumber-Apache-2.0.txt",
-          "licenses/phonenumbers-MIT.txt", "licenses/phone-numbering-NOTICE.txt"}
+          "licenses/phonenumbers-MIT.txt", "licenses/phone-numbering-NOTICE.txt",
+          "licenses/klauspost-compress-LICENSE", "licenses/klauspost-compress-zstd-internal-xxhash-LICENSE.txt",
+          "licenses/klauspost-compress-internal-snapref-LICENSE", "licenses/klauspost-compress-snappy-AUTHORS"}
 forbidden = (".onnx", ".bin", ".safetensors", ".jsonl", ".wasm", "tokenizer", "model")
 ok = True
 def check(cond, msg):
@@ -235,7 +239,7 @@ for name in archives:
     check(not [k for k in rel if k.lower().endswith(forbidden) or "scanner" in k.lower()], f"{name}: no trained scanner/model/corpus files")
     check(b"NOT A RELEASE" in rel["README.txt"][1], f"{name}: README states private prototype")
     steps = [l for l in rel["README.txt"][1].decode().splitlines() if l[:4].strip().rstrip(".").isdigit() and l.startswith("  ")]
-    check(len(steps) <= 7, f"{name}: README start flow has {len(steps)} actions (<8)")
+    check(len(steps) <= 7, f"{name}: README documents {len(steps)} core steps (native prompts unqualified)")
     if "macos" in name:
         exe = rel.get("DMZ.app/Contents/MacOS/DMZ")
         check(exe is not None and exe[0] & 0o111 == 0o111, f"{name}: DMZ.app/Contents/MacOS/DMZ executable")
