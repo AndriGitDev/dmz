@@ -262,6 +262,10 @@ func (s *Server) Snapshot() Status {
 	return status
 }
 
+// ClearMappings drops the service's references to live originals. It is used
+// after the owning app session stops; counters remain available for review.
+func (s *Server) ClearMappings() { s.mu.Lock(); s.maps = make(map[string]*mapping); s.mu.Unlock() }
+
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// DNS rebinding and browser callers are outside this local client API.
 	host := r.Host
@@ -287,9 +291,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.URL.Path == "/_dmz/reset" && r.Method == http.MethodPost {
-		s.mu.Lock()
-		s.maps = make(map[string]*mapping)
-		s.mu.Unlock()
+		s.ClearMappings()
 		s.warn("mapping_reset_history_may_degrade")
 		w.WriteHeader(http.StatusNoContent)
 		return

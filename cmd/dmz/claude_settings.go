@@ -12,7 +12,17 @@ import (
 // settings. Its local token is kept out of process arguments in a private,
 // temporary file. Managed policy may still take precedence and needs separate
 // qualification; this is not an enforcement boundary against a local agent.
-func claudeSettings(args []string, base, headers string) ([]string, func(), error) {
+type claudeLaunchSettings struct {
+	ProjectDir  string
+	PinAuth     bool
+	LocalBearer string
+}
+
+func claudeSettings(args []string, base, headers string, options ...claudeLaunchSettings) ([]string, func(), error) {
+	var opts claudeLaunchSettings
+	if len(options) > 0 {
+		opts = options[0]
+	}
 	settings := map[string]json.RawMessage{}
 	remaining := make([]string, 0, len(args))
 	for i := 0; i < len(args); i++ {
@@ -47,7 +57,7 @@ func claudeSettings(args []string, base, headers string) ([]string, func(), erro
 		}
 		settings = parsed
 	}
-	paths, err := claudeSettingsPaths()
+	paths, err := claudeSettingsPaths(opts.ProjectDir)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -71,6 +81,15 @@ func claudeSettings(args []string, base, headers string) ([]string, func(), erro
 	}
 	for key, value := range map[string]string{"ANTHROPIC_BASE_URL": base, "ANTHROPIC_CUSTOM_HEADERS": headers, "CLAUDE_CODE_USE_BEDROCK": "0", "CLAUDE_CODE_USE_VERTEX": "0", "CLAUDE_CODE_USE_FOUNDRY": "0", "CLAUDE_CODE_USE_MANTLE": "0"} {
 		env[key], _ = json.Marshal(value)
+	}
+	if opts.PinAuth {
+		// Ordinary project settings must not turn an explicit account choice
+		// into API billing, or replace the companion's local bearer credential.
+		env["ANTHROPIC_API_KEY"], _ = json.Marshal("")
+		env["ANTHROPIC_AUTH_TOKEN"], _ = json.Marshal(opts.LocalBearer)
+		if opts.LocalBearer != "" {
+			env["CLAUDE_CODE_OAUTH_TOKEN"], _ = json.Marshal("")
+		}
 	}
 	settings["env"], _ = json.Marshal(env)
 	encoded, err := json.Marshal(settings)
@@ -151,7 +170,7 @@ func checkClaudeRoute(settings map[string]json.RawMessage) error {
 	return nil
 }
 
-func claudeSettingsPaths() ([]string, error) {
+func claudeSettingsPaths(projectDir ...string) ([]string, error) {
 	configDir := os.Getenv("CLAUDE_CONFIG_DIR")
 	if configDir == "" {
 		home, err := os.UserHomeDir()
@@ -163,6 +182,9 @@ func claudeSettingsPaths() ([]string, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return nil, errors.New("cannot resolve project settings directory")
+	}
+	if len(projectDir) > 0 && projectDir[0] != "" {
+		cwd = projectDir[0]
 	}
 	project := cwd
 	for current := cwd; ; current = filepath.Dir(current) {

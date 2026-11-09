@@ -17,30 +17,51 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"runtime"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/AndriGitDev/dmz/internal/agentgateway"
+	"github.com/AndriGitDev/dmz/internal/companion"
 )
 
 const scopeNotice = "experimental BASIC profile; selected user-message text only. Instructions, tool results, attachments, client history and other network routes are outside masking coverage. Responses retain markers."
 
-func main() { os.Exit(mainCode(os.Args[1:], os.Stdin, os.Stdout, os.Stderr)) }
+func main() {
+	args := os.Args[1:]
+	if len(args) == 0 {
+		if handled, err := launchAppHost(); handled {
+			if err != nil {
+				companion.ShowStartupError()
+				os.Exit(1)
+			}
+			return
+		}
+	}
+	code := mainCode(args, os.Stdin, os.Stdout, os.Stderr)
+	graphical := len(args) == 0 || (args[0] == "app" && len(args) == 1)
+	if code != 0 && graphical {
+		companion.ShowStartupError()
+	}
+	os.Exit(code)
+}
 
 func mainCode(args []string, in io.Reader, out, errOut io.Writer) int {
 	if len(args) == 0 {
-		usage(errOut)
-		return 2
+		args = []string{"app"}
 	}
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	ctx, stop := signal.NotifyContext(context.Background(), lifecycleSignals()...)
 	defer stop()
 	var err error
 	switch args[0] {
+	case "app":
+		err = app(ctx, args[1:], errOut)
+	case "connect":
+		return connect(ctx, args[1:], in, out, errOut)
 	case "run":
 		return run(ctx, args[1:], in, out, errOut)
 	case "serve":
@@ -74,6 +95,8 @@ func usage(w io.Writer) {
   dmz reset [--address http://127.0.0.1:PORT]
   dmz config [--address http://127.0.0.1:PORT] codex|claude
   dmz version
+
+Open DMZ without arguments for the local app window.
 
 run uses temporary process configuration and a random local credential.
 serve requires DMZ_LOCAL_TOKEN (at least 32 characters); it never prints it.
@@ -141,6 +164,10 @@ type options struct {
 }
 
 func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer) int {
+	return runInternal(ctx, args, in, out, errOut, nil)
+}
+
+func runInternal(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer, external *connectorSession) int {
 	f := flag.NewFlagSet("run", flag.ContinueOnError)
 	f.SetOutput(errOut)
 	var opts options
@@ -197,7 +224,7 @@ func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer
 	if opts.upstream != "" {
 		upstream = opts.upstream
 	}
-	if client == "codex" && opts.auth == "api" && os.Getenv("OPENAI_API_KEY") == "" {
+	if external == nil && client == "codex" && opts.auth == "api" && os.Getenv("OPENAI_API_KEY") == "" {
 		fmt.Fprintln(errOut, "dmz: API mode requires OPENAI_API_KEY; use --auth chatgpt only for a qualified ChatGPT route")
 		return 2
 	}
@@ -208,6 +235,9 @@ func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer
 		return 1
 	}
 	token := hex.EncodeToString(entropy)
+	if external != nil {
+		token = external.GatewayToken
+	}
 	var outputMu sync.Mutex
 	seenWarnings := make(map[string]bool)
 	warning := func(code string) {
@@ -227,23 +257,44 @@ func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer
 	if client == "claude" {
 		cfg.SessionHeader = "X-Claude-Code-Session-Id"
 	}
-	handler, err := agentgateway.NewServer(cfg)
-	if err != nil {
-		fmt.Fprintln(errOut, "dmz:", err)
-		return 2
-	}
-	listener, err := net.Listen("tcp4", "127.0.0.1:0")
-	if err != nil {
-		fmt.Fprintln(errOut, "dmz: cannot bind local adapter")
-		return 1
-	}
-	httpServer := newHTTPServer(handler)
+	var handler *agentgateway.Server
+	var httpServer *http.Server
+	var err error
+	base := ""
 	serveDone := make(chan error, 1)
-	go func() { serveDone <- httpServer.Serve(listener) }()
-	defer shutdown(httpServer)
-	base := "http://" + listener.Addr().String()
+	if external == nil {
+		handler, err = agentgateway.NewServer(cfg)
+		if err != nil {
+			fmt.Fprintln(errOut, "dmz:", err)
+			return 2
+		}
+		listener, listenErr := net.Listen("tcp4", "127.0.0.1:0")
+		if listenErr != nil {
+			fmt.Fprintln(errOut, "dmz: cannot bind local adapter")
+			return 1
+		}
+		httpServer = newHTTPServer(handler)
+		go func() { serveDone <- httpServer.Serve(listener) }()
+		defer shutdown(httpServer)
+		base = "http://" + listener.Addr().String()
+	} else {
+		base = external.GatewayURL
+	}
 	env := os.Environ()
 	env = setEnv(env, "DMZ_LOCAL_TOKEN", token)
+	if external != nil {
+		if external.Auth == "api" {
+			env = setEnv(env, "OPENAI_API_KEY", token)
+			env = setEnv(env, "ANTHROPIC_API_KEY", "")
+			env = setEnv(env, "ANTHROPIC_AUTH_TOKEN", token)
+			env = setEnv(env, "CLAUDE_CODE_OAUTH_TOKEN", "")
+		} else {
+			env = setEnv(env, "OPENAI_API_KEY", "")
+			env = setEnv(env, "ANTHROPIC_API_KEY", "")
+			env = setEnv(env, "ANTHROPIC_AUTH_TOKEN", "")
+		}
+		env = setEnv(env, "PATH", filepath.Dir(external.ClientPath)+string(os.PathListSeparator)+os.Getenv("PATH"))
+	}
 	if client == "codex" {
 		overrides := []string{"--no-daemon", "-c", `model_provider="dmz_local"`, "-c", `model_providers.dmz_local.name="dmz local experimental"`, "-c", "model_providers.dmz_local.base_url=" + strconv.Quote(base+"/v1"), "-c", `model_providers.dmz_local.wire_api="responses"`, "-c", `model_providers.dmz_local.supports_websockets=false`, "-c", `features.enable_request_compression=false`, "-c", `model_providers.dmz_local.env_http_headers={"X-Dmz-Token"="DMZ_LOCAL_TOKEN"}`}
 		if opts.auth == "chatgpt" {
@@ -265,7 +316,15 @@ func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer
 		headers += agentgateway.TokenHeader + ": " + token
 		env = setEnv(env, "ANTHROPIC_CUSTOM_HEADERS", headers)
 		var cleanup func()
-		clientArgs, cleanup, err = claudeSettings(clientArgs, base, headers)
+		settingsOpts := claudeLaunchSettings{}
+		if external != nil {
+			settingsOpts.ProjectDir = external.Project
+			settingsOpts.PinAuth = true
+			if external.Auth == "api" {
+				settingsOpts.LocalBearer = token
+			}
+		}
+		clientArgs, cleanup, err = claudeSettings(clientArgs, base, headers, settingsOpts)
 		if err != nil {
 			fmt.Fprintln(errOut, "dmz:", err)
 			return 2
@@ -279,6 +338,9 @@ func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer
 	command := exec.CommandContext(ctx, bin, clientArgs...)
 	cleanupChild := configureChild(command, in, out, errOut)
 	command.Env = env
+	if external != nil {
+		command.Dir = external.Project
+	}
 	command.Stdin = in
 	command.Stdout = out
 	command.Stderr = lockedWriter{mu: &outputMu, out: errOut}
@@ -286,8 +348,13 @@ func run(ctx context.Context, args []string, in io.Reader, out, errOut io.Writer
 	fmt.Fprintln(errOut, "dmz: local adapter active for this launch; mappings are discarded on exit. No automatic restoration.")
 	err = command.Run()
 	cleanupChild()
-	shutdown(httpServer)
-	snapshot := handler.Snapshot()
+	var snapshot agentgateway.Status
+	if external == nil {
+		shutdown(httpServer)
+		snapshot = handler.Snapshot()
+	} else {
+		snapshot = externalStatus(ctx, external)
+	}
 	outputMu.Lock()
 	fmt.Fprintf(errOut, "dmz: observed %d model-route requests, %d text parts, %d changed parts.\n", snapshot.Requests, snapshot.TextParts, snapshot.ChangedParts)
 	codes := make([]string, 0, len(snapshot.Warnings))

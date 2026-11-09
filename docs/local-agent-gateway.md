@@ -4,6 +4,8 @@ This development prototype reuses dmz's basic detector to mask selected user-mes
 
 The local gateway and CLI launcher are implemented. Installed CLI binaries have been exercised against synthetic local upstream servers. Desktop applications, real provider responses, account authentication, compaction and remote execution still need qualification. Use fabricated data during evaluation.
 
+For the experimental graphical launcher, see the [local companion app guide](local-companion.md). The app hides local credentials and temporary routing from users; the commands below remain developer/operator tools.
+
 ## Build and run
 
 Use the Go version required by the repository's `go.mod` (Go 1.27 or later):
@@ -108,7 +110,7 @@ Merge the Codex fragment into the appropriate user-level configuration without d
 
 For Claude Desktop, review the third-party inference configuration in Developer → Configure Third-Party Inference. Use the local gateway address, bearer scheme and local dmz token. The generated JSON is a configuration fragment, not a complete OS-managed profile. Evaluate the Code tab only; Chat and Cowork are outside this prototype. Whether an installed desktop build accepts the local HTTP endpoint, sends the required session header and completes startup/model discovery must be verified on that device.
 
-Keep the service terminal visible for warnings. There is no tray application or desktop notification integration. Stopping the service interrupts the configured client route; restore the previous client configuration explicitly before returning to normal use. Maps currently live until reset/exit; automatic idle expiry is not implemented.
+Keep the service terminal visible for warnings. The separate companion has a local browser control window for its CLI launches; this manual service has no tray or notification integration. Stopping the service interrupts the configured client route; restore the previous client configuration explicitly before returning to normal use. Maps currently live until reset/exit; automatic idle expiry is not implemented.
 
 ## Status and reset
 

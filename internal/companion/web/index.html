@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="is">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>DMZ</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="/" aria-label="DMZ"
+          >dm<span>z</span><small>LOCAL COMPANION · ALPHA</small></a
+        >
+        <div class="header-actions">
+          <button id="language" type="button">English</button
+          ><button
+            id="quit"
+            disabled
+            class="quiet"
+            data-i18n="quit"
+            type="button"
+          >
+            Loka DMZ
+          </button>
+        </div>
+      </header>
+      <main>
+        <div class="intro">
+          <p class="eyebrow" data-i18n="eyebrow">ÞÍN TÓL. MINNI GÖGN.</p>
+          <h1 data-i18n="title">Haltu áfram með þín tól.</h1>
+          <p data-i18n="intro">
+            Veldu verkefni. Ræstu kóðunartólið þitt. DMZ reynir að fela studd
+            auðkenni í textaskilaboðum áður en þau eru send.
+          </p>
+        </div>
+        <div class="layout">
+          <section class="setup" aria-labelledby="setup-title">
+            <div class="section-top">
+              <h2 id="setup-title" data-i18n="setup">Byrjaðu nýja lotu</h2>
+              <span class="pill" data-i18n="local">Á tækinu þínu</span>
+            </div>
+            <form id="start-form">
+              <fieldset>
+                <legend>
+                  <span class="step">1</span
+                  ><span data-i18n="tool">Veldu tól</span>
+                </legend>
+                <div id="clients" class="tool-grid" aria-live="polite"></div>
+              </fieldset>
+              <fieldset>
+                <legend>
+                  <span class="step">2</span
+                  ><span data-i18n="project">Veldu verkefni</span>
+                </legend>
+                <label class="sr-only" for="project" data-i18n="folder"
+                  >Verkefnamappa</label
+                >
+                <div class="folder-row">
+                  <input
+                    id="project"
+                    name="project"
+                    required
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="/path/to/project"
+                  /><button id="choose-folder" type="button" data-i18n="choose">
+                    Velja möppu
+                  </button>
+                </div>
+                <p class="hint" data-i18n="project-hint">
+                  Tólið opnast í þessari möppu. Skráa- og netaðgangur fylgja
+                  stillingum tólsins.
+                </p>
+              </fieldset>
+              <fieldset>
+                <legend>
+                  <span class="step">3</span
+                  ><span data-i18n="connection">Notaðu þína tengingu</span>
+                </legend>
+                <label id="environment-option" class="radio-row" hidden
+                  ><input id="use-environment" type="checkbox" /><span
+                    data-i18n="useEnvironment"
+                    >Nota API-lykil úr umhverfi DMZ (API-gjöld)</span
+                  ></label
+                >
+                <p class="connection-summary" data-i18n="connection-default">
+                  Notar núverandi innskráningu tólsins nema þú sláir inn
+                  API-lykil. Innskráningarleiðin er enn í prófun.
+                </p>
+                <div id="api-fields">
+                  <label for="api-key" data-i18n="api-key"
+                    >API-lykill (valfrjálst)</label
+                  ><input
+                    id="api-key"
+                    type="password"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="API key"
+                  />
+                  <p class="hint" id="api-hint"></p>
+                </div>
+              </fieldset>
+              <div class="scope">
+                <strong data-i18n="scope-title"
+                  >Textaskilaboð, með takmörkunum.</strong
+                >
+                <p data-i18n="scope">
+                  Skrár, viðhengi og niðurstöður tóla eru óbreytt. Greining
+                  getur misst af gögnum; bilanir vara við og halda áfram. Svör
+                  geta innihaldið sýnileg merki.
+                </p>
+              </div>
+              <p id="error" class="error" role="alert" hidden></p>
+              <button
+                class="primary"
+                id="start"
+                type="submit"
+                data-i18n="start"
+              >
+                Ræsa með DMZ →
+              </button>
+              <p class="hint" data-i18n="terminal-hint">
+                Opnar terminal-útgáfu tólsins. Tólið gæti beðið þig um að
+                staðfesta traust á verkefnamöppunni. DMZ breytir ekki
+                stillingaskrám þínum.
+              </p>
+            </form>
+          </section>
+          <aside>
+            <section class="sessions" aria-labelledby="sessions-title">
+              <div class="section-top">
+                <h2 id="sessions-title" data-i18n="sessions">Þínar lotur</h2>
+                <span id="live-count" class="live-count">0</span>
+              </div>
+              <div id="sessions" aria-live="polite">
+                <p class="empty" data-i18n="empty">
+                  Engin lota í gangi. Byrjaðu vinstra megin.
+                </p>
+              </div>
+            </section>
+            <section class="note">
+              <h2 data-i18n="simple-title">Engin DMZ-innskráning.</h2>
+              <p data-i18n="simple">
+                Engin skýjaþjónusta frá DMZ og engin samtalsgreining send til
+                DMZ. Vörpun gilda er í minni þessarar lotu.
+              </p>
+              <details>
+                <summary data-i18n="desktop">
+                  Hvað með desktop-forritin?
+                </summary>
+                <p data-i18n="desktop-hint">
+                  Þessi útgáfa ræsir terminal-tólin þín. Beinar tengingar við
+                  desktop-forritin eru enn óstaðfestar og eru ekki sýndar sem
+                  studdar hér.
+                </p>
+              </details>
+            </section>
+          </aside>
+        </div>
+      </main>
+      <footer>
+        <span data-i18n="footer"
+          >DMZ · staðbundin vinnsla · opinn frumkóði með GPL-3.0-only
+          leyfi</span
+        ><span data-i18n="preview"
+          >Þróunarútgáfa — notaðu tilbúin prófunargögn.</span
+        >
+      </footer>
+    </div>
+  </body>
+</html>

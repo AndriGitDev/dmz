@@ -74,3 +74,34 @@ func TestClaudeSettingsRejectIncompatibleRoutes(t *testing.T) {
 		t.Fatal("incompatible user route accepted")
 	}
 }
+
+func TestCompanionClaudeConnectionChoicePinsOnlyLocalCredentials(t *testing.T) {
+	t.Setenv("CLAUDE_CONFIG_DIR", t.TempDir())
+	t.Chdir(t.TempDir())
+	for _, bearer := range []string{"", "synthetic-local-bearer"} {
+		args, cleanup, err := claudeSettings([]string{"--settings", `{"env":{"ANTHROPIC_API_KEY":"synthetic-user-key","ANTHROPIC_AUTH_TOKEN":"synthetic-user-token","CLAUDE_CODE_OAUTH_TOKEN":"synthetic-oauth"}}`}, "http://127.0.0.1:1234", "X-Dmz-Token: synthetic-local", claudeLaunchSettings{PinAuth: true, LocalBearer: bearer})
+		if err != nil {
+			t.Fatal(err)
+		}
+		body, err := os.ReadFile(args[1])
+		cleanup()
+		if err != nil {
+			t.Fatal(err)
+		}
+		var result struct {
+			Env map[string]string `json:"env"`
+		}
+		if json.Unmarshal(body, &result) != nil {
+			t.Fatal("invalid private auth settings")
+		}
+		if result.Env["ANTHROPIC_API_KEY"] != "" || result.Env["ANTHROPIC_AUTH_TOKEN"] != bearer {
+			t.Fatal("explicit app connection could be replaced by ordinary settings")
+		}
+		if bearer != "" && result.Env["CLAUDE_CODE_OAUTH_TOKEN"] != "" {
+			t.Fatal("API connection kept an overriding OAuth setting")
+		}
+		if strings.Contains(string(body), "synthetic-user-key") || strings.Contains(string(body), "synthetic-user-token") {
+			t.Fatal("private local routing copied provider credentials")
+		}
+	}
+}
