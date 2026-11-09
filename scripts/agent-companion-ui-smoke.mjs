@@ -296,6 +296,8 @@ try {
       state: "restart_required",
       requests: 0,
       changed_parts: 0,
+      new_redactions: 2,
+      activity: [{ at: "2026-11-09T12:00:00Z", outcome: "masked", new_redactions: 2, changed_parts: 1 }],
     },
     {
       client: "claude",
@@ -364,6 +366,9 @@ try {
     "custom_gateway_warning_missing",
   );
   const backgroundCard = page.locator("#background-connections article").first();
+  check((await backgroundCard.locator(".redaction-counter").innerText()).includes("2 new values masked"), "new_value_counter_missing");
+  await backgroundCard.locator(".activity-log summary").click();
+  check((await backgroundCard.locator(".activity-log").innerText()).includes("Text masked"), "local_activity_missing");
   backgroundRoutes[0].warnings = { attachment_unchanged: 1, mapping_evicted_history_may_degrade: 1 };
   backgroundRoutes[0].recent_warnings = [];
   backgroundRoutes[0].requests = 3;
@@ -374,12 +379,13 @@ try {
   backgroundRoutes[0].state = "needs_attention";
   await backgroundCard.locator(".session-warning").waitFor();
   check((await backgroundCard.innerText()).includes("last two minutes"), "recent_warning_not_disclosed");
+  check(await backgroundCard.locator(".activity-log").evaluate(el => el.open), "activity_collapsed_during_poll");
   backgroundRoutes[0].recent_warnings = [];
   backgroundRoutes[0].state = "traffic_observed";
   await backgroundCard.locator(".session-warning").waitFor({ state: "detached" });
   check((await backgroundCard.innerText()).includes("Processing warnings recorded since connection: 1."), "old_warning_history_lost");
-  await backgroundCard.locator("details summary").click();
-  check((await backgroundCard.locator("details").innerText()).includes("upstream_unavailable: 1"), "diagnostic_warning_code_missing");
+  await backgroundCard.locator("details:not(.activity-log) summary").click();
+  check((await backgroundCard.locator("details:not(.activity-log)").innerText()).includes("upstream_unavailable: 1"), "diagnostic_warning_code_missing");
   await connection.click();
   await page.waitForFunction(
     () =>

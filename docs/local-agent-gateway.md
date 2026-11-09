@@ -52,6 +52,14 @@ Instructions, system/developer messages, tool definitions, tool arguments, metad
 
 ## Local answer restoration
 
+The companion menu and Settings show newly masked values since connection.
+Repeated history reuses mappings and does not increase this count. Scope reset,
+eviction or recreation can count a value again; reconnecting resets the totals.
+Settings retains the last 20 local request-processing events in memory, with
+time, new-value and changed-field counts and a fixed outcome only. There is no
+prompt, original, marker, credential or file-path log, and no activity file is
+written. These counters describe local work, not delivery or complete detection.
+
 On supported successful model routes, a missing or nonstandard reply MIME label
 no longer disables restoration by itself. The gateway probes at most 4 KiB for
 JSON or SSE framing, then uses the same strict protocol and assistant-field

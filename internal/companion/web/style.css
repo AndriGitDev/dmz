@@ -482,6 +482,19 @@ footer {
 .scope {
   margin-top: 0;
 }
+.redaction-counter {
+  font-size: 20px;
+  font-weight: 650;
+  margin: 12px 0 6px;
+}
+.activity-log {
+  margin: 12px 0;
+}
+.activity-log li {
+  margin: 8px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
 .tool-card:has(input:disabled) {
   cursor: default;
 }

@@ -549,6 +549,8 @@ static NSString *DMZSafeLabel(id v, NSUInteger max) {
       NSDictionary *labels = @{@"not_detected":@"not detected", @"restart_required":@"routing configured, not confirmed", @"traffic_observed":@"model traffic observed", @"needs_attention":@"needs attention", @"disconnected":@"disconnected"};
       NSString *label = labels[code] ?: @"checking connection";
       [self addInfo:[NSString stringWithFormat:@"%@ — %@", name, label]];
+      unsigned long long redactions = [route[@"new_redactions"] isKindOfClass:[NSNumber class]] ? [route[@"new_redactions"] unsignedLongLongValue] : 0;
+      [self addInfo:[NSString stringWithFormat:@"%@ — %llu new values masked", name, redactions]];
       if ([route[@"detected"] boolValue] || [route[@"routed"] boolValue]) {
         BOOL routed = [route[@"routed"] boolValue];
         NSMenuItem *action = [[NSMenuItem alloc] initWithTitle:[NSString stringWithFormat:@"%@ %@", routed ? @"Disconnect" : @"Connect", name] action:@selector(toggleConnection:) keyEquivalent:@""];

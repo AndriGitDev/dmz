@@ -31,16 +31,18 @@ type BackgroundConfig struct {
 	Planners  map[string]func([]byte, string, string) ([]byte, error)
 }
 type BackgroundView struct {
-	Client         string            `json:"client"`
-	Name           string            `json:"name"`
-	Detected       bool              `json:"detected"`
-	State          string            `json:"state"`
-	Routed         bool              `json:"routed"`
-	Issue          string            `json:"issue,omitempty"`
-	Requests       uint64            `json:"requests"`
-	ChangedParts   uint64            `json:"changed_parts"`
-	Warnings       map[string]uint64 `json:"warnings"`
-	RecentWarnings []string          `json:"recent_warnings"`
+	NewRedactions  uint64                  `json:"new_redactions"`
+	Activity       []agentgateway.Activity `json:"activity"`
+	Client         string                  `json:"client"`
+	Name           string                  `json:"name"`
+	Detected       bool                    `json:"detected"`
+	State          string                  `json:"state"`
+	Routed         bool                    `json:"routed"`
+	Issue          string                  `json:"issue,omitempty"`
+	Requests       uint64                  `json:"requests"`
+	ChangedParts   uint64                  `json:"changed_parts"`
+	Warnings       map[string]uint64       `json:"warnings"`
+	RecentWarnings []string                `json:"recent_warnings"`
 }
 type backgroundRoute struct {
 	view            BackgroundView
@@ -306,6 +308,8 @@ func (m *backgroundManager) Views() []BackgroundView {
 			status := r.handler.Snapshot()
 			view.Requests = status.ModelRequests
 			view.ChangedParts = status.ChangedParts
+			view.NewRedactions = status.NewRedactions
+			view.Activity = status.Activity
 			view.Warnings = status.Warnings
 			view.RecentWarnings = status.RecentWarnings
 			if status.NativeCredentialMissing {

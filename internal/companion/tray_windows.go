@@ -86,6 +86,7 @@ $timer.add_Tick({
         $script:routes[$r.client]=$r
         $label=switch($r.state){'not_detected'{'not detected'}'restart_required'{'routing configured, not confirmed'}'traffic_observed'{'model traffic observed'}'needs_attention'{'needs attention'}'disconnected'{'disconnected'}default{'checking'}}
         $action=if($r.routed){'Disconnect'}else{'Connect'}
+        $label=$label+'; '+[string]$r.new_redactions+' new values masked'
         if($r.client -eq 'codex'){$codex.Text='Codex: '+$label+' ('+$action+')';$codex.Enabled=($r.detected -or $r.routed)}
         if($r.client -eq 'claude'){$claude.Text='Claude Code: '+$label+' ('+$action+')';$claude.Enabled=($r.detected -or $r.routed)}
       }

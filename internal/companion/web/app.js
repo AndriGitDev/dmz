@@ -240,6 +240,13 @@ Object.assign(strings.en, {
     "A processing or connection warning occurred in the last two minutes. Check this connection before continuing; some text may have passed unchanged.",
   warningHistory: "Processing warnings recorded since connection: {count}.",
   warningDetails: "Diagnostic warning codes",
+  redactions: "new values masked",
+  activityTitle: "Recent local activity",
+  activityHint: "Repeated history does not increase the counter. A mapping reset can count a value again; reconnecting resets these totals. Only times, counts and outcomes are kept in memory, never message text. Counts do not prove complete detection or delivery.",
+  activity_masked: "Text masked",
+  activity_no_changes: "No text changes",
+  activity_processing_skipped: "Processing skipped — check warnings",
+  activity_cancelled: "Request cancelled",
   evictedMappings: "Older session mappings were discarded {count} times. Their markers may be unresolved.",
   confirmBackgroundQuit:
     "Quit DMZ? Its routes will be restored. Tools opened afterwards connect directly without DMZ masking. Open DMZ again after your next login.",
@@ -286,6 +293,13 @@ Object.assign(strings.is, {
     "Viðvörun kom upp við vinnslu eða tengingu á síðustu tveimur mínútum. Athugaðu tenginguna áður en haldið er áfram; einhver texti gæti hafa farið óbreyttur áfram.",
   warningHistory: "Skráðar vinnsluviðvaranir frá tengingu: {count}.",
   warningDetails: "Viðvörunarkóðar fyrir bilanagreiningu",
+  redactions: "ný gildi falin",
+  activityTitle: "Nýleg staðbundin virkni",
+  activityHint: "Endursend samtalssaga hækkar ekki teljarann. Eftir endurstillingu geta sömu gildi talist aftur; endurtenging núllstillir tölurnar. Aðeins tímar, fjöldi og niðurstöður eru geymd í minni, aldrei skilaboðatexti. Tölurnar staðfesta hvorki fullkomna greiningu né afhendingu.",
+  activity_masked: "Texti falinn",
+  activity_no_changes: "Engar textabreytingar",
+  activity_processing_skipped: "Vinnslu sleppt — skoðaðu viðvaranir",
+  activity_cancelled: "Hætt við beiðni",
   evictedMappings: "Eldri lotuvörpunum var sleppt {count} sinnum. Merki þeirra gætu verið óþekkt.",
   confirmBackgroundQuit:
     "Loka DMZ? Leiðarstillingar verða teknar til baka. Tól sem opnast síðar tengjast beint án þess að DMZ feli texta. Opnaðu DMZ aftur eftir næstu innskráningu.",
@@ -493,6 +507,10 @@ function renderBackground() {
   if (signature === backgroundRendered) return;
   backgroundRendered = signature;
   const root = $("#background-connections");
+  const expanded = new Map(Array.from(root.querySelectorAll("article[data-background-view]"), card => [card.dataset.backgroundView, {
+    activity: !!card.querySelector(".activity-log")?.open,
+    warnings: !!card.querySelector(".warning-details")?.open,
+  }]));
   const focused = document.activeElement?.dataset.backgroundClient;
   const previous = new Map(
     Array.from(root.querySelectorAll("button[data-background-client]"), (b) => [
@@ -504,7 +522,24 @@ function renderBackground() {
   for (const route of state.background || []) {
     const card = document.createElement("article");
     card.className = "session";
+    card.dataset.backgroundView = route.client;
     card.append(text("h3", route.name), text("p", t(route.state), "status"));
+    card.append(text("p", `${route.new_redactions || 0} ${t("redactions")}`, "redaction-counter"));
+    card.append(text("p", t("activityHint"), "hint"));
+    if (route.activity?.length) {
+      const activity = document.createElement("details");
+      activity.className = "activity-log";
+      activity.open = !!expanded.get(route.client)?.activity;
+      activity.append(text("summary", t("activityTitle")));
+      const events = document.createElement("ol");
+      for (const event of [...route.activity].reverse()) {
+        const at = new Date(event.at);
+        const time = Number.isNaN(at.getTime()) ? "" : at.toLocaleTimeString();
+        events.append(text("li", `${time} · ${t("activity_" + event.outcome)} · ${event.new_redactions} ${t("redactions")} · ${event.changed_parts} ${t("masked")}`));
+      }
+      activity.append(events);
+      card.append(activity);
+    }
     if (route.requests)
       card.append(
         text(
@@ -535,6 +570,8 @@ function renderBackground() {
     }
     if (Object.keys(route.warnings || {}).length) {
       const details = document.createElement("details");
+      details.className = "warning-details";
+      details.open = !!expanded.get(route.client)?.warnings;
       details.append(text("summary", t("warningDetails")));
       const codes = document.createElement("ul");
       for (const code of Object.keys(route.warnings).sort())

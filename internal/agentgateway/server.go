@@ -79,6 +79,8 @@ type mapping struct {
 
 // Status contains aggregate operational data, never original text or mappings.
 type Status struct {
+	NewRedactions           uint64            `json:"new_redactions"`
+	Activity                []Activity        `json:"activity"`
 	Profile                 string            `json:"profile"`
 	Coverage                string            `json:"coverage"`
 	Requests                uint64            `json:"requests"`
@@ -91,6 +93,15 @@ type Status struct {
 	// RecentWarnings contains attention codes seen in the last two minutes.
 	// Warnings above retain lifetime counts, including routine scope notices.
 	RecentWarnings []string `json:"recent_warnings"`
+}
+
+// Activity describes local processing only, never delivery or complete coverage.
+// No request identifiers, text, paths, credentials or marker values are retained.
+type Activity struct {
+	At            time.Time `json:"at"`
+	Outcome       string    `json:"outcome"`
+	NewRedactions uint64    `json:"new_redactions"`
+	ChangedParts  uint64    `json:"changed_parts"`
 }
 
 type Server struct {
@@ -302,6 +313,7 @@ func (s *Server) Snapshot() Status {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	status := s.status
+	status.Activity = append([]Activity{}, s.status.Activity...)
 	status.Sessions = len(s.maps)
 	status.Warnings = make(map[string]uint64, len(s.status.Warnings))
 	status.RecentWarnings = []string{}
@@ -397,6 +409,20 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) prepare(r *http.Request) (scope *mapping) {
+	var newRedactions, changedParts uint64
+	outcome := "processing_skipped"
+	defer func() {
+		if r.Context().Err() != nil {
+			outcome = "cancelled"
+		}
+		s.mu.Lock()
+		s.status.NewRedactions += newRedactions
+		s.status.Activity = append(s.status.Activity, Activity{At: time.Now().UTC(), Outcome: outcome, NewRedactions: newRedactions, ChangedParts: changedParts})
+		if len(s.status.Activity) > 20 {
+			s.status.Activity = append([]Activity(nil), s.status.Activity[len(s.status.Activity)-20:]...)
+		}
+		s.mu.Unlock()
+	}()
 	coding := requestCoding(r.Header)
 	if coding == codingUnsupported {
 		s.warn(warnEncodingUnsupported)
@@ -500,6 +526,8 @@ func (s *Server) prepare(r *http.Request) (scope *mapping) {
 	}()
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	before := m.core.MappingCount()
+	defer func() { newRedactions = uint64(m.core.MappingCount() - before) }()
 	transformed, report := Transform(s.cfg.Protocol, body, func(input string) (output string, err error) {
 		knownMasked := input
 		defer func() {
@@ -578,6 +606,17 @@ func (s *Server) prepare(r *http.Request) (scope *mapping) {
 	replayReport := TransformReport{}
 	if s.cfg.RestoreReplies {
 		transformed, replayReport = TransformReplyHistory(s.cfg.Protocol, transformed, func(text string) (string, error) { return m.remaskRestored(text), nil })
+	}
+	changedParts = uint64(report.ChangedParts + replayReport.ChangedParts)
+	outcome = "no_changes"
+	if changedParts > 0 {
+		outcome = "masked"
+	}
+	for _, code := range append(report.Warnings, replayReport.Warnings...) {
+		if IsFailOpenWarning(code) {
+			outcome = "processing_skipped"
+			break
+		}
 	}
 	if report.ChangedParts > 0 || replayReport.ChangedParts > 0 {
 		// A changed decoded body is sent as identity JSON: re-encoding would

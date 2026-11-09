@@ -107,7 +107,7 @@ func TestBackgroundNormalRequestsRestartAndRestore(t *testing.T) {
 		}
 	}
 	for _, view := range m.Views() {
-		if view.State != "traffic_observed" || view.Requests != 1 || view.ChangedParts != 1 {
+		if view.State != "traffic_observed" || view.Requests != 1 || view.ChangedParts != 1 || view.NewRedactions != 1 || len(view.Activity) != 1 {
 			t.Fatal("background traffic state incorrect")
 		}
 	}
