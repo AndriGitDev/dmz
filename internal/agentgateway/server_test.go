@@ -462,3 +462,30 @@ func TestCompactionMasksUserTextAndPreservesOpaqueState(t *testing.T) {
 		t.Fatal("compaction output changed")
 	}
 }
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func TestCancelledQueueDoesNotInvokeUpstreamTransport(t *testing.T) {
+	s, err := NewServer(Config{Protocol: Responses, Upstream: "https://api.openai.com/v1", Token: syntheticToken})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < cap(s.workers); i++ {
+		s.workers <- struct{}{}
+	}
+	s.proxy.Transport = roundTripFunc(func(*http.Request) (*http.Response, error) {
+		t.Fatal("cancelled draft invoked upstream transport")
+		return nil, nil
+	})
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	r := httptest.NewRequest("POST", "/responses", strings.NewReader(`{"input":"pilot@example.test"}`)).WithContext(ctx)
+	r.Host = "127.0.0.1"
+	r.Header.Set(TokenHeader, syntheticToken)
+	s.ServeHTTP(httptest.NewRecorder(), r)
+	if s.Snapshot().Requests != 1 || s.Snapshot().ChangedParts != 0 {
+		t.Fatal("cancelled queued draft unexpectedly transformed")
+	}
+}

@@ -181,6 +181,9 @@ func NewServer(cfg Config) (*Server, error) {
 		Transport:     transport,
 		FlushInterval: -1,
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, _ error) {
+			if r.Context().Err() != nil {
+				return
+			}
 			s.warn("upstream_unavailable")
 			http.Error(w, "dmz: upstream connection failed", http.StatusBadGateway)
 		},
@@ -304,6 +307,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.mu.Unlock()
 	if r.Method == http.MethodPost {
 		s.prepare(r)
+	}
+	// A cancelled caller is no longer asking us to submit a draft. In
+	// particular, do not invoke a transport with an unprocessed body after
+	// cancellation interrupted waiting for a masking slot.
+	if r.Context().Err() != nil {
+		return
 	}
 	s.proxy.ServeHTTP(w, r)
 }
