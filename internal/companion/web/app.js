@@ -411,7 +411,7 @@ $("#choose-folder").addEventListener("click", async () => {
   b.disabled = true;
   try {
     const result = await api("folder", {});
-    if (stopped) return;
+    if (stopped || result.cancelled) return;
     if (result.folder) {
       $("#project").value = result.folder;
       $("#error").hidden = true;

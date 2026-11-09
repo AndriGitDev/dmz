@@ -2,6 +2,7 @@ package companion
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -217,5 +218,15 @@ func TestInvalidAndExpiredTicketsAreNotConsumed(t *testing.T) {
 	}
 	if _, err := os.Stat(name); err != nil {
 		t.Fatal("invalid input file unexpectedly deleted")
+	}
+}
+
+func TestCancelledFolderPickerIsNotAnError(t *testing.T) {
+	a, local := testApp(t, func(string, string, string) error { return nil }, http.NotFoundHandler())
+	a.cfg.ChooseDirectory = func(context.Context) (string, error) { return "", ErrDialogCancelled }
+	response := appRequest(t, a, local, "POST", "/api/folder", `{}`, nil)
+	var result map[string]any
+	if response.StatusCode != 200 || json.NewDecoder(response.Body).Decode(&result) != nil || result["cancelled"] != true || result["error"] != nil {
+		t.Fatal("picker cancellation reported failure")
 	}
 }

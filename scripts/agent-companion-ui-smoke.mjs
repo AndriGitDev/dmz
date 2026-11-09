@@ -141,6 +141,23 @@ try {
     (await page.locator("#start-codex").innerText()) === "Open Codex CLI →",
     "english_action_missing",
   );
+  await page.locator("#project").fill(project);
+  await page.route("**/api/folder", (route) =>
+    route.fulfill({ json: { cancelled: true } }),
+  );
+  await page.locator("#choose-folder").click();
+  await page.waitForFunction(
+    () => !document.querySelector("#choose-folder").disabled,
+  );
+  check(
+    (await page.locator("#project").inputValue()) === project,
+    "cancelled_picker_changed_project",
+  );
+  check(
+    !(await page.locator("#error").isVisible()),
+    "cancelled_picker_reported_error",
+  );
+  await page.unroute("**/api/folder");
   const detected = await page.locator(".tool-start:not(:disabled)").count();
   check(detected > 0, "installed_cli_not_detected");
   check(

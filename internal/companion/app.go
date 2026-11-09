@@ -160,6 +160,10 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		defer stop()
 		defer cancel()
 		folder, err := a.cfg.ChooseDirectory(ctx)
+		if errors.Is(err, ErrDialogCancelled) {
+			writeJSON(w, map[string]bool{"cancelled": true})
+			return
+		}
 		if err != nil {
 			writeJSON(w, map[string]string{"error": "folder_picker_unavailable"})
 			return
