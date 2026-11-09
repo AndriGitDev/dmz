@@ -1,8 +1,10 @@
 DMZ companion - private review prototype
 ========================================
 
-NOT A RELEASE. Unsigned, unnotarized, unpublished review build. Use fabricated
-text while evaluating. Native GUI behavior and live account routes still need
+NOT A RELEASE. Unsigned and unnotarized review build. Use fabricated
+text while evaluating. PR #27 may provide this binary as a public review
+artifact after its checks pass. Historical private-prototype file/bundle names
+do not restrict access to that artifact. Native GUI and live account routes need
 qualification; compilation and synthetic fixtures do not establish them.
 
 DMZ attempts to mask selected identifiers in user messages. This basic build

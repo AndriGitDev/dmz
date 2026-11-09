@@ -127,3 +127,14 @@ installation, actual accounts, direct vendor desktop apps or signing.
 
 Mac builds assemble the Cocoa entry point and Go core; non-Mac builds explicitly
 label their Mac artifact core-only. No new public binaries or release are created.
+
+## Authorized native Mac review download
+
+The owner authorized unsigned native Mac review artifacts on public PR #27 on
+9 November 2026. A dedicated artifact job runs only for that same-repository PR
+after gateway, core, baseline, browser and both Mac jobs pass. It builds the
+universal menu-bar bundle, includes the Mac checksum, validation and source
+manifest, and retains the artifact for seven days. GitHub users with repository
+read access can download it. This is binary review hosting, not a release,
+Developer ID signing, notarization or native acceptance. Historical
+private-prototype names in the bundle do not imply private artifact access.
