@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>dmz app icon</title>
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="#0e0d0c"/>
+  <rect x="80" y="80" width="864" height="864" rx="186" fill="none" stroke="#34312e" stroke-width="3"/>
+  <path fill="#ecebe7" fill-rule="evenodd" d="M530 234h105v541H427c-115 0-207-75-207-177v-28c0-101 92-177 207-177h103V234zm0 264H427c-58 0-102 42-102 94s44 84 102 84h103V498z"/>
+  <rect x="672" y="671" width="104" height="104" rx="23" fill="#e8432b"/>
+</svg>
