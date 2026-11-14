@@ -47,4 +47,55 @@ class EncoderIntegrationTests(unittest.TestCase):
             with self.assertRaises(ValueError):cache(root/'dev','dev')
 
 
+@unittest.skipUnless(
+    all(importlib.util.find_spec(m) for m in ['numpy', 'torch', 'transformers', 'tokenizers']),
+    'optional local transformer environment',
+)
+class LocalTransformerCompatibilityTests(unittest.TestCase):
+    def test_encode_uses_only_local_synthetic_safetensors_and_tokenizer(self):
+        import numpy as np
+        import torch
+        from tokenizers import Tokenizer
+        from tokenizers.models import WordPiece
+        from tokenizers.normalizers import BertNormalizer
+        from tokenizers.pre_tokenizers import BertPreTokenizer
+        from tokenizers.processors import TemplateProcessing
+        from transformers import BertConfig, BertModel, PreTrainedTokenizerFast
+        from encoder import encode
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            base = root / 'synthetic-model'
+            vocab = {token: i for i, token in enumerate(
+                ['[PAD]', '[UNK]', '[CLS]', '[SEP]', '[MASK]', 'alpha', 'beta']
+            )}
+            tokenizer = Tokenizer(WordPiece(vocab=vocab, unk_token='[UNK]'))
+            tokenizer.normalizer = BertNormalizer(lowercase=True)
+            tokenizer.pre_tokenizer = BertPreTokenizer()
+            tokenizer.post_processor = TemplateProcessing(
+                single='[CLS] $A [SEP]',
+                special_tokens=[('[CLS]', vocab['[CLS]']), ('[SEP]', vocab['[SEP]'])],
+            )
+            fast = PreTrainedTokenizerFast(
+                tokenizer_object=tokenizer, unk_token='[UNK]', pad_token='[PAD]',
+                cls_token='[CLS]', sep_token='[SEP]', mask_token='[MASK]',
+            )
+            fast.save_pretrained(base)
+            torch.manual_seed(7)
+            model = BertModel(BertConfig(
+                vocab_size=len(vocab), hidden_size=8, num_hidden_layers=1,
+                num_attention_heads=2, intermediate_size=16,
+            ), add_pooling_layer=False)
+            model.save_pretrained(base, safe_serialization=True)
+            source = root / 'synthetic.jsonl'
+            source.write_text(json.dumps({
+                'id': 'synthetic', 'split': 'dev', 'text': 'alpha beta', 'entities': [],
+            }) + '\n')
+            metadata = encode(source, 'dev', base, root / 'cache', threads=1)
+            self.assertEqual(metadata['tokens'], 2)
+            values = np.load(root / 'cache' / 'x.npy', allow_pickle=False)
+            self.assertEqual(values.shape, (2, 8))
+            self.assertTrue(np.isfinite(values).all())
+
+
 if __name__=='__main__':unittest.main()
