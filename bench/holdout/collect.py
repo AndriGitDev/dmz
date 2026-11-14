@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bounded public PDF collection for LOCAL annotation preparation, not training.
 Source text never enters Git or stdout. No model predictions or inferred labels.
-Install pypdf==6.1.1 in the local research environment.
+Install dependencies from the adjacent requirements.txt in the local research environment.
 """
 import argparse
 from datetime import datetime, timezone
